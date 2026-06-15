@@ -41,10 +41,11 @@ consumers. See [docs/strategy.md](docs/strategy.md) D3/D4.
   the shadcn CLI / MCP.
 - **Backend:** Convex (`eu-west-1`, GDPR). **No trailing slash** in
   `VITE_CONVEX_URL`.
-- **Auth (dual):** **Convex Auth (`@convex-dev/auth`) by default** —
-  auth-server-less, no cross-domain. **Better Auth (`@convex-dev/better-auth`,
-  crossDomain, Convex ≥ 1.25) is the scale-up** for orgs / RBAC / passkeys / 2FA
-  / SSO. react-shell's providers support both.
+- **Auth:** react-shell ships **only the Convex Auth (`@convex-dev/auth`)
+  default** — auth-server-less, no cross-domain — via a pluggable auth seam. It
+  does **not** ship Better Auth: a consumer needing Better Auth
+  (`@convex-dev/better-auth`, crossDomain, Convex ≥ 1.25), SSO, or MFA wires its
+  own provider through the seam.
 - **Package manager: pnpm** — never `npm install` (it desyncs the lockfile and
   Convex dev then crash-loops). Use `pnpm add` / `pnpm <script>` / `pnpm dlx`.
 - **Hosting (consumers):** Vercel (static). **Git remote:**

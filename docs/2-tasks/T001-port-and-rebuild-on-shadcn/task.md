@@ -46,11 +46,14 @@ providers / i18n / theme-provider slices are planned-but-unbuilt. So this is a
    contracts from the SolidJS foundation's `app-shell-rules.md` **verbatim**:
    single shell scroll container, breadcrumb as a pure function of the URL, the
    three non-substitutable nav layers, and `?tab=` deep-link contracts.
-4. **Providers:** Convex client + auth + theme providers. Support **both** auth
-   paths — **Convex Auth (`@convex-dev/auth`) as the default** (auth-server-less,
-   no cross-domain) and **Better Auth (`@convex-dev/better-auth`, crossDomain,
-   Convex ≥ 1.25) as the scale-up**. For the Better Auth path, spike the
-   cross-domain wiring before relying on it.
+4. **Providers + auth seam:** Convex client + theme providers, plus a **pluggable
+   auth seam** the consumer fills. react-shell ships **only the Convex Auth
+   (`@convex-dev/auth`) default** (auth-server-less, no cross-domain) — the
+   batteries-included path for the common private-SPA case. It does **NOT** ship
+   Better Auth or any other provider: a project that needs Better Auth / SSO /
+   MFA / orgs implements its own auth provider through the seam (incl. Better
+   Auth's `@convex-dev/better-auth` crossDomain wiring, Convex ≥ 1.25). Auth
+   beyond the Convex Auth default is the project's responsibility.
 5. **i18n:** the `t()` seam + central-key policy + missing-key dev surface.
 6. **Contracts:** the `~/config/*` inversion-of-control pattern and the
    no-silent-defaults / break-cleanly discipline, written up as this project's

@@ -10,8 +10,8 @@ owns the layer above it:
 
 - **App-shell** — routing chrome, header / footer / menu / bottom-nav, page
   chrome, the single shell scroll container, page-level and in-page tabs.
-- **Providers** — Convex client, auth (Convex Auth by default; Better Auth for
-  scale-up), theme.
+- **Providers** — Convex client, theme, and a pluggable auth seam: ships the
+  Convex Auth default; Better Auth and other providers are project-implemented.
 - **i18n** — the `t()` seam and central-key policy.
 - **Contracts** — the `~/config/*` inversion-of-control pattern, the app-shell
   rules (single scroll container, breadcrumb-from-URL, the three non-substitutable
@@ -46,7 +46,8 @@ layer (plus the shared registry), built once and consumed by every new React app
 ## Stack
 
 Vite SPA + TanStack Router + Convex + shadcn/ui (react-shell's shared private
-registry). Auth is **Convex Auth (`@convex-dev/auth`) by default** —
-auth-server-less, no cross-domain — with **Better Auth (`@convex-dev/better-auth`,
-crossDomain, Convex ≥ 1.25) as the scale-up** for orgs / RBAC / passkeys / 2FA /
-SSO. pnpm · React 19 · TS 6 · Tailwind v4. Full rationale in the decision guide.
+registry). **Auth is project-owned:** react-shell ships the **Convex Auth
+(`@convex-dev/auth`) default** (auth-server-less, no cross-domain) via a pluggable
+seam; it does **not** ship Better Auth — a project needing Better Auth
+(`@convex-dev/better-auth`, crossDomain, Convex ≥ 1.25) or SSO / MFA wires its own
+provider. pnpm · React 19 · TS 6 · Tailwind v4. Full rationale in the decision guide.
