@@ -1,6 +1,6 @@
 # T001 — port-and-rebuild-on-shadcn
 
-**Status:** planning | **Type:** feature | **Branch:** main
+**Status:** in-progress | **Type:** feature | **Branch:** main
 **Origin:** [react-framework-guide.md](../../../../notes/react-framework-guide.md) §2 + §5 — shadcn owns the primitive layer; this project owns everything above it.
 **Depends on:** nothing. **Blocks:** every react-shell consumer.
 
@@ -75,11 +75,37 @@ providers / i18n / theme-provider slices are planned-but-unbuilt. So this is a
 
 ## Build sequence
 
-Phases (each a commit point): **0** record+scope · **A** scaffold (Vite + TanStack
-Router `--router-only`, Tailwind v4, TS6, git-dep `package.json`) · **B** theming
-(token contract + 5 palettes + `ThemeProvider`) · **C** providers + auth seam
-(`ConvexClientProvider`, Convex Auth default) · **D** app-shell core · **E** page /
-tab primitives · **F** i18n seam · **G** registry composites · **H** guides/specs.
+Each phase is a commit point.
+
+- [x] **0 — record + scope** — decisions D5–D7 in [strategy.md](../../strategy.md);
+  scope refined; index → `in-progress`.
+- [x] **A — scaffold** — Vite 8 + TanStack Router + Tailwind v4 + TS6
+  project-references; git-dep `package.json` (TS-source `exports`, peers + dev
+  mirrors); dev-harness entry (`main.tsx` + `routes/{__root,index}`); empty library
+  barrel `src/index.ts`. Node-side typecheck (`vite.config`) passes. **Harness boot
+  + `routeTree.gen.ts` generation pend the user's first `pnpm dev`** (router plugin
+  generates the route tree; until then the app-project typecheck reports a missing
+  `./routeTree.gen` — expected).
+- [ ] **B — theming** *(next)* — `base.css` token contract + 5 palettes
+  (`dynamic`/`forest`/`ocean`/`soft`/`sunset`) as `registry:base`; `ThemeProvider`
+  (light/dark, theme selection, consumer-defined themes). No new deps.
+- [ ] **C — providers + auth seam** — `ConvexClientProvider` (throws on absent
+  `VITE_CONVEX_URL`), `AppProviders`, pluggable auth seam + Convex Auth default.
+  *(adds `convex`, `@convex-dev/auth`, `@auth/core`)*
+- [ ] **D — app-shell core** — `AppShell` (single `[data-shell-content]` scroll
+  container, pinned chrome slot + body cell), header/menu/bottom-nav/footer,
+  `ShellPageHeader` (breadcrumb = pure function of URL), `defineShellConfig` +
+  `useDynamicPages` + the three nav layers.
+- [ ] **E — page/tab primitives** — `PageSections` (in-page `?tab=`, sticky strip,
+  scrollspy on the body cell), `PageTabs` (route-level), `LocalTabs`; the `?tab=`
+  deep-link contract; `sections-playground` / `tabs-playground` test routes.
+- [ ] **F — i18n seam** — `t()` + central-key policy + missing-key dev surface.
+- [ ] **G — registry composites** — `PhiCard`, `CompactColorPicker` /
+  `CompactIconPicker`, `InlineEditText`, imperative `alertDialog` as shadcn registry
+  items + registry-host wiring.
+- [ ] **H — guides/specs** — app-shell-rules (verbatim minus the SSR/Solid-reactivity
+  rules), `~/config` contract, theming, providers, consumer bootstrapping.
+
 The no-SSR stack drops `foundation`'s Kobalte-focus / thunk-children / Portal-SSR
 rules, halving D/E.
 
