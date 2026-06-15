@@ -36,10 +36,15 @@ providers / i18n / theme-provider slices are planned-but-unbuilt. So this is a
    layer, so the underlying primitives are the same.)
 2. **Shared shadcn registry (the UI contribution):** stand up react-shell's
    shared registry + shadcn MCP + the `CLAUDE.md` reuse rule. Carry across the
-   brand token *values* (the 6 themes) as a `registry:base`, and the handful of
-   bespoke composites shadcn lacks (GoldenCard, CompactColorPicker /
-   CompactIconPicker, InlineEditText, ReactionPill, the imperative `alertDialog`
-   API) as registry items.
+   `base.css` semantic-token contract + **5 themes** (`dynamic` / `forest` /
+   `ocean` / `soft` / `sunset`) as a `registry:base` — `foundation-golden` is
+   **dropped** (Zingularis brand), and `ThemeProvider` lets a consumer select a
+   palette *and* define its own. Carry the bespoke composites shadcn lacks
+   (**`PhiCard`** — φ/golden-*ratio* geometry, the canonical Solid-`foundation`
+   name, not `foundation-react`'s "GoldenCard" — `CompactColorPicker` /
+   `CompactIconPicker`, `InlineEditText`, the imperative `alertDialog` API) as
+   registry items. `ReactionPill`/`ReactionGroup` are **dropped** (a feature, not
+   a primitive). See strategy D6.
 3. **App-shell (the hard, durable core):** build the React shell on shadcn —
    AppShell, header/footer/menu/bottom-nav, page chrome, the single shell scroll
    container, page-level tabs + in-page tabs. Carry the framework-agnostic
@@ -58,6 +63,25 @@ providers / i18n / theme-provider slices are planned-but-unbuilt. So this is a
 6. **Contracts:** the `~/config/*` inversion-of-control pattern and the
    no-silent-defaults / break-cleanly discipline, written up as this project's
    standing guides in `docs/guides/`.
+
+## Distribution & repo shape
+
+- **Consumed as a tag-pinned Bitbucket git-dependency** (ships TS source for the
+  consumer's Vite to transpile; `prepare`-build fallback). No npm registry to run.
+  The shadcn registry is a separate static-JSON host. See strategy D5.
+- **One repo, two roles:** the importable **library** + a dev-only **harness Vite
+  app** (showcase + test routes) that renders the shell for behavior verification —
+  app-shell contracts are only catchable in-browser. See strategy D7.
+
+## Build sequence
+
+Phases (each a commit point): **0** record+scope · **A** scaffold (Vite + TanStack
+Router `--router-only`, Tailwind v4, TS6, git-dep `package.json`) · **B** theming
+(token contract + 5 palettes + `ThemeProvider`) · **C** providers + auth seam
+(`ConvexClientProvider`, Convex Auth default) · **D** app-shell core · **E** page /
+tab primitives · **F** i18n seam · **G** registry composites · **H** guides/specs.
+The no-SSR stack drops `foundation`'s Kobalte-focus / thunk-children / Portal-SSR
+rules, halving D/E.
 
 ## Exit criteria
 
