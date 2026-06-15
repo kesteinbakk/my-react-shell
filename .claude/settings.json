@@ -1,0 +1,14 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node ~/Developer/zingularis/.claude/hooks/role-init.mjs SessionStart"
+          }
+        ]
+      }
+    ]
+  }
+}
