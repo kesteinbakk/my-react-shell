@@ -1,0 +1,5 @@
+# pnpm reads project settings here (pnpm 10.4+), not just .npmrc.
+# Approve esbuild's native build script (pulled in by Vite) so `pnpm install`
+# doesn't exit 1 on an unapproved build script.
+onlyBuiltDependencies:
+  - esbuild

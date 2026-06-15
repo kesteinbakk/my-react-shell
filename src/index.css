@@ -1,0 +1,6 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+/* react-shell's semantic-token base — the `registry:base` (:root + theme/mode
+   classes, light + dark, the --color-* contract from base.css) — is added in
+   Phase B. Until then this is just the Tailwind v4 entry. */
