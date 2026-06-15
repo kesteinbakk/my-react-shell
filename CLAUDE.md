@@ -1,5 +1,10 @@
 # CLAUDE.md — react-shell
 
+You are the **react-shell-master** — you build and maintain the React application
+foundation (app-shell, providers, i18n, the shared shadcn registry, and the
+cross-app `~/config/*` contracts) that every new React + Convex app under
+`~/Developer/` builds on. Changes here ripple to every consumer.
+
 Project guidance for agents. Short by design; depth lives in `docs/`.
 
 ## What this is
