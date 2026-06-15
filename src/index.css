@@ -1,6 +1,18 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
 
-/* react-shell's semantic-token base — the `registry:base` (:root + theme/mode
-   classes, light + dark, the --color-* contract from base.css) — is added in
-   Phase B. Until then this is just the Tailwind v4 entry. */
+/* react-shell semantic-token base (the `registry:base`): the `:root` token
+   contract + generic themed base styles, then each palette as a
+   `.theme-<name>-{light,dark}` class. <ThemeProvider> applies the active class
+   to <html>. A consumer can add its own palette by importing a class that fills
+   the same contract (see styles/base.css) and listing it in <ThemeProvider>.
+
+   The shadcn token bridge (mapping these tokens onto shadcn's `--background` /
+   `--primary` / … names + Tailwind `@theme` exposure) lands with the registry
+   wiring in a later phase; this file is the palette/token source it builds on. */
+@import './styles/base.css';
+@import './styles/themes/ocean.css';
+@import './styles/themes/forest.css';
+@import './styles/themes/sunset.css';
+@import './styles/themes/soft.css';
+@import './styles/themes/dynamic.css';

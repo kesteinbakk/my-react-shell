@@ -86,10 +86,26 @@ Each phase is a commit point.
   + `routeTree.gen.ts` generation pend the user's first `pnpm dev`** (router plugin
   generates the route tree; until then the app-project typecheck reports a missing
   `./routeTree.gen` — expected).
-- [ ] **B — theming** *(next)* — `base.css` token contract + 5 palettes
-  (`dynamic`/`forest`/`ocean`/`soft`/`sunset`) as `registry:base`; `ThemeProvider`
-  (light/dark, theme selection, consumer-defined themes). No new deps.
-- [ ] **C — providers + auth seam** — `ConvexClientProvider` (throws on absent
+- [x] **B — theming** — token contract `src/styles/base.css` (`:root` semantic
+  `--color-*` contract + themed base styles) and the 5 palettes
+  `src/styles/themes/{ocean,forest,sunset,soft,dynamic}.css` as
+  `.theme-<name>-{light,dark}` classes (values ported verbatim from the Solid
+  `foundation`; `golden` dropped). React `ThemeProvider` + `useTheme` +
+  `themeContext` under `src/theme/` (light/dark, system-follow, palette
+  selection, **open theme set** for consumer-defined palettes, localStorage
+  persistence), exported from the barrel; harness wired (root provider + theme
+  playground on `/`). `tsc -b` passes; CSS compiles and all palette `var(--color-*)`
+  references resolve. No new deps. **Notes:** (1) the foundation's hand-rolled
+  color *utility classes* (`.text-primary`, `.bg-primary`, …) are deliberately
+  **not** ported — several collide semantically with shadcn/Tailwind conventions;
+  proper Tailwind v4 `@theme` exposure + the shadcn token **bridge**
+  (`--background`/`--primary`/… names) land with the registry wiring in **G**. The
+  *contract* (the variables) is fully carried. (2) Added the universal `*-border`
+  tokens to the `:root` contract (every palette already fills them). (3) Fixed a
+  pre-existing scaffold issue: dropped deprecated `baseUrl` from
+  `tsconfig.app.json` (TS6 TS5101) so the app project typechecks. **Pends the
+  user's in-browser check via `pnpm dev`.**
+- [ ] **C — providers + auth seam** *(next)* — `ConvexClientProvider` (throws on absent
   `VITE_CONVEX_URL`), `AppProviders`, pluggable auth seam + Convex Auth default.
   *(adds `convex`, `@convex-dev/auth`, `@auth/core`)*
 - [ ] **D — app-shell core** — `AppShell` (single `[data-shell-content]` scroll

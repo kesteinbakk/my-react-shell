@@ -1,0 +1,237 @@
+/* Ocean — deep sea blues and cool tones. Light and dark modes. */
+
+/* Ocean Light Mode */
+.theme-ocean-light {
+  /* ===== Surface Colors ===== */
+  --color-surface-primary: #ffffff;
+  --color-surface-secondary: var(--color-sky-50);
+  --color-surface-tertiary: var(--color-sky-100);
+  --color-surface-elevated: #ffffff;
+  --color-surface-neutral: var(--color-gray-400); /* mid-gray for color indicators */
+
+  /* ===== Background Colors ===== */
+  --color-background-primary: var(--color-sky-50);
+  --color-background-secondary: var(--color-sky-100);
+
+  /* ===== Border Colors ===== */
+  --color-border-primary: var(--color-sky-200);
+  --color-border-secondary: var(--color-sky-300);
+  --color-border-hover: var(--color-sky-400);
+
+  /* ===== Text Hierarchy ===== */
+  --color-text-primary: var(--color-slate-900);
+  --color-text-secondary: var(--color-slate-700);
+  --color-text-tertiary: var(--color-slate-600);
+  --color-text-muted: var(--color-slate-500);
+  --color-text-heading: var(--color-indigo-600);
+
+  /* ===== Interactive States ===== */
+  --color-hover: var(--color-sky-100);
+  --color-active: var(--color-sky-200);
+  --color-selected: var(--color-indigo-100);
+
+  /* ===== Brand Colors ===== */
+  --color-primary: var(--color-indigo-600);
+  --color-primary-hover: var(--color-indigo-700);
+  --color-primary-active: var(--color-indigo-800);
+  --color-primary-content: #ffffff;
+  --color-primary-bg: var(--color-indigo-50);
+
+  --color-secondary: var(--color-sky-600);
+  --color-secondary-hover: var(--color-sky-700);
+  --color-secondary-content: #ffffff;
+  --color-secondary-bg: var(--color-sky-50);
+
+  /* ===== Semantic Colors ===== */
+  --color-success: var(--color-green-600);
+  --color-success-hover: var(--color-green-700);
+  --color-success-content: #ffffff;
+  --color-success-bg: var(--color-green-50);
+
+  --color-warning: var(--color-amber-500);
+  --color-warning-hover: var(--color-amber-600);
+  --color-warning-content: var(--color-amber-900);
+  --color-warning-bg: var(--color-amber-50);
+
+  --color-danger: var(--color-red-600);
+  --color-danger-hover: var(--color-red-700);
+  --color-danger-content: #ffffff;
+  --color-danger-bg: var(--color-red-50);
+
+  --color-info: var(--color-blue-500);
+  --color-info-hover: var(--color-blue-600);
+  --color-info-content: #ffffff;
+  --color-info-bg: var(--color-blue-50);
+
+  /* ===== Semantic / Share Border Colors (softer shade of each hue) ===== */
+  --color-success-border: var(--color-green-300);
+  --color-warning-border: var(--color-amber-300);
+  --color-danger-border: var(--color-red-300);
+  --color-info-border: var(--color-blue-300);
+  --color-share-public-border: var(--color-blue-300);
+  --color-share-shared-border: var(--color-teal-300);
+  --color-share-private-border: var(--color-green-300);
+
+  /* ===== Focus States ===== */
+  --color-focus: var(--color-indigo-500);
+  --color-focus-ring: rgba(99, 102, 241, 0.2);
+
+  /* ===== Overlay ===== */
+  --color-overlay: rgba(0, 0, 0, 0.5);
+
+  /* ===== Shadows ===== */
+  --color-shadow-sm: rgba(0, 0, 0, 0.05);
+  --color-shadow-md: rgba(0, 0, 0, 0.1);
+  --color-shadow-lg: rgba(0, 0, 0, 0.15);
+  --color-shadow-xl: rgba(0, 0, 0, 0.25);
+
+  /* ===== Accent Colors ===== */
+  --color-accent-sky: var(--color-sky-500);
+  --color-accent-sky-bg: var(--color-sky-100);
+  --color-accent-sky-hover: var(--color-sky-600);
+
+  --color-accent-emerald: var(--color-emerald-500);
+  --color-accent-emerald-bg: var(--color-emerald-100);
+  --color-accent-emerald-hover: var(--color-emerald-600);
+
+  --color-accent-amber: var(--color-amber-500);
+  --color-accent-amber-bg: var(--color-amber-100);
+  --color-accent-amber-hover: var(--color-amber-600);
+
+  --color-accent-violet: var(--color-violet-500);
+  --color-accent-violet-bg: var(--color-violet-100);
+  --color-accent-violet-hover: var(--color-violet-600);
+
+  --color-accent-rose: var(--color-rose-500);
+  --color-accent-rose-bg: var(--color-rose-100);
+  --color-accent-rose-hover: var(--color-rose-600);
+
+  /* ===== Share Status Colors ===== */
+  --color-share-public: var(--color-blue-500);
+  --color-share-public-bg: var(--color-blue-50);
+  --color-share-shared: var(--color-teal-500);
+  --color-share-shared-bg: var(--color-teal-50);
+  --color-share-private: var(--color-green-700);
+  --color-share-private-bg: var(--color-green-50);
+}
+
+/* Ocean Dark Mode */
+.theme-ocean-dark {
+  /* ===== Surface Colors =====
+     Each stop is a distinct slate shade so that borders/hover applied on any
+     surface stay visible — collapsing surface-elevated, surface-secondary,
+     border-primary and hover onto one value makes popover/dropdown borders and
+     hover states invisible. */
+  --color-surface-primary: var(--color-slate-800);
+  --color-surface-secondary: var(--color-slate-700);
+  --color-surface-tertiary: var(--color-slate-600);
+  --color-surface-elevated: var(--color-slate-750, #293548); /* distinct lift between 800 and 700 */
+  --color-surface-neutral: var(--color-gray-500); /* mid-gray for color indicators */
+
+  /* ===== Background Colors ===== */
+  --color-background-primary: var(--color-slate-900);
+  --color-background-secondary: var(--color-slate-800);
+
+  /* ===== Border Colors =====
+     Border must contrast with surface-primary AND surface-elevated. */
+  --color-border-primary: var(--color-slate-600);
+  --color-border-secondary: var(--color-slate-500);
+  --color-border-hover: var(--color-slate-400);
+
+  /* ===== Text Hierarchy ===== */
+  --color-text-primary: var(--color-slate-100);
+  --color-text-secondary: var(--color-slate-300);
+  --color-text-tertiary: var(--color-slate-400);
+  --color-text-muted: var(--color-slate-500);
+  --color-text-heading: var(--color-cyan-400);
+
+  /* ===== Interactive States =====
+     Hover must contrast with both surface-primary and surface-elevated. */
+  --color-hover: var(--color-slate-600);
+  --color-active: var(--color-slate-600);
+  --color-selected: var(--color-cyan-900);
+
+  /* ===== Brand Colors ===== */
+  --color-primary: var(--color-cyan-400);
+  --color-primary-hover: var(--color-cyan-300);
+  --color-primary-active: var(--color-cyan-500);
+  --color-primary-content: var(--color-slate-900);
+  --color-primary-bg: var(--color-cyan-950);
+
+  --color-secondary: var(--color-teal-400);
+  --color-secondary-hover: var(--color-teal-300);
+  --color-secondary-content: var(--color-slate-900);
+  --color-secondary-bg: var(--color-teal-950);
+
+  /* ===== Semantic Colors ===== */
+  --color-success: var(--color-emerald-400);
+  --color-success-hover: var(--color-emerald-300);
+  --color-success-content: var(--color-slate-900);
+  --color-success-bg: var(--color-emerald-950);
+
+  --color-warning: var(--color-amber-400);
+  --color-warning-hover: var(--color-amber-300);
+  --color-warning-content: var(--color-slate-900);
+  --color-warning-bg: var(--color-amber-950);
+
+  --color-danger: var(--color-red-500);
+  --color-danger-hover: var(--color-red-400);
+  --color-danger-content: #ffffff;
+  --color-danger-bg: var(--color-red-950);
+
+  --color-info: var(--color-sky-400);
+  --color-info-hover: var(--color-sky-300);
+  --color-info-content: var(--color-slate-900);
+  --color-info-bg: var(--color-sky-950);
+
+  /* ===== Semantic / Share Border Colors (dimmer shade of each hue) ===== */
+  --color-success-border: var(--color-emerald-800);
+  --color-warning-border: var(--color-amber-800);
+  --color-danger-border: var(--color-red-800);
+  --color-info-border: var(--color-sky-800);
+  --color-share-public-border: var(--color-blue-800);
+  --color-share-shared-border: var(--color-teal-800);
+  --color-share-private-border: var(--color-green-800);
+
+  /* ===== Focus States ===== */
+  --color-focus: var(--color-cyan-400);
+  --color-focus-ring: rgba(34, 211, 238, 0.3);
+
+  /* ===== Overlay ===== */
+  --color-overlay: rgba(0, 0, 0, 0.5);
+
+  /* ===== Shadows (glow effect for dark mode) ===== */
+  --color-shadow-sm: rgba(255, 255, 255, 0.05);
+  --color-shadow-md: rgba(255, 255, 255, 0.1);
+  --color-shadow-lg: rgba(255, 255, 255, 0.15);
+  --color-shadow-xl: rgba(255, 255, 255, 0.2);
+
+  /* ===== Accent Colors ===== */
+  --color-accent-sky: var(--color-sky-400);
+  --color-accent-sky-bg: var(--color-sky-950);
+  --color-accent-sky-hover: var(--color-sky-300);
+
+  --color-accent-emerald: var(--color-emerald-400);
+  --color-accent-emerald-bg: var(--color-emerald-950);
+  --color-accent-emerald-hover: var(--color-emerald-300);
+
+  --color-accent-amber: var(--color-amber-400);
+  --color-accent-amber-bg: var(--color-amber-950);
+  --color-accent-amber-hover: var(--color-amber-300);
+
+  --color-accent-violet: var(--color-violet-400);
+  --color-accent-violet-bg: var(--color-violet-950);
+  --color-accent-violet-hover: var(--color-violet-300);
+
+  --color-accent-rose: var(--color-rose-400);
+  --color-accent-rose-bg: var(--color-rose-950);
+  --color-accent-rose-hover: var(--color-rose-300);
+
+  /* ===== Share Status Colors ===== */
+  --color-share-public: var(--color-blue-400);
+  --color-share-public-bg: var(--color-blue-950);
+  --color-share-shared: var(--color-teal-400);
+  --color-share-shared-bg: var(--color-teal-950);
+  --color-share-private: var(--color-green-400);
+  --color-share-private-bg: var(--color-green-950);
+}
