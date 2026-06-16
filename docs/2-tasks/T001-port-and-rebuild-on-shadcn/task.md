@@ -105,10 +105,19 @@ Each phase is a commit point.
   pre-existing scaffold issue: dropped deprecated `baseUrl` from
   `tsconfig.app.json` (TS6 TS5101) so the app project typechecks. **Pends the
   user's in-browser check via `pnpm dev`.**
-- [ ] **C — providers + auth seam** *(next)* — `ConvexClientProvider` (throws on absent
-  `VITE_CONVEX_URL`), `AppProviders`, pluggable auth seam + Convex Auth default.
-  *(adds `convex`, `@convex-dev/auth`, `@auth/core`)*
-- [ ] **D — app-shell core** — `AppShell` (single `[data-shell-content]` scroll
+- [x] **C — providers + auth seam** — `createConvexClient` + `ConvexClientProvider`
+  (`src/providers/`; throws on absent `VITE_CONVEX_URL` *and* on a trailing slash —
+  no silent default). `AppProviders` composes `ThemeProvider` + Convex client +
+  the optional auth seam. The **auth seam** (`src/auth/seam.ts`: `AuthProvider` /
+  `AuthProviderProps`) is auth-agnostic; the **Convex Auth default**
+  (`ConvexAuthDefaultProvider`, `src/auth/convex-auth.tsx`) ships at the
+  **`react-shell/auth/convex` sub-path export** — the only place `@convex-dev/auth`
+  is imported, so it + `@auth/core` stay **optional peers** (a Better-Auth consumer
+  never imports them). `VITE_CONVEX_URL` typed in `vite-env.d.ts`. Deps added in a
+  prior commit (peer + dev; betas pinned exact). `tsc -b` passes. **Note:** the
+  harness root stays `ThemeProvider`-only so it boots without `VITE_CONVEX_URL`;
+  live Convex/auth verification needs the consumer's env + `convex dev` (user-owned).
+- [ ] **D — app-shell core** *(next)* — `AppShell` (single `[data-shell-content]` scroll
   container, pinned chrome slot + body cell), header/menu/bottom-nav/footer,
   `ShellPageHeader` (breadcrumb = pure function of URL), `defineShellConfig` +
   `useDynamicPages` + the three nav layers.
