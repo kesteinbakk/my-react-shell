@@ -18,7 +18,7 @@ primitive kit.
 
 - What this is + boundary: [docs/concept.md](docs/concept.md)
 - Standing decisions + rationale: [docs/strategy.md](docs/strategy.md)
-- Framework decision / from-scratch consumer guide: [../guides/react-framework-notes.md](../guides/react-framework-notes.md)
+- Framework decision / from-scratch consumer guide: the `react-framework` skill ([.claude/skills/react-framework/react-framework-notes.md](.claude/skills/react-framework/react-framework-notes.md))
 - Build plan: **T001** in `docs/2-tasks/` (index: `docs/2-tasks/_index/`)
 
 > **Status: pre-implementation.** Currently docs only — no `src/` yet. The first
@@ -111,6 +111,7 @@ docs/
 
 A new app points shadcn at my-react-shell's shared registry (+ MCP), wraps its
 TanStack Router in my-react-shell's providers, and renders routes inside its
-app-shell with the auth gate. The full from-scratch sequence is the bootstrapping
-guide: [../guides/react-framework-notes.md](../guides/react-framework-notes.md).
+app-shell with the auth gate. The stack-level scaffolding sequence is the
+`react-framework` skill's guide
+([.claude/skills/react-framework/react-framework-notes.md](.claude/skills/react-framework/react-framework-notes.md));
 my-react-shell's `docs/guides/` are the authority for exact exports and contracts.
