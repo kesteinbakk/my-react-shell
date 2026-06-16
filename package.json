@@ -3,27 +3,35 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "React application foundation above shadcn/ui — app-shell, providers, i18n, and cross-app contracts for Vite + Convex SPAs.",
+  "description": "Modular React foundation — optional, versioned drop-in modules (theme, providers, auth seam, i18n) for Vite + Convex SPAs. Consumed as a Bitbucket git-dependency.",
   "engines": {
     "node": "24.x"
   },
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "types": "./dist/index.d.ts",
+  "module": "./dist/index.js",
   "exports": {
     ".": {
-      "types": "./src/index.ts",
-      "import": "./src/index.ts"
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
     },
     "./auth/convex": {
-      "types": "./src/auth/convex-auth.tsx",
-      "import": "./src/auth/convex-auth.tsx"
+      "types": "./dist/auth/convex-auth.d.ts",
+      "import": "./dist/auth/convex-auth.js"
     },
     "./styles.css": "./src/index.css"
   },
   "files": [
+    "dist",
     "src"
   ],
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "build:lib": "tsc -p tsconfig.lib.json",
+    "prepare": "tsc -p tsconfig.lib.json",
     "typecheck": "tsc -b",
     "preview": "vite preview"
   },

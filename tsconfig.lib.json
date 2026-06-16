@@ -1,0 +1,29 @@
+{
+  // Library emit config — compiles the importable package surface (src/, minus the
+  // dev-harness) to dist/ as JS + .d.ts. Run by `prepare` so a consumer installing
+  // the Bitbucket git-dependency gets compiled output, like a published npm package.
+  // The harness (main.tsx, routes/**, routeTree.gen.ts) is excluded — consumers
+  // never receive it. This config is standalone (not in tsconfig.json references),
+  // so `tsc -b` typecheck and `vite build` never trigger a dist emit.
+  "compilerOptions": {
+    "target": "ESNext",
+    "lib": ["ESNext", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "jsx": "react-jsx",
+
+    "strict": true,
+    "verbatimModuleSyntax": true,
+    "isolatedModules": true,
+    "moduleDetection": "force",
+    "skipLibCheck": true,
+
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "outDir": "./dist",
+    "rootDir": "./src"
+  },
+  "include": ["src"],
+  "exclude": ["src/main.tsx", "src/routes", "src/routeTree.gen.ts"]
+}
