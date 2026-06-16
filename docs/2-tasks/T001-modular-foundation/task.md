@@ -77,8 +77,12 @@ Each phase is a commit point.
   router-peer Open decision — `@tanstack/react-router` removed from
   `peerDependencies` (harness-only dev dep) — and the committed-link guard (4): a
   generalized `pre-commit` hook (`.githooks/pre-commit`, `pnpm setup:hooks`, no
-  husky). Remaining: item 5 (release verify from a real tag) needs a tag push —
-  local `pnpm pack` dry-run substitutes until then.
+  husky). Item 5 (release verify): tag `v0.1.0` pushed + installed from a scratch
+  dir — package contents are correct, but the install is **not zero-config on pnpm
+  10/11** (the `prepare`/build-script gate). Open decision recorded in
+  distribution-model.md (commit `dist/` vs document the allowlist) — fix ships as
+  `v0.1.1`. A `my-react-shell-demo` consumer app (local `link:`, theme + shadcn) was
+  built to exercise the package.
 - [ ] **E — module pattern + core** *(next)* — extract shared `core` types; codify
   the module contract; write the **module-authoring guide** (how to add a module,
   the sub-path/optional-peer rule, the self-containment rule).

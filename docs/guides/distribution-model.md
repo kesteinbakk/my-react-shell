@@ -48,8 +48,10 @@ local checkout — this is a **dev-only** redirect:
 The *distribution* model is shared; the *build* step differs because the two
 compile differently:
 - **React (`my-react-shell`):** ships **precompiled `dist/`**. A `prepare` build
-  runs `tsc -p tsconfig.lib.json` on install → JS + `.d.ts`. Consumers get
-  zero-config JS (bundlers don't transpile `node_modules`, so raw TS can't ship).
+  runs `tsc -p tsconfig.lib.json` on install → JS + `.d.ts` (bundlers don't transpile
+  `node_modules`, so raw TS can't ship). **Caveat:** `prepare`-on-install is *not*
+  zero-config on pnpm 10/11 — see "Open decision — `prepare`-on-install vs committed
+  `dist/`" below.
 - **Solid (`foundation`):** ships **source under the Solid `"solid"` export
   condition** (JSX preserved), compiled by each consumer's `vite-plugin-solid`.
   A precompiled framework-agnostic dist is not viable for Solid (SSR + SPA
@@ -88,12 +90,13 @@ is hardening, not redesign:
    dependency. Intentional bypass: `git commit --no-verify`. Each consumer gets the
    same guard by copying `.githooks/pre-commit` and running the same setup — see
    Consumer adoption.
-5. **Verify the release path once, end to end.** From a scratch dir, after
-   cutting a real tag: `pnpm add 'git+ssh://git@bitbucket.org:kesteinbakk/my-react-shell.git#vX.Y.Z'`
-   and confirm (a) `prepare` runs, (b) `dist/` is emitted, (c) both
-   `import { ThemeProvider } from 'my-react-shell'` and
-   `import 'my-react-shell/styles.css'` resolve. No consumer has installed this
-   yet; "landed" means code-present, not proven-consumable.
+5. **Verify the release path once, end to end — done, with a finding.** Tag
+   `v0.1.0` was pushed and installed from a scratch dir via
+   `pnpm add 'git+ssh://…#v0.1.0'`. Result: once builds are allowed, (a) `prepare`
+   runs, (b) `dist/` is emitted, (c) `my-react-shell`, `my-react-shell/styles.css`,
+   and `my-react-shell/auth/convex` all resolve, and the narrowed `files` holds
+   (only `index.css` + `styles/` under `src`). **But the install is not zero-config
+   on pnpm 10/11** — see the Open decision below.
 6. **Narrow the `files` allowlist** (optional, recommended). `files: ["dist", "src"]`
    ships the entire raw `src` tree (including the dev-harness) into every install.
    Narrow to `["dist", "src/index.css", "src/styles"]` so only `dist/` plus the
@@ -107,6 +110,32 @@ is hardening, not redesign:
   behind. Consumers pick their own router (TanStack Router remains the recommended
   choice — see the `react-framework` guide — but as the consumer's own dependency,
   not one this package imposes).
+
+### Open decision — `prepare`-on-install vs committed `dist/`
+The `prepare`→`dist/` model (D5) is **not zero-config on pnpm 10/11**, surfaced by
+the item-5 release verification:
+- **`ERR_PNPM_GIT_DEP_PREPARE_NOT_ALLOWED`** — pnpm blocks a git dep's `prepare`
+  build unless the consumer allowlists it in `pnpm-workspace.yaml`. The only key that
+  matches is the **full git-spec including the commit hash** (`my-react-shell@git+ssh://…#<hash>: true`);
+  a glob or version key is rejected — so the consumer must edit that file **every
+  release** (the hash changes per tag).
+- **`ERR_PNPM_IGNORED_BUILDS: esbuild`** (exit 1) — to run `prepare` (`tsc`), pnpm
+  installs `my-react-shell`'s **entire devDependency tree** into the consumer, and
+  esbuild's build script trips a second gate. A "successful" install still exits
+  non-zero (CI reads it as failure).
+
+Options (a decision is needed; not yet taken):
+- **B — commit `dist/`** (recommended): un-gitignore + commit built output; no build
+  script runs on install → genuinely zero-config, no devDep tree pulled, no allowlist.
+  Revises D5. Cost: build artifacts in git + keep `dist/` fresh (enforceable).
+- **A — keep `prepare`-on-install, document the allowlist**: consumer adds the
+  hash-pinned `allowBuilds` key per release + allows esbuild (fragile, heavy install).
+- **C — `dangerouslyAllowAllBuilds: true`** as the documented consumer step: stable,
+  one line, but still drags the full devDep tree in and globally allows build scripts.
+
+`v0.1.0` is published but stands as the "not-yet-zero-config" data point; the chosen
+fix ships as `v0.1.1`. **The local `link:` dev-loop is unaffected** (no `prepare`,
+no git fetch) — it is the path the `my-react-shell-demo` app uses.
 
 ---
 

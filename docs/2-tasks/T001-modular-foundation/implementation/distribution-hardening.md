@@ -75,9 +75,13 @@ compiled in `dist/`.
 - `vite.config.ts` — header comment rewrite (no code change).
 - `README.md` — created.
 
-## Not touched (out of scope / gated)
+## Not touched by *this* sub-phase (handled later in D2)
 
-- Item 4 (committed-link guard) and item 5 (release verification).
-- No dependency change; `peerDependencies` / `peerDependenciesMeta` /
-  `devDependencies` untouched (the `@tanstack/react-router` peer decision is gated on
-  user approval).
+This report covers only items 1, 2, 3, 6. The rest of D2 landed in later commits:
+
+- Item 4 (committed-link guard) — done: `.githooks/pre-commit` + `pnpm setup:hooks`.
+- Item 5 (release verification) — done: tag `v0.1.0` pushed; the scratch-dir install
+  surfaced the pnpm-11 `prepare`/build-script gate (see distribution-model.md →
+  "Open decision — prepare-on-install vs committed dist").
+- The `@tanstack/react-router` peer — since **removed** from `peerDependencies`
+  (resolved Open decision); no shipped module imports a router.

@@ -1,9 +1,9 @@
 // my-react-shell — public API barrel (the package `exports["."]` entry).
 //
 // This is the entire importable surface consumers get via the git-dep (D5).
-// It is populated as the build phases land:
-//   B theming · C providers + auth seam · D app-shell · E page/tab primitives ·
-//   F i18n seam.
+// It grows as modules land: theme (B) and providers + auth seam (C) ship today;
+// i18n is planned. App-shell / page-tab primitives are NOT part of this package —
+// they were dropped in the modular pivot (strategy D8).
 // The dev-harness (src/main.tsx, src/routes/**) is NOT exported.
 
 // ── B · theming ──────────────────────────────────────────────────────────────
