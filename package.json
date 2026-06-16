@@ -17,6 +17,10 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
     },
+    "./providers": {
+      "types": "./dist/providers/index.d.ts",
+      "import": "./dist/providers/index.js"
+    },
     "./auth/convex": {
       "types": "./dist/auth/convex-auth.d.ts",
       "import": "./dist/auth/convex-auth.js"
@@ -46,6 +50,9 @@
     "@auth/core": "^0.41.1"
   },
   "peerDependenciesMeta": {
+    "convex": {
+      "optional": true
+    },
     "@convex-dev/auth": {
       "optional": true
     },

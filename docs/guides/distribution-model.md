@@ -54,10 +54,11 @@ local checkout — this is a **dev-only** redirect:
   resolve: {
     // theme-only consumer (the barrel): the React triple is enough
     dedupe: ['react', 'react-dom', 'react/jsx-runtime'],
-    // consumer that uses `my-react-shell/auth/convex`: also dedupe the
-    // Convex-React layer shared beneath the auth seam —
+    // consumer that uses `my-react-shell/providers`: also dedupe the shared
+    // Convex-React layer; add `@convex-dev/auth` when using `/auth/convex` —
     // dedupe: ['react', 'react-dom', 'react/jsx-runtime',
-    //          'convex', 'convex/react', '@convex-dev/auth'],
+    //          'convex', 'convex/react',
+    //          '@convex-dev/auth'],  // only for /auth/convex
   },
   ```
   The exact list is **what the consumer shares with the shell across the symlink**:
@@ -175,10 +176,11 @@ no git fetch) — it is the path the `my-react-shell-demo` app uses.
 ## Consumer adoption (applies when an app adopts either package)
 
 These are **dependency changes** and need explicit approval before they land:
-- Satisfy peer floors (e.g. for `my-react-shell`: `convex ≥1.41`, plus
-  `@convex-dev/auth ≥0.0.94` + `@auth/core ≥0.41.1` only if using the Convex Auth
-  default at `my-react-shell/auth/convex`). No router peer — the consumer brings its
-  own router.
+- Satisfy peer floors **only for the modules used** — all of Convex is optional now
+  (D9): `convex ≥1.41` for `my-react-shell/providers`; `@convex-dev/auth ≥0.0.94` +
+  `@auth/core ≥0.41.1` for the Convex Auth default at `my-react-shell/auth/convex`. A
+  theme-only consumer (the barrel) needs none of them. No router peer — the consumer
+  brings its own router.
 - One package manager only — **pnpm**. Settle any repo that still has an `npm`
   `package-lock.json` onto `pnpm` before adopting.
 - Configure the Vercel/CI Bitbucket token for the `git+https` specifier.

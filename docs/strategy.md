@@ -100,3 +100,16 @@ replaced by the **modular drop-in** model above (D1/D3/D5). Rationale:
 composites, and the "build on the mandated app-shell" requirement. **Deferred:** a
 shared app-shell and page/tab primitives may return later as *optional* modules,
 built when an app needs them — not the centerpiece.
+
+## D9 — Convex is optional and isolated behind sub-paths (barrel = Convex-free core)
+
+`convex` is an **optional** peer, and every Convex-coupled export lives behind a
+sub-path — the Convex client providers at `my-react-shell/providers`, the Convex Auth
+default at `my-react-shell/auth/convex`. The barrel (`my-react-shell`) is the
+**Convex-free theme core**, so a theme-only consumer never installs Convex. Rationale:
+the providers were originally in the barrel with `convex` a *required* peer, which
+forced every consumer (even theme-only) to install it — the same "barrel drags an
+optional concern" trap as the dropped router peer. This mirrors the SolidJS
+`foundation`, which already keeps `convex`/`convex-solidjs` optional and walled off in
+its `zing-shell` module. Applies the standing rule "optional/heavy peers behind
+sub-paths" ([concept.md](concept.md)) to Convex.

@@ -35,15 +35,23 @@ modules you import (tree-shaken).
 ## Usage
 
 ```ts
-import { AppProviders, ThemeProvider, createConvexClient } from 'my-react-shell'
-import { ConvexAuthDefaultProvider } from 'my-react-shell/auth/convex'
+import { ThemeProvider } from 'my-react-shell'                       // theme — the Convex-free core
+import { AppProviders, createConvexClient } from 'my-react-shell/providers' // needs `convex`
+import { ConvexAuthDefaultProvider } from 'my-react-shell/auth/convex'      // needs `@convex-dev/auth`
 import 'my-react-shell/styles.css'
 ```
 
-The Convex Auth default provider lives at the `my-react-shell/auth/convex` sub-path
-(not the main barrel) so `@convex-dev/auth` stays an *optional* peer — a consumer that
-brings its own auth (Better Auth, SSO, …) never imports it. Wrap your own TanStack
-Router in `AppProviders` and pass an auth provider:
+The barrel (`my-react-shell`) is the **Convex-free core** — only the theme module — so
+a theme-only app never pulls Convex. Anything that imports Convex lives behind a
+sub-path:
+- **`my-react-shell/providers`** — the Convex client context (`AppProviders`,
+  `ConvexClientProvider`, `createConvexClient`) and the `AuthProvider` seam type. Needs
+  the optional `convex` peer.
+- **`my-react-shell/auth/convex`** — the Convex Auth default. Needs the optional
+  `@convex-dev/auth` peer; a consumer bringing its own auth (Better Auth, SSO, …) never
+  imports it.
+
+Wrap your own router in `AppProviders` and pass an auth provider:
 
 ```tsx
 <AppProviders authProvider={ConvexAuthDefaultProvider}>{/* … */}</AppProviders>
@@ -82,13 +90,14 @@ From `package.json` `peerDependencies`:
 |------|-------|-------|
 | `react` | `^19.0.0` | required |
 | `react-dom` | `^19.0.0` | required |
-| `convex` | `^1.41.0` | required |
+| `convex` | `^1.41.0` | **optional** — only for `my-react-shell/providers` and `my-react-shell/auth/convex` |
 | `@convex-dev/auth` | `^0.0.94` | **optional** — only for the `my-react-shell/auth/convex` sub-path |
 | `@auth/core` | `^0.41.1` | **optional** — only for the `my-react-shell/auth/convex` sub-path |
 
-`@convex-dev/auth` and `@auth/core` are declared `optional` in
-`peerDependenciesMeta`: a consumer that doesn't use the Convex Auth default never
-needs them.
+`convex`, `@convex-dev/auth`, and `@auth/core` are declared `optional` in
+`peerDependenciesMeta`: a **theme-only** consumer (importing just the barrel) needs
+none of them. Install `convex` when you use `my-react-shell/providers`; add
+`@convex-dev/auth` + `@auth/core` when you use the Convex Auth default.
 
 > **No router peer.** my-react-shell ships no code that imports a router, so
 > `@tanstack/react-router` is **not** a peer dependency — a consumer picks (or

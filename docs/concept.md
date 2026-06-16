@@ -12,7 +12,9 @@ Each module is one capability an app can opt into:
 - **theme** — the semantic-token contract, 5 palettes, light/dark/system, and
   consumer-defined palettes. A batteries-included drop-in: import the provider, done.
 - **providers** — the Convex client provider and the single `AppProviders` wrapper
-  that composes theme + Convex + (optional) auth.
+  that composes theme + Convex + (optional) auth. Shipped at the
+  `my-react-shell/providers` sub-path so `convex` stays an *optional* peer and the
+  barrel stays Convex-free.
 - **auth** — a pluggable auth **seam** (a TypeScript contract) plus the Convex Auth
   default implementation, shipped at a sub-path so its dependency stays optional.
 - **i18n** *(planned)* — the `t()` seam, central-key policy, and missing-key surface.
@@ -31,8 +33,9 @@ to implement." Modules come in two flavors:
 ## Module rules
 
 1. **Independently importable** — from the barrel (`import { ThemeProvider } from
-   'my-react-shell'`) or a sub-path (`my-react-shell/auth/convex`). Tree-shaking
-   means importing the barrel never bundles modules an app doesn't use.
+   'my-react-shell'`) or a sub-path (`my-react-shell/providers`,
+   `my-react-shell/auth/convex`). The barrel is the Convex-free theme core; anything
+   pulling Convex lives behind a sub-path so a theme-only app never installs it.
 2. **Self-contained** — a module never hard-depends on another module's *runtime*;
    only small pure types are shared. `theme` works without `i18n`; `auth` without
    `theme`. `AppProviders` *composes* them for convenience, but each stands alone.

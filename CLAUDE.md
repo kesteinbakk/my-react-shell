@@ -50,7 +50,10 @@ app-shell. New apps build their own components; reusable ones may become modules
   host a registry or ship primitives. It does ship the **theme token contract** the
   app's components render against.
 - **Backend:** Convex (`eu-west-1`, GDPR). **No trailing slash** in
-  `VITE_CONVEX_URL`.
+  `VITE_CONVEX_URL`. The Convex client context (`AppProviders`,
+  `ConvexClientProvider`, `createConvexClient`) ships in the `providers` module at
+  the `my-react-shell/providers` sub-path, so `convex` is an *optional* peer and the
+  barrel (theme) stays Convex-free.
 - **Auth:** the `auth` module ships **only the Convex Auth (`@convex-dev/auth`)
   default** — auth-server-less, no cross-domain — behind the seam, at the
   `my-react-shell/auth/convex` sub-path so `@convex-dev/auth` stays an *optional*
@@ -73,8 +76,10 @@ app-shell. New apps build their own components; reusable ones may become modules
   module exports a TS **contract** and (where sensible) a shipped default. The
   `auth` seam is the template: `AuthProvider` type + Convex Auth default + BYO.
 - **Optional/heavy peers behind sub-paths.** Anything pulling an optional or heavy
-  dependency lives at `my-react-shell/<module>/<impl>`, keeping the main barrel
-  dependency-light (e.g. `@convex-dev/auth` only via `my-react-shell/auth/convex`).
+  dependency lives behind a sub-path, keeping the main barrel dependency-light: the
+  Convex client providers at `my-react-shell/providers` (`convex` optional), the
+  Convex Auth default at `my-react-shell/auth/convex` (`@convex-dev/auth` optional).
+  The barrel (`my-react-shell`) is the Convex-free theme core.
 - **i18n:** every user-facing string through the `t()` seam; central-key policy;
   missing-key dev surface. Code / comments / docs in English.
 - **Semantic tokens only** — no hardcoded colors/shadows; render in light *and* dark.
@@ -130,7 +135,8 @@ docs/
 A consumer adds the Bitbucket git-dep, then imports only the modules it wants:
 
 ```ts
-import { AppProviders, ThemeProvider, createConvexClient } from 'my-react-shell'
+import { ThemeProvider } from 'my-react-shell'                       // theme — Convex-free core
+import { AppProviders, createConvexClient } from 'my-react-shell/providers'
 import { ConvexAuthDefaultProvider } from 'my-react-shell/auth/convex'
 import 'my-react-shell/styles.css'
 ```

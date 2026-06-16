@@ -83,6 +83,12 @@ Each phase is a commit point.
   distribution-model.md (commit `dist/` vs document the allowlist) — fix ships as
   `v0.1.1`. A `my-react-shell-demo` consumer app (local `link:`, theme + shadcn) was
   built to exercise the package.
+- [~] **D3 — Convex isolated, barrel = Convex-free core** ([strategy D9](../../strategy.md)).
+  The Convex client providers moved out of the barrel to the `my-react-shell/providers`
+  sub-path; `convex` is now an *optional* peer (`peerDependenciesMeta`). Barrel `.` =
+  theme only. Surfaced by the demo (a theme-only consumer was forced to install
+  `convex` via the barrel) — same trap as the router peer; realigns with the Solid
+  foundation's optional/isolated Convex (`zing-shell`).
 - [ ] **E — module pattern + core** *(next)* — extract shared `core` types; codify
   the module contract; write the **module-authoring guide** (how to add a module,
   the sub-path/optional-peer rule, the self-containment rule).
