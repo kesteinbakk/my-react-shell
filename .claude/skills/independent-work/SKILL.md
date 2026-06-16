@@ -85,6 +85,16 @@ Everything else → note it, keep going.
 
 ---
 
+## Waiting on external state
+
+A `run_in_background` process is **reaped when the session goes idle**, so it can't bridge a wait longer than the current active burst — nothing wakes an idle session from outside. Don't depend on a wake you can't guarantee.
+
+When work is blocked on an external event (sibling repo commit, CI, long-running external state) past the current burst:
+- **Self-pace** with `ScheduleWakeup` under `/loop` — the durable primitive (`notify-me`'s reply-polling loop is the worked example), or
+- finish all unblocked work and **hand back** with an explicit "re-invoke me / launch `/loop` when X lands" note.
+
+A background watcher reporting in (killed / done / timeout) is a **mandatory re-check** of the dependency — never "no response requested." Then re-arm a durable wait or hand back.
+
 ## The pause test
 
 Before pausing, answer:
