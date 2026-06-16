@@ -41,7 +41,8 @@ local checkout — this is a **dev-only** redirect:
   `"my-react-shell": "link:../my-react-shell"` (or `pnpm link --dir ../my-react-shell`), then `pnpm install`.
 - **Strip the link before committing.** A committed `link:`/`file:` specifier
   breaks every other clone and all Vercel/CI installs (the path won't exist).
-  This is enforced by a pre-push guard (see Required changes), not by memory.
+  This is enforced by a **pre-commit guard** (`.githooks/pre-commit`, enabled via
+  `pnpm setup:hooks`), not by memory.
 
 ### Build sub-model (differs by language — by necessity)
 The *distribution* model is shared; the *build* step differs because the two
@@ -79,10 +80,14 @@ is hardening, not redesign:
    token-referencing palettes) — it is *not* zero-config like the JS. The
    consumer must run Tailwind v4 / PostCSS and have `tw-animate-css` installed.
    Record this in the theme guide and the package README.
-4. **Add a committed-link guard.** Extend the `pre-push-checks` gate (or a
-   pre-commit hook) in this repo and in each consumer to reject a staged
-   `package.json` whose dependency on `my-react-shell` uses a `link:`/`file:`
-   specifier. Machine gate over checklist.
+4. **Committed-link guard — done (machine gate).** A `pre-commit` git hook
+   (`.githooks/pre-commit`, enabled per clone with `pnpm setup:hooks` →
+   `core.hooksPath`) rejects committing a staged `package.json` that carries **any**
+   `link:`/`file:` dependency specifier (generalized — no shipped self-dependency
+   exists to make a `my-react-shell`-specific check fire here). No husky / extra
+   dependency. Intentional bypass: `git commit --no-verify`. Each consumer gets the
+   same guard by copying `.githooks/pre-commit` and running the same setup — see
+   Consumer adoption.
 5. **Verify the release path once, end to end.** From a scratch dir, after
    cutting a real tag: `pnpm add 'git+ssh://git@bitbucket.org:kesteinbakk/my-react-shell.git#vX.Y.Z'`
    and confirm (a) `prepare` runs, (b) `dist/` is emitted, (c) both
@@ -115,3 +120,6 @@ These are **dependency changes** and need explicit approval before they land:
 - One package manager only — **pnpm**. Settle any repo that still has an `npm`
   `package-lock.json` onto `pnpm` before adopting.
 - Configure the Vercel/CI Bitbucket token for the `git+https` specifier.
+- Copy the committed-link guard: drop `.githooks/pre-commit` into the consumer repo
+  and run `git config core.hooksPath .githooks` (or add the same `setup:hooks`
+  script). It blocks committing the dev-loop `link:`/`file:` redirect.

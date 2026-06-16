@@ -109,6 +109,9 @@ docs/
 - Single long-lived branch: **`main`.** No feature branches unless asked.
 - Commit your own work at natural finish points. **Never push** without an
   explicit instruction (a `push` targets this repo only).
+- A **pre-commit guard** (`.githooks/pre-commit`, enabled via `pnpm setup:hooks`)
+  rejects committing a `link:`/`file:` dependency specifier — the local dev-loop
+  redirect must never land in a commit. Bypass intentionally with `--no-verify`.
 
 ## Dev servers (agent rules)
 

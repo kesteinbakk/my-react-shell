@@ -73,12 +73,12 @@ Each phase is a commit point.
 - [~] **D2 — distribution hardening** — harden the git-dep package model per
   [distribution-model.md](../../guides/distribution-model.md) "Required changes" 1–6.
   Done: `build:lib:watch` script (1), corrected `vite.config.ts` header (2), package
-  README + CSS requirement (3), narrowed `files` allowlist (6), and resolved the
+  README + CSS requirement (3), narrowed `files` allowlist (6), resolved the
   router-peer Open decision — `@tanstack/react-router` removed from
-  `peerDependencies` (harness-only dev dep; no shipped module imports a router).
-  Still gated on user approval: committed-link guard hook (4). Item 5 (release
-  verify from a real tag) needs a tag push — local `pnpm pack` dry-run substitutes
-  until then.
+  `peerDependencies` (harness-only dev dep) — and the committed-link guard (4): a
+  generalized `pre-commit` hook (`.githooks/pre-commit`, `pnpm setup:hooks`, no
+  husky). Remaining: item 5 (release verify from a real tag) needs a tag push —
+  local `pnpm pack` dry-run substitutes until then.
 - [ ] **E — module pattern + core** *(next)* — extract shared `core` types; codify
   the module contract; write the **module-authoring guide** (how to add a module,
   the sub-path/optional-peer rule, the self-containment rule).

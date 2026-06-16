@@ -35,7 +35,8 @@
     "build:lib:watch": "tsc -p tsconfig.lib.json --watch",
     "prepare": "tsc -p tsconfig.lib.json",
     "typecheck": "tsc -b",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "setup:hooks": "git config core.hooksPath .githooks"
   },
   "peerDependencies": {
     "react": "^19.0.0",

@@ -113,3 +113,19 @@ reinstall cycle:
 
 **Strip the link before committing.** A committed `link:` / `file:` specifier breaks
 every other clone and all Vercel/CI installs, because the path won't exist there.
+This is enforced by a **pre-commit guard**, not by memory.
+
+## Repo setup (contributors)
+
+After cloning, enable the git hooks once:
+
+```bash
+pnpm setup:hooks   # sets core.hooksPath to .githooks
+```
+
+This installs a **pre-commit committed-link guard** (`.githooks/pre-commit`) that
+rejects any staged `package.json` carrying a `link:` / `file:` dependency specifier —
+the local dev-loop redirect above must never be committed. Bypass intentionally with
+`git commit --no-verify`. A consumer of my-react-shell gets the same protection by
+copying `.githooks/pre-commit` into its repo and running the same `core.hooksPath`
+setup.
