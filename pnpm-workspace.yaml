@@ -1,5 +1,12 @@
 # pnpm reads project settings here (pnpm 10.4+), not just .npmrc.
-# Approve esbuild's native build script (pulled in by Vite) so `pnpm install`
-# doesn't exit 1 on an unapproved build script.
+#
+# Build-script approval. pnpm blocks dependency install scripts by default.
+# `allowBuilds` is the approval map pnpm 11.6 honors (written by
+# `pnpm approve-builds`); `onlyBuiltDependencies` is the allowlist (only these
+# packages may run scripts at all). esbuild ships a native postinstall (pulled in
+# by Vite and Convex) — approve it so `pnpm install` doesn't exit 1 on an
+# unapproved build.
+allowBuilds:
+  esbuild: true
 onlyBuiltDependencies:
   - esbuild

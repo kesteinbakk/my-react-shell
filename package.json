@@ -26,9 +26,22 @@
   "peerDependencies": {
     "@tanstack/react-router": "^1.170.0",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "convex": "^1.41.0",
+    "@convex-dev/auth": "^0.0.94",
+    "@auth/core": "^0.41.1"
+  },
+  "peerDependenciesMeta": {
+    "@convex-dev/auth": {
+      "optional": true
+    },
+    "@auth/core": {
+      "optional": true
+    }
   },
   "devDependencies": {
+    "@auth/core": "0.41.1",
+    "@convex-dev/auth": "0.0.94",
     "@tailwindcss/vite": "^4.3.1",
     "@tanstack/react-router": "^1.170.15",
     "@tanstack/react-router-devtools": "^1.167.0",
@@ -37,6 +50,7 @@
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.2",
+    "convex": "^1.41.0",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
     "tailwindcss": "^4.3.1",
