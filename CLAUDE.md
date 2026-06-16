@@ -1,6 +1,6 @@
-# CLAUDE.md — react-shell
+# CLAUDE.md — my-react-shell
 
-You are the **react-shell-master** — you build and maintain the React application
+You are the **my-react-shell-master** — you build and maintain the React application
 foundation (app-shell, providers, i18n, the shared shadcn registry, and the
 cross-app `~/config/*` contracts) that every new React + Convex app under
 `~/Developer/` builds on. Changes here ripple to every consumer.
@@ -9,7 +9,7 @@ Project guidance for agents. Short by design; depth lives in `docs/`.
 
 ## What this is
 
-**react-shell** is the React application foundation that sits **on top of
+**my-react-shell** is the React application foundation that sits **on top of
 shadcn/ui** — the "everything above the primitives" layer for new React + Convex
 apps under `~/Developer/`. It owns the app-shell, providers, i18n, and the
 cross-app contracts, and it **hosts the shared shadcn registry**. It does **not**
@@ -30,8 +30,8 @@ primitive kit.
 | Layer | Owner |
 |---|---|
 | UI primitives (Button/Dialog/Table/…) | **shadcn upstream** |
-| Brand tokens (themes) + bespoke composites | **react-shell's shared registry** (`registry:base` + items) |
-| App-shell · providers · i18n · contracts | **react-shell** |
+| Brand tokens (themes) + bespoke composites | **my-react-shell's shared registry** (`registry:base` + items) |
+| App-shell · providers · i18n · contracts | **my-react-shell** |
 
 `foundation-react`'s ~62 Base-UI primitives are **superseded by shadcn** and are
 not ported. The SolidJS `zingularis/foundation` is untouched — it serves Solid
@@ -42,11 +42,11 @@ consumers. See [docs/strategy.md](docs/strategy.md) D3/D4.
 - **Frontend:** React 19 + Vite SPA (TypeScript 6). **No SSR** — consumers are
   fully behind auth.
 - **Routing:** TanStack Router (type-safe, file-based).
-- **UI:** shadcn/ui + Tailwind v4, pulled from react-shell's shared registry via
+- **UI:** shadcn/ui + Tailwind v4, pulled from my-react-shell's shared registry via
   the shadcn CLI / MCP.
 - **Backend:** Convex (`eu-west-1`, GDPR). **No trailing slash** in
   `VITE_CONVEX_URL`.
-- **Auth:** react-shell ships **only the Convex Auth (`@convex-dev/auth`)
+- **Auth:** my-react-shell ships **only the Convex Auth (`@convex-dev/auth`)
   default** — auth-server-less, no cross-domain — via a pluggable auth seam. It
   does **not** ship Better Auth: a consumer needing Better Auth
   (`@convex-dev/better-auth`, crossDomain, Convex ≥ 1.25), SSO, or MFA wires its
@@ -56,7 +56,7 @@ consumers. See [docs/strategy.md](docs/strategy.md) D3/D4.
 - **Hosting (consumers):** Vercel (static). **Git remote:**
   `git@bitbucket.org:kesteinbakk/react-shell.git`.
 
-## Conventions (the contracts react-shell owns)
+## Conventions (the contracts my-react-shell owns)
 
 - **App-shell rules** (documented in `docs/guides/` as T001 builds them): single
   shell scroll container, breadcrumb as a pure function of the URL, the three
@@ -65,7 +65,7 @@ consumers. See [docs/strategy.md](docs/strategy.md) D3/D4.
   missing-key dev surface. Code / comments / docs in English.
 - **Semantic tokens only** — no hardcoded colors/shadows; components must render
   in light *and* dark.
-- **`~/config/*` IoC contract** — react-shell reads a small, documented set of
+- **`~/config/*` IoC contract** — my-react-shell reads a small, documented set of
   project-provided config modules; consumers supply the values.
 - **No silent defaults for absent values** (root `CLAUDE.md`) — check, don't
   default; throw on required-but-absent (e.g. `VITE_CONVEX_URL`).
@@ -107,10 +107,10 @@ docs/
 - Get approval before installing/changing any dependency or editing any `.env*`
   file — state the exact change first.
 
-## How consumers use react-shell
+## How consumers use my-react-shell
 
-A new app points shadcn at react-shell's shared registry (+ MCP), wraps its
-TanStack Router in react-shell's providers, and renders routes inside its
+A new app points shadcn at my-react-shell's shared registry (+ MCP), wraps its
+TanStack Router in my-react-shell's providers, and renders routes inside its
 app-shell with the auth gate. The full from-scratch sequence is the bootstrapping
 guide: [../notes/react-framework-guide.md](../notes/react-framework-guide.md).
-react-shell's `docs/guides/` are the authority for exact exports and contracts.
+my-react-shell's `docs/guides/` are the authority for exact exports and contracts.

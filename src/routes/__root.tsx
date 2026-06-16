@@ -6,7 +6,7 @@ export const Route = createRootRoute({
   component: RootLayout,
 })
 
-// The harness wraps its routes in react-shell's providers the way a consumer
+// The harness wraps its routes in my-react-shell's providers the way a consumer
 // would. ThemeProvider is imported from the package barrel to exercise the
 // public export surface.
 function RootLayout() {

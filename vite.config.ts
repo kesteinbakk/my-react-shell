@@ -6,7 +6,7 @@ import { tanstackRouter } from '@tanstack/router-plugin/vite'
 
 // Dev-harness build config (D7). The published library ships TS source via
 // `exports` and is transpiled by the *consumer's* Vite — this config only builds
-// react-shell's own harness app (showcase + test routes).
+// my-react-shell's own harness app (showcase + test routes).
 export default defineConfig({
   plugins: [
     // tanstackRouter() MUST come before react().

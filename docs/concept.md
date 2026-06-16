@@ -1,11 +1,11 @@
-# react-shell — concept
+# my-react-shell — concept
 
 ## What this is
 
-**react-shell** is the React application foundation that sits **on top of
+**my-react-shell** is the React application foundation that sits **on top of
 shadcn/ui** — everything a React + Convex app needs that shadcn does not provide.
-shadcn (used via react-shell's shared private registry + its MCP server +
-`CLAUDE.md` reuse rules) owns the UI-primitive and composite layer; react-shell
+shadcn (used via my-react-shell's shared private registry + its MCP server +
+`CLAUDE.md` reuse rules) owns the UI-primitive and composite layer; my-react-shell
 owns the layer above it:
 
 - **App-shell** — routing chrome, header / footer / menu / bottom-nav, page
@@ -18,7 +18,7 @@ owns the layer above it:
   nav layers, `?tab=` deep-link contracts), and the no-silent-defaults /
   break-cleanly discipline.
 
-react-shell also **hosts the shared shadcn registry** that new apps point at —
+my-react-shell also **hosts the shared shadcn registry** that new apps point at —
 the brand tokens as a `registry:base` plus the bespoke composites shadcn lacks —
 so the UI layer is shared, not re-derived per app. Base primitives come from
 shadcn upstream.
@@ -26,9 +26,9 @@ shadcn upstream.
 ## What it is NOT
 
 - **Not a component library.** It does not ship Button / Dialog / Table / etc.
-  Those come from shadcn. react-shell never hand-maintains primitives.
+  Those come from shadcn. my-react-shell never hand-maintains primitives.
 - **Not the SolidJS `foundation`.** That stays the source of truth for SolidJS
-  consumers. react-shell is the React/shadcn-era equivalent of the layer the
+  consumers. my-react-shell is the React/shadcn-era equivalent of the layer the
   Solid foundation provides *above* its kit.
 - **Not `foundation-react`.** foundation-react was a React port of the SolidJS
   *primitive kit*; with shadcn owning primitives that layer is redundant, and
@@ -40,13 +40,13 @@ The framework decision ([../../notes/react-framework-guide.md](../../notes/react
 concluded that component consistency for agent-built apps is solved by shadcn's
 registry / MCP / rules **regardless of framework** — which removes the reason to
 maintain an own primitive kit, but leaves the shell / providers / i18n /
-contracts layer that shadcn never touches. react-shell is exactly that remaining
+contracts layer that shadcn never touches. my-react-shell is exactly that remaining
 layer (plus the shared registry), built once and consumed by every new React app.
 
 ## Stack
 
-Vite SPA + TanStack Router + Convex + shadcn/ui (react-shell's shared private
-registry). **Auth is project-owned:** react-shell ships the **Convex Auth
+Vite SPA + TanStack Router + Convex + shadcn/ui (my-react-shell's shared private
+registry). **Auth is project-owned:** my-react-shell ships the **Convex Auth
 (`@convex-dev/auth`) default** (auth-server-less, no cross-domain) via a pluggable
 seam; it does **not** ship Better Auth — a project needing Better Auth
 (`@convex-dev/better-auth`, crossDomain, Convex ≥ 1.25) or SSO / MFA wires its own

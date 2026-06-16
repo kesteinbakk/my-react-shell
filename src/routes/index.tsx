@@ -61,7 +61,7 @@ function ThemePlayground() {
   return (
     <main className="mx-auto flex max-w-5xl flex-col gap-8 p-8">
       <header className="flex flex-col gap-1">
-        <h1 className="text-2xl font-semibold">react-shell · theme playground</h1>
+        <h1 className="text-2xl font-semibold">my-react-shell · theme playground</h1>
         <p className="text-sm" style={{ color: 'var(--color-text-tertiary)' }}>
           Active: <strong>{theme}</strong> · <strong>{mode}</strong>
           {isSystemMode ? ' (following system)' : ''}

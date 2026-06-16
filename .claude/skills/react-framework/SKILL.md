@@ -1,12 +1,12 @@
 ---
 name: react-framework
-description: "Bootstrap a new React project on the decided stack — Vite SPA + TanStack Router + Convex + shadcn, built on the shared react-shell foundation (app-shell + providers + i18n + registry), auth = Convex Auth (default) or Better Auth (scale-up), static on Vercel. Points to the full guide and the non-negotiables.\nTRIGGER when: creating/scaffolding a NEW React app or project; setting up Vite + TanStack Router, shadcn, Convex, or Convex Auth / Better Auth from scratch; deciding the framework/stack for a new front end.\nDO NOT TRIGGER when: working on features in an already-set-up project; on a SolidJS Zingularis site (use create-new-site); on the SolidJS foundation/sites ecosystem."
+description: "Bootstrap a new React project on the decided stack — Vite SPA + TanStack Router + Convex + shadcn, built on the shared my-react-shell foundation (app-shell + providers + i18n + registry), auth = Convex Auth (default) or Better Auth (scale-up), static on Vercel. Points to the full guide and the non-negotiables.\nTRIGGER when: creating/scaffolding a NEW React app or project; setting up Vite + TanStack Router, shadcn, Convex, or Convex Auth / Better Auth from scratch; deciding the framework/stack for a new front end.\nDO NOT TRIGGER when: working on features in an already-set-up project; on a SolidJS Zingularis site (use create-new-site); on the SolidJS foundation/sites ecosystem."
 ---
 
 # react-framework
 
 Bootstrapping a new React project? The decided stack is **Vite SPA + TanStack
-Router + Convex (eu-west-1) + shadcn**, built on the shared **react-shell**
+Router + Convex (eu-west-1) + shadcn**, built on the shared **my-react-shell**
 foundation, auth = Convex Auth (default) / Better Auth (scale-up), static on
 Vercel.
 
@@ -32,12 +32,12 @@ reuse rules, convex tsconfig, vercel.json) — copy its discipline, not its rout
 - **`convex/tsconfig.json` needs `"types": ["node"]` + `@types/node`** (TS 6.0).
 - **Build = `tsc -b && vite build`** (Vercel runs `pnpm build`; type errors must
   gate the deploy).
-- **Build on react-shell — don't rebuild it.** react-shell owns app-shell,
+- **Build on my-react-shell — don't rebuild it.** my-react-shell owns app-shell,
   providers (Convex/auth/theme), i18n, and the `~/config/*` contracts, and ships
   the shared shadcn registry. Wrap the router in its providers; render routes in
   its AppShell; pull UI from its registry via MCP. No hand-rolled shell, no local
   primitive kit.
-- **Reuse-first UI.** Browse react-shell's registry via MCP before building any
+- **Reuse-first UI.** Browse my-react-shell's registry via MCP before building any
   component; rule-of-two ⇒ contribute to the registry, never a local copy. No
   hardcoded strings (use the `t()` seam) or colors (semantic tokens). Seed these
   rules into the project CLAUDE.md.

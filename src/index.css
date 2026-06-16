@@ -1,7 +1,7 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
 
-/* react-shell semantic-token base (the `registry:base`): the `:root` token
+/* my-react-shell semantic-token base (the `registry:base`): the `:root` token
    contract + generic themed base styles, then each palette as a
    `.theme-<name>-{light,dark}` class. <ThemeProvider> applies the active class
    to <html>. A consumer can add its own palette by importing a class that fills

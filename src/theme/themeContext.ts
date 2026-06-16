@@ -11,7 +11,7 @@ import { createContext, useContext } from 'react'
 
 export type ThemeMode = 'light' | 'dark'
 
-/** The palettes react-shell ships in its `registry:base`. */
+/** The palettes my-react-shell ships in its `registry:base`. */
 export type BuiltInThemeName = 'ocean' | 'forest' | 'sunset' | 'soft' | 'dynamic'
 
 /**

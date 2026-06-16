@@ -1,12 +1,12 @@
-# react-shell — strategy (decision log)
+# my-react-shell — strategy (decision log)
 
 Standing decisions for this project. Newest on top. Full framework rationale:
 [../../notes/react-framework-guide.md](../../notes/react-framework-guide.md).
 
-## D1 — react-shell is the "everything above shadcn" layer
+## D1 — my-react-shell is the "everything above shadcn" layer
 
-shadcn/ui (used via react-shell's **shared private registry** + MCP + `CLAUDE.md`
-reuse rules) owns UI primitives and composites. react-shell **hosts that shared
+shadcn/ui (used via my-react-shell's **shared private registry** + MCP + `CLAUDE.md`
+reuse rules) owns UI primitives and composites. my-react-shell **hosts that shared
 registry** (brand tokens as a `registry:base` + the bespoke composites shadcn
 lacks) and owns what shadcn does not: app-shell, providers, i18n, and the
 cross-app contracts. We do **not** maintain an own primitive kit. Source:
@@ -16,7 +16,7 @@ react-framework-guide §2/§5.
 
 Per the guide's Option C. No SSR (consumers are behind auth; a separate Astro
 site handles any public marketing surface). **Auth is project-owned:**
-react-shell ships **only the Convex Auth (`@convex-dev/auth`) default** — runs
+my-react-shell ships **only the Convex Auth (`@convex-dev/auth`) default** — runs
 entirely in Convex, no auth server, no cross-domain — via a pluggable auth seam.
 It does **not** ship Better Auth: a project needing Better Auth
 (`@convex-dev/better-auth`, crossDomain, Convex ≥ 1.25), SSO, or MFA wires its
@@ -32,14 +32,14 @@ shadcn registry items. Source: foundation-react investigation.
 ## D4 — The SolidJS `foundation` is untouched
 
 `zingularis/foundation` remains the source of truth for SolidJS consumers.
-react-shell is its React/shadcn-era sibling for the above-the-kit layer, not a
+my-react-shell is its React/shadcn-era sibling for the above-the-kit layer, not a
 replacement. **The Solid `foundation` — never the abandoned `foundation-react` —
-is the canonical reference for what react-shell ports** (`foundation-react`
+is the canonical reference for what my-react-shell ports** (`foundation-react`
 renamed/degraded components, e.g. `PhiCard` → "GoldenCard"; see D6).
 
 ## D5 — Distribution: Bitbucket git-dependency, tag-pinned
 
-react-shell is consumed as a versioned **git dependency** from its Bitbucket repo
+my-react-shell is consumed as a versioned **git dependency** from its Bitbucket repo
 (`git+ssh://git@bitbucket.org:kesteinbakk/react-shell.git#<tag>`), pinned by tag —
 no npm registry / Verdaccio server to run and keep reachable. It ships
 **TypeScript source** and relies on the consumer's Vite to transpile it (every
@@ -65,7 +65,7 @@ feature, not a foundation primitive). The ~62 Base-UI/CVA primitives are not car
 
 ## D7 — Repo shape: library + dev-harness app
 
-react-shell is one repo serving two roles: the **library** consumers import (shell,
+my-react-shell is one repo serving two roles: the **library** consumers import (shell,
 providers, i18n, contracts) and a **dev-harness Vite app** (showcase + test routes)
 that renders the shell for development and behavior verification. The harness is
 dev-only — not in the package `exports`, absent from what consumers git-dep.

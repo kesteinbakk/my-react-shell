@@ -6,4 +6,4 @@ status. Template: [_template.md](_template.md).
 
 | Spec | Status | Summary |
 |---|---|---|
-| _(none yet)_ | — | Specs are added as react-shell's shell / providers / i18n surfaces are built (see T001). |
+| _(none yet)_ | — | Specs are added as my-react-shell's shell / providers / i18n surfaces are built (see T001). |

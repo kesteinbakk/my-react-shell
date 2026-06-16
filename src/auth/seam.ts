@@ -12,8 +12,8 @@ export interface AuthProviderProps {
  * The auth seam.
  *
  * An auth provider is a component that wraps the Convex client with an
- * authentication context. react-shell ships the Convex Auth default at
- * `react-shell/auth/convex`; a consumer needing Better Auth / SSO / MFA
+ * authentication context. my-react-shell ships the Convex Auth default at
+ * `my-react-shell/auth/convex`; a consumer needing Better Auth / SSO / MFA
  * implements this type and passes it to `<AppProviders authProvider={…}>`.
  */
 export type AuthProvider = ComponentType<AuthProviderProps>

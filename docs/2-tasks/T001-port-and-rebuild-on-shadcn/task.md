@@ -2,21 +2,21 @@
 
 **Status:** in-progress | **Type:** feature | **Branch:** main
 **Origin:** [react-framework-guide.md](../../../../notes/react-framework-guide.md) §2 + §5 — shadcn owns the primitive layer; this project owns everything above it.
-**Depends on:** nothing. **Blocks:** every react-shell consumer.
+**Depends on:** nothing. **Blocks:** every my-react-shell consumer.
 
 ## Goal
 
-Stand up **react-shell** as the non-shadcn React foundation: **port** the parts of
+Stand up **my-react-shell** as the non-shadcn React foundation: **port** the parts of
 `zingularis/foundation-react` that survive the shadcn decision, and **rebuild on
 top of shadcn** the parts that should not be hand-maintained primitives. After
 this task a consumer app gets app-shell + providers + i18n + contracts from
-react-shell and **all UI primitives from react-shell's shared shadcn registry** —
+my-react-shell and **all UI primitives from my-react-shell's shared shadcn registry** —
 with no overlap between the two layers.
 
 ## Background
 
 See [react-framework-guide.md](../../../../notes/react-framework-guide.md): §2
-establishes that shadcn (react-shell's shared registry + MCP + `CLAUDE.md` reuse
+establishes that shadcn (my-react-shell's shared registry + MCP + `CLAUDE.md` reuse
 rules) owns the UI-primitive/composite layer; §1/§5 land the stack on Vite SPA +
 TanStack Router + Convex + shadcn, and §4 sets auth to **Convex Auth (default) /
 Better Auth (scale-up)**. **This project is the layer the guide says shadcn does
@@ -34,7 +34,7 @@ providers / i18n / theme-provider slices are planned-but-unbuilt. So this is a
    `zingularis/foundation-react/src/foundation/kit/` are superseded by shadcn —
    do not bring them across. (shadcn now supports the same Base UI headless
    layer, so the underlying primitives are the same.)
-2. **Shared shadcn registry (the UI contribution):** stand up react-shell's
+2. **Shared shadcn registry (the UI contribution):** stand up my-react-shell's
    shared registry + shadcn MCP + the `CLAUDE.md` reuse rule. Carry across the
    `base.css` semantic-token contract + **5 themes** (`dynamic` / `forest` /
    `ocean` / `soft` / `sunset`) as a `registry:base` — `foundation-golden` is
@@ -52,7 +52,7 @@ providers / i18n / theme-provider slices are planned-but-unbuilt. So this is a
    single shell scroll container, breadcrumb as a pure function of the URL, the
    three non-substitutable nav layers, and `?tab=` deep-link contracts.
 4. **Providers + auth seam:** Convex client + theme providers, plus a **pluggable
-   auth seam** the consumer fills. react-shell ships **only the Convex Auth
+   auth seam** the consumer fills. my-react-shell ships **only the Convex Auth
    (`@convex-dev/auth`) default** (auth-server-less, no cross-domain) — the
    batteries-included path for the common private-SPA case. It does **NOT** ship
    Better Auth or any other provider: a project that needs Better Auth / SSO /
@@ -111,7 +111,7 @@ Each phase is a commit point.
   the optional auth seam. The **auth seam** (`src/auth/seam.ts`: `AuthProvider` /
   `AuthProviderProps`) is auth-agnostic; the **Convex Auth default**
   (`ConvexAuthDefaultProvider`, `src/auth/convex-auth.tsx`) ships at the
-  **`react-shell/auth/convex` sub-path export** — the only place `@convex-dev/auth`
+  **`my-react-shell/auth/convex` sub-path export** — the only place `@convex-dev/auth`
   is imported, so it + `@auth/core` stay **optional peers** (a Better-Auth consumer
   never imports them). `VITE_CONVEX_URL` typed in `vite-env.d.ts`. Deps added in a
   prior commit (peer + dev; betas pinned exact). `tsc -b` passes. **Note:** the
@@ -136,10 +136,10 @@ rules, halving D/E.
 
 ## Exit criteria
 
-- A consumer can install react-shell + point shadcn at its shared registry and
+- A consumer can install my-react-shell + point shadcn at its shared registry and
   get a booting, themed, authenticated app shell with type-safe routing —
   pulling **every UI primitive from shadcn** and **every shell / provider /
-  contract from react-shell**, with no duplicated component layer.
+  contract from my-react-shell**, with no duplicated component layer.
 - App-shell contracts documented in `docs/guides/`; no primitive clone present in
   the repo.
 
@@ -147,4 +147,4 @@ rules, halving D/E.
 
 - Any consumer feature UI.
 - The SolidJS `foundation` (unchanged — it serves Solid consumers).
-- Migrating existing apps (e.g. evaluering) onto react-shell.
+- Migrating existing apps (e.g. evaluering) onto my-react-shell.

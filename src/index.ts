@@ -1,4 +1,4 @@
-// react-shell — public API barrel (the package `exports["."]` entry).
+// my-react-shell — public API barrel (the package `exports["."]` entry).
 //
 // This is the entire importable surface consumers get via the git-dep (D5).
 // It is populated as the build phases land:
@@ -16,7 +16,7 @@ export type { BuiltInThemeName, ThemeInfo, ThemeMode, ThemeName } from './theme/
 
 // ── C · providers + auth seam ────────────────────────────────────────────────
 // The Convex Auth default provider is NOT exported here — it lives at the
-// `react-shell/auth/convex` sub-path so `@convex-dev/auth` stays an optional peer.
+// `my-react-shell/auth/convex` sub-path so `@convex-dev/auth` stays an optional peer.
 export { AppProviders } from './providers/AppProviders'
 export type { AppProvidersProps } from './providers/AppProviders'
 export { ConvexClientProvider } from './providers/ConvexClientProvider'

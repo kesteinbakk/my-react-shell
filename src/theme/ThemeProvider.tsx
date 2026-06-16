@@ -17,7 +17,7 @@ import type { ThemeContextValue, ThemeInfo, ThemeMode, ThemeName } from './theme
 
 export type { ThemeMode, ThemeName, ThemeInfo } from './themeContext'
 
-const DEFAULT_STORAGE_KEY = 'react-shell.theme'
+const DEFAULT_STORAGE_KEY = 'my-react-shell.theme'
 
 interface PersistedTheme {
   theme: ThemeName
@@ -35,7 +35,7 @@ export interface ThemeProviderProps {
   defaultMode?: ThemeMode
   /** Follow the OS color scheme until the user picks a mode. Default `true`. */
   defaultFollowSystem?: boolean
-  /** localStorage key for persistence. Default `'react-shell.theme'`. */
+  /** localStorage key for persistence. Default `'my-react-shell.theme'`. */
   storageKey?: string
 }
 

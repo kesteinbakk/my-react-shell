@@ -12,13 +12,13 @@ export function createConvexClient(
 ): ConvexReactClient {
   if (url === undefined || url === '') {
     throw new Error(
-      'react-shell: VITE_CONVEX_URL is required but is not set. Set it in .env.local ' +
-        '(written by `convex dev`) or your host environment — react-shell does not default it.',
+      'my-react-shell: VITE_CONVEX_URL is required but is not set. Set it in .env.local ' +
+        '(written by `convex dev`) or your host environment — my-react-shell does not default it.',
     )
   }
   if (url.endsWith('/')) {
     throw new Error(
-      `react-shell: VITE_CONVEX_URL must not end with a trailing slash (got "${url}") — ` +
+      `my-react-shell: VITE_CONVEX_URL must not end with a trailing slash (got "${url}") — ` +
         'a trailing slash breaks the Convex sync websocket (close code 1006).',
     )
   }

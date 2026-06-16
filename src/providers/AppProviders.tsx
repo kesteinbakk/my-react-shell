@@ -11,7 +11,7 @@ export interface AppProvidersProps {
   children: ReactNode
   /**
    * The auth seam. Omit for a plain (unauthenticated) Convex app. For the Convex
-   * Auth default, import `ConvexAuthDefaultProvider` from `react-shell/auth/convex`
+   * Auth default, import `ConvexAuthDefaultProvider` from `my-react-shell/auth/convex`
    * and pass it here; for Better Auth / SSO, pass your own `AuthProvider`.
    */
   authProvider?: AuthProvider
