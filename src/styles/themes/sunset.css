@@ -37,20 +37,20 @@
   --color-primary-content: #ffffff;
   --color-primary-bg: var(--color-violet-50);
 
-  --color-secondary: var(--color-orange-600);
-  --color-secondary-hover: var(--color-orange-700);
+  --color-secondary: var(--color-orange-700);
+  --color-secondary-hover: var(--color-orange-800);
   --color-secondary-content: #ffffff;
   --color-secondary-bg: var(--color-orange-50);
 
   /* ===== Semantic Colors ===== */
-  --color-success: var(--color-green-600);
-  --color-success-hover: var(--color-green-700);
+  --color-success: var(--color-green-700);
+  --color-success-hover: var(--color-green-800);
   --color-success-content: #ffffff;
   --color-success-bg: var(--color-green-50);
 
   --color-warning: var(--color-amber-500);
   --color-warning-hover: var(--color-amber-600);
-  --color-warning-content: var(--color-amber-900);
+  --color-warning-content: var(--color-amber-950);
   --color-warning-bg: var(--color-amber-50);
 
   --color-danger: var(--color-red-600);
@@ -58,8 +58,8 @@
   --color-danger-content: #ffffff;
   --color-danger-bg: var(--color-red-50);
 
-  --color-info: var(--color-blue-500);
-  --color-info-hover: var(--color-blue-600);
+  --color-info: var(--color-blue-600);
+  --color-info-hover: var(--color-blue-700);
   --color-info-content: #ffffff;
   --color-info-bg: var(--color-blue-50);
 
@@ -133,11 +133,13 @@
   --color-border-secondary: rgb(85, 55, 45);
   --color-border-hover: rgb(100, 65, 50);
 
-  /* ===== Text Hierarchy ===== */
+  /* ===== Text Hierarchy =====
+     One stop brighter than a naive invert, so muted body text clears even the
+     lightest dark surface. */
   --color-text-primary: var(--color-stone-100);
-  --color-text-secondary: var(--color-stone-300);
-  --color-text-tertiary: var(--color-stone-400);
-  --color-text-muted: var(--color-stone-500);
+  --color-text-secondary: var(--color-stone-200);
+  --color-text-tertiary: var(--color-stone-300);
+  --color-text-muted: var(--color-stone-400);
   --color-text-heading: var(--color-violet-400);
 
   /* ===== Interactive States ===== */
@@ -168,8 +170,8 @@
   --color-warning-content: var(--color-amber-950);
   --color-warning-bg: rgb(40, 30, 10);
 
-  --color-danger: var(--color-red-500);
-  --color-danger-hover: var(--color-red-400);
+  --color-danger: var(--color-red-600);
+  --color-danger-hover: var(--color-red-500);
   --color-danger-content: #ffffff;
   --color-danger-bg: rgb(40, 15, 15);
 

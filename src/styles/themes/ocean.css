@@ -37,20 +37,20 @@
   --color-primary-content: #ffffff;
   --color-primary-bg: var(--color-indigo-50);
 
-  --color-secondary: var(--color-sky-600);
-  --color-secondary-hover: var(--color-sky-700);
+  --color-secondary: var(--color-sky-700);
+  --color-secondary-hover: var(--color-sky-800);
   --color-secondary-content: #ffffff;
   --color-secondary-bg: var(--color-sky-50);
 
   /* ===== Semantic Colors ===== */
-  --color-success: var(--color-green-600);
-  --color-success-hover: var(--color-green-700);
+  --color-success: var(--color-green-700);
+  --color-success-hover: var(--color-green-800);
   --color-success-content: #ffffff;
   --color-success-bg: var(--color-green-50);
 
   --color-warning: var(--color-amber-500);
   --color-warning-hover: var(--color-amber-600);
-  --color-warning-content: var(--color-amber-900);
+  --color-warning-content: var(--color-amber-950);
   --color-warning-bg: var(--color-amber-50);
 
   --color-danger: var(--color-red-600);
@@ -58,8 +58,8 @@
   --color-danger-content: #ffffff;
   --color-danger-bg: var(--color-red-50);
 
-  --color-info: var(--color-blue-500);
-  --color-info-hover: var(--color-blue-600);
+  --color-info: var(--color-blue-600);
+  --color-info-hover: var(--color-blue-700);
   --color-info-content: #ffffff;
   --color-info-bg: var(--color-blue-50);
 
@@ -138,11 +138,15 @@
   --color-border-secondary: var(--color-slate-500);
   --color-border-hover: var(--color-slate-400);
 
-  /* ===== Text Hierarchy ===== */
+  /* ===== Text Hierarchy =====
+     Dark ramp runs one stop brighter than the light ramp inverts to: the
+     lightest dark surface (surface-secondary = slate-700) is close enough to a
+     slate-500 that muted body text would wash out, so the ramp lifts to keep
+     every tier — including muted — clearly above its background. */
   --color-text-primary: var(--color-slate-100);
-  --color-text-secondary: var(--color-slate-300);
-  --color-text-tertiary: var(--color-slate-400);
-  --color-text-muted: var(--color-slate-500);
+  --color-text-secondary: var(--color-slate-200);
+  --color-text-tertiary: var(--color-slate-300);
+  --color-text-muted: var(--color-slate-400);
   --color-text-heading: var(--color-cyan-400);
 
   /* ===== Interactive States =====
@@ -174,8 +178,8 @@
   --color-warning-content: var(--color-slate-900);
   --color-warning-bg: var(--color-amber-950);
 
-  --color-danger: var(--color-red-500);
-  --color-danger-hover: var(--color-red-400);
+  --color-danger: var(--color-red-600);
+  --color-danger-hover: var(--color-red-500);
   --color-danger-content: #ffffff;
   --color-danger-bg: var(--color-red-950);
 

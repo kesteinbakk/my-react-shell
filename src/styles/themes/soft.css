@@ -22,9 +22,9 @@
   /* ===== Text Hierarchy ===== */
   --color-text-primary: rgb(28, 36, 48); /* softer than pure black */
   --color-text-secondary: rgb(64, 79, 98); /* muted slate-700 */
-  --color-text-tertiary: rgb(107, 123, 142); /* muted slate-500 */
-  --color-text-muted: rgb(148, 163, 184); /* slate-400 */
-  --color-text-heading: rgb(45, 132, 188); /* softer sky-600 for headings */
+  --color-text-tertiary: rgb(92, 107, 125); /* deepened so captions clear AA on tints */
+  --color-text-muted: rgb(118, 132, 150); /* deepened so muted text stays legible */
+  --color-text-heading: rgb(40, 122, 176); /* softer sky-600 for headings */
 
   /* ===== Interactive States ===== */
   --color-hover: rgb(236, 241, 247); /* very subtle blue-gray */
@@ -32,35 +32,35 @@
   --color-selected: rgb(219, 237, 249); /* soft sky-100 */
 
   /* ===== Brand Colors ===== */
-  --color-primary: rgb(56, 155, 214); /* softer sky-500 */
-  --color-primary-hover: rgb(45, 132, 188); /* softer sky-600 */
-  --color-primary-active: rgb(37, 108, 158); /* sky-700 */
+  --color-primary: rgb(31, 107, 163); /* deepened soft sky so white labels + link text clear AA */
+  --color-primary-hover: rgb(24, 90, 140);
+  --color-primary-active: rgb(19, 74, 117);
   --color-primary-content: rgb(255, 255, 255); /* white */
   --color-primary-bg: rgb(235, 246, 253); /* very soft sky-50 */
 
-  --color-secondary: rgb(100, 116, 139); /* slate-500 */
-  --color-secondary-hover: rgb(71, 85, 105); /* slate-600 */
+  --color-secondary: rgb(82, 97, 119); /* deepened slate so white labels clear AA */
+  --color-secondary-hover: rgb(64, 79, 98);
   --color-secondary-content: rgb(255, 255, 255); /* white */
   --color-secondary-bg: rgb(241, 245, 249); /* slate-50 */
 
   /* ===== Semantic Colors ===== */
-  --color-success: rgb(74, 192, 128); /* softer green */
-  --color-success-hover: rgb(59, 170, 106); /* darker green */
+  --color-success: rgb(28, 128, 78); /* deepened soft green so white text clears AA */
+  --color-success-hover: rgb(22, 112, 68);
   --color-success-content: rgb(255, 255, 255); /* white text */
   --color-success-bg: rgb(220, 247, 235); /* very soft green */
 
-  --color-warning: rgb(217, 159, 54); /* softer amber */
-  --color-warning-hover: rgb(197, 141, 42); /* darker amber */
-  --color-warning-content: rgb(255, 255, 255); /* white text */
+  --color-warning: rgb(214, 154, 48); /* softer amber — pairs with dark content */
+  --color-warning-hover: rgb(190, 134, 40);
+  --color-warning-content: rgb(61, 43, 8); /* dark text (white on amber is illegible) */
   --color-warning-bg: rgb(254, 243, 218); /* very soft amber */
 
-  --color-danger: rgb(220, 93, 93); /* softer red */
-  --color-danger-hover: rgb(198, 73, 73); /* darker red */
+  --color-danger: rgb(199, 72, 72); /* deepened soft red so white text clears AA */
+  --color-danger-hover: rgb(176, 55, 55);
   --color-danger-content: rgb(255, 255, 255); /* white text */
   --color-danger-bg: rgb(254, 226, 226); /* very soft red */
 
-  --color-info: rgb(56, 155, 214); /* same as primary for consistency */
-  --color-info-hover: rgb(45, 132, 188);
+  --color-info: rgb(31, 107, 163); /* same as primary for consistency */
+  --color-info-hover: rgb(24, 90, 140);
   --color-info-content: rgb(255, 255, 255);
   --color-info-bg: rgb(235, 246, 253);
 
@@ -137,8 +137,8 @@
   /* ===== Text Hierarchy ===== */
   --color-text-primary: rgb(236, 237, 239); /* soft white */
   --color-text-secondary: rgb(196, 199, 205); /* warm gray-300 */
-  --color-text-tertiary: rgb(148, 152, 162); /* muted gray-400 */
-  --color-text-muted: rgb(108, 113, 125); /* subtle gray-500 */
+  --color-text-tertiary: rgb(170, 174, 184); /* brightened so captions clear AA */
+  --color-text-muted: rgb(140, 146, 158); /* brightened so muted text stays legible */
   --color-text-heading: rgb(125, 182, 251); /* softer blue-400 for headings */
 
   /* ===== Interactive States =====
@@ -152,18 +152,18 @@
   --color-primary: rgb(125, 182, 251); /* softer blue-400 */
   --color-primary-hover: rgb(99, 153, 246); /* softer blue-500 */
   --color-primary-active: rgb(59, 130, 246); /* blue-500 */
-  --color-primary-content: rgb(255, 255, 255); /* white */
+  --color-primary-content: rgb(16, 26, 46); /* dark text — accent is light in dark mode */
   --color-primary-bg: rgb(30, 41, 72); /* muted blue-950 */
 
   --color-secondary: rgb(148, 163, 184); /* slate-400 */
   --color-secondary-hover: rgb(129, 146, 169); /* brighter slate */
-  --color-secondary-content: rgb(255, 255, 255); /* white text */
+  --color-secondary-content: rgb(20, 24, 33); /* dark text — accent is light in dark mode */
   --color-secondary-bg: rgb(51, 65, 85); /* slate-700 */
 
   /* ===== Semantic Colors ===== */
   --color-success: rgb(110, 231, 164); /* softer green-400 */
   --color-success-hover: rgb(74, 222, 128); /* green-400 */
-  --color-success-content: rgb(255, 255, 255); /* white text */
+  --color-success-content: rgb(8, 32, 19); /* dark text — accent is light in dark mode */
   --color-success-bg: rgb(25, 48, 38); /* muted green-950 */
 
   --color-warning: rgb(252, 205, 86); /* softer amber-400 */
@@ -173,12 +173,12 @@
 
   --color-danger: rgb(251, 146, 146); /* softer red-400 */
   --color-danger-hover: rgb(248, 113, 113); /* red-400 */
-  --color-danger-content: rgb(255, 255, 255); /* white text */
+  --color-danger-content: rgb(48, 14, 14); /* dark text — accent is light in dark mode */
   --color-danger-bg: rgb(69, 26, 26); /* muted red-950 */
 
   --color-info: rgb(125, 182, 251); /* same as primary */
   --color-info-hover: rgb(99, 153, 246);
-  --color-info-content: rgb(255, 255, 255);
+  --color-info-content: rgb(16, 26, 46); /* dark text — accent is light in dark mode */
   --color-info-bg: rgb(30, 41, 72);
 
   /* ===== Semantic / Share Border Colors (dimmer shade of each hue) ===== */

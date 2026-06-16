@@ -22,9 +22,9 @@
   /* ===== Text Hierarchy ===== */
   --color-text-primary: var(--color-zinc-900);
   --color-text-secondary: var(--color-zinc-700);
-  --color-text-tertiary: var(--color-zinc-500);
-  --color-text-muted: var(--color-zinc-400);
-  --color-text-heading: var(--color-blue-600);
+  --color-text-tertiary: var(--color-zinc-600); /* darkened — this is the high-contrast palette */
+  --color-text-muted: var(--color-zinc-500); /* darkened so even muted text stays legible */
+  --color-text-heading: var(--color-blue-700);
 
   /* ===== Interactive States ===== */
   --color-hover: var(--color-zinc-100);
@@ -32,9 +32,9 @@
   --color-selected: var(--color-blue-50);
 
   /* ===== Brand Colors ===== */
-  --color-primary: var(--color-blue-500);
-  --color-primary-hover: var(--color-blue-600);
-  --color-primary-active: var(--color-blue-700);
+  --color-primary: var(--color-blue-600);
+  --color-primary-hover: var(--color-blue-700);
+  --color-primary-active: var(--color-blue-800);
   --color-primary-content: #ffffff;
   --color-primary-bg: var(--color-blue-50);
 
@@ -44,23 +44,23 @@
   --color-secondary-bg: var(--color-slate-50);
 
   /* ===== Semantic Colors ===== */
-  --color-success: var(--color-green-500);
-  --color-success-hover: var(--color-green-600);
+  --color-success: var(--color-green-700);
+  --color-success-hover: var(--color-green-800);
   --color-success-content: #ffffff;
   --color-success-bg: var(--color-green-100);
 
   --color-warning: var(--color-amber-500);
   --color-warning-hover: var(--color-amber-600);
-  --color-warning-content: #ffffff;
+  --color-warning-content: var(--color-amber-950); /* dark text — white on amber is illegible */
   --color-warning-bg: var(--color-amber-100);
 
-  --color-danger: var(--color-red-500);
-  --color-danger-hover: var(--color-red-600);
+  --color-danger: var(--color-red-600);
+  --color-danger-hover: var(--color-red-700);
   --color-danger-content: #ffffff;
   --color-danger-bg: var(--color-red-100);
 
-  --color-info: var(--color-blue-500);
-  --color-info-hover: var(--color-blue-600);
+  --color-info: var(--color-blue-600);
+  --color-info-hover: var(--color-blue-700);
   --color-info-content: #ffffff;
   --color-info-bg: var(--color-blue-100);
 
@@ -168,37 +168,37 @@
   --color-selected: rgb(37, 99, 235); /* bright blue selection */
 
   /* ===== Brand Colors ===== */
-  --color-primary: rgb(59, 130, 246); /* bright blue-500 */
-  --color-primary-hover: rgb(37, 99, 235); /* brighter blue-600 */
-  --color-primary-active: rgb(29, 78, 216); /* blue-700 */
-  --color-primary-content: rgb(255, 255, 255); /* pure white */
-  --color-primary-bg: rgb(30, 64, 175); /* clear blue background */
+  --color-primary: rgb(96, 165, 250); /* blue-400 — light accent: reads as link on dark AND as a button bg with dark label (matches the other dark palettes) */
+  --color-primary-hover: rgb(147, 197, 253); /* blue-300 */
+  --color-primary-active: rgb(59, 130, 246); /* blue-500 */
+  --color-primary-content: rgb(12, 20, 38); /* dark text on the light accent */
+  --color-primary-bg: rgb(23, 37, 84); /* deep blue-950 — accent text on it stays legible */
 
-  --color-secondary: rgb(100, 116, 139); /* slate-500 */
+  --color-secondary: rgb(100, 116, 139); /* slate-500 — solid fill carries white content */
   --color-secondary-hover: rgb(71, 85, 105); /* slate-600 */
   --color-secondary-content: rgb(255, 255, 255);
-  --color-secondary-bg: rgb(71, 85, 105); /* slate-600 */
+  --color-secondary-bg: rgb(15, 23, 42); /* deep slate-900 — the subtle/secondary surface, so secondary text on it is readable (was slate-600 → gray-on-gray) */
 
   /* ===== Semantic Colors ===== */
   --color-success: rgb(34, 197, 94); /* bright green-500 */
   --color-success-hover: rgb(22, 163, 74); /* green-600 */
-  --color-success-content: rgb(255, 255, 255);
-  --color-success-bg: rgb(22, 101, 52); /* clear green background */
+  --color-success-content: rgb(5, 30, 16); /* dark text — white on bright green is illegible */
+  --color-success-bg: rgb(5, 46, 22); /* deep green-950 — accent text on it stays legible */
 
   --color-warning: rgb(245, 158, 11); /* bright amber-500 */
   --color-warning-hover: rgb(217, 119, 6); /* amber-600 */
-  --color-warning-content: rgb(255, 255, 255);
-  --color-warning-bg: rgb(146, 64, 14); /* clear amber background */
+  --color-warning-content: rgb(40, 28, 5); /* dark text — white on amber is illegible */
+  --color-warning-bg: rgb(69, 26, 3); /* deep amber-950 */
 
-  --color-danger: rgb(239, 68, 68); /* bright red-500 */
-  --color-danger-hover: rgb(220, 38, 38); /* red-600 */
+  --color-danger: rgb(220, 38, 38); /* red-600 — deep enough that the white label clears AA */
+  --color-danger-hover: rgb(239, 68, 68); /* red-500 (brightens on hover) */
   --color-danger-content: rgb(255, 255, 255);
-  --color-danger-bg: rgb(153, 27, 27); /* clear red background */
+  --color-danger-bg: rgb(69, 10, 10); /* deep red-950 — accent text on it stays legible */
 
-  --color-info: rgb(59, 130, 246); /* same as primary */
-  --color-info-hover: rgb(37, 99, 235);
-  --color-info-content: rgb(255, 255, 255);
-  --color-info-bg: rgb(30, 64, 175);
+  --color-info: rgb(96, 165, 250); /* same as primary (blue-400 light accent) */
+  --color-info-hover: rgb(147, 197, 253);
+  --color-info-content: rgb(12, 20, 38); /* dark text on the light accent */
+  --color-info-bg: rgb(23, 37, 84); /* deep blue-950 */
 
   /* ===== Semantic / Share Border Colors (dimmer shade of each hue) ===== */
   --color-success-border: rgb(30, 120, 65);

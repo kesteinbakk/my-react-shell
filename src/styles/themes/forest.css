@@ -31,26 +31,26 @@
   --color-selected: var(--color-emerald-100);
 
   /* ===== Brand Colors ===== */
-  --color-primary: var(--color-emerald-600);
-  --color-primary-hover: var(--color-emerald-700);
-  --color-primary-active: var(--color-emerald-800);
+  --color-primary: var(--color-emerald-700);
+  --color-primary-hover: var(--color-emerald-800);
+  --color-primary-active: var(--color-emerald-900);
   --color-primary-content: #ffffff;
   --color-primary-bg: var(--color-emerald-50);
 
-  --color-secondary: var(--color-lime-600);
-  --color-secondary-hover: var(--color-lime-700);
+  --color-secondary: var(--color-lime-700);
+  --color-secondary-hover: var(--color-lime-800);
   --color-secondary-content: #ffffff;
   --color-secondary-bg: var(--color-lime-50);
 
   /* ===== Semantic Colors ===== */
-  --color-success: var(--color-green-600);
-  --color-success-hover: var(--color-green-700);
+  --color-success: var(--color-green-700);
+  --color-success-hover: var(--color-green-800);
   --color-success-content: #ffffff;
   --color-success-bg: var(--color-green-50);
 
   --color-warning: var(--color-amber-500);
   --color-warning-hover: var(--color-amber-600);
-  --color-warning-content: var(--color-amber-900);
+  --color-warning-content: var(--color-amber-950);
   --color-warning-bg: var(--color-amber-50);
 
   --color-danger: var(--color-red-600);
@@ -58,8 +58,8 @@
   --color-danger-content: #ffffff;
   --color-danger-bg: var(--color-red-50);
 
-  --color-info: var(--color-blue-500);
-  --color-info-hover: var(--color-blue-600);
+  --color-info: var(--color-blue-600);
+  --color-info-hover: var(--color-blue-700);
   --color-info-content: #ffffff;
   --color-info-bg: var(--color-blue-50);
 
@@ -136,11 +136,13 @@
   --color-border-secondary: rgb(75, 95, 78);
   --color-border-hover: rgb(95, 120, 100);
 
-  /* ===== Text Hierarchy ===== */
+  /* ===== Text Hierarchy =====
+     One stop brighter than a naive invert, so muted body text clears even the
+     lightest dark surface. */
   --color-text-primary: var(--color-gray-100);
-  --color-text-secondary: var(--color-gray-300);
-  --color-text-tertiary: var(--color-gray-400);
-  --color-text-muted: var(--color-gray-500);
+  --color-text-secondary: var(--color-gray-200);
+  --color-text-tertiary: var(--color-gray-300);
+  --color-text-muted: var(--color-gray-400);
   --color-text-heading: var(--color-emerald-400);
 
   /* ===== Interactive States =====
@@ -173,8 +175,8 @@
   --color-warning-content: var(--color-gray-900);
   --color-warning-bg: rgb(30, 25, 10); /* Very dark amber */
 
-  --color-danger: var(--color-red-500);
-  --color-danger-hover: var(--color-red-400);
+  --color-danger: var(--color-red-600);
+  --color-danger-hover: var(--color-red-500);
   --color-danger-content: #ffffff;
   --color-danger-bg: rgb(30, 10, 10); /* Very dark red */
 
