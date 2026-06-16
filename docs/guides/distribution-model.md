@@ -39,6 +39,39 @@ The release loop is for *releases*. To iterate locally, point the consumer at th
 local checkout — this is a **dev-only** redirect:
 - In the consumer, set the dependency to a local link:
   `"my-react-shell": "link:../my-react-shell"` (or `pnpm link --dir ../my-react-shell`), then `pnpm install`.
+- **Dedupe React (and the shared Convex-React layer) in the consumer's bundler.**
+  This step applies **only to the `link:` loop** — not the tag-pinned git-dep path.
+  A `link:` symlinks the shell's checkout, which carries its **own**
+  `node_modules/react` (React is a devDependency here for the dev-harness, build, and
+  tests). The consumer's Vite dev pre-bundler then resolves **two physically distinct
+  React copies** — the app's own, and the linked package's reached through the
+  symlink. Two Reacts share no hook dispatcher, so the **first my-react-shell
+  component to call a hook** throws `Invalid hook call` /
+  `Cannot read properties of null (reading 'useContext')` at first paint and the whole
+  tree falls to the error boundary. Collapse to one copy in the consumer's
+  `vite.config.ts`:
+  ```ts
+  resolve: {
+    // theme-only consumer (the barrel): the React triple is enough
+    dedupe: ['react', 'react-dom', 'react/jsx-runtime'],
+    // consumer that uses `my-react-shell/auth/convex`: also dedupe the
+    // Convex-React layer shared beneath the auth seam —
+    // dedupe: ['react', 'react-dom', 'react/jsx-runtime',
+    //          'convex', 'convex/react', '@convex-dev/auth'],
+  },
+  ```
+  The exact list is **what the consumer shares with the shell across the symlink**:
+  always the React triple (every compiled module imports `react/jsx-runtime`); plus
+  `convex` / `convex/react` / `@convex-dev/auth` when the consumer imports
+  `my-react-shell/providers` or `my-react-shell/auth/convex` (those are the bare
+  specifiers the compiled `dist/` externalizes). The tag-pinned **git-dep path does
+  not need this** — a real (non-symlinked) install resolves each bare specifier to the
+  consumer's single copy through normal node resolution; the duplication is a
+  symlink-only artifact.
+
+  > **Build/test do not catch this.** `vite build` and vitest resolve React
+  > differently than the dev pre-bundler, so a green build/test run does **not**
+  > exercise the failing path. Only a live dev-server boot does.
 - **Strip the link before committing.** A committed `link:`/`file:` specifier
   breaks every other clone and all Vercel/CI installs (the path won't exist).
   This is enforced by a **pre-commit guard** (`.githooks/pre-commit`, enabled via
@@ -152,3 +185,9 @@ These are **dependency changes** and need explicit approval before they land:
 - Copy the committed-link guard: drop `.githooks/pre-commit` into the consumer repo
   and run `git config core.hooksPath .githooks` (or add the same `setup:hooks`
   script). It blocks committing the dev-loop `link:`/`file:` redirect.
+- **When developing against the `link:` loop, dedupe React in the consumer's Vite
+  config** so the symlinked shell's own React copy doesn't collide with the app's and
+  crash first paint with `Invalid hook call` — see the dedupe step under "Local
+  dev-loop" above. This is a `link:`-only dev concern (the tag-pinned git-dep path
+  dedupes through normal resolution), so it is **not** a dependency change and needs
+  no approval — just a `resolve.dedupe` key.

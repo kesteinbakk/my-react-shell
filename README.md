@@ -106,10 +106,30 @@ reinstall cycle:
 3. In the consumer, point the dependency at this checkout —
    `"my-react-shell": "link:../my-react-shell"` (or `pnpm link --dir
    ../my-react-shell`) — then `pnpm install`.
+4. **Dedupe React in the consumer's `vite.config.ts`** — `link:`-only step:
+   ```ts
+   resolve: {
+     dedupe: ['react', 'react-dom', 'react/jsx-runtime'],
+     // + 'convex', 'convex/react', '@convex-dev/auth' if you use
+     //   my-react-shell/providers or my-react-shell/auth/convex
+   },
+   ```
 
 > The package exports `dist/` (not `src/`) and `prepare` does **not** run for a
 > `link:` dependency, so the link serves stale/missing output until `dist/` is
 > emitted — hence the `build:lib` + `build:lib:watch` steps.
+
+> **Why step 4 — the `Invalid hook call` footgun.** A `link:` symlinks this
+> checkout, which carries its **own** `node_modules/react` (a devDependency, for the
+> dev-harness, build, and tests). The consumer's Vite dev pre-bundler then resolves
+> **two physically distinct React copies** — the app's, and the linked package's
+> reached through the symlink — which share no hook dispatcher. The first
+> my-react-shell component to call a hook throws `Invalid hook call` /
+> `Cannot read properties of null (reading 'useContext')` at first paint. The
+> `resolve.dedupe` collapses them to one copy. This bites the **`link:` loop only**;
+> a tag-pinned git-dep install resolves a single React through normal node
+> resolution and needs none of it. `vite build` and tests resolve React differently
+> than the dev pre-bundler, so neither catches this — only a live dev-server boot does.
 
 **Strip the link before committing.** A committed `link:` / `file:` specifier breaks
 every other clone and all Vercel/CI installs, because the path won't exist there.

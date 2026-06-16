@@ -112,6 +112,11 @@ docs/
 - A **pre-commit guard** (`.githooks/pre-commit`, enabled via `pnpm setup:hooks`)
   rejects committing a `link:`/`file:` dependency specifier — the local dev-loop
   redirect must never land in a commit. Bypass intentionally with `--no-verify`.
+- A consumer on the **`link:` dev-loop must dedupe React** in its own Vite config
+  (`resolve.dedupe`), or the symlinked shell's own React copy collides with the
+  app's and first paint crashes with `Invalid hook call`. `link:`-only — the
+  git-dep path is unaffected. See `docs/guides/distribution-model.md` → Local
+  dev-loop for the exact package list and why.
 
 ## Dev servers (agent rules)
 
