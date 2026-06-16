@@ -25,12 +25,14 @@
   },
   "files": [
     "dist",
-    "src"
+    "src/index.css",
+    "src/styles"
   ],
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
     "build:lib": "tsc -p tsconfig.lib.json",
+    "build:lib:watch": "tsc -p tsconfig.lib.json --watch",
     "prepare": "tsc -p tsconfig.lib.json",
     "typecheck": "tsc -b",
     "preview": "vite preview"
