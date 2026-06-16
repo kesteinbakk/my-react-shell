@@ -1,7 +1,7 @@
 # my-react-shell — strategy (decision log)
 
 Standing decisions for this project. Newest on top. Full framework rationale:
-[../../notes/react-framework-guide.md](../../notes/react-framework-guide.md).
+[../../guides/react-framework-notes.md](../../guides/react-framework-notes.md).
 
 ## D1 — my-react-shell is the "everything above shadcn" layer
 
@@ -10,7 +10,7 @@ reuse rules) owns UI primitives and composites. my-react-shell **hosts that shar
 registry** (brand tokens as a `registry:base` + the bespoke composites shadcn
 lacks) and owns what shadcn does not: app-shell, providers, i18n, and the
 cross-app contracts. We do **not** maintain an own primitive kit. Source:
-react-framework-guide §2/§5.
+[react-framework-notes.md](../../guides/react-framework-notes.md).
 
 ## D2 — Stack: Vite SPA + TanStack Router + Convex + shadcn (auth project-owned)
 
@@ -20,7 +20,7 @@ my-react-shell ships **only the Convex Auth (`@convex-dev/auth`) default** — r
 entirely in Convex, no auth server, no cross-domain — via a pluggable auth seam.
 It does **not** ship Better Auth: a project needing Better Auth
 (`@convex-dev/better-auth`, crossDomain, Convex ≥ 1.25), SSO, or MFA wires its
-own provider through the seam. Source: react-framework-guide §1, §4.
+own provider through the seam. Source: [react-framework-notes.md](../../guides/react-framework-notes.md).
 
 ## D3 — foundation-react's primitives are not ported
 

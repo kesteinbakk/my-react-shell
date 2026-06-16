@@ -36,7 +36,7 @@ shadcn upstream.
 
 ## Why it exists
 
-The framework decision ([../../notes/react-framework-guide.md](../../notes/react-framework-guide.md))
+The framework decision ([../../guides/react-framework-notes.md](../../guides/react-framework-notes.md))
 concluded that component consistency for agent-built apps is solved by shadcn's
 registry / MCP / rules **regardless of framework** — which removes the reason to
 maintain an own primitive kit, but leaves the shell / providers / i18n /

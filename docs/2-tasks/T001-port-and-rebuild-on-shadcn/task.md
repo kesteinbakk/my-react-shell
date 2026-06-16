@@ -1,7 +1,7 @@
 # T001 — port-and-rebuild-on-shadcn
 
 **Status:** in-progress | **Type:** feature | **Branch:** main
-**Origin:** [react-framework-guide.md](../../../../notes/react-framework-guide.md) §2 + §5 — shadcn owns the primitive layer; this project owns everything above it.
+**Origin:** [react-framework-notes.md](../../../../guides/react-framework-notes.md) — shadcn owns the primitive layer; this project owns everything above it.
 **Depends on:** nothing. **Blocks:** every my-react-shell consumer.
 
 ## Goal
@@ -15,7 +15,7 @@ with no overlap between the two layers.
 
 ## Background
 
-See [react-framework-guide.md](../../../../notes/react-framework-guide.md): §2
+See [react-framework-notes.md](../../../../guides/react-framework-notes.md): §2
 establishes that shadcn (my-react-shell's shared registry + MCP + `CLAUDE.md` reuse
 rules) owns the UI-primitive/composite layer; §1/§5 land the stack on Vite SPA +
 TanStack Router + Convex + shadcn, and §4 sets auth to **Convex Auth (default) /
