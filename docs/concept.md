@@ -2,52 +2,81 @@
 
 ## What this is
 
-**my-react-shell** is the React application foundation that sits **on top of
-shadcn/ui** — everything a React + Convex app needs that shadcn does not provide.
-shadcn (used via my-react-shell's shared private registry + its MCP server +
-`CLAUDE.md` reuse rules) owns the UI-primitive and composite layer; my-react-shell
-owns the layer above it:
+**my-react-shell** is a **modular React foundation** for React + Convex apps under
+`~/Developer/` — a menu of optional, self-contained **drop-in modules** an app
+imports à la carte, consumed like a standard npm package from a Bitbucket
+git-dependency. It is **not** a framework, a fixed app template, or a component kit.
 
-- **App-shell** — routing chrome, header / footer / menu / bottom-nav, page
-  chrome, the single shell scroll container, page-level and in-page tabs.
-- **Providers** — Convex client, theme, and a pluggable auth seam: ships the
-  Convex Auth default; Better Auth and other providers are project-implemented.
-- **i18n** — the `t()` seam and central-key policy.
-- **Contracts** — the `~/config/*` inversion-of-control pattern, the app-shell
-  rules (single scroll container, breadcrumb-from-URL, the three non-substitutable
-  nav layers, `?tab=` deep-link contracts), and the no-silent-defaults /
-  break-cleanly discipline.
+Each module is one capability an app can opt into:
 
-my-react-shell also **hosts the shared shadcn registry** that new apps point at —
-the brand tokens as a `registry:base` plus the bespoke composites shadcn lacks —
-so the UI layer is shared, not re-derived per app. Base primitives come from
-shadcn upstream.
+- **theme** — the semantic-token contract, 5 palettes, light/dark/system, and
+  consumer-defined palettes. A batteries-included drop-in: import the provider, done.
+- **providers** — the Convex client provider and the single `AppProviders` wrapper
+  that composes theme + Convex + (optional) auth.
+- **auth** — a pluggable auth **seam** (a TypeScript contract) plus the Convex Auth
+  default implementation, shipped at a sub-path so its dependency stays optional.
+- **i18n** *(planned)* — the `t()` seam, central-key policy, and missing-key surface.
+
+## The two module flavors
+
+The user explicitly wants both "drop-ins like translation" *and* "contracts on how
+to implement." Modules come in two flavors:
+
+- **Batteries-included drop-in** — import the provider and use it; no app input
+  required (theme, the Convex client provider).
+- **Seam + default + bring-your-own** — the module exports a TS **contract** the app
+  fills, with a shipped default and a BYO path (auth: `AuthProvider` contract +
+  Convex Auth default + your own provider; i18n will follow the same shape).
+
+## Module rules
+
+1. **Independently importable** — from the barrel (`import { ThemeProvider } from
+   'my-react-shell'`) or a sub-path (`my-react-shell/auth/convex`). Tree-shaking
+   means importing the barrel never bundles modules an app doesn't use.
+2. **Self-contained** — a module never hard-depends on another module's *runtime*;
+   only small pure types are shared. `theme` works without `i18n`; `auth` without
+   `theme`. `AppProviders` *composes* them for convenience, but each stands alone.
+3. **Optional/heavy peers behind sub-paths** — anything pulling an optional
+   dependency lives at `my-react-shell/<module>/<impl>`, keeping the main barrel
+   dependency-light.
+4. **Documented** — each module ships a `docs/guides/<module>.md`: what it does, the
+   contract to fill, how to wire it, how to bring your own.
+
+**Adding modules / reusing what others built:** an app builds a capability locally;
+when a second app needs it (rule of two), it is contributed back as a new module
+(folder + export + guide). Every app gets it on the next version bump.
 
 ## What it is NOT
 
-- **Not a component library.** It does not ship Button / Dialog / Table / etc.
-  Those come from shadcn. my-react-shell never hand-maintains primitives.
+- **Not a component library.** It ships no Button / Dialog / Table / etc. Consumers
+  use shadcn/ui directly and build their own components; reusable ones may later
+  become modules. my-react-shell ships the **theme token contract** those components
+  render against, not the components.
+- **Not a registry host.** It does not host a shadcn registry or an MCP server.
+- **Not a fixed app-shell.** There is no mandated layout/shell. A shared app-shell
+  may exist later as one *optional* module among others — never the centerpiece.
 - **Not the SolidJS `foundation`.** That stays the source of truth for SolidJS
-  consumers. my-react-shell is the React/shadcn-era equivalent of the layer the
-  Solid foundation provides *above* its kit.
-- **Not `foundation-react`.** foundation-react was a React port of the SolidJS
-  *primitive kit*; with shadcn owning primitives that layer is redundant, and
-  only its non-primitive, not-yet-built parts move here.
+  consumers. my-react-shell is the React-era sibling for the reusable-module layer.
 
-## Why it exists
+## Distribution
 
-The framework decision ([../../guides/react-framework-notes.md](../../guides/react-framework-notes.md))
-concluded that component consistency for agent-built apps is solved by shadcn's
-registry / MCP / rules **regardless of framework** — which removes the reason to
-maintain an own primitive kit, but leaves the shell / providers / i18n /
-contracts layer that shadcn never touches. my-react-shell is exactly that remaining
-layer (plus the shared registry), built once and consumed by every new React app.
+Consumed as a **tag-pinned Bitbucket git-dependency**, like an npm package:
+
+```ts
+import { ThemeProvider } from 'my-react-shell'
+```
+
+A `prepare` build compiles `src/ → dist/` on install, so consumers receive compiled
+JS + types with zero bundler config. To ship an update: push + tag; consumers bump
+the tag and reinstall. Apps receive updates only to the modules they actually
+import. No npm registry, no Verdaccio, no sync system. Full rationale in
+[strategy.md](strategy.md) D5.
 
 ## Stack
 
-Vite SPA + TanStack Router + Convex + shadcn/ui (my-react-shell's shared private
-registry). **Auth is project-owned:** my-react-shell ships the **Convex Auth
-(`@convex-dev/auth`) default** (auth-server-less, no cross-domain) via a pluggable
-seam; it does **not** ship Better Auth — a project needing Better Auth
-(`@convex-dev/better-auth`, crossDomain, Convex ≥ 1.25) or SSO / MFA wires its own
-provider. pnpm · React 19 · TS 6 · Tailwind v4. Full rationale in the decision guide.
+Vite SPA + TanStack Router + Convex (`eu-west-1`). **Auth is project-owned:** the
+`auth` module ships the **Convex Auth (`@convex-dev/auth`) default** behind the seam;
+a project needing Better Auth (`@convex-dev/better-auth`, crossDomain, Convex ≥ 1.25)
+or SSO / MFA implements the seam itself. pnpm · React 19 · TS 6 · Tailwind v4.
+Full framework rationale in the
+[react-framework guide](../.claude/skills/react-framework/react-framework-notes.md).
