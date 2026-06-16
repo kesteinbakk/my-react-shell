@@ -94,20 +94,24 @@ is hardening, not redesign:
    Narrow to `["dist", "src/index.css", "src/styles"]` so only `dist/` plus the
    CSS the `styles.css` export needs is packed.
 
-### Open decision (needs approval before acting)
-- **Router peer.** `@tanstack/react-router` is currently a **mandatory** peer, so
-  even the router-agnostic modules (theme / providers / auth) drag it in. Consider
-  moving it behind the sub-path(s) that actually use routing (mirroring how
-  `@convex-dev/auth` is isolated behind `my-react-shell/auth/convex` +
-  `peerDependenciesMeta.optional`). This is a dependency-surface change.
+### Resolved decision — router peer
+- **Router peer: removed entirely.** No shipped module imports a router (it was
+  harness-only — `main.tsx` / `routes/` / `routeTree.gen.ts`, all excluded from the
+  library emit), so `@tanstack/react-router` is **not** a peer dependency. It stays a
+  `devDependency` for the dev-harness; there was no routing sub-path to gate it
+  behind. Consumers pick their own router (TanStack Router remains the recommended
+  choice — see the `react-framework` guide — but as the consumer's own dependency,
+  not one this package imposes).
 
 ---
 
 ## Consumer adoption (applies when an app adopts either package)
 
 These are **dependency changes** and need explicit approval before they land:
-- Satisfy peer floors (e.g. for `my-react-shell`: `convex ≥1.41`,
-  `@convex-dev/auth ≥0.0.94`, `@auth/core ≥0.41.1`, and a router decision).
+- Satisfy peer floors (e.g. for `my-react-shell`: `convex ≥1.41`, plus
+  `@convex-dev/auth ≥0.0.94` + `@auth/core ≥0.41.1` only if using the Convex Auth
+  default at `my-react-shell/auth/convex`). No router peer — the consumer brings its
+  own router.
 - One package manager only — **pnpm**. Settle any repo that still has an `npm`
   `package-lock.json` onto `pnpm` before adopting.
 - Configure the Vercel/CI Bitbucket token for the `git+https` specifier.

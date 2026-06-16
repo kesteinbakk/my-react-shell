@@ -38,7 +38,6 @@
     "preview": "vite preview"
   },
   "peerDependencies": {
-    "@tanstack/react-router": "^1.170.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "convex": "^1.41.0",

@@ -20,8 +20,10 @@ static site). Convex is the backend. **Auth is project-owned:** the `auth` modul
 ships **only the Convex Auth (`@convex-dev/auth`) default** — runs entirely in
 Convex, no auth server, no cross-domain — behind a pluggable seam. A project needing
 Better Auth (`@convex-dev/better-auth`, crossDomain, Convex ≥ 1.25), SSO, or MFA
-implements the seam itself. shadcn/ui + Tailwind v4 are consumer-side choices, not
-shipped by my-react-shell. Source:
+implements the seam itself. shadcn/ui + Tailwind v4 — and **TanStack Router** — are
+consumer-side choices, not shipped by my-react-shell: the router is recommended and
+used by the dev-harness, but no shipped module imports it, so it is **not a peer
+dependency** (consumers bring their own). Source:
 [react-framework-notes.md](../.claude/skills/react-framework/react-framework-notes.md).
 
 ## D3 — No component kit, no registry

@@ -83,13 +83,18 @@ From `package.json` `peerDependencies`:
 | `react` | `^19.0.0` | required |
 | `react-dom` | `^19.0.0` | required |
 | `convex` | `^1.41.0` | required |
-| `@tanstack/react-router` | `^1.170.0` | required |
 | `@convex-dev/auth` | `^0.0.94` | **optional** — only for the `my-react-shell/auth/convex` sub-path |
 | `@auth/core` | `^0.41.1` | **optional** — only for the `my-react-shell/auth/convex` sub-path |
 
 `@convex-dev/auth` and `@auth/core` are declared `optional` in
 `peerDependenciesMeta`: a consumer that doesn't use the Convex Auth default never
 needs them.
+
+> **No router peer.** my-react-shell ships no code that imports a router, so
+> `@tanstack/react-router` is **not** a peer dependency — a consumer picks (or
+> omits) a router on its own. TanStack Router is still the *recommended* router for
+> a consumer app (see the `react-framework` guide), but that's the consumer's own
+> dependency, not one this package imposes.
 
 ## Local dev-loop
 

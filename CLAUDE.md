@@ -43,7 +43,9 @@ app-shell. New apps build their own components; reusable ones may become modules
 - **Frontend:** React 19 + Vite SPA (TypeScript 6). **No SSR** — consumers are
   fully behind auth.
 - **Routing:** TanStack Router (type-safe, file-based) — used by the dev-harness
-  and recommended to consumers; not a module my-react-shell ships.
+  and recommended to consumers; not a module my-react-shell ships, and **not a peer
+  dependency** (it's a dev-only harness dep — no shipped module imports a router, so
+  consumers bring their own).
 - **UI:** consumers use shadcn/ui + Tailwind v4 directly; my-react-shell does **not**
   host a registry or ship primitives. It does ship the **theme token contract** the
   app's components render against.
