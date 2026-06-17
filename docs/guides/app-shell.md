@@ -1,0 +1,176 @@
+# app-shell module
+
+A React (SPA) re-implementation of the SolidJS `foundation` app shell: header-or-
+sidebar chrome with a responsive mobile drawer + optional bottom nav and a single
+scrolling body cell, a URL-derived page header (breadcrumbs + actions + search +
+`subPages` dropdown), the shell-config contract (the three navigation layers), and
+the page-tab primitives. Shipped at the sub-path **`my-react-shell/app-shell`** so the
+package barrel stays the theme core.
+
+```ts
+import {
+  AppShell,
+  ShellPageHeader,
+  PageTabs,
+  PageSections,
+  useDynamicPages,
+  defineShellConfig,
+} from 'my-react-shell/app-shell'
+import 'my-react-shell/app-shell/styles.css'
+```
+
+It is **router-coupled** (TanStack Router) and uses **Radix** headless primitives —
+both are *optional peers* you install only when you import this module. It renders
+against the theme token contract, and every user-facing string comes via config/props
+(it never imports the i18n module — you translate at the call site).
+
+## Optional peers
+
+```bash
+pnpm add @tanstack/react-router @radix-ui/react-dialog @radix-ui/react-dropdown-menu
+```
+
+A theme-only consumer installs none of these.
+
+## Define the shell config
+
+`defineShellConfig` validates the config once at import time (throwing
+`ShellConfigError` on a bad shape) and brands it — `<AppShell>` re-checks the brand
+at runtime. The icon library is yours: pass one `renderIcon(key, size)`.
+
+```tsx
+import { defineShellConfig } from 'my-react-shell/app-shell'
+import { Home, Database, Shield } from 'lucide-react'
+
+const icons: Record<string, typeof Home> = { home: Home, data: Database, trust: Shield }
+
+export const shellConfig = defineShellConfig({
+  appName: 'Acme',
+  renderIcon: (key, size) => {
+    const Icon = icons[key] ?? Home
+    return <Icon size={size} />
+  },
+  pages: [
+    { id: 'home', route: '/', label: () => t('nav.home'), icon: 'home' },
+    {
+      id: 'data',
+      route: '/data',
+      label: () => t('nav.data'),
+      icon: 'data',
+      // sibling pages → the title dropdown (a route each, so the breadcrumb moves)
+      subPages: [
+        { id: 'data-core', route: '/data/core', label: () => t('nav.core'), icon: 'data' },
+        { id: 'data-media', route: '/data/media', label: () => t('nav.media'), icon: 'data' },
+      ],
+    },
+    { id: 'trust', route: '/trust', label: () => t('nav.trust'), icon: 'trust', tabBar: true },
+  ],
+})
+```
+
+`label` is a thunk so you can wire `t()` and have it re-evaluate on locale change.
+`renderIcon` is **required**. Optional: `appNameRender`, `pageContainer.defaultMaxWidth`
+(default `'2xl'`), `tabs.variant` (`'underline'` | `'pill'`), `shellPageHeader.border`
+(default `true`) / `.documentTitle`, and `labels` (translated aria-label thunks —
+`home`, `breadcrumb`, `openMenu`, `mainNavigation`, `more`; English fallbacks apply).
+
+## Mount the shell
+
+Wrap your router outlet in `<AppShell>` once at the root. `useMenu` picks sidebar
+(`true`) vs top banner (`false`). `actions` is your chrome action row (theme toggle,
+language picker, notification bell — your components, as render thunks).
+
+```tsx
+import { AppShell } from 'my-react-shell/app-shell'
+
+function RootLayout() {
+  return (
+    <AppShell
+      config={shellConfig}
+      useMenu
+      actions={[() => <ThemeToggle />, () => <LanguagePicker />]}
+      mobileNav="drawer" // or 'tabBar' for a mobile bottom bar
+    >
+      <Outlet />
+    </AppShell>
+  )
+}
+```
+
+Only the body cell scrolls (`[data-shell-content]`) — the chrome, sidebar, and footer
+stay pinned. On mobile the sidebar collapses to a Radix drawer (or a bottom tab bar of
+the `tabBar: true` pages when `mobileNav='tabBar'`).
+
+## The page header
+
+Drop `<ShellPageHeader>` anywhere in a route's subtree. It renders `null` and registers
+its props onto the shell, which renders the chrome in the pinned slot:
+
+```tsx
+<ShellPageHeader
+  title={() => t('data.title')}            // overrides only the leaf breadcrumb label
+  actions={[() => <NewItemButton />]}
+  search={{ onChange: setQuery, placeholder: () => t('common.search') }}
+  tabs={() => <PageTabs tabs={dataTabs} />} // pins a route-tab strip with the breadcrumbs
+/>
+```
+
+**The breadcrumb chain is a pure function of the URL pathname.** It is built by walking
+the config `pages` tree (plus any `useDynamicPages` registrations) against the current
+path. Nothing else feeds it — an in-page primitive can never add a crumb, and
+`title` overrides only the leaf label, never adds a level. Want a crumb for X → X must
+be a route registered in the config (`subPages`) or via `useDynamicPages`.
+
+For dynamic route levels (a record name, a doc slug), register them at runtime:
+
+```tsx
+useDynamicPages({
+  parent: '/sites',
+  items: sites.map((s) => ({ id: s.id, label: s.name, route: `/sites/${s.id}` })),
+})
+```
+
+## The three navigation layers
+
+Each layer has one job — don't substitute one for another:
+
+| Layer | Surface | Use for |
+|---|---|---|
+| `pages` (sidebar / banner) | Persistent sidebar items | Top-level feature areas. |
+| `subPages` | Title dropdown next to the breadcrumb | Sibling pages within a feature (each a route, so the breadcrumb moves). |
+| `PageTabs` / `PageSections` | Tab strip below the title | Sub-views of one page. |
+
+The discriminator is the breadcrumb: *should selecting this gain a crumb / a shareable
+URL / a back-button stop?* Yes → a route (`subPages` or a nested route). No → in-page
+(`PageSections`). A list of articles/records is **peer routes**, not `PageSections`
+tabs.
+
+## Page tabs: route-based vs in-page
+
+- **`PageTabs`** — each tab is its own route. Pin it via `<ShellPageHeader tabs={() =>
+  <PageTabs tabs={…} />}>`. Selecting a tab navigates; the breadcrumb can move.
+- **`PageSections`** — splits one page into in-page sections synced to `?<persistKey>=`
+  (deep-linkable, shareable). Modes: `single` (one section at a time) or `list`
+  (scrollspy + click-to-scroll over the body cell; sections may be `lazy`). Section
+  `children` is a thunk so only the active/visible section mounts.
+
+```tsx
+<PageSections
+  persistKey="tab"
+  mode="single"
+  sections={[
+    { id: 'overview', label: () => t('overview'), children: () => <Overview /> },
+    { id: 'activity', label: () => t('activity'), children: () => <Activity /> },
+  ]}
+/>
+```
+
+## Notes
+
+- **Strings via config/props, no i18n dependency.** The shell never imports the i18n
+  module. Feed it translated thunks (`label: () => t('…')`); when you use
+  `my-react-shell/i18n`, wire `t` at the call site.
+- **Excluded by design** (app-glue, not shell): the notification system, feedback
+  modal, and command-bar/action registry. Wire your own into the `actions` slot.
+- **Scroll-aware code** must read the shell's scroll container (`useShellContext().
+  scrollContainer`), not `window` — the body cell is the only scroller.

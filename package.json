@@ -29,12 +29,18 @@
       "types": "./dist/i18n/index.d.ts",
       "import": "./dist/i18n/index.js"
     },
+    "./app-shell": {
+      "types": "./dist/app-shell/index.d.ts",
+      "import": "./dist/app-shell/index.js"
+    },
+    "./app-shell/styles.css": "./src/app-shell/app-shell.css",
     "./styles.css": "./src/index.css"
   },
   "files": [
     "dist",
     "src/index.css",
-    "src/styles"
+    "src/styles",
+    "src/app-shell/app-shell.css"
   ],
   "scripts": {
     "dev": "vite",
