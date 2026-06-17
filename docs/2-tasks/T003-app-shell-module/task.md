@@ -81,10 +81,24 @@ chain derivation, flatten/scroll math) get ephemeral node checks where possible.
 
 | Phase | Status | Summary |
 |-------|--------|---------|
-| 0 docs + deps | in-progress | strategy D10 + concept done; deps next. |
-| 1 spec | — | |
-| 2 core | — | |
-| 3 chrome | — | |
-| 4 page header | — | |
-| 5 page tabs | — | |
-| 6 packaging + guide | — | |
+| 0 docs + deps | done | strategy D10 + concept; Radix installed; router + Radix declared optional peers. |
+| 1 spec | done | Port blueprint at `docs/4-reports/research/app-shell-port-blueprint.md` (app-shell expert). |
+| 2 core | done | `shellContract.ts`, `shellContext.ts`, `defineShellConfig.ts`, `app-shell.css`. |
+| 3 chrome | done | `AppShell` (drawer + bottom nav + body-cell scroller + doc title), `AppHeader`, `AppMenu`, `AppBottomNav`. |
+| 4 page header | done | `ShellPageHeader` (registration + `ShellPageHeaderUI` + `findActiveChain` + breadcrumbs + `LeafDropdown` + search), `useDynamicPages`. |
+| 5 page tabs | done | `PageTabs` (route tabs) + `PageSections` (single/list, scrollspy, `?<key>=` sync, lazy). |
+| 6 packaging + guide | done | `./app-shell` + `./app-shell/styles.css` exports; `index.ts` barrel; `docs/guides/app-shell.md`. |
+
+**Verification done:** `tsc -b` typecheck green; `pnpm build:lib` emits `dist/app-shell/`
+(JS + d.ts); 13 `defineShellConfig` validator checks pass (node/esbuild).
+
+**Verification pending (user-owned — dev servers are user-owned, project rule):**
+- Browser behavior via a harness playground: responsive header/menu/drawer/bottom-nav,
+  the body-cell scroll container, breadcrumb derivation, `PageSections` URL↔state +
+  scrollspy + deep-link, `PageTabs` pinning. **Harness routes are not yet added** — a
+  new route needs a dev-server run to regenerate `routeTree.gen.ts` (agents don't run
+  dev servers here).
+- The one empirical Radix check from the blueprint appendix: open the mobile drawer
+  from a focused hamburger and confirm no `aria-hidden` focus-retention warning (the
+  SolidJS Hard Rule #3 blur workaround was intentionally not ported — Radix manages
+  focus scope).
