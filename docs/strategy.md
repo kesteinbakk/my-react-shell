@@ -72,8 +72,10 @@ from the original D6 is dropped — see D3.)*
 ## D7 — Repo shape: library + dev-harness app
 
 One repo, two roles: the **library** consumers import (the modules) and a dev-only
-**harness Vite app** (showcase + test routes) that renders the modules for
-development and behavior verification. The harness (`main.tsx`, `routes/**`,
+**harness Vite app** (test routes) that renders the modules for development and
+behavior verification — **not** a feature showcase. Visual showcasing of modules
+lives in the sister `my-react-shell-demo` project (see CLAUDE.md → Demos & visual
+showcasing). The harness (`main.tsx`, `routes/**`,
 `routeTree.gen.ts`) is excluded from the library emit (`tsconfig.lib.json`) and from
 the package `exports`, so consumers never receive it. Rationale: theme/provider
 behavior (FOUC-free theme application, system-follow, provider composition) is only

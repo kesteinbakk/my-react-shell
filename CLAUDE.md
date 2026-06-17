@@ -38,6 +38,18 @@ app-shell. New apps build their own components; reusable ones may become modules
 > per-module guides, and the module-authoring contract are next. The SolidJS
 > `zingularis/foundation` is untouched — it serves Solid consumers.
 
+## Demos & visual showcasing
+
+**All visual showcasing of this library lives in the sister project
+`my-react-shell-demo`** (`~/Developer/my-react-shell-demo`). When asked to *show* a
+feature, *display* how something works, or *demo* a module, that always means the
+demo project's pages — **not** this repo. Build the showcase there, against the
+modules this library publishes.
+
+The in-repo dev-harness exists only for development and behavior verification (test
+routes that catch what typecheck can't); it is not where features are shown to the
+user.
+
 ## Stack
 
 - **Frontend:** React 19 + Vite SPA (TypeScript 6). **No SSR** — consumers are
