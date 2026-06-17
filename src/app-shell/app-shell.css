@@ -1,0 +1,538 @@
+/*
+ * app-shell.css — the app-shell module's own stylesheet.
+ *
+ * my-react-shell ships precompiled JS; a consumer's Tailwind never scans
+ * node_modules, so no utility classes survive the build. Every shell style lives
+ * here as stable `mrs-`-prefixed semantic classes on the theme tokens (the CSS
+ * custom properties from styles/base.css), plus the media queries inline styles
+ * cannot express. The barrel side-effect-imports this file. One breakpoint at
+ * 1024px: below = mobile (drawer / optional bottom nav, static sidebar hidden);
+ * at/above = desktop (persistent sidebar).
+ */
+
+/* ── Shell frame ─────────────────────────────────────────────────────────── */
+.mrs-shell {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  min-height: 0;
+  background: var(--color-background-primary);
+}
+.mrs-shell__header-row {
+  flex-shrink: 0;
+}
+.mrs-shell__middle {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+.mrs-shell__page-area {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+.mrs-shell__chrome {
+  flex-shrink: 0;
+}
+/* The ONLY scroller — [data-shell-content]. */
+.mrs-shell__content {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  overflow-y: auto;
+}
+.mrs-shell__footer {
+  flex-shrink: 0;
+}
+@media (max-width: 1023.98px) {
+  .mrs-shell__footer--hide-mobile {
+    display: none;
+  }
+}
+
+/* ── Container (max-width + padding, replaces <Container>) ───────────────── */
+.mrs-shell__container {
+  width: 100%;
+  margin-inline: auto;
+}
+.mrs-shell__container--fill {
+  height: 100%;
+}
+.mrs-shell[data-content-padding='default'] .mrs-shell__container {
+  padding-inline: 1rem;
+}
+@media (min-width: 640px) {
+  .mrs-shell[data-content-padding='default'] .mrs-shell__container {
+    padding-inline: 1.5rem;
+  }
+}
+@media (min-width: 1024px) {
+  .mrs-shell[data-content-padding='default'] .mrs-shell__container {
+    padding-inline: 2rem;
+  }
+}
+.mrs-shell[data-content-padding='none'] .mrs-shell__container {
+  padding-inline: 0;
+}
+.mrs-shell[data-max-width='sm'] .mrs-shell__container {
+  max-width: 640px;
+}
+.mrs-shell[data-max-width='md'] .mrs-shell__container {
+  max-width: 768px;
+}
+.mrs-shell[data-max-width='lg'] .mrs-shell__container {
+  max-width: 1024px;
+}
+.mrs-shell[data-max-width='xl'] .mrs-shell__container {
+  max-width: 1280px;
+}
+.mrs-shell[data-max-width='2xl'] .mrs-shell__container {
+  max-width: 1536px;
+}
+/* data-max-width="full" → no max-width. */
+
+/* ── Sidebar wrapper (AppMenu host) ──────────────────────────────────────── */
+.mrs-shell__sidebar {
+  flex-shrink: 0;
+  display: none;
+}
+@media (min-width: 1024px) {
+  .mrs-shell__sidebar {
+    display: block;
+  }
+}
+.mrs-shell__sidebar--left {
+  border-right: 1px solid var(--color-border-primary);
+}
+.mrs-shell__sidebar--right {
+  border-left: 1px solid var(--color-border-primary);
+}
+
+/* ── AppMenu ──────────────────────────────────────────────────────────────── */
+.mrs-app-menu {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  flex-shrink: 0;
+  background: var(--color-surface-primary);
+}
+.mrs-app-menu[data-size='sm'] {
+  width: 10rem;
+}
+.mrs-app-menu[data-size='md'] {
+  width: 14rem;
+}
+.mrs-app-menu[data-size='lg'] {
+  width: 18rem;
+}
+.mrs-app-menu__head {
+  flex-shrink: 0;
+  padding: 1rem;
+  border-bottom: 1px solid var(--color-border-primary);
+}
+.mrs-app-menu__brand {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  text-decoration: none;
+}
+.mrs-app-menu__brand:hover {
+  color: var(--color-primary);
+}
+.mrs-app-menu__subtitle {
+  margin-top: 0.25rem;
+  font-size: 0.75rem;
+  color: var(--color-text-tertiary);
+}
+.mrs-app-menu__nav {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+.mrs-app-menu__divider {
+  margin-block: 0.5rem;
+  border-top: 1px solid var(--color-border-primary);
+}
+.mrs-app-menu__item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.375rem 0.5rem;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+  text-decoration: none;
+}
+.mrs-app-menu__item:hover {
+  background: var(--color-hover);
+  color: var(--color-text-primary);
+}
+.mrs-app-menu__item[data-active='true'] {
+  color: var(--color-primary);
+  font-weight: 500;
+  background: var(--color-primary-bg);
+}
+.mrs-app-menu__actions {
+  flex-shrink: 0;
+  padding: 0.75rem;
+  border-top: 1px solid var(--color-border-primary);
+  display: flex;
+  align-items: center;
+}
+.mrs-app-menu__actions[data-dense='true'] {
+  justify-content: space-around;
+}
+.mrs-app-menu__actions[data-dense='false'] {
+  justify-content: space-between;
+}
+
+/* ── AppHeader (banner) ──────────────────────────────────────────────────── */
+.mrs-app-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1.5rem;
+  border-bottom: 1px solid var(--color-border-primary);
+  background: var(--color-surface-primary);
+}
+.mrs-app-header__brand {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  text-decoration: none;
+}
+.mrs-app-header__brand:hover {
+  color: var(--color-primary);
+}
+.mrs-app-header__subtitle {
+  font-size: 0.75rem;
+  color: var(--color-text-tertiary);
+}
+.mrs-app-header__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-left: auto;
+}
+
+/* ── Mobile brand strip + hamburger (no page header) ─────────────────────── */
+.mrs-shell__mobile-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-bottom: 1px solid var(--color-border-primary);
+}
+@media (min-width: 1024px) {
+  .mrs-shell__mobile-brand {
+    display: none;
+  }
+}
+.mrs-shell__hamburger,
+.mrs-page-header__hamburger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.375rem;
+  border: none;
+  border-radius: 0.375rem;
+  background: transparent;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+}
+.mrs-shell__hamburger:hover,
+.mrs-page-header__hamburger:hover {
+  background: var(--color-hover);
+  color: var(--color-text-primary);
+}
+@media (min-width: 1024px) {
+  .mrs-page-header__hamburger {
+    display: none;
+  }
+}
+.mrs-shell__brand-link {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  text-decoration: none;
+}
+
+/* ── Page header chrome (ShellPageHeaderUI) ──────────────────────────────── */
+.mrs-page-header {
+  padding-top: 0.75rem;
+  padding-bottom: 0.25rem;
+}
+.mrs-page-header[data-border='true'] {
+  border-bottom: 1px solid var(--color-border-primary);
+}
+@media (min-width: 1024px) {
+  .mrs-page-header[data-menu-only='true'] {
+    display: none;
+  }
+}
+.mrs-page-header__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  column-gap: 1rem;
+  row-gap: 0.5rem;
+}
+.mrs-breadcrumbs {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.125rem;
+  font-weight: 600;
+  min-width: 0;
+  order: 1;
+}
+.mrs-breadcrumbs__home,
+.mrs-breadcrumbs__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  color: var(--color-text-secondary);
+  text-decoration: none;
+}
+.mrs-breadcrumbs__home:hover,
+.mrs-breadcrumbs__link:hover {
+  color: var(--color-text-primary);
+}
+.mrs-breadcrumbs__leaf {
+  color: var(--color-primary);
+}
+.mrs-breadcrumbs__chevron {
+  color: var(--color-text-tertiary);
+  display: inline-flex;
+}
+.mrs-page-header__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-left: auto;
+  order: 2;
+}
+@media (min-width: 640px) {
+  .mrs-page-header__actions {
+    order: 3;
+  }
+}
+.mrs-page-header__search {
+  position: relative;
+  flex-basis: 100%;
+  order: 3;
+}
+@media (min-width: 640px) {
+  .mrs-page-header__search {
+    flex-basis: auto;
+    flex: 1;
+    min-width: 220px;
+    order: 2;
+  }
+}
+.mrs-page-header__search-icon {
+  position: absolute;
+  left: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--color-text-tertiary);
+  display: inline-flex;
+  pointer-events: none;
+}
+.mrs-page-header__search-input {
+  width: 100%;
+  height: 2.25rem;
+  padding-left: 2.25rem;
+  padding-right: 0.75rem;
+  border-radius: 0.375rem;
+  background: var(--color-surface-secondary);
+  border: 1px solid var(--color-border-primary);
+  color: var(--color-text-primary);
+}
+.mrs-page-header__search-input:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--color-focus-ring);
+}
+.mrs-page-header__tabs {
+  margin-top: 0.5rem;
+}
+
+/* ── Tab rows (PageTabs + SectionTabsStrip) ──────────────────────────────── */
+.mrs-tab-row {
+  display: flex;
+  align-items: stretch;
+  overflow-x: auto;
+}
+.mrs-tab-row[data-variant='underline'] {
+  gap: 0.25rem;
+  border-bottom: 1px solid var(--color-border-primary);
+}
+.mrs-tab-row[data-variant='pill'] {
+  gap: 0.5rem;
+  padding-block: 0.5rem;
+}
+.mrs-tab {
+  display: flex;
+  align-items: stretch;
+}
+.mrs-tab-row[data-variant='underline'] .mrs-tab {
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+}
+.mrs-tab-row[data-variant='underline'] .mrs-tab[data-active='true'] {
+  border-color: var(--color-primary);
+}
+.mrs-tab-row[data-variant='pill'] .mrs-tab {
+  border-radius: 0.375rem;
+}
+.mrs-tab-row[data-variant='pill'] .mrs-tab[data-active='true'] {
+  background: var(--color-primary-bg);
+}
+.mrs-tab__button,
+.mrs-tab__link {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  white-space: nowrap;
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+.mrs-tab[data-active='true'] .mrs-tab__button,
+.mrs-tab[data-active='true'] .mrs-tab__link {
+  color: var(--color-primary);
+}
+.mrs-tab-row[data-variant='underline'] .mrs-tab__button:hover,
+.mrs-tab-row[data-variant='underline'] .mrs-tab__link:hover {
+  color: var(--color-text-primary);
+}
+.mrs-tab-row[data-variant='pill'] .mrs-tab__button:hover,
+.mrs-tab-row[data-variant='pill'] .mrs-tab__link:hover {
+  background: var(--color-hover);
+}
+
+/* ── PageSections frame ──────────────────────────────────────────────────── */
+.mrs-sections {
+  min-width: 0;
+}
+/* Sticky against the body cell (Hard Rule #4b). */
+.mrs-sections__strip {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: var(--color-background-primary);
+}
+.mrs-sections__body {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding-top: 1rem;
+}
+.mrs-section {
+  scroll-margin-top: 6rem;
+  margin-right: 0.5rem;
+}
+.mrs-section__card {
+  background: var(--color-surface-secondary);
+  border-radius: 0.5rem;
+  border: 1px solid var(--color-border-secondary);
+}
+.mrs-section__head {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1rem;
+  border-bottom: 1px solid var(--color-border-secondary);
+}
+.mrs-section__title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+.mrs-section__actions {
+  margin-left: auto;
+  display: flex;
+  gap: 0.25rem;
+}
+.mrs-section__body {
+  padding: 1rem;
+}
+.mrs-section__placeholder {
+  padding-block: 3rem;
+}
+
+/* ── AppBottomNav ────────────────────────────────────────────────────────── */
+.mrs-bottom-nav {
+  display: flex;
+  border-top: 1px solid var(--color-border-primary);
+  background: var(--color-surface-primary);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+@media (min-width: 1024px) {
+  .mrs-bottom-nav {
+    display: none;
+  }
+}
+.mrs-bottom-nav__tab {
+  flex: 1;
+  min-width: 0;
+  min-height: 3.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.125rem;
+  padding: 0.375rem 0.25rem;
+  text-decoration: none;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text-secondary);
+}
+.mrs-bottom-nav__tab[data-active='true'] {
+  color: var(--color-primary);
+}
+.mrs-bottom-nav__label {
+  font-size: 11px;
+  line-height: 1;
+  font-weight: 500;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── Mobile drawer (Radix Dialog) ────────────────────────────────────────── */
+.mrs-drawer__overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--color-overlay);
+  z-index: 49;
+}
+.mrs-drawer__content {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  width: auto;
+  max-width: 85vw;
+  background: var(--color-surface-primary);
+  z-index: 50;
+}
+.mrs-drawer__content--left {
+  left: 0;
+  border-right: 1px solid var(--color-border-primary);
+}
+.mrs-drawer__content--right {
+  right: 0;
+  border-left: 1px solid var(--color-border-primary);
+}
