@@ -159,7 +159,7 @@
   --color-text-primary: rgb(255, 255, 255); /* pure white for maximum readability */
   --color-text-secondary: rgb(229, 229, 231); /* bright gray */
   --color-text-tertiary: rgb(178, 178, 184); /* still clearly readable */
-  --color-text-muted: rgb(128, 128, 135); /* muted but visible */
+  --color-text-muted: rgb(148, 148, 156); /* muted but clears AA as body text */
   --color-text-heading: var(--color-blue-400); /* bright blue for headings */
 
   /* ===== Interactive States ===== */
@@ -174,10 +174,10 @@
   --color-primary-content: rgb(12, 20, 38); /* dark text on the light accent */
   --color-primary-bg: rgb(23, 37, 84); /* deep blue-950 — accent text on it stays legible */
 
-  --color-secondary: rgb(100, 116, 139); /* slate-500 — solid fill carries white content */
-  --color-secondary-hover: rgb(71, 85, 105); /* slate-600 */
-  --color-secondary-content: rgb(255, 255, 255);
-  --color-secondary-bg: rgb(15, 23, 42); /* deep slate-900 — the subtle/secondary surface, so secondary text on it is readable (was slate-600 → gray-on-gray) */
+  --color-secondary: rgb(148, 163, 184); /* slate-400 — light accent: reads as the secondary-button label on the deep bg, with dark content on the solid fill */
+  --color-secondary-hover: rgb(203, 213, 225); /* slate-300 */
+  --color-secondary-content: rgb(15, 23, 42); /* dark text on the light accent */
+  --color-secondary-bg: rgb(15, 23, 42); /* deep slate-900 — the secondary-button surface (was slate-600 → gray-on-gray) */
 
   /* ===== Semantic Colors ===== */
   --color-success: rgb(34, 197, 94); /* bright green-500 */
