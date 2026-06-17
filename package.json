@@ -25,6 +25,10 @@
       "types": "./dist/auth/convex-auth.d.ts",
       "import": "./dist/auth/convex-auth.js"
     },
+    "./i18n": {
+      "types": "./dist/i18n/index.d.ts",
+      "import": "./dist/i18n/index.js"
+    },
     "./styles.css": "./src/index.css"
   },
   "files": [

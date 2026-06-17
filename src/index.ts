@@ -4,10 +4,8 @@
 // imports Convex lives behind a sub-path, so a theme-only consumer never pulls it:
 //   • providers (Convex client + AppProviders + the auth seam) → `my-react-shell/providers`
 //   • Convex Auth default                                       → `my-react-shell/auth/convex`
-//   • i18n seam                                                 → planned
-// App-shell / page-tab primitives are NOT part of this package (dropped in the
-// modular pivot — strategy D8). The dev-harness (src/main.tsx, src/routes/**) is
-// NOT exported.
+//   • i18n (t() seam + missing-key surface, zero-dep)           → `my-react-shell/i18n`
+// The dev-harness (src/main.tsx, src/routes/**) is NOT exported.
 
 // ── theme ───────────────────────────────────────────────────────────────────
 export { ThemeProvider } from './theme/ThemeProvider'
