@@ -89,13 +89,18 @@ Each phase is a commit point.
   theme only. Surfaced by the demo (a theme-only consumer was forced to install
   `convex` via the barrel) — same trap as the router peer; realigns with the Solid
   foundation's optional/isolated Convex (`zing-shell`).
-- [ ] **E — module pattern + core** *(next)* — extract shared `core` types; codify
-  the module contract; write the **module-authoring guide** (how to add a module,
-  the sub-path/optional-peer rule, the self-containment rule).
-- [ ] **F — i18n module** — `t()` / `useT` seam + catalog contract + central-key
-  policy + missing-key dev surface; barrel + sub-path as appropriate; harness route.
-- [ ] **G — guides** — per-module guides (theme, providers, auth, i18n) + the
-  `~/config` optional contract + consumer bootstrapping pointer.
+- [x] **E — module pattern + core** — module contract codified in the
+  **module-authoring guide** ([module-authoring.md](../../guides/module-authoring.md));
+  `core` documented as **empty by design** — no type is shared across modules yet, so
+  no `src/core/` was created; a type is promoted only on rule-of-two. No placeholder.
+- [x] **F — i18n module** — zero-dep `t()` seam at the `my-react-shell/i18n` sub-path:
+  `I18nProvider` + `useTranslation` (+ namespace) over a pure translator (flatten +
+  `{{param}}` + fallback locale), localStorage persistence, browser-locale detection,
+  a dev missing-key surface (`MissingTranslationsOverlay` + `missingKeyStore`), and
+  `translateNow`. Central-key policy in the guide. *Harness showcase route deferred —
+  adding a route needs a dev-server run to regenerate `routeTree.gen.ts` (user-owned).*
+- [x] **G — guides** — per-module guides (theme, providers, auth, i18n) + the
+  `~/config` optional convention (documented in the authoring guide).
 
 ## Exit criteria
 
