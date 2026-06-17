@@ -12,7 +12,7 @@ import type { AuthProviderProps } from './seam'
  * Import path: `my-react-shell/auth/convex`. Pass it to `<AppProviders>`:
  *
  * ```tsx
- * import { AppProviders } from 'my-react-shell'
+ * import { AppProviders } from 'my-react-shell/providers'
  * import { ConvexAuthDefaultProvider } from 'my-react-shell/auth/convex'
  *
  * <AppProviders authProvider={ConvexAuthDefaultProvider}>{…}</AppProviders>
