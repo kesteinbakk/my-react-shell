@@ -1,6 +1,6 @@
 # T002 — De-risk the `link:` dev-loop against duplicate-React crashes
 
-- **Status:** in-progress
+- **Status:** finished (owner-confirmed 2026-06-17)
 - **Filed:** 2026-06-16
 - **Working branch:** `main` (no worktree — cross-repo config + docs, small scope)
 - **Origin:** `background.md` (the approved proposal `react-dedupe-link-dev-loop.md`)
