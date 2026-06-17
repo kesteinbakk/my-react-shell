@@ -24,6 +24,13 @@ the map.
     by me.
   - **Verified:** `tsc -b` green, `pnpm build:lib` emits `dist/app-shell/`, 13
     `defineShellConfig` validator checks pass.
+  - **Adversarially reviewed** (correctness pass over the integration seams + the
+    Solid→React effect translations): all load-bearing contracts confirmed faithful
+    (PageSections URL↔state untrack, edge-triggered write, scroll-container
+    reactivity, LazyContent wait-for-container, AppShell context memo, breadcrumb
+    purity). Three hardening fixes applied — scroll effects key on a stable
+    `hasShell` boolean (not the whole context value), and dead `data-border`/
+    `data-menu-only` attributes removed from the AppShell container.
 - **Docs/decisions:** strategy **D10** (app-shell module; router + Radix as optional
   peers behind the sub-path), amended **D2** (router optional peer) and **D8**
   (un-defer), concept boundary updated.
@@ -61,6 +68,11 @@ the map.
   (`my-react-shell/app-shell/styles.css`), mirroring the theme `styles.css` precedent —
   *not* bundled into `dist` (tsc doesn't copy raw assets). Confirm a real consumer
   resolves the import.
+- **`'/'`-route longest-prefix guard** is present in `PageTabs.findActiveTabId` but not
+  in the three other matchers (`findActiveChain`, `AppMenu`, `AppBottomNav`). Harmless
+  today (`startsWith('//')` never false-matches a normal path), but the four copies of
+  the same rule diverging is a latent footgun if a consumer leans on a `'/'` root page —
+  worth aligning. Left untouched (not a defect; touches code three agents wrote).
 
 ## Suggested cleanup (out-of-scope — NOT touched)
 
