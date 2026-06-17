@@ -65,12 +65,17 @@ function LazyContentInner(props: LazyContentProps): ReactNode {
   // a shell is present we wait (reactively, via the effect's scrollRoot dep) for
   // it to resolve; standalone (no shell) legitimately observes the viewport.
   const shell = useShellContextOptional()
+  // Presence of a shell is stable for the component's lifetime. Key the effect
+  // on this boolean rather than the whole context value, whose identity changes
+  // on every unrelated context update — which would needlessly tear down and
+  // re-create the observer.
+  const hasShell = shell !== null
   const ref = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
     if (visible || !ref.current) return
     const root = props.scrollRoot ?? null
-    if (shell && !root) return // body cell not resolved yet — wait for it (effect re-runs on scrollRoot)
+    if (hasShell && !root) return // body cell not resolved yet — wait for it (effect re-runs on scrollRoot)
     const node = ref.current
     const obs = new IntersectionObserver(
       ([entry]) => {
@@ -83,7 +88,7 @@ function LazyContentInner(props: LazyContentProps): ReactNode {
     )
     obs.observe(node)
     return () => obs.disconnect()
-  }, [visible, shell, props.scrollRoot])
+  }, [visible, hasShell, props.scrollRoot])
 
   return (
     <div ref={ref}>

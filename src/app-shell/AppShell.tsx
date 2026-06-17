@@ -163,7 +163,6 @@ export function AppShell({
   const menuOnLeft = (menuSide ?? 'left') !== 'right'
   const maxWidth = config.pageContainer?.defaultMaxWidth ?? '2xl'
   const containerPadding = contentPadding ?? 'default'
-  const border = config.shellPageHeader?.border ?? true
 
   const brand = (): ReactNode => (config.appNameRender ? config.appNameRender() : config.appName)
   const openMenuLabel = config.labels?.openMenu?.() ?? 'Open menu'
@@ -190,11 +189,7 @@ export function AppShell({
           <div className="mrs-shell__page-area">
             {pageHeaderSpec ? (
               <div className="mrs-shell__chrome">
-                <div
-                  className="mrs-shell__container"
-                  data-border={border}
-                  data-menu-only={false}
-                >
+                <div className="mrs-shell__container">
                   <ShellPageHeaderUI
                     spec={pageHeaderSpec}
                     shell={ctx}

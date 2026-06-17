@@ -94,6 +94,13 @@ export function PageSections(props: PageSectionsProps): ReactNode {
   // stand-alone use (no scrollspy in that case).
   const shell = useShellContextOptional()
   const scrollContainer = shell?.scrollContainer ?? undefined
+  // Whether a shell is present is stable for the component's lifetime (a
+  // PageSections is either inside <AppShell> or it isn't). Derive a boolean so
+  // the scrollspy effect can key on it WITHOUT keying on the whole context
+  // value — which changes identity on every unrelated context update (a
+  // page-header re-registration, a dynamic-pages change), needlessly tearing
+  // down and re-attaching the scroll listener mid-interaction.
+  const hasShell = shell !== null
 
   // Track section DOM elements for scrollspy.
   const sectionRefs = useRef(new Map<string, HTMLElement>())
@@ -278,7 +285,7 @@ export function PageSections(props: PageSectionsProps): ReactNode {
     // refresh / shared link should land directly on it. Shell case waits for the
     // container; standalone (no shell) goes straight to the scrollIntoView
     // fallback.
-    if (!didInitialScroll.current && (sc || !shell)) {
+    if (!didInitialScroll.current && (sc || !hasShell)) {
       didInitialScroll.current = true
       const initial = activeIdRef.current
       if (initial && initial !== props.sections[0]?.id) {
@@ -288,7 +295,7 @@ export function PageSections(props: PageSectionsProps): ReactNode {
 
     return cleanup
     // eslint-disable-next-line react-hooks/exhaustive-deps -- re-run when the body-cell ref resolves
-  }, [mode, scrollContainer, shell])
+  }, [mode, scrollContainer, hasShell])
 
   function handleTabClick(id: string): void {
     setActiveId(id)

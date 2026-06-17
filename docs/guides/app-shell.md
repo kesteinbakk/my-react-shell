@@ -174,3 +174,6 @@ tabs.
   modal, and command-bar/action registry. Wire your own into the `actions` slot.
 - **Scroll-aware code** must read the shell's scroll container (`useShellContext().
   scrollContainer`), not `window` — the body cell is the only scroller.
+- **The page-header `search` slot is seed-once.** Its `initialValue` sets the input's
+  starting text; the input is then self-managed and won't re-sync if `initialValue`
+  changes after mount. Drive your query state from the `onChange` callback.
