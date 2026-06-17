@@ -56,8 +56,10 @@ when a second app needs it (rule of two), it is contributed back as a new module
   become modules. my-react-shell ships the **theme token contract** those components
   render against, not the components.
 - **Not a registry host.** It does not host a shadcn registry or an MCP server.
-- **Not a fixed app-shell.** There is no mandated layout/shell. A shared app-shell
-  may exist later as one *optional* module among others — never the centerpiece.
+- **Not a *fixed* app-shell.** There is no mandated layout/shell. A shared app-shell
+  ships as one *optional* module among others (`my-react-shell/app-shell`, strategy
+  D10) — a consumer uses it, swaps it, or builds its own. Never mandated, never the
+  centerpiece.
 - **Not the SolidJS `foundation`.** That stays the source of truth for SolidJS
   consumers. my-react-shell is the React-era sibling for the reusable-module layer.
 
