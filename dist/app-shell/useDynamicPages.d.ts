@@ -1,0 +1,30 @@
+/**
+ * useDynamicPages — register runtime breadcrumb children under a parent route.
+ *
+ * Routes with a dynamic set of sub-pages (e.g. one per Convex record) call this
+ * to feed the breadcrumb chain `findActiveChain` reads. It takes a PLAIN config
+ * object (not a thunk): the caller already re-renders when its data updates, so
+ * the hook just runs an effect that maps the items to context entries and
+ * registers them, returning the unregister. The effect is keyed on a serialized
+ * digest of the items so it re-registers on content change, not on every render
+ * (callers typically pass a fresh array each render).
+ *
+ * A plain `useEffect` (post-commit) is correct here: SPA has no SSR HTML, so the
+ * SolidJS `createComputed` (synchronous, SSR-correct registration) is moot — the
+ * chain fills in on the same first paint cycle. Each string `label` is wrapped
+ * as `() => label` to stay `PageEntry`-shaped; a missing `icon` defaults to
+ * `'circle'`. Throws (via `useShellContext`) when used outside `<AppShell>`.
+ */
+/** One runtime page — a plain-data shape the hook lifts into a `PageEntry`. */
+export interface DynamicPageInput {
+    id: string;
+    label: string;
+    route: string;
+    icon?: string;
+}
+export interface DynamicPagesConfig {
+    parent: string;
+    items: DynamicPageInput[];
+}
+/** Register `config.items` as breadcrumb children of `config.parent`. */
+export declare function useDynamicPages(config: DynamicPagesConfig): void;

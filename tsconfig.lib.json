@@ -1,10 +1,12 @@
 {
   // Library emit config — compiles the importable package surface (src/, minus the
-  // dev-harness) to dist/ as JS + .d.ts. Run by `prepare` so a consumer installing
-  // the Bitbucket git-dependency gets compiled output, like a published npm package.
-  // The harness (main.tsx, routes/**, routeTree.gen.ts) is excluded — consumers
-  // never receive it. This config is standalone (not in tsconfig.json references),
-  // so `tsc -b` typecheck and `vite build` never trigger a dist emit.
+  // dev-harness) to dist/ as JS + .d.ts. Run by `build:lib`; the emitted dist/ is
+  // committed and shipped to git-dep consumers, who run no build on install. Source
+  // maps are off so the committed dist/ stays small and self-contained (src/ TS is
+  // not shipped, so maps would dangle). The harness (main.tsx, routes/**,
+  // routeTree.gen.ts) is excluded — consumers never receive it. This config is
+  // standalone (not in tsconfig.json references), so `tsc -b` typecheck and
+  // `vite build` never trigger a dist emit.
   "compilerOptions": {
     "target": "ESNext",
     "lib": ["ESNext", "DOM", "DOM.Iterable"],
@@ -19,8 +21,8 @@
     "skipLibCheck": true,
 
     "declaration": true,
-    "declarationMap": true,
-    "sourceMap": true,
+    "declarationMap": false,
+    "sourceMap": false,
     "outDir": "./dist",
     "rootDir": "./src"
   },

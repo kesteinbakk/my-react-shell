@@ -1,5 +1,6 @@
 node_modules/
-dist/
+# dist/ is committed — it ships to git-dep consumers, who run no build on install.
+# See docs/guides/distribution-model.md. (dist-harness/ is the harness build; never shipped.)
 dist-harness/
 .env
 .env.*

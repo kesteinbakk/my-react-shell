@@ -1,60 +1,95 @@
 #!/bin/sh
-# pre-commit — committed-link guard.
-#
-# Rejects committing a local `link:` / `file:` dependency specifier in any staged
-# package.json. Such a specifier is for the LOCAL dev-loop only (point a consumer
-# at a local checkout while iterating); committing it breaks every other clone and
-# all Vercel/CI installs, because the path won't exist there.
+# pre-commit — two guards for the git-dep distribution model:
+#   (1) committed-link guard — reject a local link:/file: dependency specifier.
+#   (2) dist/ freshness guard — keep the committed dist/ in lockstep with src/.
 # See docs/guides/distribution-model.md.
 #
 # Enable once per clone:  pnpm setup:hooks   (sets core.hooksPath to .githooks)
 # Bypass intentionally:   git commit --no-verify
 
+# ---------------------------------------------------------------------------
+# (1) committed-link guard
+#
+# A link:/file: specifier is for the LOCAL dev-loop only (point a consumer at a
+# local checkout while iterating); committing it breaks every other clone and all
+# Vercel/CI installs, because the path won't exist there.
+# ---------------------------------------------------------------------------
 staged_pkgs=$(git diff --cached --name-only --diff-filter=ACM | grep -E '(^|/)package\.json$')
-[ -z "$staged_pkgs" ] && exit 0
-
-# Node is the precise check (parses JSON, inspects only dependency fields). If it
-# is somehow unavailable, fall open rather than block every commit — the project
-# cannot build without node anyway, so its absence is its own louder failure.
-if ! command -v node >/dev/null 2>&1; then
-  echo "pre-commit: node not found — skipping committed-link guard." >&2
-  exit 0
-fi
-
-fail=0
-for f in $staged_pkgs; do
-  bad=$(git show ":$f" 2>/dev/null | node --input-type=module -e '
-    let s = ""
-    process.stdin.on("data", (d) => (s += d))
-    process.stdin.on("end", () => {
-      let pkg
-      try { pkg = JSON.parse(s) } catch { process.exit(0) }
-      const fields = ["dependencies", "devDependencies", "peerDependencies", "optionalDependencies"]
-      const bad = []
-      for (const field of fields) {
-        const deps = pkg[field] || {}
-        for (const [name, spec] of Object.entries(deps)) {
-          if (typeof spec === "string" && /^(link|file):/.test(spec)) {
-            bad.push(`  ${field}.${name} = "${spec}"`)
+if [ -n "$staged_pkgs" ]; then
+  # Node is the precise check (parses JSON, inspects only dependency fields). If it
+  # is somehow unavailable, fall open rather than block every commit — the project
+  # cannot build without node anyway, so its absence is its own louder failure.
+  if command -v node >/dev/null 2>&1; then
+    fail=0
+    for f in $staged_pkgs; do
+      bad=$(git show ":$f" 2>/dev/null | node --input-type=module -e '
+        let s = ""
+        process.stdin.on("data", (d) => (s += d))
+        process.stdin.on("end", () => {
+          let pkg
+          try { pkg = JSON.parse(s) } catch { process.exit(0) }
+          const fields = ["dependencies", "devDependencies", "peerDependencies", "optionalDependencies"]
+          const bad = []
+          for (const field of fields) {
+            const deps = pkg[field] || {}
+            for (const [name, spec] of Object.entries(deps)) {
+              if (typeof spec === "string" && /^(link|file):/.test(spec)) {
+                bad.push(`  ${field}.${name} = "${spec}"`)
+              }
+            }
           }
-        }
-      }
-      if (bad.length) { console.log(bad.join("\n")); process.exit(1) }
-      process.exit(0)
-    })
-  ')
-  if [ -n "$bad" ]; then
-    echo "✖ committed-link guard: staged $f contains a local link:/file: specifier:" >&2
-    echo "$bad" >&2
-    fail=1
+          if (bad.length) { console.log(bad.join("\n")); process.exit(1) }
+          process.exit(0)
+        })
+      ')
+      if [ -n "$bad" ]; then
+        echo "✖ committed-link guard: staged $f contains a local link:/file: specifier:" >&2
+        echo "$bad" >&2
+        fail=1
+      fi
+    done
+    if [ "$fail" -ne 0 ]; then
+      echo "" >&2
+      echo "A link:/file: specifier is for the local dev-loop only — it breaks other" >&2
+      echo "clones and all Vercel/CI installs. Restore the git/version specifier before" >&2
+      echo "committing (intentional bypass: git commit --no-verify)." >&2
+      exit 1
+    fi
+  else
+    echo "pre-commit: node not found — skipping committed-link guard." >&2
   fi
-done
-
-if [ "$fail" -ne 0 ]; then
-  echo "" >&2
-  echo "A link:/file: specifier is for the local dev-loop only — it breaks other" >&2
-  echo "clones and all Vercel/CI installs. Restore the git/version specifier before" >&2
-  echo "committing (intentional bypass: git commit --no-verify)." >&2
-  exit 1
 fi
+
+# ---------------------------------------------------------------------------
+# (2) dist/ freshness guard
+#
+# dist/ is committed and shipped to git-dep consumers, who run NO build on install,
+# so the committed dist/ must match src/. When a commit stages library source (src/,
+# excluding the dev-harness), rebuild dist/ and stage it — so every commit, and thus
+# every release tag, carries output that matches its source.
+#
+# Caveat: the rebuild compiles the WORKING tree, so stage library changes wholesale
+# rather than partially (git add -p). `tsc` does not prune, so after deleting or
+# renaming a src module, do a clean rebuild once: rm -rf dist && pnpm build:lib &&
+# git add dist. Bypass this guard with: git commit --no-verify.
+# ---------------------------------------------------------------------------
+lib_src=$(git diff --cached --name-only --diff-filter=ACMR \
+  | grep -E '^src/.*\.(ts|tsx)$' \
+  | grep -vE '^src/main\.tsx$|^src/routes/|^src/routeTree\.gen\.ts$|\.test-d\.ts$')
+
+if [ -n "$lib_src" ]; then
+  if ! command -v pnpm >/dev/null 2>&1; then
+    echo "pre-commit: pnpm not found — skipping dist/ freshness rebuild." >&2
+    echo "  Library source is staged but dist/ was not rebuilt; build it before tagging." >&2
+    exit 0
+  fi
+  echo "pre-commit: library source changed — rebuilding dist/ (pnpm build:lib)…" >&2
+  if ! out=$(pnpm build:lib 2>&1); then
+    echo "✖ dist/ freshness guard: pnpm build:lib failed — refusing to commit a stale dist/:" >&2
+    echo "$out" >&2
+    exit 1
+  fi
+  git add dist
+fi
+
 exit 0
