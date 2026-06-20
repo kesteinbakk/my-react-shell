@@ -94,3 +94,212 @@
   border-color: var(--color-danger-border);
   color: var(--color-danger-strong);
 }
+
+/* ── Spinner ─────────────────────────────────────────────────────────────── */
+@keyframes mrs-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.mrs-spinner {
+  display: inline-block;
+  border-radius: 50%;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  opacity: 0.7;
+  animation: mrs-spin 0.6s linear infinite;
+  vertical-align: -0.125em;
+}
+.mrs-spinner--sm {
+  width: 0.875rem;
+  height: 0.875rem;
+}
+.mrs-spinner--md {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+.mrs-spinner--lg {
+  width: 2rem;
+  height: 2rem;
+  border-width: 3px;
+}
+
+.mrs-spinner-page,
+.mrs-spinner-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-muted);
+}
+.mrs-spinner-page {
+  min-height: 60vh;
+}
+.mrs-spinner-section {
+  padding: 2rem;
+}
+
+/* ── EmptyState ──────────────────────────────────────────────────────────── */
+.mrs-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.5rem;
+  padding: 2.5rem 1.5rem;
+}
+.mrs-empty__icon {
+  margin-bottom: 0.25rem;
+  color: var(--color-text-muted);
+}
+.mrs-empty__icon svg {
+  width: 2.5rem;
+  height: 2.5rem;
+}
+.mrs-empty__title {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+.mrs-empty__desc {
+  max-width: 28rem;
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+}
+.mrs-empty__action {
+  margin-top: 0.75rem;
+}
+
+/* ── InfoBox (neutral, tone-free) ────────────────────────────────────────── */
+.mrs-infobox {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.625rem;
+  padding: 0.75rem 0.875rem;
+  border: 1px solid var(--color-border-primary);
+  border-radius: 0.5rem;
+  background: var(--color-surface-secondary);
+  color: var(--color-text-secondary);
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+.mrs-infobox__icon {
+  flex-shrink: 0;
+  margin-top: 0.0625rem;
+  color: var(--color-text-muted);
+}
+.mrs-infobox__icon svg {
+  width: 1.125rem;
+  height: 1.125rem;
+}
+.mrs-infobox__content {
+  flex: 1;
+  min-width: 0;
+}
+.mrs-infobox__title {
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+.mrs-infobox__title + .mrs-infobox__body {
+  margin-top: 0.125rem;
+}
+
+/* ── ConfirmDialog ───────────────────────────────────────────────────────── */
+.mrs-dialog__overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: var(--color-overlay);
+}
+.mrs-dialog {
+  position: fixed;
+  z-index: 51;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: calc(100vw - 2rem);
+  max-width: 26rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1.25rem;
+  border: 1px solid var(--color-border-primary);
+  border-radius: 0.75rem;
+  background: var(--color-surface-elevated);
+  color: var(--color-text-primary);
+  box-shadow: 0 10px 30px var(--color-shadow-lg);
+}
+.mrs-dialog__title {
+  font-size: 1.0625rem;
+  font-weight: 500;
+  color: var(--color-text-heading);
+}
+.mrs-dialog__desc {
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--color-text-secondary);
+}
+.mrs-dialog__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+.mrs-dialog__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 2.25rem;
+  padding: 0 0.875rem;
+  border: 1px solid transparent;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color 120ms ease, opacity 120ms ease;
+}
+.mrs-dialog__btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.mrs-dialog__btn--ghost {
+  background: transparent;
+  border-color: var(--color-border-primary);
+  color: var(--color-text-primary);
+}
+.mrs-dialog__btn--ghost:hover:not(:disabled) {
+  background: var(--color-hover);
+}
+.mrs-dialog__btn--primary {
+  background: var(--color-primary);
+  color: var(--color-primary-content);
+}
+.mrs-dialog__btn--primary:hover:not(:disabled) {
+  background: var(--color-primary-hover);
+}
+.mrs-dialog__btn--danger {
+  background: var(--color-danger);
+  color: var(--color-danger-content);
+}
+.mrs-dialog__btn--danger:hover:not(:disabled) {
+  background: var(--color-danger-hover);
+}
+
+/* ── Toast ───────────────────────────────────────────────────────────────── */
+.mrs-toast-viewport {
+  position: fixed;
+  z-index: 60;
+  right: 1rem;
+  bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: min(22rem, calc(100vw - 2rem));
+  pointer-events: none;
+}
+.mrs-toast {
+  pointer-events: auto;
+  border-radius: 0.5rem;
+  box-shadow: 0 8px 24px var(--color-shadow-md);
+}

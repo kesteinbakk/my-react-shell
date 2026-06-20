@@ -20,9 +20,10 @@ Popover) are **not** shipped: use shadcn directly for those. The demo's
 `ComponentSections` shows the plain shadcn primitives; the demo's **Kit** page shows
 this module.
 
-Shipped today: **`Alert`**. The kit grows per T004 (ConfirmDialog, Toast, InfoBox,
-EmptyState, Spinner, Card, Badge, Chip, Avatar, Table, InputField, Select,
-SegmentedControl).
+Shipped today: **`Alert`**, **`InfoBox`**, **`EmptyState`**, **`Spinner`** (+
+`PageSpinner` / `SectionSpinner`), **`ConfirmDialog`**, and the **`Toast`** system
+(`ToastProvider` + `useToast`). The kit grows per T004 (Card, Badge, Chip, Avatar,
+Table, InputField, Select, SegmentedControl).
 
 ## Wire it
 
@@ -63,6 +64,45 @@ a per-tone leading icon and an optional dismiss control.
 | `dismissLabel` | `'Dismiss'` | Accessible label for the dismiss button. |
 | `role` | `'alert'` | `alert` (assertive) or `status` (non-urgent). |
 | `className` | — | Extra classes, merged via `cn()`. |
+
+## Other feedback components
+
+- **`Spinner`** / **`PageSpinner`** / **`SectionSpinner`** — a rotating indicator on the
+  current text color; the block variants center it for a page or section loading state.
+- **`InfoBox`** — a neutral, tone-free contextual note (icon + title + body). Reach for
+  `Alert` when the message carries a semantic tone.
+- **`EmptyState`** — centered zero-state: optional icon, required title, description, and
+  an action slot.
+- **`ConfirmDialog`** — a controlled confirmation dialog on Radix Dialog (overlay, focus
+  trap, Esc / backdrop close). `variant="danger"` makes the confirm destructive; it
+  renders its own confirm / cancel buttons.
+
+  ```tsx
+  const [open, setOpen] = useState(false)
+  <ConfirmDialog
+    open={open}
+    onOpenChange={setOpen}
+    title="Delete this item?"
+    description="This cannot be undone."
+    variant="danger"
+    confirmLabel="Delete"
+    onConfirm={() => { setOpen(false); /* … */ }}
+  />
+  ```
+
+- **`Toast`** — mount `<ToastProvider>` once near the app root, then fire toasts
+  imperatively from any descendant via `useToast()`. Each toast renders as an `Alert` and
+  auto-dismisses (default 5s; `duration: 0` keeps it until dismissed).
+
+  ```tsx
+  // near the root
+  <ToastProvider><App /></ToastProvider>
+
+  // anywhere inside
+  const toast = useToast()
+  toast.success('Saved', { title: 'Success' })
+  toast.error('Something went wrong')
+  ```
 
 ## How it's built
 
