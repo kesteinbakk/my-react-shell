@@ -25,5 +25,5 @@
     "rootDir": "./src"
   },
   "include": ["src"],
-  "exclude": ["src/main.tsx", "src/routes", "src/routeTree.gen.ts"]
+  "exclude": ["src/main.tsx", "src/routes", "src/routeTree.gen.ts", "src/**/*.test-d.ts"]
 }

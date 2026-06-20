@@ -21,12 +21,20 @@ export interface LocaleInfo {
   label: string
 }
 
-/** The translation function. Resolves a (namespaced) key to a string. */
-export type TFunction = (key: string, params?: TranslateParams) => string
+/**
+ * The translation function. Resolves a (namespaced) key to a string.
+ *
+ * `K` is the accepted key type — it **defaults to `string`**, so the untyped
+ * seam (`t('any.dotted.key')`) is unchanged. A consumer binds `K` to its own
+ * key union (directly, or via `createTypedI18n<K>()`) to make a bad key a
+ * compile error. Narrowing `K` never changes the runtime — the context always
+ * carries a `string`-keyed translator; the bound type is a compile-time view.
+ */
+export type TFunction<K extends string = string> = (key: K, params?: TranslateParams) => string
 
-export interface I18nContextValue {
+export interface I18nContextValue<K extends string = string> {
   /** Translate a key in the active locale. */
-  t: TFunction
+  t: TFunction<K>
   /** The active locale code. */
   locale: Locale
   /** Locales this app exposes. */
@@ -35,6 +43,9 @@ export interface I18nContextValue {
   setLocale: (locale: Locale) => void
 }
 
+// The context identity is untyped (`string`-keyed); the hooks/factory narrow the
+// read view to a bound `K`. One context, one runtime value — never re-created per
+// key type.
 export const I18nContext = createContext<I18nContextValue | null>(null)
 
 /** Read the i18n context. Throws if used outside <I18nProvider>. */

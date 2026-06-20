@@ -20,6 +20,23 @@ export interface Messages {
 export type FlatMessages = Record<string, string>
 
 /**
+ * The dotted-path string-literal union of a nested catalog type — the type-level
+ * mirror of `flattenMessages`. `{ a: { b: 'x' }, c: 'y' }` → `'a.b' | 'c'`.
+ *
+ * Pure type; no runtime. A consumer with a nested catalog derives the key union
+ * for `createTypedI18n` from the catalog itself:
+ * `createTypedI18n<DotPaths<typeof en>>()`. A consumer that already keeps a flat
+ * key union (e.g. evaluering's `DictKey`) passes that directly and never needs this.
+ */
+export type DotPaths<T> = T extends string
+  ? never
+  : {
+      [K in keyof T & string]: T[K] extends string
+        ? K
+        : `${K}.${DotPaths<T[K]>}`
+    }[keyof T & string]
+
+/**
  * Flatten a nested catalog into dotted-path keys.
  * `{ a: { b: 'x' } }` → `{ 'a.b': 'x' }`.
  */

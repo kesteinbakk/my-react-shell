@@ -10,6 +10,7 @@
  */
 
 import type { TFunction } from './i18nContext'
+import type { TranslateParams } from './translate'
 
 let active: TFunction | null = null
 
@@ -18,7 +19,13 @@ export function setActiveTranslator(translator: TFunction | null): void {
   active = translator
 }
 
-export const translateNow: TFunction = (key, params) => {
+/**
+ * Imperative translate. `K` is the accepted key type and **defaults to `string`**,
+ * so `translateNow('x')` is unchanged. The factory (`createTypedI18n`) re-exports
+ * a `K`-bound `translateNow` so imperative callers get the same compile-time key
+ * safety as the hook. Narrowing is compile-time only — one runtime translator.
+ */
+export function translateNow<K extends string = string>(key: K, params?: TranslateParams): string {
   if (active === null) return key
   return active(key, params)
 }

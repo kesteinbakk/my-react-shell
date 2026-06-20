@@ -11,16 +11,20 @@
 export { I18nProvider } from './I18nProvider'
 export type { I18nProviderProps } from './I18nProvider'
 export { useTranslation, useI18n } from './useTranslation'
-export type { UseTranslationResult } from './useTranslation'
+export type { NamespacedKeys, UseTranslationResult } from './useTranslation'
 export { useI18nContext } from './i18nContext'
 export type { I18nContextValue, Locale, LocaleInfo, TFunction } from './i18nContext'
+
+// ── typed keys (opt-in, compile-time) ─────────────────────────────────────────
+export { createTypedI18n } from './createTypedI18n'
+export type { TypedI18n } from './createTypedI18n'
 
 // ── imperative translation ────────────────────────────────────────────────────
 export { translateNow } from './translateNow'
 
 // ── translator core (pure) ────────────────────────────────────────────────────
 export { flattenMessages, interpolate, mergeMessages } from './translate'
-export type { FlatMessages, Messages, TranslateParams } from './translate'
+export type { DotPaths, FlatMessages, Messages, TranslateParams } from './translate'
 
 // ── dev missing-key surface ───────────────────────────────────────────────────
 export { MissingTranslationsOverlay } from './MissingTranslationsOverlay'
