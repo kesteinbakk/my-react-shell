@@ -2,73 +2,29 @@ import { createFileRoute } from '@tanstack/react-router'
 import { useTheme } from '../index'
 
 export const Route = createFileRoute('/')({
-  component: ThemePlayground,
+  component: ThemeSmokeTest,
 })
 
-// Token groups rendered as swatches, to verify every palette resolves the
-// contract in both modes. Names are the `--color-<name>` suffix.
-const SURFACE_TOKENS = [
-  'surface-primary',
-  'surface-secondary',
-  'surface-tertiary',
-  'surface-elevated',
-  'surface-neutral',
-  'background-primary',
-  'background-secondary',
-]
-const BORDER_TOKENS = ['border-primary', 'border-secondary', 'border-hover']
-const BRAND_TOKENS = ['primary', 'primary-hover', 'primary-active', 'secondary', 'secondary-hover']
-const SEMANTIC_TOKENS = ['success', 'warning', 'danger', 'info']
-const ACCENT_TOKENS = ['accent-sky', 'accent-emerald', 'accent-amber', 'accent-violet', 'accent-rose']
-const TEXT_TOKENS = ['text-primary', 'text-secondary', 'text-tertiary', 'text-muted', 'text-heading']
-
-function ColorSwatch({ token }: { token: string }) {
-  return (
-    <div className="flex flex-col gap-1">
-      <div
-        className="h-12 rounded-md"
-        style={{
-          backgroundColor: `var(--color-${token})`,
-          border: '1px solid var(--color-border-primary)',
-        }}
-      />
-      <code className="text-xs" style={{ color: 'var(--color-text-tertiary)' }}>
-        {token}
-      </code>
-    </div>
-  )
-}
-
-function SwatchGroup({ title, tokens }: { title: string; tokens: readonly string[] }) {
-  return (
-    <section className="flex flex-col gap-3">
-      <h2 className="text-sm font-semibold uppercase tracking-wide" style={{ color: 'var(--color-text-secondary)' }}>
-        {title}
-      </h2>
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-5">
-        {tokens.map((t) => (
-          <ColorSwatch key={t} token={t} />
-        ))}
-      </div>
-    </section>
-  )
-}
-
-function ThemePlayground() {
+// The harness's in-browser theme/provider behavior check (strategy D7): drive the
+// live useTheme() controls — palette select, light/dark, follow-system, cycle —
+// and eyeball one elevated surface to catch FOUC, system-follow, persistence, and
+// palette resolution that typecheck can't. The full per-token palette reference is
+// the demo's job (my-react-shell-demo → PaletteReference), not the harness.
+function ThemeSmokeTest() {
   const { theme, mode, isDark, isSystemMode, themes, setTheme, toggleMode, setSystemMode, cycleTheme } =
     useTheme()
 
   return (
-    <main className="mx-auto flex max-w-5xl flex-col gap-8 p-8">
+    <main className="mx-auto flex max-w-3xl flex-col gap-8 p-8">
       <header className="flex flex-col gap-1">
-        <h1 className="text-2xl font-semibold">my-react-shell · theme playground</h1>
+        <h1 className="text-2xl font-semibold">my-react-shell · theme smoke-test</h1>
         <p className="text-sm" style={{ color: 'var(--color-text-tertiary)' }}>
           Active: <strong>{theme}</strong> · <strong>{mode}</strong>
           {isSystemMode ? ' (following system)' : ''}
         </p>
       </header>
 
-      {/* Palette selector */}
+      {/* Palette selector — exercises setTheme + live re-theming */}
       <section className="flex flex-col gap-3">
         <h2 className="text-sm font-semibold uppercase tracking-wide" style={{ color: 'var(--color-text-secondary)' }}>
           Palette
@@ -96,7 +52,7 @@ function ThemePlayground() {
         </div>
       </section>
 
-      {/* Mode + system controls */}
+      {/* Mode + system controls — toggleMode / setSystemMode / cycleTheme */}
       <section className="flex flex-wrap items-center gap-2">
         <button
           type="button"
@@ -136,7 +92,8 @@ function ThemePlayground() {
         </button>
       </section>
 
-      {/* Elevated-surface sample card */}
+      {/* One elevated surface — eyeball that the active palette resolves, reads in
+          both modes, and applies without a flash. */}
       <section
         className="rounded-lg p-5"
         style={{
@@ -152,30 +109,11 @@ function ThemePlayground() {
           Body text in <span style={{ color: 'var(--color-text-primary)' }}>primary</span>,{' '}
           <span style={{ color: 'var(--color-text-secondary)' }}>secondary</span>, and{' '}
           <span style={{ color: 'var(--color-text-muted)' }}>muted</span> tones, plus a{' '}
-          <a href="#playground" className="link">
+          <a href="#smoke-test" className="link">
             themed link
           </a>
           .
         </p>
-      </section>
-
-      <SwatchGroup title="Surfaces & backgrounds" tokens={SURFACE_TOKENS} />
-      <SwatchGroup title="Borders" tokens={BORDER_TOKENS} />
-      <SwatchGroup title="Brand" tokens={BRAND_TOKENS} />
-      <SwatchGroup title="Semantic" tokens={SEMANTIC_TOKENS} />
-      <SwatchGroup title="Accents" tokens={ACCENT_TOKENS} />
-
-      <section className="flex flex-col gap-3">
-        <h2 className="text-sm font-semibold uppercase tracking-wide" style={{ color: 'var(--color-text-secondary)' }}>
-          Text hierarchy
-        </h2>
-        <div className="flex flex-col gap-1">
-          {TEXT_TOKENS.map((t) => (
-            <span key={t} style={{ color: `var(--color-${t})` }} className="text-base">
-              {t} — The quick brown fox jumps over the lazy dog
-            </span>
-          ))}
-        </div>
       </section>
     </main>
   )
