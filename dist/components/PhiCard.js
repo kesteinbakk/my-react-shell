@@ -30,16 +30,20 @@ function PhiCardMenu({ actions, icon, label, }) {
     return (_jsxs(DropdownMenu.Root, { children: [_jsx(DropdownMenu.Trigger, { asChild: true, children: _jsx("button", { type: "button", className: "mrs-phi-card__menu-trigger", "aria-label": label, children: icon ?? DEFAULT_MENU_GLYPH }) }), _jsx(DropdownMenu.Portal, { children: _jsx(DropdownMenu.Content, { className: "mrs-phi-card__menu", align: "end", sideOffset: 4, children: actions.map((action) => (_jsxs(DropdownMenu.Item, { className: cn('mrs-phi-card__menu-item', action.destructive && 'mrs-phi-card__menu-item--danger'), disabled: action.disabled, onSelect: () => action.onSelect(), children: [action.icon != null ? (_jsx("span", { className: "mrs-phi-card__menu-icon", children: action.icon })) : null, _jsx("span", { children: action.label })] }, action.label))) }) })] }));
 }
 /**
- * Golden-ratio card with two consumer-owned sections. Width is the only size knob —
- * height (width / φ) and the φ:1 section split derive from it. The bottom section
- * collapses when empty; an optional top-right overflow menu takes consumer-supplied
- * actions. See the components guide for examples.
+ * Golden-ratio card with two consumer-owned sections. Width is the only size knob;
+ * height (= width / φ) and the φ:1 split derive from it, and with no bottom section
+ * the card shrinks to the top band's height (width / φ²) — shorter by exactly the
+ * bottom split. An optional top-right overflow menu takes consumer-supplied actions.
  */
 export function PhiCard({ upper, image, imageAlt = '', icon, lower, size = 'md', actions, menuIcon, menuLabel = 'Actions', corner, leftBorderColor, onClick, hoverable, className, }) {
     const width = SIZE_WIDTH_PX[size];
-    const height = width / PHI;
-    const isHoverable = hoverable ?? !!onClick;
     const hasLower = !isEmpty(lower);
+    // No bottom section → the card collapses to the top band's height (W/φ²) — shorter
+    // by exactly the bottom split — NOT a full-height φ:1 box with the top content
+    // centered in the leftover space. (Full card H = W/φ; the φ:1 split makes the top
+    // band W/φ², so a collapsed card ends right where the split was.)
+    const height = hasLower ? width / PHI : width / (PHI * PHI);
+    const isHoverable = hoverable ?? !!onClick;
     // Top section content: an `image` (full-bleed) or `icon` (centered figure) takes
     // it over for the figure-over-content pattern; otherwise it's the `upper` node.
     const topContent = image ? (_jsx("img", { className: "mrs-phi-card__image", src: image, alt: imageAlt })) : !isEmpty(icon) ? (_jsx("div", { className: "mrs-phi-card__figure", children: icon })) : (upper);

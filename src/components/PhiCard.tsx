@@ -60,9 +60,9 @@ export interface PhiCardProps {
   icon?: ReactNode
   /**
    * Bottom section, same contract as `upper`. When it's empty (absent / `null` /
-   * `false`) the section is **not rendered at all** — the top section fills the
-   * whole card, and the outer φ:1 ratio is kept so collapsed cards still line up
-   * in a grid.
+   * `false`) the section is **not rendered at all** and the **card shrinks to the
+   * top band's height** (`width / φ²`) — shorter by exactly the bottom split, not a
+   * full-height card with the top content centered.
    */
   lower?: ReactNode
   /** Width preset. Height auto-derives as width / φ. Default: `'md'`. */
@@ -148,10 +148,10 @@ function PhiCardMenu({
 }
 
 /**
- * Golden-ratio card with two consumer-owned sections. Width is the only size knob —
- * height (width / φ) and the φ:1 section split derive from it. The bottom section
- * collapses when empty; an optional top-right overflow menu takes consumer-supplied
- * actions. See the components guide for examples.
+ * Golden-ratio card with two consumer-owned sections. Width is the only size knob;
+ * height (= width / φ) and the φ:1 split derive from it, and with no bottom section
+ * the card shrinks to the top band's height (width / φ²) — shorter by exactly the
+ * bottom split. An optional top-right overflow menu takes consumer-supplied actions.
  */
 export function PhiCard({
   upper,
@@ -170,9 +170,13 @@ export function PhiCard({
   className,
 }: PhiCardProps) {
   const width = SIZE_WIDTH_PX[size]
-  const height = width / PHI
-  const isHoverable = hoverable ?? !!onClick
   const hasLower = !isEmpty(lower)
+  // No bottom section → the card collapses to the top band's height (W/φ²) — shorter
+  // by exactly the bottom split — NOT a full-height φ:1 box with the top content
+  // centered in the leftover space. (Full card H = W/φ; the φ:1 split makes the top
+  // band W/φ², so a collapsed card ends right where the split was.)
+  const height = hasLower ? width / PHI : width / (PHI * PHI)
+  const isHoverable = hoverable ?? !!onClick
 
   // Top section content: an `image` (full-bleed) or `icon` (centered figure) takes
   // it over for the figure-over-content pattern; otherwise it's the `upper` node.

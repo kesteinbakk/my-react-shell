@@ -47,9 +47,9 @@ export interface PhiCardProps {
     icon?: ReactNode;
     /**
      * Bottom section, same contract as `upper`. When it's empty (absent / `null` /
-     * `false`) the section is **not rendered at all** — the top section fills the
-     * whole card, and the outer φ:1 ratio is kept so collapsed cards still line up
-     * in a grid.
+     * `false`) the section is **not rendered at all** and the **card shrinks to the
+     * top band's height** (`width / φ²`) — shorter by exactly the bottom split, not a
+     * full-height card with the top content centered.
      */
     lower?: ReactNode;
     /** Width preset. Height auto-derives as width / φ. Default: `'md'`. */
@@ -79,9 +79,9 @@ export interface PhiCardProps {
     className?: string;
 }
 /**
- * Golden-ratio card with two consumer-owned sections. Width is the only size knob —
- * height (width / φ) and the φ:1 section split derive from it. The bottom section
- * collapses when empty; an optional top-right overflow menu takes consumer-supplied
- * actions. See the components guide for examples.
+ * Golden-ratio card with two consumer-owned sections. Width is the only size knob;
+ * height (= width / φ) and the φ:1 split derive from it, and with no bottom section
+ * the card shrinks to the top band's height (width / φ²) — shorter by exactly the
+ * bottom split. An optional top-right overflow menu takes consumer-supplied actions.
  */
 export declare function PhiCard({ upper, image, imageAlt, icon, lower, size, actions, menuIcon, menuLabel, corner, leftBorderColor, onClick, hoverable, className, }: PhiCardProps): import("react").JSX.Element;

@@ -322,8 +322,8 @@ preset, pass a custom `icon` node (a lucide icon or an `<Icon>` from `my-react-s
 A golden-ratio card: outer **W:H = φ:1**, two sections split **φ:1**. You own the content
 of each section — they're **full-bleed** (a single cell that stretches your node to fill, so
 a figure/image fills edge-to-edge; add your own padding for inset content). The **bottom
-section collapses when empty** (`lower` absent / `null` / `false` → not rendered, the top
-fills, outer φ:1 kept so cards still line up in a grid). Width is the only size knob; `PHI`
+section collapses when empty** (`lower` absent / `null` / `false` → not rendered; the card
+**shrinks to the top band's height** `W/φ²`, shorter by exactly the bottom split). Width is the only size knob; `PHI`
 (`1.6180339887`) is exported so you can size layouts against it (height = width / φ).
 For a figure-over-content card, pass **`image`** (full-bleed, `object-fit: cover`) or
 **`icon`** (centered) — it renders the top section full-width, with `lower` the content
@@ -342,7 +342,7 @@ labels. The corner never triggers a clickable card's `onClick`.
 | `image` | — | Image URL rendered full-bleed (`object-fit: cover`) as the top section. Takes precedence over `icon`/`upper`. |
 | `imageAlt` | `''` | Alt text for `image` (decorative by default). |
 | `icon` | — | Icon/figure node rendered centered, full-width, as the top section (when there's no `image`). Takes precedence over `upper`. |
-| `lower` | — | Bottom section content. Empty → the section isn't rendered (card collapses to the top, φ:1 kept). |
+| `lower` | — | Bottom section content. Empty → not rendered; the card shrinks to the top band's height (`W/φ²`), shorter by exactly the bottom split. |
 | `size` | `'md'` | Width preset — `sm`·`md`·`lg`·`xl` = 180/240/320/480px. Height = width / φ. |
 | `actions` | — | Items for the built-in ⋮ menu: `{ icon?, label, onSelect, destructive?, disabled? }[]`. Empty/absent → no menu. Ignored when `corner` is set. |
 | `menuIcon` | ⋮ | Override the menu trigger glyph. |

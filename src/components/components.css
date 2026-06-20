@@ -1018,7 +1018,8 @@
   transition: box-shadow 200ms ease;
 }
 .mrs-phi-card--single {
-  grid-template-rows: 1fr; /* bottom section absent → top fills; outer φ:1 kept by inline height */
+  grid-template-rows: 1fr; /* bottom section absent → the single row fills the card,
+                              whose inline height is already collapsed to the top band (W/φ²) */
 }
 .mrs-phi-card--hoverable {
   cursor: pointer;

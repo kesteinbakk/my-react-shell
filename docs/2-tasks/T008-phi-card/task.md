@@ -31,8 +31,8 @@ Split:  upperH : lowerH = φ : 1    (the two sections)
   renders the **top** section full-width (figure-over-content), with `lower` below.
   Precedence for the top section: `image` > `icon` > `upper`.
 - **Bottom collapses when empty** — `lower` absent / `null` / `false` → the section is not
-  rendered; the top fills the card and the outer φ:1 ratio is kept (so collapsed cards
-  still line up in a grid). Replaces the old `singleBand` prop.
+  rendered and the **card shrinks to the top band's height** (`width / φ²`), shorter by
+  exactly the bottom split. Replaces the old `singleBand` prop.
 - **Top-right overflow menu** — `actions: PhiCardAction[]` → a ⋮ trigger opening a Radix
   `DropdownMenu` (reuses the already-declared `@radix-ui/react-dropdown-menu` optional
   peer — no new dependency). No actions → no trigger. The card owns placement + the menu
