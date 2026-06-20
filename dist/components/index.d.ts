@@ -20,6 +20,8 @@ export { Avatar, AvatarGroup } from './Avatar';
 export type { AvatarProps, AvatarGroupProps, AvatarSize } from './Avatar';
 export { Table } from './Table';
 export type { TableProps, TableColumn } from './Table';
+export { PhiCard, PHI } from './PhiCard';
+export type { PhiCardProps, PhiCardSize } from './PhiCard';
 export { InputField } from './InputField';
 export type { InputFieldProps } from './InputField';
 export { SegmentedControl } from './SegmentedControl';

@@ -23,12 +23,13 @@ this module.
 Shipped today: **`Alert`**, **`InfoBox`**, **`EmptyState`**, **`Spinner`** (+
 `PageSpinner` / `SectionSpinner`), **`ConfirmDialog`**, the **`Toast`** system
 (`ToastProvider` + `useToast`), **`Badge`**, **`Chip`** / **`ChipGroup`**, **`Avatar`** /
-**`AvatarGroup`**, **`Table`**, **`ActionButton`** / **`ActionButtonGroup`**, **`InputField`**,
-**`SegmentedControl`**, **`Select`**, and **`UserPreferences`** (a theme / display settings
-panel). (`Card` is intentionally *not* shipped — shadcn's Card works out of the box; the
-kit ships only opinionated composites. The plain shadcn **`Button`** primitive isn't shipped
-either — `ActionButton` is the *opinionated* icon/emoji-with-label action button, not a
-replacement for it.)
+**`AvatarGroup`**, **`Table`**, **`PhiCard`** (a golden-ratio card layout), **`ActionButton`** /
+**`ActionButtonGroup`**, **`InputField`**, **`SegmentedControl`**, **`Select`**, and
+**`UserPreferences`** (a theme / display settings panel). (The plain **`Card`** is
+intentionally *not* shipped — shadcn's Card works out of the box; the kit ships only
+opinionated composites, like **`PhiCard`** below. The plain shadcn **`Button`** primitive
+isn't shipped either — `ActionButton` is the *opinionated* icon/emoji-with-label action
+button, not a replacement for it.)
 
 ## Wire it
 
@@ -262,6 +263,64 @@ switches, use shadcn directly.
     ]}
   />
   ```
+
+## Layout
+
+- **`PhiCard`** — a golden-ratio–locked card with four fixed slots and φ-proportioned
+  bands. The outer box is **W:H = φ:1**, and every internal split is a φ ratio too, so
+  the whole layout scales from a single width preset. Ported from the SolidJS
+  foundation's `PhiCard`; the exported **`PHI`** constant (`1.6180339887`) is the same φ
+  the geometry uses, so you can size a layout against it (a card's rendered height is
+  `width / PHI`).
+
+  Slot map (φ = the golden ratio; `W`/`H` are the card's width/height):
+
+  | Slot | Band · column | Cell size | Alignment | Typical use |
+  |------|---------------|-----------|-----------|-------------|
+  | `upperLeft` | upper · narrow (1:φ) | `1/φ²W × 1/φH` | centered | logo / avatar |
+  | `upperRight` | upper · wide | `1/φW × 1/φH` | vertically centered | title |
+  | `lowerLeft` | lower · wide (φ:1) | `1/φW × 1/φ²H` | top-left, may overflow | footer / meta line |
+  | `lowerRight` | lower · narrow | `1/φ²W × 1/φ²H` | right-aligned | badge / action |
+
+  ```tsx
+  import { PhiCard } from 'my-react-shell/components'
+  import { Badge } from 'my-react-shell/components'
+
+  <PhiCard
+    size="md"
+    upperLeft={<Logo />}
+    upperRight={<h3>Quarterly report</h3>}
+    lowerLeft={<span>Updated 12 Jun 2026</span>}
+    lowerRight={<Badge tone="success">Live</Badge>}
+    onClick={() => openReport()}
+  />
+  ```
+
+  Height auto-derives from the width preset (`width / φ`). When `upperLeft` is absent the
+  upper-left column collapses and the title spans the full band. With **`singleBand`** the
+  lower band (and its `lowerLeft` / `lowerRight` slots) is dropped and the upper band fills
+  the height — the card keeps its outer φ:1 ratio, so single-band cards stay the same
+  height as full cards in a grid. **`dividers`** draws inset separator lines between the
+  bands and between the lower cells; **`centerContent`** centers every slot on both axes.
+
+  | Prop | Default | Meaning |
+  |------|---------|---------|
+  | `size` | `'md'` | Width preset — `sm` · `md` · `lg` · `xl` = 180 / 240 / 320 / 480px. Height = width / φ. |
+  | `upperLeft` | — | Narrow top-band slot (centered). Absent → the column collapses and the title spans the band. |
+  | `upperRight` | — | Wide top-band slot — the title area. |
+  | `lowerLeft` | — | Wide bottom-band slot (footer / meta); allowed to overflow horizontally so a long line stays readable. |
+  | `lowerRight` | — | Narrow bottom-band slot (a badge / action), right-aligned. |
+  | `leftBorderColor` | — | Draws a 3px left accent border in this CSS color — pass a token, e.g. `var(--color-primary)`. |
+  | `onClick` | — | Click handler for the whole card. |
+  | `hoverable` | `!!onClick` | Hover lift (shadow + pointer). Defaults on when `onClick` is set. |
+  | `dividers` | `false` | Inset separator lines between the bands and between the lower cells. |
+  | `centerContent` | `false` | Center every slot's content on both axes, overriding the per-slot alignment. |
+  | `singleBand` | `false` | Drop the lower band; the upper fills the height, outer φ:1 kept. |
+  | `className` | — | Extra classes on the outer card, merged via `cn()`. |
+
+  Like the rest of the kit, `PhiCard` renders its own surface on the semantic tokens
+  (it does **not** depend on a `Card` — plain cards stay shadcn's) and ships its styling
+  in `my-react-shell/components/styles.css`; no per-slot styling is required.
 
 ## How it's built
 
