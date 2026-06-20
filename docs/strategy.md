@@ -1,283 +1,176 @@
-# my-react-shell — strategy (decision log)
+# my-react-shell — strategy
 
-Standing decisions for this project. Numbered in the order taken; a later decision
-supersedes an earlier one where it says so. Full framework rationale:
-[react-framework-notes.md](../.claude/skills/react-framework/react-framework-notes.md).
+The standing intent behind my-react-shell and the decisions that still shape it.
+It says **why** the project is the way it is; for **what** each module is, see
+[concept.md](concept.md), and for stack rationale, the
+[react-framework notes](../.claude/skills/react-framework/react-framework-notes.md).
 
-## D1 — my-react-shell is a modular drop-in foundation
+This is a goal and a set of principles, not a rulebook. The numbered decisions
+below record choices we'd otherwise re-litigate — when one stops serving the goal,
+change it.
 
-my-react-shell is a **library of optional, self-contained modules** (theme,
-providers, auth seam, i18n, …) that apps import à la carte — not a framework, a
-fixed app template, or a UI kit. Each module is independently importable and never
-hard-depends on another module's runtime. It does **not** own UI primitives, a
-component kit, or a registry; consumers use shadcn/ui directly. *(Supersedes the
-original D1: "everything above shadcn, hosts a shared shadcn registry." See D8.)*
+## The goal
 
-## D2 — Stack: Vite SPA + TanStack Router + Convex (auth project-owned)
+Reuse with **per-module propagation**. Apps under `~/Developer/` keep re-solving
+the same problems — theme, providers, an auth seam, i18n, a shell. The aim is to
+solve each once, as an optional **drop-in module**, so every app pulls in only what
+it wants and receives improvements on a version bump.
 
-No SSR (consumers are behind auth; any public marketing surface is a separate
-static site). Convex is the backend. **Auth is project-owned:** the `auth` module
-ships **only the Convex Auth (`@convex-dev/auth`) default** — runs entirely in
-Convex, no auth server, no cross-domain — behind a pluggable seam. A project needing
-Better Auth (`@convex-dev/better-auth`, crossDomain, Convex ≥ 1.25), SSO, or MFA
-implements the seam itself. shadcn/ui + Tailwind v4 — and **TanStack Router** — are
-consumer-side choices, not shipped by my-react-shell: the router is recommended and
-used by the dev-harness, but no shipped module imports it, so it is **not a peer
-dependency** (consumers bring their own). *(Amended by D10: the optional `app-shell`
-module DOES import the router, so TanStack Router is an **optional** peer for the
-`my-react-shell/app-shell` sub-path — still not a barrel peer.)* Source:
-[react-framework-notes.md](../.claude/skills/react-framework/react-framework-notes.md).
+The inspiration is the SolidJS `foundation`'s *model* — one shared foundation many
+apps draw from, where core fine-tuning propagates — but delivered as a
+**dependency** rather than a sync: an app imports à la carte and updates by bumping
+a tag, instead of having a whole foundation copied into it. So my-react-shell is a
+**menu of modules**, not a framework, a fixed app template, or a UI kit.
 
-## D3 — No component kit, no registry
+## Principles
 
-my-react-shell ships **no UI components** (no Button/Dialog/Table, no bespoke
-composites) and **hosts no registry / MCP**. New apps build their own components
-with shadcn; a component reused across apps (rule of two) may later become a module,
-added then — not pre-built now. *(Supersedes the original D3/D6 plan to port
-`foundation` composites — `PhiCard`, pickers, `InlineEditText`, `alertDialog` — as
-registry items. See D8.)*
+Every module is shaped to hold these — the goal restated at module scale:
 
-## D4 — The SolidJS `foundation` is untouched
+- **Self-contained.** A module is importable on its own and never hard-depends on
+  another module's *runtime*; only small pure types are shared. `theme` works
+  without `i18n`, `auth` without `theme`. `AppProviders` composes them for
+  convenience, but each stands alone.
+- **Contract + default + bring-your-own.** Where an app must supply something, the
+  module ships a TS **contract**, a sensible **default**, and a **BYO** path — the
+  `auth` seam is the template, `i18n` follows it. Other modules are
+  batteries-included drop-ins (theme, the Convex client provider): import and use.
+- **Light barrel, optional peers behind sub-paths.** The barrel (`my-react-shell`)
+  is the Convex-free theme core. Anything pulling a heavy or optional dependency
+  lives at a sub-path (`my-react-shell/providers`, `/auth/convex`, `/app-shell`,
+  `/components`, `/icons`), so a theme-only app installs nothing it doesn't use.
+- **Semantic tokens only.** Components render against the shared `--color-*` token
+  contract, in light *and* dark, across every palette — never a hardcoded color.
+- **Reuse drives new modules.** A capability becomes a module on the rule of two —
+  the second app that needs it — and reaches every app on the next version bump.
+- **Every module ships a guide** in `docs/guides/`: what it does, the contract to
+  fill, how to wire it, how to bring your own.
 
-`zingularis/foundation` remains the source of truth for SolidJS consumers.
-my-react-shell is its React-era sibling. The Solid foundation's **model** is the
-inspiration — a shared foundation many apps consume, where core fine-tuning
-propagates — but my-react-shell propagates per-module on version bump (D5), rather
-than by syncing the whole foundation into every app. It is not a component port.
+## Standing decisions
 
-## D5 — Distribution: Bitbucket git-dependency, consumed like an npm package
+The decisions still in force, with the reasoning worth keeping. Numbers are stable
+IDs other docs reference.
 
-my-react-shell is consumed as a versioned **git dependency** from its Bitbucket repo
+### D2 — Stack: Vite SPA + Convex, auth project-owned
+
+No SSR — consumers live behind auth, and any public marketing surface is a separate
+static site. Convex is the backend (`eu-west-1`, GDPR). shadcn/ui + Tailwind v4 are
+the consumer's own UI tools, used directly.
+
+**Auth is project-owned.** The `auth` module ships only the Convex Auth
+(`@convex-dev/auth`) default — it runs entirely in Convex, with no auth server and
+no cross-domain cookies — behind a pluggable seam. An app needing Better Auth
+(crossDomain, Convex ≥ 1.25), SSO, or MFA implements the seam itself.
+
+**The router is the consumer's.** No shipped module imports a router except the
+optional `app-shell` (D10), so TanStack Router is a dev-harness dependency and an
+*optional* peer for that one sub-path — never a barrel peer. It is the recommended
+choice, not an imposed one.
+
+### D3 — No registry, no MCP
+
+my-react-shell hosts no shadcn registry and no MCP server. It ships an opinionated
+component kit as compiled components (D11), not a registry of copy-in sources; the
+un-opinionated primitives stay the consumer's, straight from shadcn.
+
+### D5 — Distribution: a tag-pinned Bitbucket git-dependency
+
+Consumed like an npm package from its Bitbucket repo
 (`git+ssh://git@bitbucket.org:kesteinbakk/my-react-shell.git#<tag>`), pinned by tag
-— no npm registry / Verdaccio to run. A **`prepare` build** (`tsc -p
-tsconfig.lib.json`) compiles `src/ → dist/` on install, so a consumer receives
-compiled **JS + `.d.ts`** and imports it like any npm package (`import { … } from
-'my-react-shell'`) with zero bundler config — `dist/` is gitignored, built on
-install. To ship an update: push + tag; consumers bump the tag and reinstall, and
-receive updates only to the modules they import. Git auth is plain git (SSH on dev
-machines; a Bitbucket app-password / access token / deploy key in Vercel CI). *(The
-prebuilt-dist mechanism supersedes the original D5's "ship raw TS source, rely on
-the consumer's Vite to transpile" — bundlers don't transpile `node_modules`. The
-"separate shadcn registry host" clause is dropped with D3.)*
+— no npm registry or Verdaccio to run. Consumers receive compiled **JS + `.d.ts`**
+and import it with no bundler config (`import { … } from 'my-react-shell'`); raw TS
+wouldn't work, since bundlers don't transpile `node_modules`. To ship an update:
+push + tag; consumers bump the tag and reinstall, receiving updates only to the
+modules they import. Git auth is plain git (SSH on dev machines; a Bitbucket
+token/deploy key in CI).
 
-## D6 — theme module: token contract + 5 palettes
+The exact build-delivery mechanism — a `prepare`-on-install build versus a
+committed `dist/` — is still being finalized; the trade-offs and current state live
+in [distribution-model.md](guides/distribution-model.md).
 
-The `theme` module carries (from the Solid `foundation`, values verbatim) the
-`base.css` semantic-token contract + **5 palettes** (`dynamic`, `forest`, `ocean`,
-`soft`, `sunset`); **`foundation-golden` is dropped** (literal Zingularis brand
-gold). `ThemeProvider` lets a consumer **select** a palette *and* **define its own**
-(a `.theme-<name>-{light,dark}` class filling the token contract), with light/dark/
-system-follow and localStorage persistence. The Tailwind `@theme` exposure / shadcn
-token bridge is a consumer concern, not shipped here. *(The composite carry-list
-from the original D6 is dropped — see D3.)*
+### D6 + D13 — Theme tokens live in the shared `themes` package
 
-## D7 — Repo shape: library + dev-harness app
+The semantic `--color-*` token contract and the palettes are not owned here. They
+live in a separate, **framework-neutral** package, `themes` (`~/Developer/themes`,
+tag-pinned like D5), that **both my-react-shell (React) and `zingularis/foundation`
+(SolidJS) consume** — pure CSS custom properties serve both ecosystems from one
+source. This module is the React `ThemeProvider` + registry on top: it lets a
+consumer **select** a palette, **define its own**
+(`.theme-<name>-{light,dark}`), and follow light/dark/system with localStorage
+persistence.
 
-One repo, two roles: the **library** consumers import (the modules) and a dev-only
-**harness Vite app** (test routes) that renders the modules for development and
-behavior verification — **not** a feature showcase. Visual showcasing of modules
-lives in the sister `my-react-shell-demo` project (see CLAUDE.md → Demos & visual
-showcasing). The harness (`main.tsx`, `routes/**`,
-`routeTree.gen.ts`) is excluded from the library emit (`tsconfig.lib.json`) and from
-the package `exports`, so consumers never receive it. Rationale: theme/provider
-behavior (FOUC-free theme application, system-follow, provider composition) is only
-fully catchable in-browser, never by typecheck.
+my-react-shell surfaces **five** palettes (`dynamic`, `forest`, `ocean`, `soft`,
+`sunset`) and omits `golden` (literal Zingularis brand gold). Extracting the
+contract ended real drift — the palettes had been duplicated byte-for-byte across
+both repos and were starting to diverge. A color is now edited once in `themes`,
+and a tag bump propagates it everywhere. The Solid `foundation` otherwise stays
+independent and the source of truth for its own Solid modules.
 
-## D8 — The modular pivot (supersedes the "above-shadcn foundation" framing)
+### D7 — Repo shape: library + dev-harness, showcase elsewhere
 
-The project began as "the everything-above-shadcn layer" — app-shell + a hosted
-shadcn registry + bespoke composites + a mandated build-on-this setup. That is
-replaced by the **modular drop-in** model above (D1/D3/D5). Rationale:
+One repo, two roles: the **library** consumers import, and a dev-only **harness**
+Vite app of test routes that renders the modules for behavior verification — never a
+feature showcase. The harness (`main.tsx`, `routes/**`, `routeTree.gen.ts`) is
+excluded from the library emit and the package `exports`, so consumers never receive
+it. Visual showcasing lives in the sister `my-react-shell-demo` project. Rationale:
+theme/provider behavior (FOUC-free application, system-follow, provider composition)
+is only fully catchable in-browser, not by typecheck.
 
-- The value wanted is **reuse with per-module propagation**, like the Solid
-  `foundation`, but as a *dependency* so each app gets only what it imports and
-  updates on bump — not a sync that touches every app.
-- A **fixed app setup and a component/registry kit are not wanted.** New apps build
-  their own components and choose their own structure; my-react-shell supplies
-  optional capabilities (theme, providers, auth seam, i18n) and the **contracts** to
-  wire or replace them.
-- Modules come in two flavors: **batteries-included drop-ins** (theme, Convex
-  client) and **seam + default + bring-your-own** (auth and i18n). New
-  modules are contributed back on rule-of-two and reach every app on version bump.
+### D9 — Convex is optional, isolated behind sub-paths
 
-**Dropped from the earlier plan:** the shadcn registry host + MCP, all bespoke
-composites, and the "build on the mandated app-shell" requirement. **Deferred:** a
-shared app-shell and page/tab primitives may return later as *optional* modules,
-built when an app needs them — not the centerpiece. *(Un-deferred by [D10](#d10--app-shell-module-react-port-of-the-foundation-shell): the
-app-shell ships as one **optional** module among others — never mandated, never the
-centerpiece, exactly as this clause envisioned.)*
+`convex` is an optional peer, and every Convex-coupled export sits behind a sub-path
+— the client providers at `my-react-shell/providers`, the Convex Auth default at
+`my-react-shell/auth/convex`. The barrel stays the Convex-free theme core, so a
+theme-only consumer never installs Convex. This is the "light barrel" principle
+applied to the heaviest peer, and it mirrors how the Solid `foundation` walls Convex
+off in its `zing-shell` module.
 
-## D9 — Convex is optional and isolated behind sub-paths (barrel = Convex-free core)
+### D10 — app-shell: an optional, router-coupled module
 
-`convex` is an **optional** peer, and every Convex-coupled export lives behind a
-sub-path — the Convex client providers at `my-react-shell/providers`, the Convex Auth
-default at `my-react-shell/auth/convex`. The barrel (`my-react-shell`) is the
-**Convex-free theme core**, so a theme-only consumer never installs Convex. Rationale:
-the providers were originally in the barrel with `convex` a *required* peer, which
-forced every consumer (even theme-only) to install it — the same "barrel drags an
-optional concern" trap as the dropped router peer. This mirrors the SolidJS
-`foundation`, which already keeps `convex`/`convex-solidjs` optional and walled off in
-its `zing-shell` module. Applies the standing rule "optional/heavy peers behind
-sub-paths" ([concept.md](concept.md)) to Convex.
+An optional `app-shell` module at `my-react-shell/app-shell` re-implements the
+SolidJS foundation's shell for React: the chrome (`AppShell` header-or-sidebar +
+mobile drawer + optional bottom nav + the single scrolling body), `ShellPageHeader`
+(URL-derived breadcrumbs + actions + search + subPages dropdown),
+`defineShellConfig`, and the page-tab primitives. It **excludes** app-specific glue
+(notifications, feedback modal, command bar) — the consumer wires its own into the
+header's action slot.
 
-## D10 — app-shell module (React port of the foundation shell)
+The shell is inherently **router-coupled** (breadcrumbs are a function of the URL;
+`?tab=` is a deep-link contract), so TanStack Router is an optional peer *for this
+sub-path only*, alongside the Radix primitives it uses (Sheet, DropdownMenu,
+Popover). A router *seam* was rejected as heavier — the breadcrumb / scroll /
+deep-link machinery leaks router semantics into the contract anyway. Display strings
+arrive via config/props; the shell never imports the i18n module. It is one optional
+module among others — never mandated, never the centerpiece.
 
-my-react-shell ships an **optional `app-shell` module** at the sub-path
-`my-react-shell/app-shell` — a React (SPA) re-implementation of the SolidJS
-`foundation` app shell. It carries the shell chrome (`AppShell` header-or-sidebar
-mode + responsive mobile drawer + optional bottom nav + the single scrolling body
-cell), `ShellPageHeader` (URL-derived breadcrumbs + actions + search + `subPages`
-title dropdown), `defineShellConfig` (the pages tree + the three navigation layers),
-and the page-tab primitives (`PageSections` in-page `?tab=` + route-based
-`PageTabs`). It **excludes** the app-specific glue (notification system, feedback
-modal, command-bar/action registry) — a consumer wires its own into the page-header
-action slot.
+### D11 — Component kit: opinionated composites only
 
-Decisions (un-defers the app-shell from [D8](#d8--the-modular-pivot-supersedes-the-above-shadcn-foundation-framing); it returns as one optional module, not the
-centerpiece):
+An optional kit at `my-react-shell/components` ships React composites that bake a
+design/layout/behavior decision on top of Radix + the theme tokens (Alert, dialogs,
+structured cards, form fields, `UserPreferences`, …). The scope line: it ships
+**only components that need an opinion**. The un-opinionated shadcn primitives
+(Button, Input, Checkbox, plain Dialog, …) are not shipped — consumers use shadcn
+directly, and the demo shows them as plain examples.
 
-- **Router coupling.** The shell is inherently router-coupled (breadcrumbs are a
-  pure function of the URL pathname; `?tab=` is a deep-link contract; route tabs are
-  routes). **TanStack Router** is therefore an **optional peer** for the `app-shell`
-  sub-path (amends [D2](#d2--stack-vite-spa--tanstack-router--convex-auth-project-owned)) — the barrel and every other module stay router-free; only an app
-  importing the shell installs the router. Same isolation pattern as Convex ([D9](#d9--convex-is-optional-and-isolated-behind-sub-paths-barrel--convex-free-core)).
-  Rejected the alternative (a router seam) — heavier, and the breadcrumb / scroll /
-  deep-link machinery leaks router semantics into the contract anyway.
-- **Primitives.** The module depends on **Radix** headless primitives (Sheet/Drawer,
-  DropdownMenu, Popover) — declared as **optional peers** behind the sub-path (with
-  devDependencies so the harness + lib build compile), keeping theme-only consumers
-  Radix-free.
-- **Strings.** The shell takes all display strings via its **config/props** — it is
-  self-contained and never hard-imports the [i18n](#) module; the consumer translates
-  at the call site.
+It is built on the same Radix / Tailwind / `class-variance-authority` foundation as
+shadcn, but is **not** a copy-in registry (D3 stands) — it ships compiled
+components styled with `mrs-`-prefixed semantic classes. Like the shell, it ships
+its own CSS (`my-react-shell/components/styles.css`) rather than utilities, so a
+consumer's Tailwind never has to scan `node_modules`.
 
-Renders against the existing `theme` token contract. Ships `docs/guides/app-shell.md`.
-Origin: the approved proposal `docs/1-proposals/app-shell-module.md`.
+### D12 — Icons↔emojis: a seam, not a registry
 
-## D11 — opinionated component kit (`my-react-shell/components`)
+my-react-shell owns no icon kit, so the "use emojis instead of icons" preference
+ships as a **seam**: the `icons` module (`my-react-shell/icons`) gives
+`IconModeProvider` / `useIconMode` and a thin `<Icon icon emoji>` that swaps a glyph
+for its emoji on the active mode — no baked-in registry, no `lucide-react`
+dependency. Consumers bring their glyphs and route their existing `renderIcon`
+through it. The paired `<UserPreferences>` component (in the kit) is controlled and
+persistence-agnostic — it reads each value and emits `onChange`, leaving storage to
+the consumer — and stays auth-free, with account actions behind an optional slot.
 
-my-react-shell ships an **optional opinionated component kit** at the sub-path
-`my-react-shell/components` — React composites that bake a design / layout / behavior
-decision on top of shadcn/Radix primitives and render against the semantic theme
-token contract (light + dark, every palette). It mirrors the SolidJS `foundation` kit
-(`@foundation/kit`) for the React era.
+---
 
-**The scope line:** the kit ships **only components that need an opinion**. The
-un-opinionated shadcn primitives (Button, Input, Checkbox, Label, Switch, Separator,
-plain Tabs/Dialog/Select, Tooltip, Popover) are **not** shipped — a consumer uses
-shadcn directly for those, and the demo shows them as plain examples.
-
-This **supersedes D3's "no UI components"** and resolves the [D8](#d8--the-modular-pivot-supersedes-the-above-shadcn-foundation-framing)
-"deferred composites" clause: composites return, but as one opt-in module — never a
-mandated kit, and never a registry host (D3's "no registry" stands; we ship compiled
-components, not a shadcn registry). Follows the **D10** pattern exactly — a component
-module behind a sub-path with optional peers, isolated from the barrel ([D9](#d9--convex-is-optional-and-isolated-behind-sub-paths-barrel--convex-free-core)).
-
-Decisions (owner, 2026-06-20):
-
-- **Build approach → Radix + CVA + tokens, self-contained.** Components are built on
-  Radix headless primitives (optional peers, shared with app-shell) + `class-variance-authority`
-  variants + a `cn()` (`clsx` + `tailwind-merge`) helper, styled with `mrs-`-prefixed
-  semantic classes. "Based on shadcn" = the same Radix/Tailwind/CVA foundation and
-  variant API — **not** a copy-in registry. The kit never imports the consumer's
-  `@/components/ui`; where a composite needs a thin primitive it builds a minimal
-  token-styled one internally. The plain primitives stay consumer-owned (demo-only).
-- **Styling ships as CSS, not utilities.** Like `app-shell.css`, the kit ships
-  `components.css` (`my-react-shell/components/styles.css`) — a consumer's Tailwind
-  never scans `node_modules`, so styles are stable token-based classes, not utilities.
-  Keeps the D5 zero-bundler-config promise.
-- **New optional peers:** `class-variance-authority`, `clsx`, `tailwind-merge` (tiny,
-  and already present in any shadcn consumer) — optional, behind this sub-path.
-- **Drift follow-up:** the app-shell module predates CVA and styles without it; align
-  it to the kit's CVA / `cn()` conventions at the end of the kit work (tracked in T004).
-
-Renders against the existing `theme` token contract, incl. the neutral `secondary` and
-the `-strong` semantic text tokens. Ships `docs/guides/component-kit.md`. Origin: T004
-(`docs/2-tasks/T004-component-kit/task.md`).
-
-## D12 — user-preferences component + icons↔emojis display-mode seam
-
-my-react-shell ships a **`<UserPreferences>`** component in the kit
-(`my-react-shell/components`) and a small **`icons` module** (`my-react-shell/icons`) — the
-React-era answer to how the SolidJS `foundation` surfaces a theme picker + an "use emojis
-instead of icons" toggle (`shell/actionRow.tsx` `ThemeAction` + the central
-`kit/icons/Icon.tsx`).
-
-The shaping constraint: `foundation`'s emoji switch works because it **owns** a central
-`<Icon>` every glyph renders through. my-react-shell deliberately owns no icon kit (D3; the
-app-shell renders via the consumer's `config.renderIcon`). So we ship the **seam**, not a
-registry.
-
-Decisions (owner, 2026-06-20):
-
-- **Switcher → a preference seam + a thin `<Icon>`, not a full Icon module.** `icons` ships
-  `IconModeProvider` + `useIconMode` + `<Icon icon emoji>` (swaps a glyph for its emoji on
-  the active mode). **No baked-in registry and no `lucide-react` dependency** — the consumer
-  brings glyphs and typically routes its existing `renderIcon` through `<Icon>`. Keeps the
-  "no icon kit" boundary (D3) intact. (Rejected: porting `foundation`'s lucide-backed Icon
-  registry — a peer dep + a large surface against the boundary.)
-- **Scope → preferences-only, auth-free.** `<UserPreferences>` ships theme palette +
-  light/dark/system + the icons↔emojis toggle, and never imports the auth seam. Account
-  actions (sign out / profile) go through an optional `accountActions` slot, mirroring
-  `foundation`'s split of a preferences modal from its identity menu.
-- **Controlled, persistence-agnostic.** `<UserPreferences>` reads each value and emits an
-  `onChange`, persisting nothing itself — the consumer chooses storage (localStorage via the
-  shipped providers, or a per-user account / Convex). `IconModeProvider` is likewise
-  controllable (localStorage default; `value` + `onChange` to redirect), and `ThemeProvider`
-  gains a non-breaking `onChange` so theme can be mirrored too.
-- **Presentation → Radix Dialog (modal).** Matches `foundation`'s `ThemeAction` and reuses
-  the `@radix-ui/react-dialog` peer `ConfirmDialog` already uses — no
-  `@radix-ui/react-popover` dependency.
-
-Renders against the existing `theme` token contract. Ships `docs/guides/icons.md` and a
-`<UserPreferences>` entry in `docs/guides/component-kit.md`. Origin: T005
-(`docs/2-tasks/T005-user-preferences/task.md`).
-
-## D13 — shared theme package (`themes`): one source of truth for tokens + palettes (supersedes [D4](#d4--the-solidjs-foundation-is-untouched))
-
-The semantic `--color-*` token contract and the palettes are extracted into a
-**separate, framework-neutral package `themes`** (`~/Developer/themes`,
-`git+ssh://git@bitbucket.org:kesteinbakk/themes.git`, tag-pinned exactly like
-[D5](#d5--distribution-bitbucket-git-dependency-consumed-like-an-npm-package))
-that **both my-react-shell (React) and `zingularis/foundation` (SolidJS)
-consume**. The colors are pure CSS custom properties — framework-agnostic — so a
-single copy serves both ecosystems; each repo keeps only its own
-framework-specific `ThemeProvider` and its own baseline element styles.
-
-**This supersedes [D4](#d4--the-solidjs-foundation-is-untouched)** ("the SolidJS
-foundation is untouched"): foundation is refactored to consume `themes` instead of
-carrying its own palette copies. The copies had already drifted — the five shared
-palettes (`ocean/forest/sunset/soft/dynamic`) were byte-for-byte identical across
-both repos, yet my-react-shell's `base.css` contract had added the `-border` /
-`share-border` tokens foundation's `:root` never declared (its palettes filled
-them anyway). Extracting the contract ends that drift at the source. Selected
-**approach A** (extract a package) over **B** (keep two copies behind a
-drift-check guard) — a true single source beats enforced duplication, and it
-reuses the D5 git-dep model already in place.
-
-Decisions:
-
-- **Pure CSS + JSON, no build.** `themes` ships `contract.css` (the superset
-  `:root`, value-free apart from `--color-overlay`), the six palettes
-  (`ocean/forest/sunset/soft/dynamic` + `golden`), an `index.css` barrel, and a
-  `palettes.json` manifest (name/label/description, so a consumer's theme registry
-  can stop duplicating the list). No TS, no React/Solid, no `prepare`.
-- **A regular `dependencies` git-dep in both consumers**, not a dev/peer dep — it
-  must resolve **transitively** for the consumers of a library that re-exports its
-  CSS. The barrel stays otherwise dependency-light; this is CSS, not a runtime peer.
-- **Tailwind stays the consumer's.** The palettes resolve Tailwind's `--color-*`
-  ramp from the consumer's own `@import 'tailwindcss'`; `themes` imports nothing
-  and stays tooling-neutral. Import Tailwind before the palettes.
-- **Subset selection per consumer.** my-react-shell surfaces five palettes (omits
-  `golden`, the literal Zingularis brand gold — [D6](#d6--theme-module-token-contract--5-palettes)); foundation surfaces all
-  six. The package ships the superset; each app imports the palette files it wants.
-- **Providers + baseline stay per-repo.** The class-toggling runtime is genuinely
-  framework-specific; foundation's baseline also carries app utility classes +
-  animations that don't belong in a neutral package.
-
-my-react-shell: `src/index.css` imports `themes/contract.css` + its five palettes;
-`src/styles/base.css` keeps only the baseline; `src/styles/themes/*` removed.
-foundation: `src/themes/index.css` imports `themes/*`; `src/themes/base.css` keeps
-its utilities/baseline/animations minus the contract; `foundation-*.css` removed.
-Editing a color now happens once in `themes`; a tag bump propagates it (D5-style)
-to every consumer. Origin: T006 (`docs/2-tasks/T006-shared-theme-package/task.md`).
+*Retired log entries, folded into the sections above: **D1** (the modular drop-in
+thesis) is now **The goal**; **D4** (Solid `foundation` untouched) and **D8** (the
+pivot to this model) are superseded — the current model is the result. Their
+numbers are not reused.*
