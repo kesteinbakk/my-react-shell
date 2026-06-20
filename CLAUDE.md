@@ -20,7 +20,9 @@ app template. It ships a set of **self-contained modules** an app picks from:
 - **providers** — Convex client provider + the single `AppProviders` wrapper.
 - **auth** — a pluggable auth **seam** (a TS contract) + the Convex Auth default
   implementation; bring-your-own for Better Auth / SSO.
-- **i18n** *(planned)* — the `t()` seam + central-key policy + missing-key surface.
+- **i18n** — the `t()` seam at `my-react-shell/i18n`: `<I18nProvider>` + `useTranslation`,
+  a central-key catalog, `{{param}}` interpolation, and a dev-only missing-translation
+  overlay. Convex- and router-free; bring-your-own engine via `resolve`.
 - **icons** — an icons↔emojis display-mode seam (`my-react-shell/icons`): a preference
   (`IconModeProvider` / `useIconMode`) + a thin `<Icon>` glyph↔emoji swap. No icon
   registry, no `lucide-react` dep.
@@ -40,9 +42,10 @@ consumers use shadcn directly for. The app-shell ships as an *optional* module, 
 - Framework decision / from-scratch consumer guide: the `react-framework` skill ([.claude/skills/react-framework/react-framework-notes.md](.claude/skills/react-framework/react-framework-notes.md))
 - Build plan: **T001** in `docs/2-tasks/` (index: `docs/2-tasks/_index/`)
 
-> **Status: in progress.** T001 has landed the theme module, the providers + auth
-> seam, and standard-node-module distribution (prepare-build to `dist/`). i18n,
-> per-module guides, and the module-authoring contract are next. The theme tokens
+> **Status: in progress.** The theme, providers, auth seam, i18n, icons, app-shell,
+> and component-kit modules have landed — each with a guide in `docs/guides/`, plus the
+> module-authoring contract — distributed as a standard node module (prepare-build to
+> `dist/`). The theme tokens
 > are now **shared** with the SolidJS `zingularis/foundation` via the `themes`
 > package (D13); foundation otherwise stays the source of truth for its Solid modules.
 

@@ -22,7 +22,9 @@ Each module is one capability an app can opt into:
   barrel stays Convex-free.
 - **auth** — a pluggable auth **seam** (a TypeScript contract) plus the Convex Auth
   default implementation, shipped at a sub-path so its dependency stays optional.
-- **i18n** *(planned)* — the `t()` seam, central-key policy, and missing-key surface.
+- **i18n** — the `t()` seam at `my-react-shell/i18n`: `<I18nProvider>` + `useTranslation`,
+  a central-key catalog, `{{param}}` interpolation, and a dev-only missing-key overlay.
+  Convex- and router-free; bring-your-own engine via `resolve`.
 - **components** — an opinionated component kit (Alert, dialogs, structured cards, form
   fields, …) built on shadcn/Radix + the theme tokens, at `my-react-shell/components`.
   Ships only the composites that need an opinion; un-opinionated shadcn primitives stay
@@ -41,7 +43,7 @@ to implement." Modules come in two flavors:
   required (theme, the Convex client provider).
 - **Seam + default + bring-your-own** — the module exports a TS **contract** the app
   fills, with a shipped default and a BYO path (auth: `AuthProvider` contract +
-  Convex Auth default + your own provider; i18n will follow the same shape).
+  Convex Auth default + your own provider; i18n follows the same shape).
 
 ## Module rules
 

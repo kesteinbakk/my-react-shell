@@ -97,7 +97,7 @@ replaced by the **modular drop-in** model above (D1/D3/D5). Rationale:
   optional capabilities (theme, providers, auth seam, i18n) and the **contracts** to
   wire or replace them.
 - Modules come in two flavors: **batteries-included drop-ins** (theme, Convex
-  client) and **seam + default + bring-your-own** (auth today; i18n next). New
+  client) and **seam + default + bring-your-own** (auth and i18n). New
   modules are contributed back on rule-of-two and reach every app on version bump.
 
 **Dropped from the earlier plan:** the shadcn registry host + MCP, all bespoke
