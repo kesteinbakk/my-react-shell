@@ -228,11 +228,11 @@
   /* ===== Overlay ===== */
   --color-overlay: rgba(0, 0, 0, 0.5);
 
-  /* ===== Shadows (stronger glow for high contrast) ===== */
-  --color-shadow-sm: rgba(255, 255, 255, 0.20);
-  --color-shadow-md: rgba(255, 255, 255, 0.30);
-  --color-shadow-lg: rgba(255, 255, 255, 0.40);
-  --color-shadow-xl: rgba(255, 255, 255, 0.50);
+  /* ===== Shadows (dark elevation — occlusion, not a glow) ===== */
+  --color-shadow-sm: rgba(0, 0, 0, 0.30);
+  --color-shadow-md: rgba(0, 0, 0, 0.40);
+  --color-shadow-lg: rgba(0, 0, 0, 0.50);
+  --color-shadow-xl: rgba(0, 0, 0, 0.60);
 
   /* ===== Accent Colors (vibrant for high contrast) ===== */
   --color-accent-sky: rgb(125, 211, 252);

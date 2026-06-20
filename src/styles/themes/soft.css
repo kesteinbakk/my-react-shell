@@ -209,11 +209,11 @@
   /* ===== Overlay ===== */
   --color-overlay: rgba(0, 0, 0, 0.5);
 
-  /* ===== Shadows (glow effect for dark theme) ===== */
-  --color-shadow-sm: rgba(255, 255, 255, 0.15);
-  --color-shadow-md: rgba(255, 255, 255, 0.25);
-  --color-shadow-lg: rgba(255, 255, 255, 0.35);
-  --color-shadow-xl: rgba(255, 255, 255, 0.45);
+  /* ===== Shadows (dark elevation — occlusion, not a glow) ===== */
+  --color-shadow-sm: rgba(0, 0, 0, 0.30);
+  --color-shadow-md: rgba(0, 0, 0, 0.40);
+  --color-shadow-lg: rgba(0, 0, 0, 0.50);
+  --color-shadow-xl: rgba(0, 0, 0, 0.60);
 
   /* ===== Accent Colors ===== */
   --color-accent-sky: rgb(125, 211, 252);
