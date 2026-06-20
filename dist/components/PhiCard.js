@@ -35,11 +35,14 @@ function PhiCardMenu({ actions, icon, label, }) {
  * collapses when empty; an optional top-right overflow menu takes consumer-supplied
  * actions. See the components guide for examples.
  */
-export function PhiCard({ upper, lower, size = 'md', actions, menuIcon, menuLabel = 'Actions', corner, leftBorderColor, onClick, hoverable, className, }) {
+export function PhiCard({ upper, image, imageAlt = '', icon, lower, size = 'md', actions, menuIcon, menuLabel = 'Actions', corner, leftBorderColor, onClick, hoverable, className, }) {
     const width = SIZE_WIDTH_PX[size];
     const height = width / PHI;
     const isHoverable = hoverable ?? !!onClick;
     const hasLower = !isEmpty(lower);
+    // Top section content: an `image` (full-bleed) or `icon` (centered figure) takes
+    // it over for the figure-over-content pattern; otherwise it's the `upper` node.
+    const topContent = image ? (_jsx("img", { className: "mrs-phi-card__image", src: image, alt: imageAlt })) : !isEmpty(icon) ? (_jsx("div", { className: "mrs-phi-card__figure", children: icon })) : (upper);
     // `corner` wins over the built-in menu; otherwise the menu shows only when there
     // are actions. Either way the corner overlay renders only when non-empty. The
     // inline `actions &&` (not a derived flag) lets TS narrow `actions` to non-null.
@@ -50,5 +53,5 @@ export function PhiCard({ upper, lower, size = 'md', actions, menuIcon, menuLabe
         height: `${height}px`,
         ...(leftBorderColor ? { borderLeft: `3px solid ${leftBorderColor}` } : {}),
     };
-    return (_jsxs("div", { className: cn('mrs-phi-card', !hasLower && 'mrs-phi-card--single', isHoverable && 'mrs-phi-card--hoverable', className), style: style, onClick: onClick, children: [_jsx("div", { className: "mrs-phi-card__section", children: upper }), hasLower ? _jsx("div", { className: "mrs-phi-card__section", children: lower }) : null, cornerNode != null ? (_jsx("div", { className: "mrs-phi-card__corner", onClick: (e) => e.stopPropagation(), children: cornerNode })) : null] }));
+    return (_jsxs("div", { className: cn('mrs-phi-card', !hasLower && 'mrs-phi-card--single', isHoverable && 'mrs-phi-card--hoverable', className), style: style, onClick: onClick, children: [_jsx("div", { className: "mrs-phi-card__section", children: topContent }), hasLower ? _jsx("div", { className: "mrs-phi-card__section", children: lower }) : null, cornerNode != null ? (_jsx("div", { className: "mrs-phi-card__corner", onClick: (e) => e.stopPropagation(), children: cornerNode })) : null] }));
 }

@@ -41,9 +41,23 @@ export interface PhiCardProps {
   /**
    * Top section. You own its content and inner layout; it's full-bleed (a single
    * cell that stretches your node to fill both axes — a figure/image fills it
-   * edge-to-edge). Add your own padding for inset content.
+   * edge-to-edge). Add your own padding for inset content. Ignored when `image` or
+   * `icon` is set — those render the top section instead.
    */
   upper?: ReactNode
+  /**
+   * Image URL — rendered full-bleed (full width, `object-fit: cover`) as the top
+   * section, giving the classic figure-over-content card with `lower` below. Takes
+   * precedence over `icon` and `upper`.
+   */
+  image?: string
+  /** Alt text for `image`. Defaults to `''` (treated as decorative). */
+  imageAlt?: string
+  /**
+   * Icon / figure node — rendered centered, full-width, as the top section (used
+   * when there's no `image`). Takes precedence over `upper`.
+   */
+  icon?: ReactNode
   /**
    * Bottom section, same contract as `upper`. When it's empty (absent / `null` /
    * `false`) the section is **not rendered at all** — the top section fills the
@@ -141,6 +155,9 @@ function PhiCardMenu({
  */
 export function PhiCard({
   upper,
+  image,
+  imageAlt = '',
+  icon,
   lower,
   size = 'md',
   actions,
@@ -156,6 +173,16 @@ export function PhiCard({
   const height = width / PHI
   const isHoverable = hoverable ?? !!onClick
   const hasLower = !isEmpty(lower)
+
+  // Top section content: an `image` (full-bleed) or `icon` (centered figure) takes
+  // it over for the figure-over-content pattern; otherwise it's the `upper` node.
+  const topContent = image ? (
+    <img className="mrs-phi-card__image" src={image} alt={imageAlt} />
+  ) : !isEmpty(icon) ? (
+    <div className="mrs-phi-card__figure">{icon}</div>
+  ) : (
+    upper
+  )
 
   // `corner` wins over the built-in menu; otherwise the menu shows only when there
   // are actions. Either way the corner overlay renders only when non-empty. The
@@ -183,7 +210,7 @@ export function PhiCard({
       style={style}
       onClick={onClick}
     >
-      <div className="mrs-phi-card__section">{upper}</div>
+      <div className="mrs-phi-card__section">{topContent}</div>
       {hasLower ? <div className="mrs-phi-card__section">{lower}</div> : null}
       {cornerNode != null ? (
         <div className="mrs-phi-card__corner" onClick={(e) => e.stopPropagation()}>

@@ -248,7 +248,7 @@ import 'my-react-shell/components/styles.css' // REQUIRED (plain prebuilt CSS; a
 | `Chip`, `ChipGroup` | component | Tag: plain / toggleable (`selected`+`onClick`) / removable (`onRemove`). `ChipGroup` wraps. |
 | `Avatar`, `AvatarGroup` | component | Image + initials fallback (also on image error); group stacks with `+N` overflow. |
 | `Table` | component | Column-config data table: per-column sort, zebra, sticky header, empty state. |
-| `PhiCard`, `PHI` | component + const | Golden-ratio card (W:H = φ:1) with two consumer-owned, full-bleed sections (`upper`/`lower`); the bottom collapses when empty. Optional top-right ⋮ overflow menu via `actions`, or a `corner` slot. `PHI` is the constant (height = width/φ). Uses the `@radix-ui/react-dropdown-menu` optional peer. |
+| `PhiCard`, `PHI` | component + const | Golden-ratio card (W:H = φ:1) with two consumer-owned, full-bleed sections (`upper`/`lower`, or an `image`/`icon` figure top); the bottom collapses when empty. Optional top-right ⋮ overflow menu via `actions`, or a `corner` slot. `PHI` is the constant (height = width/φ). Uses the `@radix-ui/react-dropdown-menu` optional peer. |
 | `InputField` | component | Full field: label + input + helper + error, a11y-wired (`htmlFor`/`aria-invalid`/`aria-describedby`). Spreads native input props; pass `error` to switch on error styling. |
 | `SegmentedControl` | component | Single-select `radiogroup` on a track; controlled via `value`/`onChange`; generic over value type. |
 | `Select` | component | Opinionated select on Radix Select (keyboard nav, typeahead, portal); `options` list; controlled via `value`/`onValueChange`. |
@@ -325,6 +325,9 @@ a figure/image fills edge-to-edge; add your own padding for inset content). The 
 section collapses when empty** (`lower` absent / `null` / `false` → not rendered, the top
 fills, outer φ:1 kept so cards still line up in a grid). Width is the only size knob; `PHI`
 (`1.6180339887`) is exported so you can size layouts against it (height = width / φ).
+For a figure-over-content card, pass **`image`** (full-bleed, `object-fit: cover`) or
+**`icon`** (centered) — it renders the top section full-width, with `lower` the content
+below.
 
 Top-right **overflow menu**: pass `actions` and the card renders a ⋮ trigger → Radix
 `DropdownMenu` of those items (no actions → no trigger). For anything else — inline icon
@@ -335,7 +338,10 @@ labels. The corner never triggers a clickable card's `onClick`.
 
 | Prop | Default | Meaning |
 |---|---|---|
-| `upper` | — | Top section content. Full-bleed; you own its inner layout. |
+| `upper` | — | Top section content. Full-bleed; you own its inner layout. Ignored when `image`/`icon` is set. |
+| `image` | — | Image URL rendered full-bleed (`object-fit: cover`) as the top section. Takes precedence over `icon`/`upper`. |
+| `imageAlt` | `''` | Alt text for `image` (decorative by default). |
+| `icon` | — | Icon/figure node rendered centered, full-width, as the top section (when there's no `image`). Takes precedence over `upper`. |
 | `lower` | — | Bottom section content. Empty → the section isn't rendered (card collapses to the top, φ:1 kept). |
 | `size` | `'md'` | Width preset — `sm`·`md`·`lg`·`xl` = 180/240/320/480px. Height = width / φ. |
 | `actions` | — | Items for the built-in ⋮ menu: `{ icon?, label, onSelect, destructive?, disabled? }[]`. Empty/absent → no menu. Ignored when `corner` is set. |

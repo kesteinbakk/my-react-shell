@@ -28,9 +28,23 @@ export interface PhiCardProps {
     /**
      * Top section. You own its content and inner layout; it's full-bleed (a single
      * cell that stretches your node to fill both axes — a figure/image fills it
-     * edge-to-edge). Add your own padding for inset content.
+     * edge-to-edge). Add your own padding for inset content. Ignored when `image` or
+     * `icon` is set — those render the top section instead.
      */
     upper?: ReactNode;
+    /**
+     * Image URL — rendered full-bleed (full width, `object-fit: cover`) as the top
+     * section, giving the classic figure-over-content card with `lower` below. Takes
+     * precedence over `icon` and `upper`.
+     */
+    image?: string;
+    /** Alt text for `image`. Defaults to `''` (treated as decorative). */
+    imageAlt?: string;
+    /**
+     * Icon / figure node — rendered centered, full-width, as the top section (used
+     * when there's no `image`). Takes precedence over `upper`.
+     */
+    icon?: ReactNode;
     /**
      * Bottom section, same contract as `upper`. When it's empty (absent / `null` /
      * `false`) the section is **not rendered at all** — the top section fills the
@@ -70,4 +84,4 @@ export interface PhiCardProps {
  * collapses when empty; an optional top-right overflow menu takes consumer-supplied
  * actions. See the components guide for examples.
  */
-export declare function PhiCard({ upper, lower, size, actions, menuIcon, menuLabel, corner, leftBorderColor, onClick, hoverable, className, }: PhiCardProps): import("react").JSX.Element;
+export declare function PhiCard({ upper, image, imageAlt, icon, lower, size, actions, menuIcon, menuLabel, corner, leftBorderColor, onClick, hoverable, className, }: PhiCardProps): import("react").JSX.Element;

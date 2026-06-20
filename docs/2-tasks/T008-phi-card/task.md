@@ -27,6 +27,9 @@ Split:  upperH : lowerH = φ : 1    (the two sections)
 - **Two consumer-owned sections** — `upper` / `lower` (`ReactNode`). Full-bleed: each is
   a single grid cell that stretches its child to fill both axes, so a figure/image fills
   edge-to-edge; the consumer adds its own padding for inset content.
+- **Optional figure** — `image` (full-bleed, `object-fit: cover`) or `icon` (centered)
+  renders the **top** section full-width (figure-over-content), with `lower` below.
+  Precedence for the top section: `image` > `icon` > `upper`.
 - **Bottom collapses when empty** — `lower` absent / `null` / `false` → the section is not
   rendered; the top fills the card and the outer φ:1 ratio is kept (so collapsed cards
   still line up in a grid). Replaces the old `singleBand` prop.

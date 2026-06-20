@@ -1038,6 +1038,23 @@
   overflow: hidden;
 }
 
+/* Figure — the `image` / `icon` props render the top section full-width: an image
+   fills it (object-fit: cover); an icon node sits centered on the surface. */
+.mrs-phi-card__image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.mrs-phi-card__figure {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  color: var(--color-text-tertiary);
+}
+
 /* Corner — top-right overlay for the actions menu (or a consumer `corner` node).
    Out of flow so it never disturbs the φ rows; sits above full-bleed section
    content. Rendered only when there's something to show. */
