@@ -280,7 +280,9 @@ export function PhiCard({
         {topContent}
       </div>
       {hasLower ? (
-        <div className="mrs-phi-card__section mrs-phi-card__section--padded">{lower}</div>
+        <div className="mrs-phi-card__section mrs-phi-card__section--padded mrs-phi-card__section--lower">
+          {lower}
+        </div>
       ) : null}
       {cornerNode != null ? (
         <div className="mrs-phi-card__corner" onClick={(e) => e.stopPropagation()}>

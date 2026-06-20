@@ -1041,6 +1041,19 @@
 .mrs-phi-card__section--padded {
   padding: 1.1em; /* `em` → scales with the size-derived base font-size */
 }
+/* Inset separator between the upper and lower sections — doesn't run edge to edge.
+   Only the lower section renders when `lower` is present, so it's auto-hidden else. */
+.mrs-phi-card__section--lower {
+  position: relative;
+}
+.mrs-phi-card__section--lower::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 1.1em;
+  right: 1.1em;
+  border-top: 1px solid var(--color-border-primary);
+}
 
 /* Figure — the `image` / `icon` props render the top section full-width: an image
    fills it (object-fit: cover); an icon node sits centered on the surface. */
