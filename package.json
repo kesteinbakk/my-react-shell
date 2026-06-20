@@ -62,6 +62,9 @@
     "preview": "vite preview",
     "setup:hooks": "git config core.hooksPath .githooks"
   },
+  "dependencies": {
+    "themes": "git+ssh://git@bitbucket.org:kesteinbakk/themes.git#v0.1.0"
+  },
   "peerDependencies": {
     "@auth/core": "^0.41.1",
     "@convex-dev/auth": "^0.0.94",

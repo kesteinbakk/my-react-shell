@@ -13,8 +13,10 @@ Project guidance for agents. Short by design; depth lives in `docs/`.
 **my-react-shell** is a **modular foundation library**, not a framework or a fixed
 app template. It ships a set of **self-contained modules** an app picks from:
 
-- **theme** — semantic-token contract + 5 palettes + light/dark/system, consumer
-  palettes; a batteries-included drop-in.
+- **theme** — light/dark/system + palette selection + consumer palettes, a
+  batteries-included drop-in. The `--color-*` token contract + palettes live in the
+  shared, framework-neutral `themes` package (D13), shared with the SolidJS
+  `foundation`; this module is the React provider + registry on top.
 - **providers** — Convex client provider + the single `AppProviders` wrapper.
 - **auth** — a pluggable auth **seam** (a TS contract) + the Convex Auth default
   implementation; bring-your-own for Better Auth / SSO.
@@ -40,8 +42,9 @@ consumers use shadcn directly for. The app-shell ships as an *optional* module, 
 
 > **Status: in progress.** T001 has landed the theme module, the providers + auth
 > seam, and standard-node-module distribution (prepare-build to `dist/`). i18n,
-> per-module guides, and the module-authoring contract are next. The SolidJS
-> `zingularis/foundation` is untouched — it serves Solid consumers.
+> per-module guides, and the module-authoring contract are next. The theme tokens
+> are now **shared** with the SolidJS `zingularis/foundation` via the `themes`
+> package (D13); foundation otherwise stays the source of truth for its Solid modules.
 
 ## Demos & visual showcasing
 

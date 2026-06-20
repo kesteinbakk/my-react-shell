@@ -232,3 +232,52 @@ Decisions (owner, 2026-06-20):
 Renders against the existing `theme` token contract. Ships `docs/guides/icons.md` and a
 `<UserPreferences>` entry in `docs/guides/component-kit.md`. Origin: T005
 (`docs/2-tasks/T005-user-preferences/task.md`).
+
+## D13 — shared theme package (`themes`): one source of truth for tokens + palettes (supersedes [D4](#d4--the-solidjs-foundation-is-untouched))
+
+The semantic `--color-*` token contract and the palettes are extracted into a
+**separate, framework-neutral package `themes`** (`~/Developer/themes`,
+`git+ssh://git@bitbucket.org:kesteinbakk/themes.git`, tag-pinned exactly like
+[D5](#d5--distribution-bitbucket-git-dependency-consumed-like-an-npm-package))
+that **both my-react-shell (React) and `zingularis/foundation` (SolidJS)
+consume**. The colors are pure CSS custom properties — framework-agnostic — so a
+single copy serves both ecosystems; each repo keeps only its own
+framework-specific `ThemeProvider` and its own baseline element styles.
+
+**This supersedes [D4](#d4--the-solidjs-foundation-is-untouched)** ("the SolidJS
+foundation is untouched"): foundation is refactored to consume `themes` instead of
+carrying its own palette copies. The copies had already drifted — the five shared
+palettes (`ocean/forest/sunset/soft/dynamic`) were byte-for-byte identical across
+both repos, yet my-react-shell's `base.css` contract had added the `-border` /
+`share-border` tokens foundation's `:root` never declared (its palettes filled
+them anyway). Extracting the contract ends that drift at the source. Selected
+**approach A** (extract a package) over **B** (keep two copies behind a
+drift-check guard) — a true single source beats enforced duplication, and it
+reuses the D5 git-dep model already in place.
+
+Decisions:
+
+- **Pure CSS + JSON, no build.** `themes` ships `contract.css` (the superset
+  `:root`, value-free apart from `--color-overlay`), the six palettes
+  (`ocean/forest/sunset/soft/dynamic` + `golden`), an `index.css` barrel, and a
+  `palettes.json` manifest (name/label/description, so a consumer's theme registry
+  can stop duplicating the list). No TS, no React/Solid, no `prepare`.
+- **A regular `dependencies` git-dep in both consumers**, not a dev/peer dep — it
+  must resolve **transitively** for the consumers of a library that re-exports its
+  CSS. The barrel stays otherwise dependency-light; this is CSS, not a runtime peer.
+- **Tailwind stays the consumer's.** The palettes resolve Tailwind's `--color-*`
+  ramp from the consumer's own `@import 'tailwindcss'`; `themes` imports nothing
+  and stays tooling-neutral. Import Tailwind before the palettes.
+- **Subset selection per consumer.** my-react-shell surfaces five palettes (omits
+  `golden`, the literal Zingularis brand gold — [D6](#d6--theme-module-token-contract--5-palettes)); foundation surfaces all
+  six. The package ships the superset; each app imports the palette files it wants.
+- **Providers + baseline stay per-repo.** The class-toggling runtime is genuinely
+  framework-specific; foundation's baseline also carries app utility classes +
+  animations that don't belong in a neutral package.
+
+my-react-shell: `src/index.css` imports `themes/contract.css` + its five palettes;
+`src/styles/base.css` keeps only the baseline; `src/styles/themes/*` removed.
+foundation: `src/themes/index.css` imports `themes/*`; `src/themes/base.css` keeps
+its utilities/baseline/animations minus the contract; `foundation-*.css` removed.
+Editing a color now happens once in `themes`; a tag bump propagates it (D5-style)
+to every consumer. Origin: T006 (`docs/2-tasks/T006-shared-theme-package/task.md`).

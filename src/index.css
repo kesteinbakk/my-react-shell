@@ -1,18 +1,25 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
 
-/* my-react-shell semantic-token base (the `registry:base`): the `:root` token
-   contract + generic themed base styles, then each palette as a
-   `.theme-<name>-{light,dark}` class. <ThemeProvider> applies the active class
-   to <html>. A consumer can add its own palette by importing a class that fills
-   the same contract (see styles/base.css) and listing it in <ThemeProvider>.
+/* my-react-shell semantic-token base. The `--color-*` token contract and the
+   palettes live in the shared, framework-neutral `themes` package (one source of
+   truth shared with zingularis/foundation — see strategy D13); this file wires
+   them in: the contract, the local themed baseline, then each palette as a
+   `.theme-<name>-{light,dark}` class. <ThemeProvider> applies the active class to
+   <html>. A consumer adds its own palette by importing a class that fills the
+   same contract (see `themes/contract.css`) and listing it in <ThemeProvider>.
+
+   Tailwind is imported above so the palettes resolve its `--color-zinc-50` /
+   `--color-blue-500` / … ramp. `golden` is intentionally omitted (foundation-only
+   brand palette).
 
    The shadcn token bridge (mapping these tokens onto shadcn's `--background` /
    `--primary` / … names + Tailwind `@theme` exposure) lands with the registry
    wiring in a later phase; this file is the palette/token source it builds on. */
+@import 'themes/contract.css';
 @import './styles/base.css';
-@import './styles/themes/ocean.css';
-@import './styles/themes/forest.css';
-@import './styles/themes/sunset.css';
-@import './styles/themes/soft.css';
-@import './styles/themes/dynamic.css';
+@import 'themes/ocean.css';
+@import 'themes/forest.css';
+@import 'themes/sunset.css';
+@import 'themes/soft.css';
+@import 'themes/dynamic.css';

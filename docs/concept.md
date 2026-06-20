@@ -11,8 +11,11 @@ decision (see `components` below), leaving un-opinionated shadcn primitives to t
 
 Each module is one capability an app can opt into:
 
-- **theme** — the semantic-token contract, 5 palettes, light/dark/system, and
-  consumer-defined palettes. A batteries-included drop-in: import the provider, done.
+- **theme** — light/dark/system, palette selection, and consumer-defined palettes,
+  as a batteries-included drop-in (import the provider, done). The `--color-*` token
+  contract and the palettes themselves come from the shared, framework-neutral
+  `themes` package (strategy D13) — one source of truth shared with the SolidJS
+  `foundation`; this module is the React provider + registry on top.
 - **providers** — the Convex client provider and the single `AppProviders` wrapper
   that composes theme + Convex + (optional) auth. Shipped at the
   `my-react-shell/providers` sub-path so `convex` stays an *optional* peer and the
@@ -72,7 +75,10 @@ when a second app needs it (rule of two), it is contributed back as a new module
   D10) — a consumer uses it, swaps it, or builds its own. Never mandated, never the
   centerpiece.
 - **Not the SolidJS `foundation`.** That stays the source of truth for SolidJS
-  consumers. my-react-shell is the React-era sibling for the reusable-module layer.
+  consumers' own modules (kit, shell, …); my-react-shell is the React-era sibling
+  for the reusable-module layer. The two now **share their theme tokens** through
+  the framework-neutral `themes` package (strategy D13) — colors are edited once and
+  propagate to both — but otherwise stay independent.
 
 ## Distribution
 
