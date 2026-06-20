@@ -59,16 +59,26 @@ local checkout — this is a **dev-only** redirect:
     // dedupe: ['react', 'react-dom', 'react/jsx-runtime',
     //          'convex', 'convex/react',
     //          '@convex-dev/auth'],  // only for /auth/convex
+    // consumer that uses `my-react-shell/app-shell`: also dedupe the router
+    // (a split @tanstack/react-router context breaks the shell's breadcrumbs /
+    // active-nav) and the two Radix primitives the shell renders —
+    // dedupe: ['react', 'react-dom', 'react/jsx-runtime',
+    //          '@tanstack/react-router',
+    //          '@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu'],
   },
   ```
   The exact list is **what the consumer shares with the shell across the symlink**:
   always the React triple (every compiled module imports `react/jsx-runtime`); plus
   `convex` / `convex/react` / `@convex-dev/auth` when the consumer imports
-  `my-react-shell/providers` or `my-react-shell/auth/convex` (those are the bare
-  specifiers the compiled `dist/` externalizes). The tag-pinned **git-dep path does
-  not need this** — a real (non-symlinked) install resolves each bare specifier to the
-  consumer's single copy through normal node resolution; the duplication is a
-  symlink-only artifact.
+  `my-react-shell/providers` or `my-react-shell/auth/convex`, and
+  `@tanstack/react-router` / `@radix-ui/react-dialog` / `@radix-ui/react-dropdown-menu`
+  when it imports `my-react-shell/app-shell` (those are the bare specifiers the
+  compiled `dist/` externalizes). The router is **correctness-critical** for the
+  same reason React is — a second copy means a second context, so the shell's
+  `useRouterState` can't see the consumer's `RouterProvider`. The tag-pinned
+  **git-dep path does not need any of this** — a real (non-symlinked) install resolves
+  each bare specifier to the consumer's single copy through normal node resolution;
+  the duplication is a symlink-only artifact.
 
   > **Build/test do not catch this.** `vite build` and vitest resolve React
   > differently than the dev pre-bundler, so a green build/test run does **not**
