@@ -38,10 +38,10 @@
   --color-primary-content: rgb(255, 255, 255); /* white */
   --color-primary-bg: rgb(235, 246, 253); /* very soft sky-50 */
 
-  --color-secondary: rgb(82, 97, 119); /* deepened slate so white labels clear AA */
+  --color-secondary: rgb(82, 97, 119); /* neutral low-emphasis button — label / solid fill */
   --color-secondary-hover: rgb(64, 79, 98);
-  --color-secondary-content: rgb(255, 255, 255); /* white */
-  --color-secondary-bg: rgb(241, 245, 249); /* slate-50 */
+  --color-secondary-content: rgb(255, 255, 255); /* label on the solid fill */
+  --color-secondary-bg: rgb(226, 232, 240); /* slate-200 — soft surface for the bordered secondary button */
 
   /* ===== Semantic Colors ===== */
   --color-success: rgb(28, 128, 78); /* deepened soft green so white text clears AA */
@@ -63,6 +63,12 @@
   --color-info-hover: rgb(24, 90, 140);
   --color-info-content: rgb(255, 255, 255);
   --color-info-bg: rgb(235, 246, 253);
+
+  /* Semantic strong text — legible colored text on the matching -bg tint */
+  --color-success-strong: var(--color-green-800);
+  --color-warning-strong: var(--color-amber-800);
+  --color-danger-strong: var(--color-red-800);
+  --color-info-strong: var(--color-blue-800);
 
   /* ===== Semantic / Share Border Colors (softer/lighter shade of each hue) ===== */
   --color-success-border: rgb(150, 220, 185);
@@ -155,10 +161,10 @@
   --color-primary-content: rgb(16, 26, 46); /* dark text — accent is light in dark mode */
   --color-primary-bg: rgb(30, 41, 72); /* muted blue-950 */
 
-  --color-secondary: rgb(148, 163, 184); /* slate-400 */
-  --color-secondary-hover: rgb(129, 146, 169); /* brighter slate */
-  --color-secondary-content: rgb(20, 24, 33); /* dark text — accent is light in dark mode */
-  --color-secondary-bg: rgb(30, 41, 59); /* slate-800 — deep enough that the secondary-button label (shadcn maps it to secondary text on this) clears AA */
+  --color-secondary: rgb(202, 213, 226); /* slate-300 — neutral low-emphasis button — label / solid fill */
+  --color-secondary-hover: rgb(226, 232, 240);
+  --color-secondary-content: rgb(20, 24, 33); /* dark label on the solid fill */
+  --color-secondary-bg: rgb(51, 65, 85); /* slate-700 — soft surface for the bordered secondary button */
 
   /* ===== Semantic Colors ===== */
   --color-success: rgb(110, 231, 164); /* softer green-400 */
@@ -180,6 +186,12 @@
   --color-info-hover: rgb(99, 153, 246);
   --color-info-content: rgb(16, 26, 46); /* dark text — accent is light in dark mode */
   --color-info-bg: rgb(30, 41, 72);
+
+  /* Semantic strong text — legible colored text on the matching -bg tint */
+  --color-success-strong: var(--color-green-300);
+  --color-warning-strong: var(--color-amber-300);
+  --color-danger-strong: var(--color-red-300);
+  --color-info-strong: var(--color-blue-300);
 
   /* ===== Semantic / Share Border Colors (dimmer shade of each hue) ===== */
   --color-success-border: rgb(45, 90, 70);

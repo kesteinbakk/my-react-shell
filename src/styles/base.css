@@ -51,6 +51,11 @@
   --color-primary-content: initial;
   --color-primary-bg: initial;
 
+  /* Secondary is a NEUTRAL low-emphasis pairing for the primary — a muted chip,
+     not a second brand color, so it never competes with the colored primary.
+     Render it either as a soft surface (`--color-secondary-bg`) + border with
+     `--color-secondary` as the label, or as a solid fill (`--color-secondary` bg
+     + `--color-secondary-content` label). Both stay legible in light and dark. */
   --color-secondary: initial;
   --color-secondary-hover: initial;
   --color-secondary-content: initial;
@@ -76,6 +81,15 @@
   --color-info-hover: initial;
   --color-info-content: initial;
   --color-info-bg: initial;
+
+  /* ===== Semantic Strong Text ===== */
+  /* A readable colored text shade for use ON the matching `-bg` tint (soft
+     alerts / status pills): the saturated base token fails AA on its own tint,
+     so `-strong` is the legible-on-tint text color. Every palette fills these. */
+  --color-success-strong: initial;
+  --color-warning-strong: initial;
+  --color-danger-strong: initial;
+  --color-info-strong: initial;
 
   /* ===== Semantic / Share Border Colors ===== */
   /* A softer (light) / dimmer (dark) shade of each hue, for bordered alerts and

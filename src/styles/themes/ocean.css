@@ -14,9 +14,9 @@
   --color-background-secondary: var(--color-sky-100);
 
   /* ===== Border Colors ===== */
-  --color-border-primary: var(--color-sky-200);
-  --color-border-secondary: var(--color-sky-300);
-  --color-border-hover: var(--color-sky-400);
+  --color-border-primary: var(--color-slate-200);
+  --color-border-secondary: var(--color-slate-300);
+  --color-border-hover: var(--color-slate-400);
 
   /* ===== Text Hierarchy ===== */
   --color-text-primary: var(--color-slate-900);
@@ -37,10 +37,10 @@
   --color-primary-content: #ffffff;
   --color-primary-bg: var(--color-indigo-50);
 
-  --color-secondary: var(--color-sky-700);
-  --color-secondary-hover: var(--color-sky-800);
-  --color-secondary-content: #ffffff;
-  --color-secondary-bg: var(--color-sky-50);
+  --color-secondary: var(--color-slate-600); /* neutral low-emphasis button — label / solid fill */
+  --color-secondary-hover: var(--color-slate-700);
+  --color-secondary-content: #ffffff; /* label on the solid fill */
+  --color-secondary-bg: var(--color-slate-100); /* soft surface for the bordered secondary button */
 
   /* ===== Semantic Colors ===== */
   --color-success: var(--color-green-700);
@@ -62,6 +62,12 @@
   --color-info-hover: var(--color-blue-700);
   --color-info-content: #ffffff;
   --color-info-bg: var(--color-blue-50);
+
+  /* Semantic strong text — legible colored text on the matching -bg tint */
+  --color-success-strong: var(--color-green-800);
+  --color-warning-strong: var(--color-amber-800);
+  --color-danger-strong: var(--color-red-800);
+  --color-info-strong: var(--color-blue-800);
 
   /* ===== Semantic / Share Border Colors (softer shade of each hue) ===== */
   --color-success-border: var(--color-green-300);
@@ -162,10 +168,10 @@
   --color-primary-content: var(--color-slate-900);
   --color-primary-bg: var(--color-cyan-950);
 
-  --color-secondary: var(--color-teal-400);
-  --color-secondary-hover: var(--color-teal-300);
-  --color-secondary-content: var(--color-slate-900);
-  --color-secondary-bg: var(--color-teal-950);
+  --color-secondary: var(--color-slate-300); /* neutral low-emphasis button — label / solid fill */
+  --color-secondary-hover: var(--color-slate-200);
+  --color-secondary-content: var(--color-slate-900); /* dark label on the solid fill */
+  --color-secondary-bg: var(--color-slate-700); /* soft surface for the bordered secondary button */
 
   /* ===== Semantic Colors ===== */
   --color-success: var(--color-emerald-400);
@@ -187,6 +193,12 @@
   --color-info-hover: var(--color-sky-300);
   --color-info-content: var(--color-slate-900);
   --color-info-bg: var(--color-sky-950);
+
+  /* Semantic strong text — legible colored text on the matching -bg tint */
+  --color-success-strong: var(--color-emerald-300);
+  --color-warning-strong: var(--color-amber-300);
+  --color-danger-strong: var(--color-red-300);
+  --color-info-strong: var(--color-sky-300);
 
   /* ===== Semantic / Share Border Colors (dimmer shade of each hue) ===== */
   --color-success-border: var(--color-emerald-800);
