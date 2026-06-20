@@ -1045,6 +1045,9 @@
    Only the lower section renders when `lower` is present, so it's auto-hidden else. */
 .mrs-phi-card__section--lower {
   position: relative;
+  /* The footer band is the φ-small row; keep its horizontal padding but trim the
+     vertical so a footer (e.g. a fixed-height badge) fits on the smallest cards. */
+  padding: 0.5em 1.1em;
 }
 .mrs-phi-card__section--lower::before {
   content: '';
