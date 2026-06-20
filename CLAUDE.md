@@ -40,7 +40,7 @@ but **not** the un-opinionated shadcn primitives (Button/Input/Checkbox/…), wh
 consumers use shadcn directly for. The app-shell ships as an *optional* module, never mandated.
 
 - What this is + boundary: [docs/concept.md](docs/concept.md)
-- **Public API (every export + usage):** [docs/specifications/api-reference.md](docs/specifications/api-reference.md) — the fast index, also distributed to consumer agents via the `my-react-shell` skill (keep the two in lockstep)
+- **Public API (every export + usage):** [docs/specifications/api-reference.md](docs/specifications/api-reference.md) — the single source of truth; it **ships inside the package** (`package.json` → `files`), so consumer agents read the version-matched copy at `node_modules/my-react-shell/…` via the `my-react-shell` skill
 - Standing decisions + rationale: [docs/strategy.md](docs/strategy.md)
 - Framework decision / from-scratch consumer guide: the `react-framework` skill ([.claude/skills/react-framework/react-framework-notes.md](.claude/skills/react-framework/react-framework-notes.md))
 - Build plan: **T001** in `docs/2-tasks/` (index: `docs/2-tasks/_index/`)
@@ -185,12 +185,13 @@ foundation source and match it; don't reconstruct from memory or the happy path.
   the public API surface — a new/removed/renamed export, a changed prop, signature,
   default, import path, or peer; new CSS; a new component or module — **must** update
   [docs/specifications/api-reference.md](docs/specifications/api-reference.md) in the
-  **same change** (it is the single source of truth for *what* is exported and how to
-  use it), and mirror the change into the `my-react-shell` skill's bundled
-  `api-reference.md` (skill source: `~/Developer/dev-docs/skill-source/development/my-react-shell/`,
-  fanned out by skill-sync) so consumer agents stay in sync. Leaving the reference stale
-  is the staleness this rule exists to prevent. See root `CLAUDE.md` → docs reflect
-  current state.
+  **same change**. It is the **single source of truth** for *what* is exported and how to
+  use it, and there is exactly **one copy**: it **ships inside the package** (it's in
+  `package.json` → `files`), so consumers receive the version-matched reference on their
+  next tag bump, and the `my-react-shell` skill points consumer agents at it
+  (`node_modules/my-react-shell/docs/specifications/api-reference.md`). No mirror to
+  maintain — just keep this one file current. Leaving the reference stale is the
+  staleness this rule exists to prevent. See root `CLAUDE.md` → docs reflect current state.
 - **Guides are for depth, not the export list.** A module ships a `docs/guides/<module>.md`
   for the *why* + the contract to fill / how to bring your own — only when there's more to
   say than the API reference carries. A module whose guide would only restate the reference
@@ -220,8 +221,14 @@ docs/
 ## Branch & commit model
 
 - Single long-lived branch: **`main`.** No feature branches unless asked.
-- Commit your own work at natural finish points. **Never push** without an
-  explicit instruction (a `push` targets this repo only).
+- **Commit your own work at natural finish points** — and the user does **not** care
+  about this project's commit history. Prefer committing only your own changes when
+  that's trivial; **when isolating them isn't trivial, just commit everything in the
+  working tree** rather than stall. Never ask the user how to split or isolate a commit,
+  never leave your work uncommitted to avoid touching another session's changes, and
+  never close a turn reporting which of the two you chose. This **overrides** the
+  universal "commit your own changes only" rule (root `CLAUDE.md`) for this repo.
+- **Never push** without an explicit instruction (a `push` targets this repo only).
 - A **pre-commit guard** (`.githooks/pre-commit`, enabled via `pnpm setup:hooks`)
   rejects committing a `link:`/`file:` dependency specifier — the local dev-loop
   redirect must never land in a commit. Bypass intentionally with `--no-verify`.
@@ -232,10 +239,10 @@ docs/
   unrelated *source* into your commit, and committing docs / harness / non-lib files
   doesn't trigger it at all. The one real wrinkle: if your lib-src change shares the
   tree with *other* uncommitted lib-src, the rebuild compiles the whole working tree,
-  so the staged `dist/` reflects both. Isolate deterministically — `git stash push --
-  <files you don't own>`, commit yours (clean dist), `git stash pop`, or commit the
-  coherent batch together. Either way **commit your own work; a dirty tree is never a
-  reason to leave it for the user.**
+  so the staged `dist/` reflects both — harmless here (history is disposable; see the
+  commit policy above), so just commit the batch. If you do want a clean `dist/`,
+  isolate first (`git stash push -- <files you don't own>`, commit, `git stash pop`).
+  Either way **commit — never leave your work uncommitted for the user.**
 - A consumer on the **`link:` dev-loop must dedupe React** in its own Vite config
   (`resolve.dedupe`), or the symlinked shell's own React copy collides with the
   app's and first paint crashes with `Invalid hook call`. `link:`-only — the
