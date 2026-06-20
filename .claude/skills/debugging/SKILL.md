@@ -150,7 +150,7 @@ Just `Read` it. For a long capture, look at the tail-most lines first (`tail -n 
 
 ### What does NOT belong here
 
-- Server-side logs (Convex, Vinxi, API routes) — those go through `serverLog` and surface via `dev watch` / `dev analyze`. The bridge is browser-to-file only.
+- Server-side runtime logs (Convex, Vinxi, API routes) — those go through `serverLog` and surface via `dev watch` / `dev analyze`. The bridge is browser-to-file only.
 - Network requests — use Chrome DevTools MCP / network panel.
 - Production tracing — `devLog` is dev-only.
 
@@ -275,6 +275,14 @@ Fix: Move `foo.tsx` → `foo/index.tsx`
 ### Hydration Mismatch
 
 Content flashes then disappears → see `hydration-errors` skill for full debugging protocol.
+
+### Convex Change Has No Effect (Deploy Blocked by Schema Mismatch)
+
+A schema-validation failure blocks the **entire** Convex push — every function stays pinned at its last-good version while `convex dev` keeps running. Symptom: a function change does nothing, a write silently doesn't persist, or a newly added field never appears.
+
+It prints at `convex dev` boot/push to `~/Developer/zingularis/logs/<short>-cvx.log` but does NOT reliably reach `errors.log` / `dev analyze` (boot-time output the watcher misses) — their silence proves nothing. Read that log (or run `dev check convex`) for `✖ Schema validation failed` / `does not match the schema`; it names the table, field, and offending row.
+
+Fix: make the field `v.optional(...)` if absence is valid, else backfill the existing rows to match.
 
 ---
 
