@@ -34,7 +34,7 @@ export interface ThemeInfo {
 export const BUILT_IN_THEMES: readonly ThemeInfo[] = [
   { name: 'ocean', label: 'Ocean', description: 'Deep sea blues and cool tones' },
   { name: 'forest', label: 'Forest', description: 'Natural greens and earth tones' },
-  { name: 'sunset', label: 'Sunset', description: 'Warm oranges and purples' },
+  { name: 'sunset', label: 'Sunset', description: 'Warm oranges and fuchsia' },
   { name: 'soft', label: 'Soft', description: 'Muted, gentle colors with subtle contrasts' },
   { name: 'dynamic', label: 'Dynamic', description: 'High contrast with vibrant accents' },
 ]
