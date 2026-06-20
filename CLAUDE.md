@@ -83,6 +83,25 @@ confirm the change reads correctly), **but adding, removing, or renaming a
 `--color-*` token requires updating that page's `PALETTE_GROUPS` list**, or the
 token won't appear (or renders as a stray "unset" hatch).
 
+**New and changed components must reach the demo's Kit page.** The opinionated kit
+(`my-react-shell/components`) is showcased section-by-section in the demo's Kit page
+(`my-react-shell-demo/src/pages/KitPage.tsx`); the library and its showcase ship
+together, so a component change that never reaches the demo is unfinished. Whenever
+you add a kit component or change one's props / variants / behavior, keep the two in
+lockstep:
+
+- **A new component won't appear until you add its `PageSection`** to that page's
+  `sections` array — import it and render a live example, mirroring the existing
+  entries (an `id`, a `label`, an `icon` key, a short `Lead` blurb). The section's
+  scroll-spy tab also needs that same `icon` key registered in **both** the `ICONS`
+  (lucide) and `EMOJIS` maps in `my-react-shell-demo/src/shell-config.tsx`, or the
+  tab falls back to a generic glyph.
+- **A changed component** — a new prop, variant, or behavior worth seeing — updates
+  its existing section so the demo renders the new surface.
+
+(Un-opinionated shadcn primitives are *not* kit components: they're shown on the
+demo's Components page, not the Kit page.)
+
 ## Stack
 
 - **Frontend:** React 19 + Vite SPA (TypeScript 6). **No SSR** — consumers are
