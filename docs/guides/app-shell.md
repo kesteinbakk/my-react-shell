@@ -101,6 +101,38 @@ Only the body cell scrolls (`[data-shell-content]`) — the chrome, sidebar, and
 stay pinned. On mobile the sidebar collapses to a Radix drawer (or a bottom tab bar of
 the `tabBar: true` pages when `mobileNav='tabBar'`).
 
+## Not-found (404)
+
+404 handling is **router config, not a shell prop** — and the router is yours, so the
+shell can neither own it nor inject it. Catch an unmatched URL where you create the
+router, rendering the kit's `EmptyState` as the body:
+
+```tsx
+import { createRouter, Link } from '@tanstack/react-router'
+import { EmptyState } from 'my-react-shell/components'
+
+const router = createRouter({
+  routeTree,
+  defaultNotFoundComponent: () => (
+    <EmptyState
+      title={t('notFound.title')}
+      description={t('notFound.body')}
+      action={<Link to="/">{t('notFound.home')}</Link>}
+    />
+  ),
+})
+```
+
+Because the not-found renders **inside the root route** — the one that mounts
+`<AppShell>` — it keeps the shell chrome: the sidebar/header stay pinned and only the
+body cell swaps to the 404. Scope it to one subtree instead with `notFoundComponent`
+on that route, or throw `notFound()` from a loader when an id resolves to nothing.
+
+> **Two different 404s.** The above is the *in-app* not-found — an unmatched route in
+> the already-loaded SPA. A hard refresh or deep link on an unknown path is a *server*
+> 404: the static host must rewrite `/(.*)` → `/index.html` (e.g. in `vercel.json`) so
+> the SPA boots at all. Wire both — the shell owns neither.
+
 ## The page header
 
 Drop `<ShellPageHeader>` anywhere in a route's subtree. It renders `null` and registers
@@ -174,6 +206,11 @@ tabs.
   modal, and command-bar/action registry. Wire your own into the `actions` slot.
 - **Scroll-aware code** must read the shell's scroll container (`useShellContext().
   scrollContainer`), not `window` — the body cell is the only scroller.
+- **Tab strips scroll horizontally on overflow.** Both `PageTabs` and the
+  `PageSections` section-tab strip wrap their row in a horizontal scroll container
+  (hidden scrollbar) with edge-fade gradients and arrow buttons that appear only on
+  the side(s) holding hidden tabs — so a long tab list stays usable on narrow
+  viewports instead of overflowing the page. No configuration; it engages automatically.
 - **The page-header `search` slot is seed-once.** Its `initialValue` sets the input's
   starting text; the input is then self-managed and won't re-sync if `initialValue`
   changes after mount. Drive your query state from the `onChange` callback.

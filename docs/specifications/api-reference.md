@@ -1,0 +1,507 @@
+---
+title: API reference
+summary: >
+  The complete public API of my-react-shell — every export, per import path,
+  with signatures and minimal usage. The fast index the per-module guides aren't.
+status: current
+area: all modules
+last_updated: 2026-06-20
+---
+
+# my-react-shell — API reference
+
+The complete public surface, organised by import path. This is the **fast index**:
+every export, what it is, and the minimum to use it. For the *why* and the deeper
+contract of any module, follow the **Guide** link in its section.
+
+> **Mental model.** my-react-shell is a *menu of self-contained modules*, not a
+> framework. The barrel `my-react-shell` is the **Convex-free theme core**; anything
+> heavier lives behind a sub-path so a theme-only app installs nothing it doesn't use.
+> Import only the modules you want. See [concept.md](../concept.md).
+
+## Import-path map
+
+| Import path | Module | Needs (optional peers) | CSS to import |
+|---|---|---|---|
+| `my-react-shell` | **theme** (core) | — (just `react`) | `my-react-shell/styles.css` |
+| `my-react-shell/providers` | **providers** (Convex client + `AppProviders`) | `convex` | — |
+| `my-react-shell/auth/convex` | **auth** Convex Auth default | `convex`, `@convex-dev/auth`, `@auth/core` | — |
+| `my-react-shell/i18n` | **i18n** (`t()` seam) | — (zero-dep) | — |
+| `my-react-shell/components` | **component kit** (opinionated composites) | `class-variance-authority`, `clsx`, `tailwind-merge`, some `@radix-ui/*` | `my-react-shell/components/styles.css` |
+| `my-react-shell/icons` | **icons↔emojis seam** | — (pure React) | — |
+| `my-react-shell/app-shell` | **app-shell** (chrome, page header, tabs) | `@tanstack/react-router`, `@radix-ui/react-dialog`, `@radix-ui/react-dropdown-menu`, `@radix-ui/react-popover` | `my-react-shell/app-shell/styles.css` |
+
+**Required peers (always):** `react ^19`, `react-dom ^19`. Everything else is an
+**optional** peer, installed only for the sub-path that uses it (see
+`peerDependenciesMeta` in `package.json`). The barrel needs none of them.
+
+**`type` vs value.** Every `…Props` / contract type below is a TypeScript type
+(erased at runtime) — import it with `import type`. Components, hooks, and functions
+are runtime values.
+
+---
+
+## `my-react-shell` — theme (the Convex-free core)
+
+Light/dark/system + palette selection, batteries-included. **Guide:**
+[theme.md](../guides/theme.md).
+
+```ts
+import { ThemeProvider, useTheme, BUILT_IN_THEMES } from 'my-react-shell'
+import type { ThemeName, ThemeMode, ThemeInfo, BuiltInThemeName, UseThemeResult, ThemeProviderProps } from 'my-react-shell'
+import 'my-react-shell/styles.css' // REQUIRED — token contract + palettes (raw Tailwind v4 source; see CSS section)
+```
+
+| Export | Kind | Summary |
+|---|---|---|
+| `ThemeProvider` | component | Owns active palette + mode; applies them to `<html>` before paint; persists to localStorage. |
+| `useTheme()` | hook | Read theme state + actions. Throws outside `<ThemeProvider>`. |
+| `BUILT_IN_THEMES` | const | `readonly ThemeInfo[]` — the 5 palettes: `ocean`, `forest`, `sunset`, `soft`, `dynamic`. |
+| `ThemeProviderProps` | type | Props below. |
+| `UseThemeResult` | type | Return of `useTheme()`. |
+| `ThemeName` | type | `BuiltInThemeName \| (string & {})` — built-in (autocomplete) or any custom palette name. |
+| `BuiltInThemeName` | type | `'ocean' \| 'forest' \| 'sunset' \| 'soft' \| 'dynamic'`. |
+| `ThemeMode` | type | `'light' \| 'dark'`. |
+| `ThemeInfo` | type | `{ name: ThemeName; label: string; description: string }`. |
+
+**`<ThemeProvider>` props:** `themes` (default `BUILT_IN_THEMES`), `defaultTheme`
+(`'ocean'`), `defaultMode` (`'light'`), `defaultFollowSystem` (`true`), `storageKey`
+(`'my-react-shell.theme'`), `children`.
+
+**`useTheme()` returns:** `theme`, `mode`, `isDark`, `isSystemMode`, `themes`,
+`setTheme(name)`, `setMode(mode)`, `setSystemMode(follow)`, `toggleMode()`,
+`cycleTheme()`, `getThemeInfo(name)`.
+
+```tsx
+<ThemeProvider defaultTheme="ocean">{children}</ThemeProvider>
+// inside:
+const { theme, isDark, themes, setTheme, toggleMode } = useTheme()
+```
+
+> When you use `<AppProviders>`, the theme provider is **already mounted** — pass
+> theme options via its `theme` prop instead of mounting `<ThemeProvider>` yourself.
+> Custom palette? Ship a `.theme-<name>-{light,dark}` CSS class pair and list it in
+> `themes` (see the guide).
+
+---
+
+## `my-react-shell/providers` — Convex client + `AppProviders`
+
+The single wrapper that composes theme + Convex + (optional) auth above your router.
+Needs the optional `convex` peer. **Guide:** [providers.md](../guides/providers.md).
+
+```ts
+import { AppProviders, ConvexClientProvider, createConvexClient } from 'my-react-shell/providers'
+import type { AppProvidersProps, ConvexClientProviderProps, AuthProvider, AuthProviderProps } from 'my-react-shell/providers'
+```
+
+| Export | Kind | Summary |
+|---|---|---|
+| `AppProviders` | component | Mount once above your router. Composes `ThemeProvider` + Convex client + optional auth. |
+| `ConvexClientProvider` | component | Plain (unauthenticated) Convex provider; creates the client once. |
+| `createConvexClient(url?)` | function | Builds a `ConvexReactClient` from `VITE_CONVEX_URL`. **Throws** if absent/empty; **rejects** a trailing slash. |
+| `AppProvidersProps` | type | Props below. |
+| `ConvexClientProviderProps` | type | Props for the plain provider. |
+| `AuthProvider` | type | The auth seam (re-exported from the auth module). `ComponentType<AuthProviderProps>`. |
+| `AuthProviderProps` | type | `{ client: ConvexReactClient; children: ReactNode }`. |
+
+**`<AppProviders>` props:** `authProvider` (omit → plain unauthenticated Convex app),
+`client` (pre-created client; default reads `VITE_CONVEX_URL`), `theme`
+(`Omit<ThemeProviderProps, 'children'>`, default `{}`), `children`.
+
+```tsx
+<AppProviders authProvider={ConvexAuthDefaultProvider} theme={{ defaultTheme: 'ocean' }}>
+  <RouterProvider router={router} />
+</AppProviders>
+```
+
+> `VITE_CONVEX_URL` is **required and never defaulted** — no trailing slash (breaks
+> the Convex sync websocket, close code 1006). The check lives in `createConvexClient`.
+
+---
+
+## `my-react-shell/auth/convex` — Convex Auth default
+
+The shipped default implementation of the auth seam. The **only** place the library
+imports `@convex-dev/auth` (keeping it optional). **Guide:** [auth.md](../guides/auth.md).
+
+```ts
+import { ConvexAuthDefaultProvider } from 'my-react-shell/auth/convex'
+```
+
+| Export | Kind | Summary |
+|---|---|---|
+| `ConvexAuthDefaultProvider` | component | An `AuthProvider`: wraps the Convex client in `@convex-dev/auth`'s `ConvexAuthProvider`. Pass to `<AppProviders authProvider={…}>`. |
+
+**The seam (contract):** an auth provider is any `ComponentType<{ client, children }>`.
+The `AuthProvider` / `AuthProviderProps` *types* live at `my-react-shell/providers`.
+**Bring-your-own** (Better Auth, SSO, MFA): implement `AuthProvider` and pass it to
+`<AppProviders>` — never import this sub-path, so `@convex-dev/auth` stays uninstalled.
+
+```tsx
+// BYO:
+import type { AuthProviderProps } from 'my-react-shell/providers'
+function MyAuth({ client, children }: AuthProviderProps) {
+  return <BackingProvider client={client}>{children}</BackingProvider>
+}
+<AppProviders authProvider={MyAuth}>{…}</AppProviders>
+```
+
+> The default needs the Convex side configured in your `convex/` backend
+> (`@convex-dev/auth` providers, tables, HTTP routes). The seam covers only the React
+> client wiring. It ships **no UI** (no sign-in form, no account menu).
+
+---
+
+## `my-react-shell/i18n` — the `t()` seam
+
+Zero-dependency translation: provider + hook, central catalog, `{{param}}`
+interpolation, **opt-in compile-time typed keys**, dev missing-key surface.
+Convex- and router-free. **Guide:** [i18n.md](../guides/i18n.md).
+
+```ts
+import { I18nProvider, useTranslation, useI18n, translateNow, createTypedI18n,
+         mergeMessages, MissingTranslationsOverlay, missingKeyStore } from 'my-react-shell/i18n'
+import type { TFunction, I18nContextValue, Locale, LocaleInfo, Messages, DotPaths,
+              TranslateParams, UseTranslationResult, TypedI18n } from 'my-react-shell/i18n'
+```
+
+| Export | Kind | Summary |
+|---|---|---|
+| `I18nProvider` | component | Owns active locale; persists; detects browser locale. Takes `messages`. |
+| `useTranslation(namespace?)` | hook | Returns `{ t, locale, locales, setLocale }`. `namespace` prefixes keys. |
+| `useI18n` | hook | Alias of `useTranslation` (foundation-style naming). |
+| `useI18nContext()` | hook | Raw context read; throws outside provider. |
+| `translateNow(key, params?)` | function | Imperative translate for non-render callers (event handlers, toasts). |
+| `createTypedI18n<K>()` | function | Returns typed `{ useTranslation, useT, translateNow }` bound to key union `K`. Pure typing sugar — no new runtime. |
+| `mergeMessages(base, override)` | function | Deep-merge catalogs (override wins) — compose a module's strings under a consumer catalog. |
+| `flattenMessages(msgs)` | function | Nested catalog → flat dotted map. |
+| `interpolate(str, params)` | function | Fill `{{param}}` placeholders. |
+| `MissingTranslationsOverlay` | component | Dev-only panel listing missing `key · locale` (gated on `import.meta.env.DEV`). Mount once near root. |
+| `missingKeyStore` | object | `subscribe` / `getSnapshot` / `clear` — programmatic missing-key access. |
+| `TFunction<K=string>` | type | `(key: K, params?: TranslateParams) => string`. |
+| `I18nContextValue<K=string>` | type | `{ t, locale, locales, setLocale }`. |
+| `UseTranslationResult<K=string>` | type | Return of `useTranslation`. |
+| `NamespacedKeys<K, NS>` | type | Sub-keys of `K` under namespace `NS`. |
+| `Locale` | type | `string` (consumer-defined codes: `'en'`, `'nb-NO'`, …). |
+| `LocaleInfo` | type | `{ code: Locale; label: string }`. |
+| `Messages` | type | Nested catalog: `Record<Locale, nested object>`. |
+| `FlatMessages` | type | Flat dotted catalog. |
+| `DotPaths<T>` | type | Union of dotted key paths of a catalog object — derive a typed key union from your catalog. |
+| `TranslateParams` | type | `Record<string, string \| number>`. |
+| `TypedI18n<K>` | type | Shape returned by `createTypedI18n`. |
+| `MissingKey` | type | `{ key; locale }` record. |
+| `I18nProviderProps`, `MissingTranslationsOverlayProps` | type | Component props. |
+
+**`<I18nProvider>` props:** `messages` **(required**, `Record<locale, nested catalog>`),
+`locales`, `defaultLocale` (must be a `messages` key — **throws** otherwise),
+`fallbackLocale`, `detectBrowserLocale` (default `true`), `storageKey`, `resolve`
+(BYO engine), `onMissingKey`, `debug`, `children`.
+
+```tsx
+<I18nProvider messages={{ en: { greeting: 'Hi {{name}}' }, no: { greeting: 'Hei {{name}}' } }}
+              locales={[{ code: 'en', label: 'English' }, { code: 'no', label: 'Norsk' }]}
+              defaultLocale="en">
+  <App />
+</I18nProvider>
+// inside:
+const { t, locale, setLocale } = useTranslation()
+t('greeting', { name: 'Kari' })
+```
+
+**Typed keys (opt-in):** bind once, import the typed hooks instead of the bare ones.
+
+```ts
+// src/i18n.ts
+export type Key = DotPaths<typeof en>                       // or hand-write a union
+export const { useTranslation, useT, translateNow } = createTypedI18n<Key>()
+```
+
+> **Central-key policy:** every user-facing string goes through `t()` against the
+> central catalog — no inline literals. **BYO engine:** pass `resolve` to delegate
+> lookup (ICU / react-i18next) while keeping locale state + the missing-key surface.
+
+---
+
+## `my-react-shell/components` — opinionated component kit
+
+Composites that bake a design/layout/behavior decision on shadcn/Radix + the theme
+tokens. **Un-opinionated primitives (Button/Input/Checkbox/plain Dialog/Tooltip/Card/…)
+are NOT shipped — use shadcn directly for those.** This section is the **canonical
+reference** for the kit — there is no separate `docs/guides/` file for it.
+
+```ts
+import { Alert, cn /* … */ } from 'my-react-shell/components'
+import 'my-react-shell/components/styles.css' // REQUIRED (plain prebuilt CSS; also import the theme tokens via my-react-shell/styles.css)
+```
+
+| Export(s) | Kind | Summary |
+|---|---|---|
+| `Alert` | component | Inline alert/callout. `variant`: `info`·`success`·`warning`·`danger`; `title`, `icon`, `onDismiss`, `role`. |
+| `InfoBox` | component | Neutral, tone-free contextual note (icon + title + body). Use `Alert` when the message carries a semantic tone. |
+| `EmptyState` | component | Centered zero-state: optional icon, required `title`, `description`, action slot. |
+| `Spinner`, `PageSpinner`, `SectionSpinner` | component | Rotating indicator on the current text color; block variants center it for page/section loading. |
+| `ConfirmDialog` | component | Controlled confirm dialog on Radix Dialog (overlay, focus trap, Esc/backdrop close). `variant="danger"` for destructive; renders its own confirm/cancel buttons. |
+| `ToastProvider`, `useToast` | component + hook | Mount provider once; fire toasts via `useToast()` (`.success`/`.error`/…). Each renders as an `Alert`; auto-dismiss (5s; `duration:0` sticky). |
+| `ActionButton`, `ActionButtonGroup`, `actionPresets` | component + const | Icon/emoji + label action button with presets (table below). `actionPresets` is the `{ variant, emoji, label }` map. |
+| `Badge` | component | Status/category badge; tones `neutral`·`success`·`warning`·`danger`·`info`; optional status `dot`. |
+| `Chip`, `ChipGroup` | component | Tag: plain / toggleable (`selected`+`onClick`) / removable (`onRemove`). `ChipGroup` wraps. |
+| `Avatar`, `AvatarGroup` | component | Image + initials fallback (also on image error); group stacks with `+N` overflow. |
+| `Table` | component | Column-config data table: per-column sort, zebra, sticky header, empty state. |
+| `InputField` | component | Full field: label + input + helper + error, a11y-wired (`htmlFor`/`aria-invalid`/`aria-describedby`). Spreads native input props; pass `error` to switch on error styling. |
+| `SegmentedControl` | component | Single-select `radiogroup` on a track; controlled via `value`/`onChange`; generic over value type. |
+| `Select` | component | Opinionated select on Radix Select (keyboard nav, typeahead, portal); `options` list; controlled via `value`/`onValueChange`. |
+| `UserPreferences` | component | Controlled theme/display settings panel (palette + light/dark/system + optional icons↔emojis). Persists nothing — emits `onChange`. Auth-free (`accountActions` slot). |
+| `cn(...)` | function | `clsx` + `tailwind-merge` class combiner. |
+
+Every component has a matching `…Props` type export (e.g. `AlertProps`, `AlertVariant`,
+`TableProps`, `TableColumn`, `ToastApi`, `ToastOptions`, `ToastTone`, `SelectProps`,
+`SelectOption`, `SegmentedOption`, `BadgeTone`, `AvatarSize`, `ActionType`,
+`ActionPreset`, `ActionButtonVariant`/`Size`/`Layout`, etc.).
+
+```tsx
+<Alert variant="warning" title="Heads up" onDismiss={() => {}}>Session expires soon.</Alert>
+
+// ConfirmDialog — controlled:
+<ConfirmDialog open={open} onOpenChange={setOpen} title="Delete this item?"
+  description="This cannot be undone." variant="danger" confirmLabel="Delete"
+  onConfirm={() => { setOpen(false) }} />
+
+// Toast — provider once, then imperative:
+const toast = useToast()
+toast.success('Saved', { title: 'Success' }); toast.error('Something went wrong')
+
+const columns: TableColumn<Row>[] = [{ key: 'name', header: 'Name', render: r => r.name, sortValue: r => r.name }]
+<Table columns={columns} data={rows} rowKey={r => r.id} />
+
+<Select value={value} onValueChange={setValue} placeholder="Pick one…"
+  options={[{ value: 'a', label: 'Apple' }, { value: 'b', label: 'Banana', disabled: true }]} />
+```
+
+**`Alert` props:** `variant` (`'info'`), `title`, `children`, `icon` (per-variant; `false`
+drops it), `onDismiss` (renders a dismiss button), `dismissLabel` (`'Dismiss'`),
+`role` (`'alert'` \| `'status'`), `className`.
+
+### `ActionButton`
+
+An opinionated icon/emoji + label action button. **Presets** (each carries the correct
+hand-rolled SVG **and** an emoji, a semantic color, and a default English label):
+`add` · `edit` · `delete` · `copy` · `share` · `download` · `upload` · `save` ·
+`search` · `refresh` · `settings` · `star` · `close` · `more`. For anything without a
+preset, pass a custom `icon` node (a lucide icon or an `<Icon>` from `my-react-shell/icons`).
+
+| Prop | Default | Meaning |
+|---|---|---|
+| `action` | — | A preset supplying glyph + emoji + color + default label. **Either `action` or `icon` is required.** |
+| `icon` | per-preset | Custom glyph node. Required when there's no `action`; overrides the preset glyph otherwise. |
+| `emoji` | per-preset | Override the preset emoji (shown when `showEmoji`). |
+| `label` | — | Visible label; overrides the preset label. |
+| `showLabel` | `false` | Show the preset's default label without retyping it (ignored when `label` is set). |
+| `showEmoji` | `false` | Render the emoji instead of the SVG — wire to `useIconMode().isEmoji`. |
+| `variant` | preset / `neutral` | `neutral`·`primary`·`secondary`·`success`·`warning`·`danger`·`info`. |
+| `size` | `sm` | `xs`·`sm`·`md`·`lg`·`xl` — drives padding, glyph, and label size. |
+| `layout` | `vertical` | `vertical` (glyph over label) or `inline` (glyph left of label). |
+| `active` | — | For `action="star"`: filled + `aria-pressed` when true. |
+| `coloredLabel` | `false` | Let the label take the variant color instead of staying neutral. |
+| `hint` | — | Native tooltip (`title` attribute). |
+| `disabled` / `type` / `onClick` / `aria-label` / `className` | — | Usual button props; `aria-label` falls back to the visible label, then `hint`, then the preset label. |
+
+```tsx
+<ActionButtonGroup>
+  <ActionButton action="add" showLabel onClick={onAdd} />
+  <ActionButton action="delete" showEmoji={useIconMode().isEmoji} onClick={onDelete} />
+  <ActionButton action="star" active={isFavorite} onClick={toggleFavorite} />
+  <ActionButton icon={<Upload size={20} />} label="Import" variant="info" onClick={onImport} />
+</ActionButtonGroup>
+```
+
+### `UserPreferences`
+
+A fully **controlled** theme/display panel in a Radix dialog (palette + light/dark/system
++ an optional icons↔emojis switch). It **persists nothing** — reads each value, emits
+`onChange` — so the consumer owns storage. Auth-free; surface sign-out/profile via the
+`accountActions` slot. All labels are English defaults; pass translated values via your `t()`.
+
+| Prop | Default | Meaning |
+|---|---|---|
+| `theme` / `themes` / `onThemeChange` | — | Active palette, the list to offer (`useTheme().themes`), and the change handler. **Required.** |
+| `mode` / `onModeChange` | — | Active color mode and its handler. **Required.** |
+| `followSystem` / `onFollowSystemChange` | — | Pass both to show a **System** option that follows the OS. |
+| `iconMode` / `onIconModeChange` | — | Pass both to show the **icons↔emojis** switch (from `my-react-shell/icons`). |
+| `accountActions` | — | Rows below a divider — e.g. a sign-out button. Keeps the kit auth-free. |
+| `trigger` | icon button | Override the dialog trigger. |
+| `open` / `onOpenChange` | self-managed | Control the open state if you need to. |
+| label props | English | `triggerLabel`, `title`, `description`, `themeHeading`, `modeHeading`, `displayHeading`, `lightLabel`, `darkLabel`, `systemLabel`, `iconsLabel`, `emojisLabel`, `closeLabel`. |
+| `className` | — | Extra classes on the dialog, merged via `cn()`. |
+
+```tsx
+// wire to useTheme() + useIconMode():
+<UserPreferences theme={theme} themes={themes} onThemeChange={setTheme}
+  mode={mode} onModeChange={setMode}
+  followSystem={isSystemMode} onFollowSystemChange={setSystemMode}
+  iconMode={iconMode} onIconModeChange={setIconMode} />
+```
+
+> The kit **never imports i18n or the icons module**: pass translated label text via
+> props, and wire the icons↔emojis swap yourself via `useIconMode().isEmoji`. All labels
+> have English defaults. Components are themed **only through the semantic tokens** — change
+> a token in your palette and the kit follows, no component edits.
+
+---
+
+## `my-react-shell/icons` — icons↔emojis seam
+
+A *preference* (render icons or emojis) + a thin `<Icon>` glyph↔emoji swap. **No icon
+registry, no `lucide-react` dep** — you bring the glyphs. **Guide:** [icons.md](../guides/icons.md).
+
+```ts
+import { IconModeProvider, useIconMode, Icon } from 'my-react-shell/icons'
+import type { IconMode, IconProps, UseIconModeResult, IconModeProviderProps, IconModeContextValue } from 'my-react-shell/icons'
+```
+
+| Export | Kind | Summary |
+|---|---|---|
+| `IconModeProvider` | component | Owns the icon/emoji preference. Uncontrolled (localStorage) or controlled (`value`+`onChange`). `defaultMode` (`'icon'`), `storageKey`. |
+| `useIconMode()` | hook | Returns `{ iconMode, isEmoji, setIconMode, toggleIconMode }`. Throws outside provider. |
+| `Icon` | component | `<Icon icon={<Glyph/>} emoji="🎨" size label />` — shows one or the other per mode. Defaults to `icon` with no provider. |
+| `IconMode` | type | `'icon' \| 'emoji'`. |
+| `IconProps`, `UseIconModeResult`, `IconModeProviderProps`, `IconModeContextValue` | type | Props / results. |
+
+```tsx
+<IconModeProvider><App /></IconModeProvider>
+// route your icon map through <Icon> (e.g. app-shell's renderIcon) so the whole UI flips at once.
+```
+
+---
+
+## `my-react-shell/app-shell` — app shell (optional, router-coupled)
+
+Header-or-sidebar chrome + mobile drawer/bottom-nav + single scrolling body,
+URL-derived page header (breadcrumbs + actions + search + `subPages` dropdown), the
+shell-config contract, and page-tab primitives. Router-coupled (TanStack Router) +
+Radix — both optional peers. **Guide:** [app-shell.md](../guides/app-shell.md).
+
+```ts
+import { AppShell, ShellPageHeader, PageTabs, PageSections, useDynamicPages,
+         defineShellConfig, ShellConfigError, useShellContext } from 'my-react-shell/app-shell'
+import type { ShellConfig, ShellConfigInput, PageEntry /* … */ } from 'my-react-shell/app-shell'
+import 'my-react-shell/app-shell/styles.css'
+```
+
+| Export | Kind | Summary |
+|---|---|---|
+| `defineShellConfig(input)` | function | Validates (throws `ShellConfigError`) + brands the config at import time. Requires `renderIcon`. |
+| `ShellConfigError` | class | Thrown on a bad config shape. |
+| `AppShell` | component | Mount once at root. `config`, `useMenu` (sidebar vs banner), `actions[]`, `mobileNav` (`'drawer'`\|`'tabBar'`), `children`. |
+| `AppHeader`, `AppMenu`, `AppBottomNav` | component | Chrome sub-parts (usually composed by `AppShell`). |
+| `ShellPageHeader` | component | Drop in a route subtree; renders `null`, registers `title`/`actions`/`search`/`tabs` into the pinned header. |
+| `findActiveChain` | function | Compute the active breadcrumb chain from a path. |
+| `PageTabs` | component | Route-based tab strip (each tab = a route). Pin via `<ShellPageHeader tabs={…}>`. Scrolls horizontally when it overflows — edge fades + arrow buttons appear on the side(s) with hidden tabs. |
+| `PageSections` | component | In-page sections synced to `?<persistKey>=`. Modes `single` / `list` (scrollspy). Its section-tab strip scrolls horizontally on overflow (edge fades + arrows), like `PageTabs`. |
+| `useDynamicPages(cfg)` | hook | Register runtime breadcrumb levels (record names, slugs) under a `parent` route. |
+| `useShellContext()`, `useShellContextOptional()` | hook | Read shell context — incl. `scrollContainer` (the only scroller; use instead of `window`). |
+
+**Contract types:** `PageEntry`, `ShellConfig`, `ShellConfigInput`, `PageContainerMaxWidth`,
+`ShellPageContainerConfig`, `ShellTabsConfig`, `ShellTabsVariant`, `ShellPageHeaderConfig`,
+`ShellPageHeaderSearchSlot`, `ShellDocumentTitleMode`, `ShellIconRenderer`,
+`ShellChromeLabels`, plus component props (`AppShellProps`, `AppShellMobileNav`,
+`AppShellContentPadding`, `ShellPageHeaderProps`, `ChainLevel`, `PageTab`, `PageTabsProps`,
+`PageSection`, `PageSectionsMode`, `PageSectionsProps`, `DynamicPageInput`,
+`DynamicPagesConfig`, `ShellContextValue`).
+
+```tsx
+export const shellConfig = defineShellConfig({
+  appName: 'Acme',
+  renderIcon: (key, size) => { const I = icons[key] ?? Home; return <I size={size} /> }, // REQUIRED
+  pages: [{ id: 'home', route: '/', label: () => t('nav.home'), icon: 'home' }],
+})
+<AppShell config={shellConfig} useMenu actions={[() => <ThemeToggle/>]} mobileNav="drawer"><Outlet/></AppShell>
+```
+
+> **Three navigation layers, each one job:** `pages` (sidebar/banner) → top-level
+> areas · `subPages` (title dropdown, each a route) → siblings within a feature ·
+> `PageTabs`/`PageSections` → sub-views of one page. **Breadcrumbs are a pure
+> function of the URL** — only a registered route (`pages`/`subPages`/`useDynamicPages`)
+> adds a crumb; `title` overrides only the leaf label. Strings arrive as thunks
+> (`label: () => t('…')`) — the shell never imports i18n.
+
+---
+
+## CSS imports
+
+| Import | What it is | How to use |
+|---|---|---|
+| `my-react-shell/styles.css` | **Raw Tailwind v4 source** — the `--color-*` token contract + the 5 palettes. **Not precompiled.** | Your build **must run Tailwind v4** (PostCSS or `@tailwindcss/vite`) and have **`tw-animate-css`** installed. Don't `@import 'tailwindcss'` again — this file does. |
+| `my-react-shell/components/styles.css` | Plain prebuilt CSS (`mrs-`-prefixed classes on the theme tokens). | Import once. No Tailwind config needed. Requires the theme tokens (above) to be present for theming. |
+| `my-react-shell/app-shell/styles.css` | Plain prebuilt CSS for the shell chrome. | Import once when you use the app-shell. |
+
+> **shadcn bridge:** shadcn primitives read their own cssVars (`--background`, …), not
+> the `--color-*` contract. Map them once in your `index.css` — the canonical,
+> copy-paste mapping is in [theme.md → *Using these tokens with shadcn/ui*](../guides/theme.md).
+> It is deliberately **not shipped** (per-app latitude).
+
+---
+
+## Full wiring (typical app)
+
+```tsx
+import { createRoot } from 'react-dom/client'
+import { RouterProvider, createRouter } from '@tanstack/react-router'
+import { AppProviders } from 'my-react-shell/providers'
+import { ConvexAuthDefaultProvider } from 'my-react-shell/auth/convex'
+import { I18nProvider } from 'my-react-shell/i18n'
+import { IconModeProvider } from 'my-react-shell/icons'
+import { ToastProvider } from 'my-react-shell/components'
+import 'my-react-shell/styles.css'
+import 'my-react-shell/components/styles.css'
+import { routeTree } from './routeTree.gen'
+
+const router = createRouter({ routeTree })
+
+createRoot(document.getElementById('root')!).render(
+  <AppProviders authProvider={ConvexAuthDefaultProvider} theme={{ defaultTheme: 'ocean' }}>
+    <I18nProvider messages={messages} defaultLocale="en">
+      <IconModeProvider>
+        <ToastProvider>
+          <RouterProvider router={router} />
+        </ToastProvider>
+      </IconModeProvider>
+    </I18nProvider>
+  </AppProviders>,
+)
+```
+
+`AppProviders` already mounts `<ThemeProvider>`. The app-shell (`<AppShell>`) goes
+inside your router, at the root route's layout — not here.
+
+## Gotchas (the time-sinks)
+
+- **pnpm only** — never `npm install` (desyncs the lockfile; Convex dev crash-loops).
+- **`VITE_CONVEX_URL`: checked, never defaulted; no trailing slash** (close code 1006).
+- **`styles.css` is not zero-config** — needs the consumer's Tailwind v4 pipeline +
+  `tw-animate-css`. The compiled JS *is* zero-config; the stylesheet is raw source.
+- **No router peer.** Nothing in the barrel imports a router; `@tanstack/react-router`
+  is a peer **only** for `app-shell`. A consumer picks its own router.
+- **404s are the consumer's** — no shipped module owns the router, so neither catch
+  lives here. Wire `defaultNotFoundComponent` (or a route's `notFoundComponent`) on
+  your router for the *in-app* not-found, rendering the kit's `EmptyState`; add the
+  static host's `/(.*)` → `/index.html` rewrite for the *server* 404. See the
+  [app-shell guide](../guides/app-shell.md).
+- **Semantic tokens only** in any code you add — never hardcode colors; render in
+  light *and* dark, every palette.
+- **`link:` dev-loop must dedupe React** in the consumer's `vite.config.ts`
+  (`resolve.dedupe: ['react', 'react-dom', 'react/jsx-runtime']`) or first paint
+  throws `Invalid hook call`. Tag-pinned git-dep installs are unaffected. See
+  [distribution-model.md](../guides/distribution-model.md).
+- **Updating:** bump the pinned git tag (`#vX.Y.Z`) and reinstall — you receive only
+  the modules you import.
+
+## See also
+
+- Per-module deep guides (rationale + contract beyond this reference): [theme](../guides/theme.md) ·
+  [providers](../guides/providers.md) · [auth](../guides/auth.md) · [i18n](../guides/i18n.md) ·
+  [icons](../guides/icons.md) · [app-shell](../guides/app-shell.md). The **components** module
+  has no separate guide — this reference is its canonical doc.
+- [concept.md](../concept.md) — what this is and its boundary
+- [distribution-model.md](../guides/distribution-model.md) — install, tags, the local dev-loop
+- New React project from scratch: the `react-framework` skill

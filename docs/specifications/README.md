@@ -6,4 +6,4 @@ status. Template: [_template.md](_template.md).
 
 | Spec | Status | Summary |
 |---|---|---|
-| _(none yet)_ | — | Specs are added as my-react-shell's shell / providers / i18n surfaces are built (see T001). |
+| [api-reference.md](api-reference.md) | current | The complete public API — every export, per import path, with signatures + minimal usage. The fast index the per-module guides aren't. |

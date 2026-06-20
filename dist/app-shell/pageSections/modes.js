@@ -29,6 +29,7 @@ import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "react/jsx-run
  * only the standalone fallback.
  */
 import { useEffect, useRef, useState } from 'react';
+import { ScrollableTabRow } from '../ScrollableTabRow';
 import { useShellContextOptional } from '../shellContext';
 export function LazyContent(props) {
     if (!props.lazy)
@@ -86,15 +87,15 @@ export function SectionsSingleMode(props) {
  *   - single → flip activeId, replace mounted section
  *   - list   → flip activeId + scroll to that section
  *
- * Wraps in the scrollable `mrs-tab-row` (compose with `.scrollbar-hidden` from
- * base.css). `useShellContextOptional` for the variant + icon renderer;
- * tolerates standalone use.
+ * Wraps in `<ScrollableTabRow>` so the strip scrolls horizontally with edge
+ * fades + arrow affordances when it overflows. `useShellContextOptional` for
+ * the variant + icon renderer; tolerates standalone use.
  */
 export function SectionTabsStrip(props) {
     const shell = useShellContextOptional();
     const variant = shell?.config.tabs?.variant ?? 'underline';
     const renderIcon = shell?.config.renderIcon;
-    return (_jsx("div", { role: "tablist", className: `mrs-tab-row scrollbar-hidden${props.className ? ` ${props.className}` : ''}`, "data-variant": variant, children: props.sections.map((section) => {
+    return (_jsx(ScrollableTabRow, { role: "tablist", variant: variant, className: props.className, children: props.sections.map((section) => {
             const active = section.id === props.activeId;
             return (_jsx("div", { className: "mrs-tab", "data-active": active, children: _jsxs("button", { type: "button", role: "tab", "aria-selected": active, title: section.tooltip?.(), onClick: () => props.onTabClick(section.id), className: "mrs-tab__button", children: [section.icon && renderIcon?.(section.icon, 16), _jsx("span", { children: section.label() })] }) }, section.id));
         }) }));

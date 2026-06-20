@@ -117,7 +117,9 @@ environment**; callback is `https://<deployment>.convex.site/api/auth/callback/<
 - **SPA needs a catch-all rewrite on Vercel** — without
   `{ "source": "/(.*)", "destination": "/index.html" }` in `vercel.json`, deep
   links and refresh 404. Add security headers and `Disallow: /` (robots) for a
-  private app.
+  private app. That's the *server* 404; the *in-app* unmatched route is a separate
+  concern — wire `defaultNotFoundComponent` on `createRouter` (or `notFoundComponent`
+  on a route). Both are the app's to wire.
 - **Pin fast-moving / beta deps.** Convex Auth is beta — pin it and point at the
   installed-version docs (stale examples are the main failure mode). Pin
   `@auth/core` to the exact version Convex Auth requires; pin `better-auth` to a

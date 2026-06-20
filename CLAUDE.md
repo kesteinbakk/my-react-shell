@@ -40,12 +40,16 @@ but **not** the un-opinionated shadcn primitives (Button/Input/Checkbox/…), wh
 consumers use shadcn directly for. The app-shell ships as an *optional* module, never mandated.
 
 - What this is + boundary: [docs/concept.md](docs/concept.md)
+- **Public API (every export + usage):** [docs/specifications/api-reference.md](docs/specifications/api-reference.md) — the fast index, also distributed to consumer agents via the `my-react-shell` skill (keep the two in lockstep)
 - Standing decisions + rationale: [docs/strategy.md](docs/strategy.md)
 - Framework decision / from-scratch consumer guide: the `react-framework` skill ([.claude/skills/react-framework/react-framework-notes.md](.claude/skills/react-framework/react-framework-notes.md))
 - Build plan: **T001** in `docs/2-tasks/` (index: `docs/2-tasks/_index/`)
 
 > **Status: in progress.** The theme, providers, auth seam, i18n, icons, app-shell,
-> and component-kit modules have landed — each with a guide in `docs/guides/`, plus the
+> and component-kit modules have landed — documented in the single API reference
+> ([docs/specifications/api-reference.md](docs/specifications/api-reference.md)), with a
+> deeper guide in `docs/guides/` per module where there's more to say than the reference
+> (the `components` module has none — the reference is its canonical doc), plus the
 > module-authoring contract — distributed as a standard node module (a committed,
 > precompiled `dist/`). The theme tokens
 > are now **shared** with the SolidJS `zingularis/foundation` via the `themes`
@@ -102,6 +106,33 @@ lockstep:
 (Un-opinionated shadcn primitives are *not* kit components: they're shown on the
 demo's Components page, not the Kit page.)
 
+## Porting from the SolidJS foundation
+
+Much of my-react-shell is a **React re-implementation of the SolidJS `foundation`**
+(`~/Developer/zingularis/foundation/src/`) — its app-shell, tab/scroll primitives,
+kit composites, and more. **When you port anything from foundation, port it
+faithfully: every feature, behavior, and affordance the foundation version has —
+unless the user explicitly approves dropping or changing something.** Open the
+foundation source and match it; don't reconstruct from memory or the happy path.
+
+- **What legitimately changes is the implementation idiom only:** SolidJS → React
+  (signals → hooks, `For`/`Show` → `.map`/conditionals) and foundation's inline
+  Tailwind utilities → my-react-shell's `mrs-`-prefixed plain CSS.
+- **What must NOT change is the feature set:** scroll affordances, keyboard
+  behavior, ARIA wiring, sizing contracts (`min-width: 0`, `shrink-0`, …), edge /
+  empty / overflow states, every visible and interactive detail. Dropping a feature
+  to "keep it simple" or because it "looked optional" is the exact failure this rule
+  exists to prevent — a silently reduced port reads as finished but isn't.
+- **A feature that genuinely shouldn't carry over is a choice → STOP and ask** (root
+  `CLAUDE.md` → Mandatory User Approval), then record the omission. Never drop it
+  silently.
+
+> Example: foundation's scrollable tab strip
+> (`kit/layout/ScrollableTabRow.tsx` — `overflow-x` + hidden scrollbar **plus** edge
+> fades, arrow buttons, and overflow detection, on a `min-width: 0` sizing contract)
+> is ported here as `src/app-shell/ScrollableTabRow.tsx`, with all of those features
+> intact — not the bare `overflow-x: auto` an earlier port reduced it to.
+
 ## Stack
 
 - **Frontend:** React 19 + Vite SPA (TypeScript 6). **No SSR** — consumers are
@@ -150,8 +181,20 @@ demo's Components page, not the Kit page.)
 - **Semantic tokens only** — no hardcoded colors/shadows; render in light *and* dark.
 - **No silent defaults for absent values** (root `CLAUDE.md`) — check, don't
   default; throw on required-but-absent (e.g. `VITE_CONVEX_URL`).
-- **Every module ships a guide** in `docs/guides/` — what it does, the contract to
-  fill, how to wire it, how to bring your own.
+- **The API reference is mandatory and ALWAYS kept current.** Any change that touches
+  the public API surface — a new/removed/renamed export, a changed prop, signature,
+  default, import path, or peer; new CSS; a new component or module — **must** update
+  [docs/specifications/api-reference.md](docs/specifications/api-reference.md) in the
+  **same change** (it is the single source of truth for *what* is exported and how to
+  use it), and mirror the change into the `my-react-shell` skill's bundled
+  `api-reference.md` (skill source: `~/Developer/dev-docs/skill-source/development/my-react-shell/`,
+  fanned out by skill-sync) so consumer agents stay in sync. Leaving the reference stale
+  is the staleness this rule exists to prevent. See root `CLAUDE.md` → docs reflect
+  current state.
+- **Guides are for depth, not the export list.** A module ships a `docs/guides/<module>.md`
+  for the *why* + the contract to fill / how to bring your own — only when there's more to
+  say than the API reference carries. A module whose guide would only restate the reference
+  ships none (e.g. `components`, documented solely in the API reference).
 
 ## Docs & workflow (zingularis conventions)
 
@@ -182,6 +225,17 @@ docs/
 - A **pre-commit guard** (`.githooks/pre-commit`, enabled via `pnpm setup:hooks`)
   rejects committing a `link:`/`file:` dependency specifier — the local dev-loop
   redirect must never land in a commit. Bypass intentionally with `--no-verify`.
+- A **second guard in the same hook keeps `dist/` in lockstep with `src/`:** when a
+  commit stages *library* source (`src/**/*.ts(x)`, excluding the harness —
+  `main.tsx`, `routes/`, `routeTree.gen.ts`, `*.test-d.ts`), it runs `pnpm build:lib`
+  and `git add dist`. It only ever stages `dist/`, so it can **never** sweep
+  unrelated *source* into your commit, and committing docs / harness / non-lib files
+  doesn't trigger it at all. The one real wrinkle: if your lib-src change shares the
+  tree with *other* uncommitted lib-src, the rebuild compiles the whole working tree,
+  so the staged `dist/` reflects both. Isolate deterministically — `git stash push --
+  <files you don't own>`, commit yours (clean dist), `git stash pop`, or commit the
+  coherent batch together. Either way **commit your own work; a dirty tree is never a
+  reason to leave it for the user.**
 - A consumer on the **`link:` dev-loop must dedupe React** in its own Vite config
   (`resolve.dedupe`), or the symlinked shell's own React copy collides with the
   app's and first paint crashes with `Invalid hook call`. `link:`-only — the

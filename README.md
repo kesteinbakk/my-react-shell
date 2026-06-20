@@ -13,7 +13,10 @@ a fixed app template, and ships only the *opinionated* composites — consumers 
 shadcn/ui directly for the un-opinionated primitives. It is consumed like a standard npm
 package, as a **tag-pinned Bitbucket git-dependency**.
 
-See [`docs/concept.md`](docs/concept.md) for what this is and its boundary, and
+**The fast path for "what's exported and how do I use it":**
+[`docs/specifications/api-reference.md`](docs/specifications/api-reference.md) — every
+export, per import path, with signatures and minimal usage. See
+[`docs/concept.md`](docs/concept.md) for what this is and its boundary, and
 [`docs/strategy.md`](docs/strategy.md) for the standing decisions. The distribution
 model is documented in [`docs/guides/distribution-model.md`](docs/guides/distribution-model.md).
 

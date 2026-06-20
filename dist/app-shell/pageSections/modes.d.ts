@@ -72,9 +72,9 @@ export declare function SectionsSingleMode(props: SingleModeProps): ReactNode;
  *   - single → flip activeId, replace mounted section
  *   - list   → flip activeId + scroll to that section
  *
- * Wraps in the scrollable `mrs-tab-row` (compose with `.scrollbar-hidden` from
- * base.css). `useShellContextOptional` for the variant + icon renderer;
- * tolerates standalone use.
+ * Wraps in `<ScrollableTabRow>` so the strip scrolls horizontally with edge
+ * fades + arrow affordances when it overflows. `useShellContextOptional` for
+ * the variant + icon renderer; tolerates standalone use.
  */
 export declare function SectionTabsStrip(props: SectionTabsStripProps): ReactNode;
 export {};

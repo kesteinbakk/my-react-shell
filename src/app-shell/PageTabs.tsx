@@ -20,6 +20,7 @@
 
 import { Link, useRouterState } from '@tanstack/react-router'
 import type { ReactNode } from 'react'
+import { ScrollableTabRow } from './ScrollableTabRow'
 import { useShellContextOptional } from './shellContext'
 import type { ShellTabsVariant } from './shellContract'
 
@@ -85,11 +86,7 @@ export function PageTabs(props: PageTabsProps): ReactNode {
   const activeTabId = findActiveTabId(pathname, props.tabs, match)
 
   return (
-    <div
-      role="tablist"
-      className={`mrs-tab-row scrollbar-hidden${props.className ? ` ${props.className}` : ''}`}
-      data-variant={variant}
-    >
+    <ScrollableTabRow role="tablist" variant={variant} className={props.className}>
       {props.tabs.map((tab) => {
         const active = activeTabId === tab.id
         return (
@@ -101,6 +98,6 @@ export function PageTabs(props: PageTabsProps): ReactNode {
           </div>
         )
       })}
-    </div>
+    </ScrollableTabRow>
   )
 }

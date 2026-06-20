@@ -4,8 +4,9 @@ How to add a new drop-in module to my-react-shell. A module is one optional,
 self-contained capability an app imports à la carte — theme, providers, the auth
 seam, i18n. This guide is the authority for the shape every new module upholds:
 where it lives, how it stays self-contained, the two flavors it can take, and the
-checklist to land it. The per-module guides (`docs/guides/<module>.md`) are the
-authority for each module's exact exports.
+checklist to land it. The single API reference (`docs/specifications/api-reference.md`)
+is the authority for each module's exact exports; the per-module guides
+(`docs/guides/<module>.md`) carry the *why* + deeper contract where one exists.
 
 ## The module pattern
 
@@ -108,10 +109,27 @@ and the library build (`tsc -p tsconfig.lib.json`) compile:
 4. **Declare any optional peer** as above (`peerDependencies` +
    `peerDependenciesMeta` optional + a `devDependency`). A zero-dependency module
    (like i18n) needs no peer change.
-5. **Ship `docs/guides/<module>.md`** — what it does, the contract to fill, how to
-   wire it, how to bring your own. Match the existing guides' shape.
+5. **Document it in the API reference** (`docs/specifications/api-reference.md`) — a
+   section with every export, signatures, and minimal usage. This is **mandatory** and
+   kept in lockstep with the code; mirror the change into the `my-react-shell` skill's
+   bundled `api-reference.md` so consumer agents get it. **Ship a
+   `docs/guides/<module>.md` too** only when there's a *why* / contract / bring-your-own
+   story beyond the reference (as `auth`, `i18n`, `theme`, `app-shell` have); skip it
+   when a guide would only restate the reference (as `components` does).
 6. **Contribute it back (rule of two).** A capability becomes a module when a second
    app needs it. Once landed, every app picks it up on the next version bump.
+
+## Porting from the SolidJS foundation
+
+Many modules here are React re-implementations of the SolidJS `foundation`
+(`~/Developer/zingularis/foundation/src/`). A port carries the **whole feature
+set** — every behavior, affordance, edge case, ARIA wiring, and sizing contract the
+foundation version has. Only the **implementation idiom** changes (SolidJS → React,
+inline Tailwind → `mrs-`-prefixed CSS). Dropping a feature because it "looked
+optional" is a silent reduction that reads as finished but isn't; if something
+genuinely shouldn't carry over, that is a choice → **stop and ask**, then record the
+omission. This is the canonical rule in the project `CLAUDE.md` → *Porting from the
+SolidJS foundation* — read it before porting.
 
 ## The optional `~/config` IoC convention
 

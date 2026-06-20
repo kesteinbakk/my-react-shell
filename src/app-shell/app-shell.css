@@ -403,10 +403,22 @@ button.mrs-breadcrumbs__leaf {
 }
 
 /* ── Tab rows (PageTabs + SectionTabsStrip) ──────────────────────────────── */
+/* Positioning context for the scroll affordances (fades + arrow buttons),
+   which are absolutely-positioned siblings of the scroll container. `shrink-0`
+   so the row keeps its height when it sits in a flex column. */
+.mrs-tab-scroller {
+  position: relative;
+  min-width: 0;
+  flex-shrink: 0;
+}
 .mrs-tab-row {
   display: flex;
   align-items: stretch;
   overflow-x: auto;
+  /* Load-bearing: without min-width:0 the flex item's default min-width:auto
+     lets the children's intrinsic width push the row wider than its container —
+     the row overflows the page instead of scrolling inside its own box. */
+  min-width: 0;
 }
 .mrs-tab-row[data-variant='underline'] {
   gap: 0.25rem;
@@ -419,6 +431,8 @@ button.mrs-breadcrumbs__leaf {
 .mrs-tab {
   display: flex;
   align-items: stretch;
+  /* Don't compress tabs to fit — overflow and let the row scroll instead. */
+  flex-shrink: 0;
 }
 .mrs-tab-row[data-variant='underline'] .mrs-tab {
   border-bottom: 2px solid transparent;
@@ -459,6 +473,53 @@ button.mrs-breadcrumbs__leaf {
 .mrs-tab-row[data-variant='pill'] .mrs-tab__button:hover,
 .mrs-tab-row[data-variant='pill'] .mrs-tab__link:hover {
   background: var(--color-hover);
+}
+
+/* ── Scroll affordances (edge fades + arrow buttons) ─────────────────────── */
+/* Surfaced only on the side(s) with hidden content. The fade is click-through;
+   the arrow button scrolls ~80% of the visible width. They blend into the row's
+   own background so they read as a soft edge, not a hard overlay. */
+.mrs-tab-fade {
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 48px;
+  z-index: 1;
+}
+.mrs-tab-fade--left {
+  left: 0;
+  background: linear-gradient(to right, var(--color-background-primary), transparent);
+}
+.mrs-tab-fade--right {
+  right: 0;
+  background: linear-gradient(to left, var(--color-background-primary), transparent);
+}
+.mrs-tab-scroll-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 1.75rem;
+  width: 1.75rem;
+  border-radius: 9999px;
+  background: var(--color-surface-primary);
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border-primary);
+  box-shadow: 0 1px 2px var(--color-shadow-sm);
+  cursor: pointer;
+}
+.mrs-tab-scroll-btn:hover {
+  color: var(--color-text-primary);
+}
+.mrs-tab-scroll-btn--left {
+  left: 0.25rem;
+}
+.mrs-tab-scroll-btn--right {
+  right: 0.25rem;
 }
 
 /* ── PageSections frame ──────────────────────────────────────────────────── */

@@ -30,6 +30,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import type { ReactNode } from 'react'
+import { ScrollableTabRow } from '../ScrollableTabRow'
 import { useShellContextOptional } from '../shellContext'
 import type { ShellTabsVariant } from '../shellContract'
 import type { PageSection } from './types'
@@ -183,9 +184,9 @@ export function SectionsSingleMode(props: SingleModeProps): ReactNode {
  *   - single → flip activeId, replace mounted section
  *   - list   → flip activeId + scroll to that section
  *
- * Wraps in the scrollable `mrs-tab-row` (compose with `.scrollbar-hidden` from
- * base.css). `useShellContextOptional` for the variant + icon renderer;
- * tolerates standalone use.
+ * Wraps in `<ScrollableTabRow>` so the strip scrolls horizontally with edge
+ * fades + arrow affordances when it overflows. `useShellContextOptional` for
+ * the variant + icon renderer; tolerates standalone use.
  */
 export function SectionTabsStrip(props: SectionTabsStripProps): ReactNode {
   const shell = useShellContextOptional()
@@ -193,11 +194,7 @@ export function SectionTabsStrip(props: SectionTabsStripProps): ReactNode {
   const renderIcon = shell?.config.renderIcon
 
   return (
-    <div
-      role="tablist"
-      className={`mrs-tab-row scrollbar-hidden${props.className ? ` ${props.className}` : ''}`}
-      data-variant={variant}
-    >
+    <ScrollableTabRow role="tablist" variant={variant} className={props.className}>
       {props.sections.map((section) => {
         const active = section.id === props.activeId
         return (
@@ -216,6 +213,6 @@ export function SectionTabsStrip(props: SectionTabsStripProps): ReactNode {
           </div>
         )
       })}
-    </div>
+    </ScrollableTabRow>
   )
 }

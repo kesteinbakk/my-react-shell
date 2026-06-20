@@ -58,8 +58,12 @@ to implement." Modules come in two flavors:
 3. **Optional/heavy peers behind sub-paths** — anything pulling an optional
    dependency lives at `my-react-shell/<module>/<impl>`, keeping the main barrel
    dependency-light.
-4. **Documented** — each module ships a `docs/guides/<module>.md`: what it does, the
-   contract to fill, how to wire it, how to bring your own.
+4. **Documented** — every export is in the single API reference
+   (`docs/specifications/api-reference.md`), the authority for *what* each module
+   exports and how to use it. A module additionally ships a `docs/guides/<module>.md`
+   for the *why* + deeper contract (the seam to fill, how to bring your own) when there
+   is more to say than the reference carries; a module whose guide would only restate
+   the reference ships none (e.g. `components`).
 
 **Adding modules / reusing what others built:** an app builds a capability locally;
 when a second app needs it (rule of two), it is contributed back as a new module

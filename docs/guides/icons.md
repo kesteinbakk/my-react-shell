@@ -21,8 +21,8 @@ Unlike `foundation`, this project deliberately ships no central icon component �
 app-shell renders icons via a consumer-supplied `config.renderIcon`, and consumers use
 lucide directly. So there is no single `<Icon>` for an emoji toggle to hook into. This
 module supplies the missing piece — the **preference** and the **swap mechanism** — and
-leaves the actual glyphs to you. Pair it with [`<UserPreferences>`](component-kit.md)
-to give users the toggle.
+leaves the actual glyphs to you. Pair it with `<UserPreferences>` (see the
+[API reference → components](../specifications/api-reference.md)) to give users the toggle.
 
 ## Wire it
 
@@ -108,4 +108,4 @@ const { iconMode, setIconMode } = useIconMode()
 // …pass iconMode + onIconModeChange={setIconMode} to <UserPreferences>
 ```
 
-See the [component-kit guide](component-kit.md#userpreferences) for the full panel.
+See the [API reference → components](../specifications/api-reference.md) for the full `<UserPreferences>` panel.

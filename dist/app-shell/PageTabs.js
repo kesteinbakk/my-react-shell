@@ -19,6 +19,7 @@ import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
  * equality. `useShellContextOptional` for the variant; tolerates standalone use.
  */
 import { Link, useRouterState } from '@tanstack/react-router';
+import { ScrollableTabRow } from './ScrollableTabRow';
 import { useShellContextOptional } from './shellContext';
 /**
  * Resolve which tab is active using longest-route-wins. Without this, a
@@ -51,7 +52,7 @@ export function PageTabs(props) {
     const variant = shell?.config.tabs?.variant ?? 'underline';
     const renderIcon = shell?.config.renderIcon;
     const activeTabId = findActiveTabId(pathname, props.tabs, match);
-    return (_jsx("div", { role: "tablist", className: `mrs-tab-row scrollbar-hidden${props.className ? ` ${props.className}` : ''}`, "data-variant": variant, children: props.tabs.map((tab) => {
+    return (_jsx(ScrollableTabRow, { role: "tablist", variant: variant, className: props.className, children: props.tabs.map((tab) => {
             const active = activeTabId === tab.id;
             return (_jsx("div", { className: "mrs-tab", "data-active": active, children: _jsxs(Link, { to: tab.route, role: "tab", "aria-selected": active, className: "mrs-tab__link", children: [tab.icon && renderIcon?.(tab.icon, 16), _jsx("span", { children: tab.label })] }) }, tab.id));
         }) }));

@@ -50,7 +50,8 @@
     "src/index.css",
     "src/styles",
     "src/app-shell/app-shell.css",
-    "src/components/components.css"
+    "src/components/components.css",
+    "docs/specifications/api-reference.md"
   ],
   "scripts": {
     "dev": "vite",

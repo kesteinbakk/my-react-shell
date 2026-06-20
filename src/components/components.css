@@ -613,6 +613,9 @@
   gap: 0.5rem;
 }
 .mrs-prefs__option {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
   padding: 0.5rem 0.75rem;
   border: 1px solid var(--color-border-primary);
   border-radius: 0.5rem;
@@ -657,6 +660,10 @@
   border-color: var(--color-primary);
   background: var(--color-primary-bg);
   color: var(--color-primary);
+}
+.mrs-prefs__emoji {
+  font-size: 1rem;
+  line-height: 1;
 }
 .mrs-prefs__account {
   margin-top: 1rem;

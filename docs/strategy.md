@@ -42,8 +42,11 @@ Every module is shaped to hold these — the goal restated at module scale:
   contract, in light *and* dark, across every palette — never a hardcoded color.
 - **Reuse drives new modules.** A capability becomes a module on the rule of two —
   the second app that needs it — and reaches every app on the next version bump.
-- **Every module ships a guide** in `docs/guides/`: what it does, the contract to
-  fill, how to wire it, how to bring your own.
+- **One API reference, guides for depth.** The single `docs/specifications/api-reference.md`
+  is the authority for every export and its usage — kept in lockstep with the code (and
+  mirrored to the consumer-facing `my-react-shell` skill). A module additionally ships a
+  `docs/guides/<module>.md` for the *why* + deeper contract when there's more to say than
+  the reference carries; one whose guide would only restate the reference ships none.
 
 ## Standing decisions
 
