@@ -248,6 +248,7 @@ import 'my-react-shell/components/styles.css' // REQUIRED (plain prebuilt CSS; a
 | `Chip`, `ChipGroup` | component | Tag: plain / toggleable (`selected`+`onClick`) / removable (`onRemove`). `ChipGroup` wraps. |
 | `Avatar`, `AvatarGroup` | component | Image + initials fallback (also on image error); group stacks with `+N` overflow. |
 | `Table` | component | Column-config data table: per-column sort, zebra, sticky header, empty state. |
+| `PhiCard`, `PHI` | component + const | Golden-ratio card (W:H = φ:1) with two consumer-owned, full-bleed sections (`upper`/`lower`); the bottom collapses when empty. Optional top-right ⋮ overflow menu via `actions`, or a `corner` slot. `PHI` is the constant (height = width/φ). Uses the `@radix-ui/react-dropdown-menu` optional peer. |
 | `InputField` | component | Full field: label + input + helper + error, a11y-wired (`htmlFor`/`aria-invalid`/`aria-describedby`). Spreads native input props; pass `error` to switch on error styling. |
 | `SegmentedControl` | component | Single-select `radiogroup` on a track; controlled via `value`/`onChange`; generic over value type. |
 | `Select` | component | Opinionated select on Radix Select (keyboard nav, typeahead, portal); `options` list; controlled via `value`/`onValueChange`. |
@@ -257,7 +258,8 @@ import 'my-react-shell/components/styles.css' // REQUIRED (plain prebuilt CSS; a
 Every component has a matching `…Props` type export (e.g. `AlertProps`, `AlertVariant`,
 `TableProps`, `TableColumn`, `ToastApi`, `ToastOptions`, `ToastTone`, `SelectProps`,
 `SelectOption`, `SegmentedOption`, `BadgeTone`, `AvatarSize`, `ActionType`,
-`ActionPreset`, `ActionButtonVariant`/`Size`/`Layout`, etc.).
+`ActionPreset`, `ActionButtonVariant`/`Size`/`Layout`, `PhiCardProps`, `PhiCardAction`,
+`PhiCardSize`, etc.).
 
 ```tsx
 <Alert variant="warning" title="Heads up" onDismiss={() => {}}>Session expires soon.</Alert>
@@ -313,6 +315,51 @@ preset, pass a custom `icon` node (a lucide icon or an `<Icon>` from `my-react-s
   <ActionButton action="star" active={isFavorite} onClick={toggleFavorite} />
   <ActionButton icon={<Upload size={20} />} label="Import" variant="info" onClick={onImport} />
 </ActionButtonGroup>
+```
+
+### `PhiCard`
+
+A golden-ratio card: outer **W:H = φ:1**, two sections split **φ:1**. You own the content
+of each section — they're **full-bleed** (a single cell that stretches your node to fill, so
+a figure/image fills edge-to-edge; add your own padding for inset content). The **bottom
+section collapses when empty** (`lower` absent / `null` / `false` → not rendered, the top
+fills, outer φ:1 kept so cards still line up in a grid). Width is the only size knob; `PHI`
+(`1.6180339887`) is exported so you can size layouts against it (height = width / φ).
+
+Top-right **overflow menu**: pass `actions` and the card renders a ⋮ trigger → Radix
+`DropdownMenu` of those items (no actions → no trigger). For anything else — inline icon
+buttons, a custom menu — use the `corner` slot, which replaces the built-in menu. The card
+owns **placement + the menu mechanism + the trigger glyph**; you own the **actions** — the
+kit ships no icon registry and never imports i18n, so you bring glyphs and pass translated
+labels. The corner never triggers a clickable card's `onClick`.
+
+| Prop | Default | Meaning |
+|---|---|---|
+| `upper` | — | Top section content. Full-bleed; you own its inner layout. |
+| `lower` | — | Bottom section content. Empty → the section isn't rendered (card collapses to the top, φ:1 kept). |
+| `size` | `'md'` | Width preset — `sm`·`md`·`lg`·`xl` = 180/240/320/480px. Height = width / φ. |
+| `actions` | — | Items for the built-in ⋮ menu: `{ icon?, label, onSelect, destructive?, disabled? }[]`. Empty/absent → no menu. Ignored when `corner` is set. |
+| `menuIcon` | ⋮ | Override the menu trigger glyph. |
+| `menuLabel` | `'Actions'` | Accessible name for the menu trigger. |
+| `corner` | — | Bring-your-own top-right node (replaces the `actions` menu). |
+| `leftBorderColor` | — | 3px left accent border in this CSS color (pass a token, e.g. `var(--color-primary)`). |
+| `onClick` | — | Click handler for the whole card; the corner never fires it. |
+| `hoverable` | `!!onClick` | Hover lift (shadow + pointer). |
+| `className` | — | Extra classes on the outer card. |
+
+```tsx
+<PhiCard
+  size="md"
+  upper={<div className="flex h-full flex-col justify-center p-3"><strong>Quarterly report</strong></div>}
+  lower={<div className="flex h-full items-center justify-between p-3"><span>Updated 12 Jun</span><Badge tone="success" dot>Live</Badge></div>}
+  actions={[
+    { icon: <Pencil size={16} />, label: 'Edit', onSelect: onEdit },
+    { icon: <Trash2 size={16} />, label: 'Delete', destructive: true, onSelect: onDelete },
+  ]}
+/>
+
+// bottom collapses when empty → single-section card, φ:1 kept:
+<PhiCard size="md" upper={<MyHeader />} />
 ```
 
 ### `UserPreferences`

@@ -1,4 +1,5 @@
 import type { CSSProperties, ReactNode } from 'react'
+import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 import { cn } from './cn'
 
 /**
@@ -6,13 +7,11 @@ import { cn } from './cn'
  * constant the card uses (a card's rendered height is `width / PHI`).
  *
  * The card is one scaling unit driven entirely by its width:
- *   Outer:      width : height  = φ : 1
- *   Bands:      upperH : lowerH  = φ : 1   (horizontal split)
- *   Upper band: leftW  : rightW  = 1 : φ   (narrow logo · wide title)
- *   Lower band: leftW  : rightW  = φ : 1   (wide footer · narrow badge)
+ *   Outer:  width : height  = φ : 1
+ *   Split:  upperH : lowerH  = φ : 1   (the two sections)
  *
- * The internal splits live in components.css as `fr` ratios; the `1.6180339887fr`
- * literals there are this same φ, kept in lockstep with this constant.
+ * The split lives in components.css as an `fr` ratio; the `1.6180339887fr` literal
+ * there is this same φ, kept in lockstep with this constant.
  */
 export const PHI = 1.6180339887
 
@@ -25,87 +24,147 @@ const SIZE_WIDTH_PX: Record<PhiCardSize, number> = {
   xl: 480,
 }
 
+/** One entry in the built-in top-right overflow menu. */
+export interface PhiCardAction {
+  /** Leading glyph — you bring it (the kit ships no icon registry). Optional. */
+  icon?: ReactNode
+  /** Row text + accessible name. You translate it (the kit never imports i18n). */
+  label: string
+  /** Invoked when the item is chosen. */
+  onSelect: () => void
+  /** Destructive styling (a delete, etc.). */
+  destructive?: boolean
+  disabled?: boolean
+}
+
 export interface PhiCardProps {
+  /**
+   * Top section. You own its content and inner layout; it's full-bleed (a single
+   * cell that stretches your node to fill both axes — a figure/image fills it
+   * edge-to-edge). Add your own padding for inset content.
+   */
+  upper?: ReactNode
+  /**
+   * Bottom section, same contract as `upper`. When it's empty (absent / `null` /
+   * `false`) the section is **not rendered at all** — the top section fills the
+   * whole card, and the outer φ:1 ratio is kept so collapsed cards still line up
+   * in a grid.
+   */
+  lower?: ReactNode
   /** Width preset. Height auto-derives as width / φ. Default: `'md'`. */
   size?: PhiCardSize
   /**
-   * Upper-left slot — narrow top-band column, centered (a logo / avatar). When
-   * absent the column collapses and the title spans the full band.
+   * Actions for the built-in top-right overflow menu — a ⋮ trigger that opens a
+   * dropdown of these items. Empty / absent → no trigger is rendered. Ignored when
+   * `corner` is set (that replaces the built-in menu).
    */
-  upperLeft?: ReactNode
-  /** Upper-right slot — wide top-band column, the title area (vertically centered). */
-  upperRight?: ReactNode
-  /** Lower-left slot — wide bottom-band column (a footer / meta line). */
-  lowerLeft?: ReactNode
-  /** Lower-right slot — narrow bottom-band column (a badge / action), right-aligned. */
-  lowerRight?: ReactNode
+  actions?: PhiCardAction[]
+  /** Override the ⋮ trigger glyph (its own chrome — defaults to a vertical ellipsis). */
+  menuIcon?: ReactNode
+  /** Accessible name for the menu trigger. Default: `'Actions'`. */
+  menuLabel?: string
+  /**
+   * Bring-your-own top-right node (your own icon buttons, a custom menu, …). Replaces
+   * the built-in `actions` menu entirely; rendered only when set.
+   */
+  corner?: ReactNode
   /** Color for a 3px left accent border. Pass any CSS color string (e.g. a token). */
   leftBorderColor?: string
-  /** Click handler for the whole card. */
+  /** Click handler for the whole card. The corner area never triggers it. */
   onClick?: () => void
   /** Hover affordance (shadow lift + pointer). Defaults to `true` when `onClick` is set. */
   hoverable?: boolean
   /** Extra classes on the outer card, merged via `cn()`. */
   className?: string
-  /** Draw inset separator lines: between the bands, and between the lower cells. */
-  dividers?: boolean
-  /** Center every slot's content on both axes, overriding the per-slot alignment. */
-  centerContent?: boolean
-  /**
-   * Collapse to a single band: drop the lower band so the upper fills the height.
-   * The outer φ:1 ratio is kept, so single-band cards match full ones in a grid.
-   */
-  singleBand?: boolean
 }
 
-type SlotAlign = 'center' | 'center-y' | 'end' | 'start'
-
-interface SlotCellProps {
-  children?: ReactNode
-  align: SlotAlign
-  /** Let content overflow horizontally instead of clipping (the lower-left line). */
-  overflowX?: boolean
-  divider?: boolean
+// A section counts as empty (→ not rendered) for the common "no content" signals:
+// an absent prop (undefined), an explicit null, a `false` from `{cond && <X/>}`, or
+// an empty string. Anything else is content.
+function isEmpty(node: ReactNode): boolean {
+  return node == null || node === false || node === ''
 }
 
-function SlotCell({ children, align, overflowX, divider }: SlotCellProps) {
+const DEFAULT_MENU_GLYPH = (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+    <circle cx="12" cy="5" r="1.75" />
+    <circle cx="12" cy="12" r="1.75" />
+    <circle cx="12" cy="19" r="1.75" />
+  </svg>
+)
+
+function PhiCardMenu({
+  actions,
+  icon,
+  label,
+}: {
+  actions: PhiCardAction[]
+  icon: ReactNode
+  label: string
+}) {
   return (
-    <div
-      className={cn(
-        'mrs-phi-card__cell',
-        `mrs-phi-card__cell--${align}`,
-        overflowX ? 'mrs-phi-card__cell--overflow-x' : 'mrs-phi-card__cell--clip',
-        divider && 'mrs-phi-card__cell--divider',
-      )}
-    >
-      {children}
-    </div>
+    <DropdownMenu.Root>
+      <DropdownMenu.Trigger asChild>
+        <button type="button" className="mrs-phi-card__menu-trigger" aria-label={label}>
+          {icon ?? DEFAULT_MENU_GLYPH}
+        </button>
+      </DropdownMenu.Trigger>
+      <DropdownMenu.Portal>
+        <DropdownMenu.Content className="mrs-phi-card__menu" align="end" sideOffset={4}>
+          {actions.map((action) => (
+            <DropdownMenu.Item
+              key={action.label}
+              className={cn(
+                'mrs-phi-card__menu-item',
+                action.destructive && 'mrs-phi-card__menu-item--danger',
+              )}
+              disabled={action.disabled}
+              onSelect={() => action.onSelect()}
+            >
+              {action.icon != null ? (
+                <span className="mrs-phi-card__menu-icon">{action.icon}</span>
+              ) : null}
+              <span>{action.label}</span>
+            </DropdownMenu.Item>
+          ))}
+        </DropdownMenu.Content>
+      </DropdownMenu.Portal>
+    </DropdownMenu.Root>
   )
 }
 
 /**
- * Golden-ratio–locked card with four fixed slots and φ-proportioned bands. Width is
- * the only size knob — height and every slot size derive from it. See the components
- * guide for the slot map and examples.
+ * Golden-ratio card with two consumer-owned sections. Width is the only size knob —
+ * height (width / φ) and the φ:1 section split derive from it. The bottom section
+ * collapses when empty; an optional top-right overflow menu takes consumer-supplied
+ * actions. See the components guide for examples.
  */
 export function PhiCard({
+  upper,
+  lower,
   size = 'md',
-  upperLeft,
-  upperRight,
-  lowerLeft,
-  lowerRight,
+  actions,
+  menuIcon,
+  menuLabel = 'Actions',
+  corner,
   leftBorderColor,
   onClick,
   hoverable,
   className,
-  dividers = false,
-  centerContent = false,
-  singleBand = false,
 }: PhiCardProps) {
   const width = SIZE_WIDTH_PX[size]
   const height = width / PHI
   const isHoverable = hoverable ?? !!onClick
-  const hasUpperLeft = !!upperLeft
+  const hasLower = !isEmpty(lower)
+
+  // `corner` wins over the built-in menu; otherwise the menu shows only when there
+  // are actions. Either way the corner overlay renders only when non-empty. The
+  // inline `actions &&` (not a derived flag) lets TS narrow `actions` to non-null.
+  const cornerNode =
+    corner ??
+    (actions && actions.length > 0 ? (
+      <PhiCardMenu actions={actions} icon={menuIcon} label={menuLabel} />
+    ) : null)
 
   const style: CSSProperties = {
     width: `${width}px`,
@@ -117,44 +176,18 @@ export function PhiCard({
     <div
       className={cn(
         'mrs-phi-card',
-        singleBand && 'mrs-phi-card--single',
+        !hasLower && 'mrs-phi-card--single',
         isHoverable && 'mrs-phi-card--hoverable',
         className,
       )}
       style={style}
       onClick={onClick}
     >
-      {/* Upper band — 1:φ split (narrow logo · wide title); collapses to one
-          column when there's no upper-left slot, so the title spans the band. */}
-      <div
-        className={cn(
-          'mrs-phi-card__band',
-          hasUpperLeft ? 'mrs-phi-card__band--upper' : 'mrs-phi-card__band--upper-full',
-        )}
-      >
-        {hasUpperLeft ? (
-          <SlotCell align="center" divider={dividers}>
-            {upperLeft}
-          </SlotCell>
-        ) : null}
-        <SlotCell align={centerContent ? 'center' : 'center-y'}>{upperRight}</SlotCell>
-      </div>
-
-      {/* Lower band — φ:1 split (wide footer · narrow badge). Dropped in
-          single-band mode; the left cell allows horizontal overflow so a long
-          line (e.g. a date) stays readable. */}
-      {!singleBand ? (
-        <div
-          className={cn(
-            'mrs-phi-card__band',
-            'mrs-phi-card__band--lower',
-            dividers && 'mrs-phi-card__band--divider-top',
-          )}
-        >
-          <SlotCell align={centerContent ? 'center' : 'start'} overflowX divider={dividers}>
-            {lowerLeft}
-          </SlotCell>
-          <SlotCell align={centerContent ? 'center' : 'end'}>{lowerRight}</SlotCell>
+      <div className="mrs-phi-card__section">{upper}</div>
+      {hasLower ? <div className="mrs-phi-card__section">{lower}</div> : null}
+      {cornerNode != null ? (
+        <div className="mrs-phi-card__corner" onClick={(e) => e.stopPropagation()}>
+          {cornerNode}
         </div>
       ) : null}
     </div>

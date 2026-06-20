@@ -1000,11 +1000,13 @@
 }
 
 /* ── PhiCard ─────────────────────────────────────────────────────────────── */
-/* Golden-ratio–locked card. The outer width:height = φ:1 (width + height set
-   inline from the exported PHI constant); every internal band/column split is a
-   φ:1 or 1:φ ratio in `fr` units, so the whole layout scales from the one width
-   knob. The `1.6180339887fr` literals below are φ — kept in lockstep with PHI. */
+/* Golden-ratio card, two consumer-owned sections. Outer width:height = φ:1 (both
+   set inline from the exported PHI constant); the two sections split φ:1 via the
+   `1.6180339887fr` literal below — φ, kept in lockstep with PHI. The card owns the
+   surface, the proportion, and the corner overlay; the section content is the
+   consumer's. */
 .mrs-phi-card {
+  position: relative;
   display: grid;
   grid-template-rows: 1.6180339887fr 1fr; /* upper : lower = φ : 1 */
   overflow: hidden;
@@ -1016,7 +1018,7 @@
   transition: box-shadow 200ms ease;
 }
 .mrs-phi-card--single {
-  grid-template-rows: 1fr; /* lower band dropped; upper fills, outer φ:1 kept by inline height */
+  grid-template-rows: 1fr; /* bottom section absent → top fills; outer φ:1 kept by inline height */
 }
 .mrs-phi-card--hoverable {
   cursor: pointer;
@@ -1025,77 +1027,89 @@
   box-shadow: 0 4px 12px var(--color-shadow-md);
 }
 
-/* Bands — each a row of the outer grid; min-height:0 lets cells clip rather than
-   force the row past its φ share. position:relative anchors the inset dividers. */
-.mrs-phi-card__band {
-  position: relative;
+/* Section — one grid row, full-bleed: a single cell that stretches the consumer's
+   node to fill both axes (a figure / image fills it edge-to-edge). min-* lets the
+   content clip rather than force the row past its φ share; the consumer adds its
+   own padding for inset content. */
+.mrs-phi-card__section {
   display: grid;
-  min-height: 0;
-}
-.mrs-phi-card__band--upper {
-  grid-template-columns: 1fr 1.6180339887fr; /* logo : title = 1 : φ */
-}
-.mrs-phi-card__band--upper-full {
-  grid-template-columns: 1fr; /* no upper-left slot → title spans the band */
-}
-.mrs-phi-card__band--lower {
-  grid-template-columns: 1.6180339887fr 1fr; /* footer : badge = φ : 1 */
-}
-
-/* Slot cell — a flex column; alignment + clipping come from modifiers so each
-   cell maps 1:1 to the source's SlotCell. */
-.mrs-phi-card__cell {
-  display: flex;
-  flex-direction: column;
-  min-height: 0;
-  gap: 0.25rem;
-  padding: 0.375rem 0.5rem;
-}
-.mrs-phi-card__cell--clip {
   min-width: 0;
+  min-height: 0;
   overflow: hidden;
 }
-.mrs-phi-card__cell--overflow-x {
-  overflow: visible; /* don't clip a long single line (e.g. a date) */
+
+/* Corner — top-right overlay for the actions menu (or a consumer `corner` node).
+   Out of flow so it never disturbs the φ rows; sits above full-bleed section
+   content. Rendered only when there's something to show. */
+.mrs-phi-card__corner {
+  position: absolute;
+  top: 0.25rem;
+  right: 0.25rem;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
 }
-.mrs-phi-card__cell--center {
+.mrs-phi-card__menu-trigger {
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  text-align: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border: none;
+  border-radius: 0.375rem;
+  background: transparent;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: background-color 120ms ease, color 120ms ease;
 }
-.mrs-phi-card__cell--center-y {
-  align-items: flex-start;
-  justify-content: center;
+.mrs-phi-card__menu-trigger:hover {
+  background: var(--color-hover);
+  color: var(--color-text-primary);
 }
-.mrs-phi-card__cell--end {
-  align-items: flex-end;
-  justify-content: flex-start;
-  text-align: right;
-}
-.mrs-phi-card__cell--start {
-  align-items: flex-start;
-  justify-content: flex-start;
+.mrs-phi-card__menu-trigger:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
 }
 
-/* Dividers — inset pseudo-element lines, only with `dividers`. The vertical line
-   sits on a cell's right edge (the column boundary); the horizontal line sits on
-   the lower band's top edge (between bands). Both inset from the card edges. */
-.mrs-phi-card__cell--divider {
-  position: relative;
+/* Overflow menu (Radix DropdownMenu) — mirrors the Select dropdown styling. */
+.mrs-phi-card__menu {
+  min-width: 9rem;
+  padding: 0.25rem;
+  border: 1px solid var(--color-border-primary);
+  border-radius: 0.5rem;
+  background: var(--color-surface-elevated);
+  box-shadow: 0 8px 24px var(--color-shadow-lg);
+  z-index: 60;
 }
-.mrs-phi-card__cell--divider::after {
-  content: '';
-  position: absolute;
-  right: 0;
-  top: 0.5rem;
-  bottom: 0.5rem;
-  border-right: 1px solid var(--color-border-primary);
+.mrs-phi-card__menu-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.375rem 0.625rem;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  color: var(--color-text-primary);
+  cursor: pointer;
+  user-select: none;
+  outline: none;
 }
-.mrs-phi-card__band--divider-top::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0.75rem;
-  right: 0.75rem;
-  border-top: 1px solid var(--color-border-primary);
+.mrs-phi-card__menu-item[data-highlighted] {
+  background: var(--color-hover);
+}
+.mrs-phi-card__menu-item[data-disabled] {
+  opacity: 0.5;
+  pointer-events: none;
+}
+.mrs-phi-card__menu-item--danger {
+  color: var(--color-danger);
+}
+.mrs-phi-card__menu-item--danger[data-highlighted] {
+  background: var(--color-danger-bg);
+}
+.mrs-phi-card__menu-icon {
+  display: inline-flex;
+  flex-shrink: 0;
+  width: 1rem;
+  color: var(--color-text-tertiary);
 }
