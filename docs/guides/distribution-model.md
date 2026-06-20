@@ -97,8 +97,7 @@ compile differently:
   `tsc -b && vite build`) emits to a **separate `dist-harness/`** (`build.outDir` in
   `vite.config.ts`), never `dist/` — Vite empties its `outDir` on every run, so sharing
   `dist/` would wipe the shipped module entry points. **Caveat:** `prepare`-on-install
-  is *not* zero-config on pnpm 10/11 — see "Open decision — `prepare`-on-install vs
-  committed `dist/`" below.
+  is *not* zero-config on pnpm 10/11 — see "Known limitation" below.
 - **Solid (`foundation`):** ships **source under the Solid `"solid"` export
   condition** (JSX preserved), compiled by each consumer's `vite-plugin-solid`.
   A precompiled framework-agnostic dist is not viable for Solid (SSR + SPA
@@ -106,83 +105,45 @@ compile differently:
 
 ---
 
-## Required changes — `my-react-shell`
+## This repo: status
 
-This repo is already the reference implementation of the model (strategy **D5**:
-git-dep, `prepare`→`dist/`, full `exports`/`peerDependencies`). The remaining work
-is hardening, not redesign:
+`my-react-shell` is the reference implementation of the shared model (strategy
+**D5**: git-dep, `prepare`→`dist/`, full `exports` / `peerDependencies`), and
+distribution is in place: it ships precompiled `dist/` via `prepare`, the dev-harness
+builds separately to `dist-harness/`, the `files` allowlist is narrowed to `dist/`
+plus the CSS the `styles.css` export needs, and the committed-`link:` guard (above)
+is wired.
 
-1. **Add a named watch script** for the dev-loop. The package exports `dist/`
-   (not `src/`) and `prepare` does **not** run for a `link:` dep, so a bare link
-   serves stale/missing output until `dist/` is emitted. Add:
-   ```jsonc
-   "build:lib:watch": "tsc -p tsconfig.lib.json --watch"
-   ```
-   Dev-loop = `pnpm build:lib` once, then `pnpm build:lib:watch`, then link in the
-   consumer.
-2. **Fix the stale `vite.config.ts` header comment** (it still describes the
-   superseded "ship raw TS, consumer's Vite transpiles" model). State that
-   `vite.config.ts` builds only the dev-harness, and the library ships compiled
-   `dist/` via `prepare` / `tsconfig.lib.json`.
-3. **Document the CSS requirement.** `my-react-shell/styles.css` ships **raw
-   Tailwind v4 source** (`@import 'tailwindcss'`, `tw-animate-css`,
-   token-referencing palettes) — it is *not* zero-config like the JS. The
-   consumer must run Tailwind v4 / PostCSS and have `tw-animate-css` installed.
-   Record this in the theme guide and the package README.
-4. **Committed-link guard — done (machine gate).** A `pre-commit` git hook
-   (`.githooks/pre-commit`, enabled per clone with `pnpm setup:hooks` →
-   `core.hooksPath`) rejects committing a staged `package.json` that carries **any**
-   `link:`/`file:` dependency specifier (generalized — no shipped self-dependency
-   exists to make a `my-react-shell`-specific check fire here). No husky / extra
-   dependency. Intentional bypass: `git commit --no-verify`. Each consumer gets the
-   same guard by copying `.githooks/pre-commit` and running the same setup — see
-   Consumer adoption.
-5. **Verify the release path once, end to end — done, with a finding.** Tag
-   `v0.1.0` was pushed and installed from a scratch dir via
-   `pnpm add 'git+ssh://…#v0.1.0'`. Result: once builds are allowed, (a) `prepare`
-   runs, (b) `dist/` is emitted, (c) `my-react-shell`, `my-react-shell/styles.css`,
-   and `my-react-shell/auth/convex` all resolve, and the narrowed `files` holds
-   (only `index.css` + `styles/` under `src`). **But the install is not zero-config
-   on pnpm 10/11** — see the Open decision below.
-6. **Narrow the `files` allowlist** (optional, recommended). `files: ["dist", "src"]`
-   ships the entire raw `src` tree (including the dev-harness) into every install.
-   Narrow to `["dist", "src/index.css", "src/styles"]` so only `dist/` plus the
-   CSS the `styles.css` export needs is packed.
+### No router peer
 
-### Resolved decision — router peer
-- **Router peer: removed entirely.** No shipped module imports a router (it was
-  harness-only — `main.tsx` / `routes/` / `routeTree.gen.ts`, all excluded from the
-  library emit), so `@tanstack/react-router` is **not** a peer dependency. It stays a
-  `devDependency` for the dev-harness; there was no routing sub-path to gate it
-  behind. Consumers pick their own router (TanStack Router remains the recommended
-  choice — see the `react-framework` guide — but as the consumer's own dependency,
-  not one this package imposes).
+No shipped module imports a router — it was harness-only (`main.tsx` / `routes/` /
+`routeTree.gen.ts`, all excluded from the library emit) — so `@tanstack/react-router`
+is a `devDependency` here, not a peer. Consumers bring their own router (TanStack
+Router stays the recommendation — see the `react-framework` guide — but as the
+consumer's own dependency, not one this package imposes).
 
-### Open decision — `prepare`-on-install vs committed `dist/`
-The `prepare`→`dist/` model (D5) is **not zero-config on pnpm 10/11**, surfaced by
-the item-5 release verification:
+### Known limitation — `prepare`-on-install is not zero-config on pnpm 10/11
+
+The package ships on the `prepare`→`dist/` model and has since `v0.1.0`. The one
+rough edge: a consumer installing via the **tag-pinned git-dep path** on pnpm 10/11
+does not get a zero-config install. This is currently **latent** — the local `link:`
+dev-loop is unaffected (no `prepare`, no git fetch) and is the path
+`my-react-shell-demo` uses — but a real git-dep consumer hits two gates:
 - **`ERR_PNPM_GIT_DEP_PREPARE_NOT_ALLOWED`** — pnpm blocks a git dep's `prepare`
   build unless the consumer allowlists it in `pnpm-workspace.yaml`. The only key that
-  matches is the **full git-spec including the commit hash** (`my-react-shell@git+ssh://…#<hash>: true`);
-  a glob or version key is rejected — so the consumer must edit that file **every
-  release** (the hash changes per tag).
-- **`ERR_PNPM_IGNORED_BUILDS: esbuild`** (exit 1) — to run `prepare` (`tsc`), pnpm
-  installs `my-react-shell`'s **entire devDependency tree** into the consumer, and
-  esbuild's build script trips a second gate. A "successful" install still exits
-  non-zero (CI reads it as failure).
+  matches is the full git-spec including the commit hash
+  (`my-react-shell@git+ssh://…#<hash>: true`), which changes per tag — so the
+  consumer would edit that file every release.
+- **`ERR_PNPM_IGNORED_BUILDS: esbuild`** (exit 1) — running `prepare` (`tsc`) pulls
+  `my-react-shell`'s entire devDependency tree into the consumer, and esbuild's build
+  script trips a second gate; a "successful" install still exits non-zero.
 
-Options (a decision is needed; not yet taken):
-- **B — commit `dist/`** (recommended): un-gitignore + commit built output; no build
-  script runs on install → genuinely zero-config, no devDep tree pulled, no allowlist.
-  Revises D5. Cost: build artifacts in git + keep `dist/` fresh (enforceable).
-- **A — keep `prepare`-on-install, document the allowlist**: consumer adds the
-  hash-pinned `allowBuilds` key per release + allows esbuild (fragile, heavy install).
-- **C — `dangerouslyAllowAllBuilds: true`** as the documented consumer step: stable,
-  one line, but still drags the full devDep tree in and globally allows build scripts.
-
-`v0.1.0` is published but stands as the "not-yet-zero-config" data point; the chosen
-fix ships as `v0.1.1`. **The local `link:` dev-loop is unaffected** (no `prepare`,
-no git fetch) — it is the path the `my-react-shell-demo` app uses.
+**Workaround** for a git-dep consumer: approve the builds in its
+`pnpm-workspace.yaml` (`dangerouslyAllowAllBuilds: true` is the one-line form, at the
+cost of pulling in the devDep tree). **Fallback**, if a truly zero-config install
+becomes a hard requirement: commit `dist/` (un-gitignore + keep it fresh) so no build
+runs on install — that would revise D5's build-on-install detail, trading a clean
+working tree for the simpler install.
 
 ---
 

@@ -83,9 +83,10 @@ push + tag; consumers bump the tag and reinstall, receiving updates only to the
 modules they import. Git auth is plain git (SSH on dev machines; a Bitbucket
 token/deploy key in CI).
 
-The exact build-delivery mechanism — a `prepare`-on-install build versus a
-committed `dist/` — is still being finalized; the trade-offs and current state live
-in [distribution-model.md](guides/distribution-model.md).
+Builds are delivered by a `prepare`-on-install step that compiles to `dist/`. One
+known pnpm 10/11 caveat for git-dep installs — with its workaround, and committing
+`dist/` as a fallback — is documented in
+[distribution-model.md](guides/distribution-model.md).
 
 ### D6 + D13 — Theme tokens live in the shared `themes` package
 
