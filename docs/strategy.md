@@ -179,6 +179,28 @@ through it. The paired `<UserPreferences>` component (in the kit) is controlled 
 persistence-agnostic — it reads each value and emits `onChange`, leaving storage to
 the consumer — and stays auth-free, with account actions behind an optional slot.
 
+### D14 — i18n: opt-in compile-time typed keys
+
+The i18n seam is **stringly-typed by default, typed by choice**. Every public type
+and hook (`TFunction`, `I18nContextValue`, `useTranslation`, `translateNow`) takes a
+key type parameter `K extends string` that **defaults to `string`** — so the untyped
+seam (`useTranslation()`, `t('any.dotted.key')`, `translateNow('x')`) compiles and
+runs exactly as before. A consumer that wants a typo or a missing key caught at
+compile time binds a key union once with `createTypedI18n<K>()` and gets every call
+site typed with no per-call ceremony; one with a nested catalog derives the union
+from it via the exported `DotPaths<typeof catalog>`.
+
+`createTypedI18n` is pure typing sugar — no new context, no new runtime. The single
+`<I18nProvider>` still owns all lifecycle, and the bound key type is only a
+compile-time view over the same `string`-keyed translator. The point is that the
+shared hub should be at least as strong as its strongest consumer: compile-time key
+safety a consumer would otherwise hand-roll (a key union plus locale parity) is now
+the seam's own, so adopting the shell seam never means downgrading. Binding a key
+union (the factory) was chosen over per-call generics — where a forgotten type
+argument silently degrades back to `string` — and over a catalog-only API, which is
+awkward when a consumer already keeps a flat union; `DotPaths` is exported so the
+catalog-derived path stays available without being forced.
+
 ---
 
 *Retired log entries, folded into the sections above: **D1** (the modular drop-in
