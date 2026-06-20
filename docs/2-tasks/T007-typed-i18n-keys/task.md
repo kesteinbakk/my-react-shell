@@ -41,10 +41,10 @@ The runtime — one `<I18nProvider>`, one context, the pure translator, the
 missing-key store — is **unchanged**. This is a type-layer + small-helper addition
 only.
 
-## Approach (recommended — confirm at kickoff)
+## Approach (decided 2026-06-20 → A: factory binds a key union)
 
 A typed **factory** is the ergonomic path, implemented as pure typing sugar over
-generic hooks. Three candidates:
+generic hooks. Three candidates were weighed; **owner picked A**:
 
 | | How a consumer uses it | Verdict |
 |---|---|---|
@@ -52,10 +52,12 @@ generic hooks. Three candidates:
 | B. Bare generics per call | `useTranslation<DictKey>()` at each of ~64 sites | Verbose; a forgotten type arg silently degrades to `string` (no safety, no error) |
 | C. Catalog-derived | `createTypedI18n<typeof catalog>()` deriving keys via `DotPaths<T>` | Most magical; ship `DotPaths<T>` as an *exported utility* so nested-catalog consumers can write `createTypedI18n<DotPaths<typeof en>>()`, but don't force it |
 
-Recommendation: **ship A** (factory takes a key union `K extends string`) **and
+**Decision:** ship **A** (factory takes a key union `K extends string`) **and
 export `DotPaths<T>`** so a consumer with a nested catalog can derive `K` from the
 catalog type. evaluering passes its existing `DictKey` directly. The factory is
-sugar over the generic hooks below — same runtime, types only.
+sugar over the generic hooks below — same runtime, types only. (B rejected: a
+forgotten per-call type arg silently degrades to `string`. C kept only as the
+exported `DotPaths<T>` utility, not the entry point.)
 
 ## Shell changes (`src/i18n/`)
 
@@ -115,13 +117,12 @@ docs/demo.
 
 ## Open / to confirm
 
-- **Approach A vs C** (factory key-union vs catalog-derived) — recommend A +
-  exported `DotPaths`; confirm at kickoff.
 - **Namespaced-key narrowing** — ship the template-literal version if clean, else
   document the first-cut limitation.
 - **Provider `messages` typing** against `K` (stretch) — now or later.
-- **evaluering adoption** = its own consumer task (separate repo/index) — file now
-  or after ship?
+
+(Approach decided → A, above. evaluering adoption filed as **evaluering T032** —
+its own consumer task in evaluering's repo, blocked on this shipping.)
 
 ## Docs to update on completion
 
