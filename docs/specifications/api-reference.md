@@ -347,7 +347,7 @@ labels. The corner never triggers a clickable card's `onClick`.
 | `image` | — | Image URL rendered full-bleed (`object-fit: cover`) as the top section. Highest precedence for the top. |
 | `imageAlt` | `''` | Alt text for `image` (decorative by default). |
 | `icon` | — | Icon/figure node for the top (below `image`). Alone → centered, full-width. With `upper` → a narrow icon column in a 1 : φ split (logo-and-title). |
-| `iconFill` | `false` | Scale `icon` to fill its area (full-width figure, aspect preserved), overriding the icon's own size. |
+| `iconFill` | `false` | Scale `icon` to fill its area (aspect preserved), overriding the icon's own size. In the icon+content split it's capped to a logo size so it doesn't swallow the band. |
 | `lower` | — | Bottom section (footer), **card-padded**. Empty → not rendered; the card shrinks to the top band's height (`W/φ²`), shorter by exactly the bottom split. |
 | `size` | `'md'` | Size preset — `sm`·`md`·`lg`·`xl` = 180/240/320/480px wide (height = width / φ). Also sets a base `font-size` the section content inherits, so larger cards get larger text. |
 | `actions` | — | Items for the built-in ⋮ menu: `{ icon?, label, onSelect, destructive?, disabled? }[]`. Empty/absent → no menu. Ignored when `corner` is set. |

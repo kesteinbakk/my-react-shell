@@ -76,8 +76,9 @@ export interface PhiCardProps {
    */
   icon?: ReactNode
   /**
-   * Scale `icon` to **fill** its area (full-width figure, aspect preserved) instead
-   * of rendering at its intrinsic size — overrides the icon node's own width/height.
+   * Scale `icon` to **fill** its area (aspect preserved), overriding the icon node's
+   * own width/height. A standalone figure fills the section; in the icon+content
+   * split it's capped to a logo size so it doesn't swallow the tall band.
    */
   iconFill?: boolean
   /**

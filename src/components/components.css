@@ -1082,6 +1082,15 @@
   height: 100%;
   object-fit: contain;
 }
+/* …but in the split (logo + title) a filled icon must not swallow the tall φ-band —
+   cap it to a logo-sized figure (em-scaled, so it tracks the card size), centered. */
+.mrs-phi-card__split .mrs-phi-card__figure--fill svg,
+.mrs-phi-card__split .mrs-phi-card__figure--fill img {
+  width: auto;
+  height: 100%;
+  max-width: 100%;
+  max-height: 2.75em;
+}
 
 /* Icon + body together → the original upper-band split: a narrow icon column and a
    wide body column at 1 : φ (the logo-and-title layout). The padded section insets
