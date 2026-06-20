@@ -24,6 +24,16 @@ const SIZE_WIDTH_PX: Record<PhiCardSize, number> = {
   xl: 480,
 }
 
+// Base font-size (rem) per size — set on the card root so section content inherits
+// it: a larger card gets larger text by default. The consumer overrides per element
+// (e.g. `em`-relative or an explicit class) as needed.
+const SIZE_FONT_REM: Record<PhiCardSize, number> = {
+  sm: 0.75,
+  md: 0.875,
+  lg: 1,
+  xl: 1.125,
+}
+
 /** One entry in the built-in top-right overflow menu. */
 export interface PhiCardAction {
   /** Leading glyph — you bring it (the kit ships no icon registry). Optional. */
@@ -40,9 +50,9 @@ export interface PhiCardAction {
 export interface PhiCardProps {
   /**
    * Top section. You own its content and inner layout; it's full-bleed (a single
-   * cell that stretches your node to fill both axes — a figure/image fills it
-   * edge-to-edge). Add your own padding for inset content. Ignored when `image` or
-   * `icon` is set — those render the top section instead.
+   * cell that stretches your node to fill both axes). Add your own padding for inset
+   * content. Ignored when `image` is set. When `icon` is **also** present, `upper`
+   * becomes the wide content column of a 1 : φ top split (icon left, content right).
    */
   upper?: ReactNode
   /**
@@ -54,8 +64,10 @@ export interface PhiCardProps {
   /** Alt text for `image`. Defaults to `''` (treated as decorative). */
   imageAlt?: string
   /**
-   * Icon / figure node — rendered centered, full-width, as the top section (used
-   * when there's no `image`). Takes precedence over `upper`.
+   * Icon / figure node for the top section (below `image` in precedence). With no
+   * `upper` it's centered, full-width. With `upper` present the top splits 1 : φ —
+   * a narrow icon column (left) and the `upper` content column (right): the original
+   * logo-and-title layout.
    */
   icon?: ReactNode
   /**
@@ -65,7 +77,11 @@ export interface PhiCardProps {
    * full-height card with the top content centered.
    */
   lower?: ReactNode
-  /** Width preset. Height auto-derives as width / φ. Default: `'md'`. */
+  /**
+   * Size preset — sets the width (height = width / φ) **and** a base `font-size` the
+   * section content inherits, so larger cards get larger text by default (override
+   * per element as needed). `sm`/`md`/`lg`/`xl` = 180/240/320/480px. Default: `'md'`.
+   */
   size?: PhiCardSize
   /**
    * Actions for the built-in top-right overflow menu — a ⋮ trigger that opens a
@@ -178,11 +194,22 @@ export function PhiCard({
   const height = hasLower ? width / PHI : width / (PHI * PHI)
   const isHoverable = hoverable ?? !!onClick
 
-  // Top section content: an `image` (full-bleed) or `icon` (centered figure) takes
-  // it over for the figure-over-content pattern; otherwise it's the `upper` node.
+  // Top section content. Precedence:
+  //  - `image` → full-bleed image, the whole top.
+  //  - `icon` + `upper` → the original upper-band split: a narrow icon column and a
+  //    wide content column at 1 : φ (the logo-and-title layout).
+  //  - `icon` alone → centered, full-width figure.
+  //  - else → the `upper` node, full-width.
+  const hasIcon = !isEmpty(icon)
+  const hasUpper = !isEmpty(upper)
   const topContent = image ? (
     <img className="mrs-phi-card__image" src={image} alt={imageAlt} />
-  ) : !isEmpty(icon) ? (
+  ) : hasIcon && hasUpper ? (
+    <div className="mrs-phi-card__split">
+      <div className="mrs-phi-card__figure">{icon}</div>
+      <div className="mrs-phi-card__split-content">{upper}</div>
+    </div>
+  ) : hasIcon ? (
     <div className="mrs-phi-card__figure">{icon}</div>
   ) : (
     upper
@@ -200,6 +227,7 @@ export function PhiCard({
   const style: CSSProperties = {
     width: `${width}px`,
     height: `${height}px`,
+    fontSize: `${SIZE_FONT_REM[size]}rem`,
     ...(leftBorderColor ? { borderLeft: `3px solid ${leftBorderColor}` } : {}),
   }
 

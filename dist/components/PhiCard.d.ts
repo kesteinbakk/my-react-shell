@@ -27,9 +27,9 @@ export interface PhiCardAction {
 export interface PhiCardProps {
     /**
      * Top section. You own its content and inner layout; it's full-bleed (a single
-     * cell that stretches your node to fill both axes — a figure/image fills it
-     * edge-to-edge). Add your own padding for inset content. Ignored when `image` or
-     * `icon` is set — those render the top section instead.
+     * cell that stretches your node to fill both axes). Add your own padding for inset
+     * content. Ignored when `image` is set. When `icon` is **also** present, `upper`
+     * becomes the wide content column of a 1 : φ top split (icon left, content right).
      */
     upper?: ReactNode;
     /**
@@ -41,8 +41,10 @@ export interface PhiCardProps {
     /** Alt text for `image`. Defaults to `''` (treated as decorative). */
     imageAlt?: string;
     /**
-     * Icon / figure node — rendered centered, full-width, as the top section (used
-     * when there's no `image`). Takes precedence over `upper`.
+     * Icon / figure node for the top section (below `image` in precedence). With no
+     * `upper` it's centered, full-width. With `upper` present the top splits 1 : φ —
+     * a narrow icon column (left) and the `upper` content column (right): the original
+     * logo-and-title layout.
      */
     icon?: ReactNode;
     /**
@@ -52,7 +54,11 @@ export interface PhiCardProps {
      * full-height card with the top content centered.
      */
     lower?: ReactNode;
-    /** Width preset. Height auto-derives as width / φ. Default: `'md'`. */
+    /**
+     * Size preset — sets the width (height = width / φ) **and** a base `font-size` the
+     * section content inherits, so larger cards get larger text by default (override
+     * per element as needed). `sm`/`md`/`lg`/`xl` = 180/240/320/480px. Default: `'md'`.
+     */
     size?: PhiCardSize;
     /**
      * Actions for the built-in top-right overflow menu — a ⋮ trigger that opens a

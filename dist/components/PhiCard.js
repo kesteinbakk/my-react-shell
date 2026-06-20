@@ -19,6 +19,15 @@ const SIZE_WIDTH_PX = {
     lg: 320,
     xl: 480,
 };
+// Base font-size (rem) per size — set on the card root so section content inherits
+// it: a larger card gets larger text by default. The consumer overrides per element
+// (e.g. `em`-relative or an explicit class) as needed.
+const SIZE_FONT_REM = {
+    sm: 0.75,
+    md: 0.875,
+    lg: 1,
+    xl: 1.125,
+};
 // A section counts as empty (→ not rendered) for the common "no content" signals:
 // an absent prop (undefined), an explicit null, a `false` from `{cond && <X/>}`, or
 // an empty string. Anything else is content.
@@ -44,9 +53,15 @@ export function PhiCard({ upper, image, imageAlt = '', icon, lower, size = 'md',
     // band W/φ², so a collapsed card ends right where the split was.)
     const height = hasLower ? width / PHI : width / (PHI * PHI);
     const isHoverable = hoverable ?? !!onClick;
-    // Top section content: an `image` (full-bleed) or `icon` (centered figure) takes
-    // it over for the figure-over-content pattern; otherwise it's the `upper` node.
-    const topContent = image ? (_jsx("img", { className: "mrs-phi-card__image", src: image, alt: imageAlt })) : !isEmpty(icon) ? (_jsx("div", { className: "mrs-phi-card__figure", children: icon })) : (upper);
+    // Top section content. Precedence:
+    //  - `image` → full-bleed image, the whole top.
+    //  - `icon` + `upper` → the original upper-band split: a narrow icon column and a
+    //    wide content column at 1 : φ (the logo-and-title layout).
+    //  - `icon` alone → centered, full-width figure.
+    //  - else → the `upper` node, full-width.
+    const hasIcon = !isEmpty(icon);
+    const hasUpper = !isEmpty(upper);
+    const topContent = image ? (_jsx("img", { className: "mrs-phi-card__image", src: image, alt: imageAlt })) : hasIcon && hasUpper ? (_jsxs("div", { className: "mrs-phi-card__split", children: [_jsx("div", { className: "mrs-phi-card__figure", children: icon }), _jsx("div", { className: "mrs-phi-card__split-content", children: upper })] })) : hasIcon ? (_jsx("div", { className: "mrs-phi-card__figure", children: icon })) : (upper);
     // `corner` wins over the built-in menu; otherwise the menu shows only when there
     // are actions. Either way the corner overlay renders only when non-empty. The
     // inline `actions &&` (not a derived flag) lets TS narrow `actions` to non-null.
@@ -55,6 +70,7 @@ export function PhiCard({ upper, image, imageAlt = '', icon, lower, size = 'md',
     const style = {
         width: `${width}px`,
         height: `${height}px`,
+        fontSize: `${SIZE_FONT_REM[size]}rem`,
         ...(leftBorderColor ? { borderLeft: `3px solid ${leftBorderColor}` } : {}),
     };
     return (_jsxs("div", { className: cn('mrs-phi-card', !hasLower && 'mrs-phi-card--single', isHoverable && 'mrs-phi-card--hoverable', className), style: style, onClick: onClick, children: [_jsx("div", { className: "mrs-phi-card__section", children: topContent }), hasLower ? _jsx("div", { className: "mrs-phi-card__section", children: lower }) : null, cornerNode != null ? (_jsx("div", { className: "mrs-phi-card__corner", onClick: (e) => e.stopPropagation(), children: cornerNode })) : null] }));

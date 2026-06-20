@@ -28,8 +28,13 @@ Split:  upperH : lowerH = φ : 1    (the two sections)
   a single grid cell that stretches its child to fill both axes, so a figure/image fills
   edge-to-edge; the consumer adds its own padding for inset content.
 - **Optional figure** — `image` (full-bleed, `object-fit: cover`) or `icon` (centered)
-  renders the **top** section full-width (figure-over-content), with `lower` below.
-  Precedence for the top section: `image` > `icon` > `upper`.
+  renders the **top** section full-width (figure-over-content), with `lower` below. With
+  **both `icon` and `upper`**, the top splits **1 : φ** (narrow icon column · wide content)
+  — the original foundation logo-and-title layout. Top-section precedence: `image` >
+  `icon`+`upper` split > `icon` > `upper`.
+- **Font scales with `size`** — the size preset sets a base `font-size` on the card root
+  (sm/md/lg/xl = 0.75/0.875/1/1.125rem) that section content inherits, so larger cards get
+  larger text by default; consumers override per element.
 - **Bottom collapses when empty** — `lower` absent / `null` / `false` → the section is not
   rendered and the **card shrinks to the top band's height** (`width / φ²`), shorter by
   exactly the bottom split. Replaces the old `singleBand` prop.
@@ -40,8 +45,8 @@ Split:  upperH : lowerH = φ : 1    (the two sections)
   `destructive`). The kit ships no icon registry and never imports i18n.
 - **`corner` escape hatch** — a consumer node that replaces the built-in menu (inline icon
   buttons, a custom menu). The corner never triggers a clickable card's `onClick`.
-- Kept: `size` (`sm`/`md`/`lg`/`xl` = 180/240/320/480px), `leftBorderColor`, `onClick` /
-  `hoverable`, `className`, and the exported `PHI` (`1.6180339887`).
+- Kept: `size` (sets width + a base font-size content inherits), `leftBorderColor`,
+  `onClick` / `hoverable`, `className`, and the exported `PHI` (`1.6180339887`).
 - Dropped from the Solid original: the four `upper*`/`lower*` slots, `dividers`,
   `centerContent`.
 

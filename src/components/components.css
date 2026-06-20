@@ -1056,6 +1056,22 @@
   color: var(--color-text-tertiary);
 }
 
+/* Icon + `upper` together → the original upper-band split: a narrow icon column and
+   a wide content column at 1 : φ (the logo-and-title layout). */
+.mrs-phi-card__split {
+  display: grid;
+  grid-template-columns: 1fr 1.6180339887fr; /* icon : content = 1 : φ */
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+.mrs-phi-card__split-content {
+  display: grid;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
 /* Corner — top-right overlay for the actions menu (or a consumer `corner` node).
    Out of flow so it never disturbs the φ rows; sits above full-bleed section
    content. Rendered only when there's something to show. */
