@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { type VariantProps } from 'class-variance-authority';
 declare const alertVariants: (props?: ({
-    variant?: "info" | "success" | "warning" | "danger" | null | undefined;
+    variant?: "success" | "warning" | "danger" | "info" | null | undefined;
 } & import("class-variance-authority/types").ClassProp) | undefined) => string;
 export type AlertVariant = NonNullable<VariantProps<typeof alertVariants>['variant']>;
 export interface AlertProps {

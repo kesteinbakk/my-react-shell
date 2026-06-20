@@ -23,9 +23,12 @@ this module.
 Shipped today: **`Alert`**, **`InfoBox`**, **`EmptyState`**, **`Spinner`** (+
 `PageSpinner` / `SectionSpinner`), **`ConfirmDialog`**, the **`Toast`** system
 (`ToastProvider` + `useToast`), **`Badge`**, **`Chip`** / **`ChipGroup`**, **`Avatar`** /
-**`AvatarGroup`**, **`Table`**, **`InputField`**, **`SegmentedControl`**, **`Select`**, and
-**`UserPreferences`** (a theme / display settings panel). (`Card` is intentionally *not*
-shipped — shadcn's Card works out of the box; the kit ships only opinionated composites.)
+**`AvatarGroup`**, **`Table`**, **`ActionButton`** / **`ActionButtonGroup`**, **`InputField`**,
+**`SegmentedControl`**, **`Select`**, and **`UserPreferences`** (a theme / display settings
+panel). (`Card` is intentionally *not* shipped — shadcn's Card works out of the box; the
+kit ships only opinionated composites. The plain shadcn **`Button`** primitive isn't shipped
+either — `ActionButton` is the *opinionated* icon/emoji-with-label action button, not a
+replacement for it.)
 
 ## Wire it
 
@@ -124,6 +127,66 @@ a per-tone leading icon and an optional dismiss control.
   ]
   <Table columns={columns} data={rows} rowKey={(r) => r.id} />
   ```
+
+## Actions
+
+- **`ActionButton`** — an opinionated icon/emoji + label action button on the semantic
+  tokens. It ships **presets** for the common actions, each carrying the *correct* glyph
+  (a hand-rolled SVG **and** an emoji), a semantic colour, and a default English label —
+  so the everyday CRUD/toolbar actions are one prop:
+
+  ```tsx
+  import { ActionButton, ActionButtonGroup } from 'my-react-shell/components'
+
+  <ActionButtonGroup>
+    <ActionButton action="add" showLabel onClick={onAdd} />
+    <ActionButton action="edit" hint="Edit" onClick={onEdit} />
+    <ActionButton action="delete" onClick={onDelete} />
+    <ActionButton action="star" active={isFavorite} onClick={toggleFavorite} />
+  </ActionButtonGroup>
+  ```
+
+  Presets: `add` · `edit` · `delete` · `copy` · `share` · `download` · `upload` · `save` ·
+  `search` · `refresh` · `settings` · `star` · `close` · `more`. The map is exported as
+  `actionPresets` (`{ variant, emoji, label }` per action) if you need its values.
+
+  For anything without a preset, bring your own glyph — pass a custom `icon` node (a lucide
+  icon, or an `<Icon>` from `my-react-shell/icons`):
+
+  ```tsx
+  import { Upload } from 'lucide-react'
+  <ActionButton icon={<Upload size={20} />} label="Import" variant="info" onClick={onImport} />
+  ```
+
+  Like the rest of the kit it **never imports i18n or the icons module**: pass translated
+  text through `label` (the preset label is the English default + the accessible name), and
+  wire the icons↔emojis seam yourself via `showEmoji` — each preset renders its emoji
+  instead of its SVG when it's set:
+
+  ```tsx
+  import { useIconMode } from 'my-react-shell/icons'
+  const { isEmoji } = useIconMode()
+  <ActionButton action="delete" showEmoji={isEmoji} onClick={onDelete} />
+  ```
+
+  | Prop | Default | Meaning |
+  |------|---------|---------|
+  | `action` | — | A preset (`add` · `delete` · `star` · …) supplying the glyph, emoji, colour, and default label. Either `action` or `icon` is required. |
+  | `icon` | per-preset | A custom glyph node. Required when there's no `action`; overrides the preset glyph otherwise. |
+  | `emoji` | per-preset | Override the preset emoji (shown when `showEmoji`). |
+  | `label` | — | Visible label text; overrides the preset label. |
+  | `showLabel` | `false` | Show the preset's default label without retyping it (ignored when `label` is set). |
+  | `showEmoji` | `false` | Render the emoji instead of the SVG icon — wire to `useIconMode().isEmoji`. |
+  | `variant` | preset / `neutral` | `neutral` · `primary` · `secondary` · `success` · `warning` · `danger` · `info`. |
+  | `size` | `sm` | `xs` · `sm` · `md` · `lg` · `xl` — drives padding, glyph, and label size. |
+  | `layout` | `vertical` | `vertical` (glyph over label) or `inline` (glyph left of label). |
+  | `active` | — | For `action="star"`: filled + `aria-pressed` when true. |
+  | `coloredLabel` | `false` | Let the label take the variant colour instead of staying neutral. |
+  | `hint` | — | Native tooltip (the `title` attribute). |
+  | `disabled` / `type` / `onClick` / `aria-label` / `className` | — | The usual button props; `aria-label` falls back to the visible label, then `hint`, then the preset label. |
+
+- **`ActionButtonGroup`** — a flex container for a set of action buttons (a toolbar row, or
+  a column with `vertical`).
 
 ## `UserPreferences`
 

@@ -10,6 +10,8 @@ export { ConfirmDialog } from './ConfirmDialog';
 export type { ConfirmDialogProps } from './ConfirmDialog';
 export { ToastProvider, useToast } from './Toast';
 export type { ToastApi, ToastOptions, ToastProviderProps, ToastTone } from './Toast';
+export { ActionButton, ActionButtonGroup, actionPresets } from './ActionButton';
+export type { ActionButtonProps, ActionButtonPresetProps, ActionButtonIconProps, ActionButtonGroupProps, ActionButtonVariant, ActionButtonSize, ActionButtonLayout, ActionType, ActionPreset, } from './ActionButton';
 export { Badge } from './Badge';
 export type { BadgeProps, BadgeTone } from './Badge';
 export { Chip, ChipGroup } from './Chip';

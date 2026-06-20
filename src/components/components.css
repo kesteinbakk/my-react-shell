@@ -837,3 +837,157 @@
   width: 1rem;
   color: var(--color-primary);
 }
+
+/* ── ActionButton ────────────────────────────────────────────────────────── */
+.mrs-action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  border: 1px solid transparent;
+  border-radius: 0.5rem;
+  background: transparent;
+  color: var(--color-text-secondary);
+  font: inherit;
+  line-height: 1.2;
+  cursor: pointer;
+  transition: background-color 120ms ease, color 120ms ease, border-color 120ms ease;
+}
+.mrs-action-btn:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+.mrs-action-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Layout */
+.mrs-action-btn--vertical {
+  flex-direction: column;
+}
+.mrs-action-btn--inline {
+  flex-direction: row;
+  gap: 0.5rem;
+}
+
+/* Glyph + label */
+.mrs-action-btn__glyph {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.mrs-action-btn__emoji {
+  line-height: 1;
+}
+.mrs-action-btn__label {
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  transition: color 120ms ease;
+}
+.mrs-action-btn:hover:not(:disabled) .mrs-action-btn__label {
+  color: var(--color-text-primary);
+}
+
+/* Sizes — padding + label size; the glyph px is set inline to match. */
+.mrs-action-btn--xs {
+  padding: 0.25rem;
+}
+.mrs-action-btn--xs .mrs-action-btn__label {
+  font-size: 0.75rem;
+}
+.mrs-action-btn--sm {
+  padding: 0.5rem;
+}
+.mrs-action-btn--sm .mrs-action-btn__label {
+  font-size: 0.8125rem;
+}
+.mrs-action-btn--md {
+  padding: 0.75rem;
+}
+.mrs-action-btn--md .mrs-action-btn__label {
+  font-size: 0.875rem;
+}
+.mrs-action-btn--lg {
+  padding: 1rem;
+}
+.mrs-action-btn--lg .mrs-action-btn__label {
+  font-size: 1.125rem;
+}
+.mrs-action-btn--xl {
+  padding: 1.25rem;
+}
+.mrs-action-btn--xl .mrs-action-btn__label {
+  font-size: 1.25rem;
+}
+
+/* Variants — accent colour + tinted hover surface. */
+.mrs-action-btn--neutral {
+  color: var(--color-text-secondary);
+}
+.mrs-action-btn--neutral:hover:not(:disabled) {
+  background: var(--color-hover);
+  color: var(--color-text-primary);
+}
+.mrs-action-btn--primary {
+  color: var(--color-primary);
+}
+.mrs-action-btn--primary:hover:not(:disabled) {
+  background: var(--color-primary-bg);
+}
+.mrs-action-btn--secondary {
+  color: var(--color-secondary);
+}
+.mrs-action-btn--secondary:hover:not(:disabled) {
+  background: var(--color-secondary-bg);
+}
+.mrs-action-btn--success {
+  color: var(--color-success);
+}
+.mrs-action-btn--success:hover:not(:disabled) {
+  background: var(--color-success-bg);
+}
+.mrs-action-btn--warning {
+  color: var(--color-warning);
+}
+.mrs-action-btn--warning:hover:not(:disabled) {
+  background: var(--color-warning-bg);
+}
+.mrs-action-btn--danger {
+  color: var(--color-danger);
+}
+.mrs-action-btn--danger:hover:not(:disabled) {
+  background: var(--color-danger-bg);
+}
+.mrs-action-btn--info {
+  color: var(--color-info);
+}
+.mrs-action-btn--info:hover:not(:disabled) {
+  background: var(--color-info-bg);
+}
+
+/* Star (favourite) — neutral until active, amber hover regardless of state. */
+.mrs-action-btn--star-hover:hover:not(:disabled) {
+  background: var(--color-warning-bg);
+  color: var(--color-warning);
+}
+
+/* Coloured label — the label inherits the variant colour. Placed after the
+   hover rule so it wins on both rest and hover. */
+.mrs-action-btn--colored-label .mrs-action-btn__label,
+.mrs-action-btn--colored-label:hover:not(:disabled) .mrs-action-btn__label {
+  color: inherit;
+}
+
+/* Group */
+.mrs-action-btn-group {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem;
+}
+.mrs-action-btn-group--vertical {
+  flex-direction: column;
+  align-items: stretch;
+}

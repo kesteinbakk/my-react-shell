@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { type VariantProps } from 'class-variance-authority';
 declare const badgeVariants: (props?: ({
-    tone?: "info" | "success" | "warning" | "danger" | "neutral" | null | undefined;
+    tone?: "neutral" | "success" | "warning" | "danger" | "info" | null | undefined;
 } & import("class-variance-authority/types").ClassProp) | undefined) => string;
 export type BadgeTone = NonNullable<VariantProps<typeof badgeVariants>['tone']>;
 export interface BadgeProps {
