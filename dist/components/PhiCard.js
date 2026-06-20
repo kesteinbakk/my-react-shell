@@ -25,8 +25,8 @@ const SIZE_WIDTH_PX = {
 const SIZE_FONT_REM = {
     sm: 0.75,
     md: 0.875,
-    lg: 1,
-    xl: 1.125,
+    lg: 1.125,
+    xl: 1.375,
 };
 // A section counts as empty (→ not rendered) for the common "no content" signals:
 // an absent prop (undefined), an explicit null, a `false` from `{cond && <X/>}`, or
@@ -44,7 +44,7 @@ function PhiCardMenu({ actions, icon, label, }) {
  * the card shrinks to the top band's height (width / φ²) — shorter by exactly the
  * bottom split. An optional top-right overflow menu takes consumer-supplied actions.
  */
-export function PhiCard({ upper, image, imageAlt = '', icon, lower, size = 'md', actions, menuIcon, menuLabel = 'Actions', corner, leftBorderColor, onClick, hoverable, className, }) {
+export function PhiCard({ upper, image, imageAlt = '', icon, iconFill = false, lower, size = 'md', actions, menuIcon, menuLabel = 'Actions', corner, leftBorderColor, onClick, hoverable, className, }) {
     const width = SIZE_WIDTH_PX[size];
     const hasLower = !isEmpty(lower);
     // No bottom section → the card collapses to the top band's height (W/φ²) — shorter
@@ -61,7 +61,7 @@ export function PhiCard({ upper, image, imageAlt = '', icon, lower, size = 'md',
     //  - else → the `upper` node, full-width.
     const hasIcon = !isEmpty(icon);
     const hasUpper = !isEmpty(upper);
-    const topContent = image ? (_jsx("img", { className: "mrs-phi-card__image", src: image, alt: imageAlt })) : hasIcon && hasUpper ? (_jsxs("div", { className: "mrs-phi-card__split", children: [_jsx("div", { className: "mrs-phi-card__figure", children: icon }), _jsx("div", { className: "mrs-phi-card__split-content", children: upper })] })) : hasIcon ? (_jsx("div", { className: "mrs-phi-card__figure", children: icon })) : (upper);
+    const topContent = image ? (_jsx("img", { className: "mrs-phi-card__image", src: image, alt: imageAlt })) : hasIcon && hasUpper ? (_jsxs("div", { className: "mrs-phi-card__split", children: [_jsx("div", { className: cn('mrs-phi-card__figure', iconFill && 'mrs-phi-card__figure--fill'), children: icon }), _jsx("div", { className: "mrs-phi-card__split-content", children: upper })] })) : hasIcon ? (_jsx("div", { className: cn('mrs-phi-card__figure', iconFill && 'mrs-phi-card__figure--fill'), children: icon })) : (upper);
     // `corner` wins over the built-in menu; otherwise the menu shows only when there
     // are actions. Either way the corner overlay renders only when non-empty. The
     // inline `actions &&` (not a derived flag) lets TS narrow `actions` to non-null.

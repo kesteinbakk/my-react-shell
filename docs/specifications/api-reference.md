@@ -328,8 +328,9 @@ section collapses when empty** (`lower` absent / `null` / `false` → not render
 For a figure-over-content card, pass **`image`** (full-bleed, `object-fit: cover`) or
 **`icon`** (centered) — it renders the top section full-width, with `lower` the content
 below. Pass **both `icon` and `upper`** → the top splits **1 : φ** (narrow icon column ·
-wide content), the original logo-and-title layout. `size` also sets a base `font-size`
-the section content inherits, so larger cards get larger text.
+wide content), the original logo-and-title layout — set `iconFill` to scale the icon to
+fill its column. `size` also sets a base `font-size` the section content inherits, so
+larger cards get larger text.
 
 Top-right **overflow menu**: pass `actions` and the card renders a ⋮ trigger → Radix
 `DropdownMenu` of those items (no actions → no trigger). For anything else — inline icon
@@ -344,6 +345,7 @@ labels. The corner never triggers a clickable card's `onClick`.
 | `image` | — | Image URL rendered full-bleed (`object-fit: cover`) as the top section. Highest precedence for the top. |
 | `imageAlt` | `''` | Alt text for `image` (decorative by default). |
 | `icon` | — | Icon/figure node for the top (below `image`). Alone → centered, full-width. With `upper` → a narrow icon column in a 1 : φ split (logo-and-title). |
+| `iconFill` | `false` | Scale `icon` to fill its area (full-width figure, aspect preserved), overriding the icon's own size. |
 | `lower` | — | Bottom section content. Empty → not rendered; the card shrinks to the top band's height (`W/φ²`), shorter by exactly the bottom split. |
 | `size` | `'md'` | Size preset — `sm`·`md`·`lg`·`xl` = 180/240/320/480px wide (height = width / φ). Also sets a base `font-size` the section content inherits, so larger cards get larger text. |
 | `actions` | — | Items for the built-in ⋮ menu: `{ icon?, label, onSelect, destructive?, disabled? }[]`. Empty/absent → no menu. Ignored when `corner` is set. |

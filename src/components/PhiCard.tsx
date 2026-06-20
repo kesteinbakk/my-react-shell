@@ -30,8 +30,8 @@ const SIZE_WIDTH_PX: Record<PhiCardSize, number> = {
 const SIZE_FONT_REM: Record<PhiCardSize, number> = {
   sm: 0.75,
   md: 0.875,
-  lg: 1,
-  xl: 1.125,
+  lg: 1.125,
+  xl: 1.375,
 }
 
 /** One entry in the built-in top-right overflow menu. */
@@ -70,6 +70,11 @@ export interface PhiCardProps {
    * logo-and-title layout.
    */
   icon?: ReactNode
+  /**
+   * Scale `icon` to **fill** its area (full-width figure, aspect preserved) instead
+   * of rendering at its intrinsic size — overrides the icon node's own width/height.
+   */
+  iconFill?: boolean
   /**
    * Bottom section, same contract as `upper`. When it's empty (absent / `null` /
    * `false`) the section is **not rendered at all** and the **card shrinks to the
@@ -174,6 +179,7 @@ export function PhiCard({
   image,
   imageAlt = '',
   icon,
+  iconFill = false,
   lower,
   size = 'md',
   actions,
@@ -206,11 +212,15 @@ export function PhiCard({
     <img className="mrs-phi-card__image" src={image} alt={imageAlt} />
   ) : hasIcon && hasUpper ? (
     <div className="mrs-phi-card__split">
-      <div className="mrs-phi-card__figure">{icon}</div>
+      <div className={cn('mrs-phi-card__figure', iconFill && 'mrs-phi-card__figure--fill')}>
+        {icon}
+      </div>
       <div className="mrs-phi-card__split-content">{upper}</div>
     </div>
   ) : hasIcon ? (
-    <div className="mrs-phi-card__figure">{icon}</div>
+    <div className={cn('mrs-phi-card__figure', iconFill && 'mrs-phi-card__figure--fill')}>
+      {icon}
+    </div>
   ) : (
     upper
   )

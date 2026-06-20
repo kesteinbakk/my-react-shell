@@ -48,6 +48,11 @@ export interface PhiCardProps {
      */
     icon?: ReactNode;
     /**
+     * Scale `icon` to **fill** its area (full-width figure, aspect preserved) instead
+     * of rendering at its intrinsic size — overrides the icon node's own width/height.
+     */
+    iconFill?: boolean;
+    /**
      * Bottom section, same contract as `upper`. When it's empty (absent / `null` /
      * `false`) the section is **not rendered at all** and the **card shrinks to the
      * top band's height** (`width / φ²`) — shorter by exactly the bottom split, not a
@@ -90,4 +95,4 @@ export interface PhiCardProps {
  * the card shrinks to the top band's height (width / φ²) — shorter by exactly the
  * bottom split. An optional top-right overflow menu takes consumer-supplied actions.
  */
-export declare function PhiCard({ upper, image, imageAlt, icon, lower, size, actions, menuIcon, menuLabel, corner, leftBorderColor, onClick, hoverable, className, }: PhiCardProps): import("react").JSX.Element;
+export declare function PhiCard({ upper, image, imageAlt, icon, iconFill, lower, size, actions, menuIcon, menuLabel, corner, leftBorderColor, onClick, hoverable, className, }: PhiCardProps): import("react").JSX.Element;

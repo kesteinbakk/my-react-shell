@@ -31,10 +31,11 @@ Split:  upperH : lowerH = φ : 1    (the two sections)
   renders the **top** section full-width (figure-over-content), with `lower` below. With
   **both `icon` and `upper`**, the top splits **1 : φ** (narrow icon column · wide content)
   — the original foundation logo-and-title layout. Top-section precedence: `image` >
-  `icon`+`upper` split > `icon` > `upper`.
+  `icon`+`upper` split > `icon` > `upper`. `iconFill` scales the icon to fill its area
+  (full-width figure, aspect preserved) instead of its intrinsic size.
 - **Font scales with `size`** — the size preset sets a base `font-size` on the card root
-  (sm/md/lg/xl = 0.75/0.875/1/1.125rem) that section content inherits, so larger cards get
-  larger text by default; consumers override per element.
+  (sm/md/lg/xl = 0.75/0.875/1.125/1.375rem) that section content inherits, so larger cards
+  get larger text by default; consumers override per element.
 - **Bottom collapses when empty** — `lower` absent / `null` / `false` → the section is not
   rendered and the **card shrinks to the top band's height** (`width / φ²`), shorter by
   exactly the bottom split. Replaces the old `singleBand` prop.
