@@ -19,6 +19,9 @@ app template. It ships a set of **self-contained modules** an app picks from:
 - **auth** — a pluggable auth **seam** (a TS contract) + the Convex Auth default
   implementation; bring-your-own for Better Auth / SSO.
 - **i18n** *(planned)* — the `t()` seam + central-key policy + missing-key surface.
+- **icons** — an icons↔emojis display-mode seam (`my-react-shell/icons`): a preference
+  (`IconModeProvider` / `useIconMode`) + a thin `<Icon>` glyph↔emoji swap. No icon
+  registry, no `lucide-react` dep.
 
 Each module is **independently importable, self-contained** (never hard-depends on
 another module's runtime), and ships a **contract + a guide** so an app can wire it,
@@ -173,7 +176,8 @@ A consumer adds the Bitbucket git-dep, then imports only the modules it wants:
 import { ThemeProvider } from 'my-react-shell'                       // theme — Convex-free core
 import { AppProviders, createConvexClient } from 'my-react-shell/providers'
 import { ConvexAuthDefaultProvider } from 'my-react-shell/auth/convex'
-import { Alert } from 'my-react-shell/components'                    // opinionated kit
+import { Alert, UserPreferences } from 'my-react-shell/components'   // opinionated kit
+import { IconModeProvider, useIconMode } from 'my-react-shell/icons' // icons↔emojis seam
 import 'my-react-shell/styles.css'
 import 'my-react-shell/components/styles.css'
 ```

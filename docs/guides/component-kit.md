@@ -23,9 +23,9 @@ this module.
 Shipped today: **`Alert`**, **`InfoBox`**, **`EmptyState`**, **`Spinner`** (+
 `PageSpinner` / `SectionSpinner`), **`ConfirmDialog`**, the **`Toast`** system
 (`ToastProvider` + `useToast`), **`Badge`**, **`Chip`** / **`ChipGroup`**, **`Avatar`** /
-**`AvatarGroup`**, and **`Table`**. (`Card` is intentionally *not* shipped — shadcn's Card
-works out of the box; the kit ships only opinionated composites.) The kit grows per T004
-(InputField, Select, SegmentedControl).
+**`AvatarGroup`**, **`Table`**, and **`UserPreferences`** (a theme / display settings panel).
+(`Card` is intentionally *not* shipped — shadcn's Card works out of the box; the kit ships
+only opinionated composites.) The kit grows per T004 (InputField, Select, SegmentedControl).
 
 ## Wire it
 
@@ -124,6 +124,53 @@ a per-tone leading icon and an optional dismiss control.
   ]
   <Table columns={columns} data={rows} rowKey={(r) => r.id} />
   ```
+
+## `UserPreferences`
+
+A drop-in user-options panel — **theme palette + light/dark/system + an optional
+icons↔emojis switch** — in a Radix dialog opened from an icon button. The React-era
+take on foundation's `ThemeAction` modal. Drop it into the app-shell action slot (or
+any header).
+
+It is **fully controlled**: it reads each current value and emits an `onChange`, and
+**persists nothing itself** — so you decide where preferences live (localStorage via
+the shipped providers, or a per-user account / Convex). It's also **auth-free**:
+surface sign-out / profile through the `accountActions` slot. Labels come via props
+(English defaults), so the kit never imports i18n.
+
+```tsx
+import { useTheme } from 'my-react-shell'
+import { useIconMode } from 'my-react-shell/icons'
+import { UserPreferences } from 'my-react-shell/components'
+
+function PreferencesButton() {
+  const { theme, themes, setTheme, mode, setMode, isSystemMode, setSystemMode } = useTheme()
+  const { iconMode, setIconMode } = useIconMode()
+  return (
+    <UserPreferences
+      theme={theme} themes={themes} onThemeChange={setTheme}
+      mode={mode} onModeChange={setMode}
+      followSystem={isSystemMode} onFollowSystemChange={setSystemMode}
+      iconMode={iconMode} onIconModeChange={setIconMode}
+    />
+  )
+}
+```
+
+| Prop | Default | Meaning |
+|------|---------|---------|
+| `theme` / `themes` / `onThemeChange` | — | Active palette, the list to offer (`useTheme().themes`), and the change handler. **Required.** |
+| `mode` / `onModeChange` | — | Active color mode and its handler. **Required.** |
+| `followSystem` / `onFollowSystemChange` | — | Pass both to show a **System** option that follows the OS. |
+| `iconMode` / `onIconModeChange` | — | Pass both to show the **icons↔emojis** switch (from `my-react-shell/icons`). |
+| `accountActions` | — | Rows below a divider — e.g. a sign-out button. Keeps the kit auth-free. |
+| `trigger` | icon button | Override the dialog trigger. |
+| `open` / `onOpenChange` | self-managed | Control the open state if you need to. |
+| label props | English | `triggerLabel`, `title`, `description`, `themeHeading`, `modeHeading`, `displayHeading`, `lightLabel`, `darkLabel`, `systemLabel`, `iconsLabel`, `emojisLabel`, `closeLabel` — pass translated values via your `t()`. |
+| `className` | — | Extra classes on the dialog, merged via `cn()`. |
+
+The icons↔emojis switch only *does* something if the rest of your UI renders through
+the `my-react-shell/icons` seam — see the [icons guide](icons.md).
 
 ## How it's built
 

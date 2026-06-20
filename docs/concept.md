@@ -23,7 +23,11 @@ Each module is one capability an app can opt into:
 - **components** — an opinionated component kit (Alert, dialogs, structured cards, form
   fields, …) built on shadcn/Radix + the theme tokens, at `my-react-shell/components`.
   Ships only the composites that need an opinion; un-opinionated shadcn primitives stay
-  consumer-owned.
+  consumer-owned. Includes **`UserPreferences`**, a controlled theme/display settings panel.
+- **icons** — the icons↔emojis display-mode seam: a preference (`IconModeProvider` /
+  `useIconMode`) plus a thin `<Icon>` that swaps a glyph for its emoji, at
+  `my-react-shell/icons`. No icon registry and no `lucide-react` dep — consumers bring
+  their own glyphs.
 
 ## The two module flavors
 

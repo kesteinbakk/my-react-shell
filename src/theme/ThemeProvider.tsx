@@ -10,7 +10,7 @@
  * `.theme-<name>-light` / `.theme-<name>-dark` class filling the token contract.
  */
 
-import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import type { ReactNode } from 'react'
 import { BUILT_IN_THEMES, ThemeContext } from './themeContext'
 import type { ThemeContextValue, ThemeInfo, ThemeMode, ThemeName } from './themeContext'
@@ -37,6 +37,12 @@ export interface ThemeProviderProps {
   defaultFollowSystem?: boolean
   /** localStorage key for persistence. Default `'my-react-shell.theme'`. */
   storageKey?: string
+  /**
+   * Called whenever the user changes theme / mode / system-follow (not on initial
+   * mount). Use it to mirror the choice to a backend or per-user account; the
+   * provider keeps persisting to localStorage regardless.
+   */
+  onChange?: (state: { theme: ThemeName; mode: ThemeMode; followSystem: boolean }) => void
 }
 
 function getSystemMode(): ThemeMode {
@@ -89,6 +95,7 @@ export function ThemeProvider({
   defaultMode = 'light',
   defaultFollowSystem = true,
   storageKey = DEFAULT_STORAGE_KEY,
+  onChange,
 }: ThemeProviderProps) {
   const [state, setState] = useState<PersistedTheme>(() => {
     const persisted = readPersisted(storageKey, themes)
@@ -111,6 +118,26 @@ export function ThemeProvider({
       /* ignore */
     }
   }, [state, storageKey])
+
+  // Notify the consumer of changes (skipping initial mount) so it can mirror the
+  // choice to a backend. Read `onChange` from a ref so this effect depends only on
+  // `state` — a new callback identity each render won't re-fire it.
+  const onChangeRef = useRef(onChange)
+  useEffect(() => {
+    onChangeRef.current = onChange
+  }, [onChange])
+  const mountedRef = useRef(false)
+  useEffect(() => {
+    if (!mountedRef.current) {
+      mountedRef.current = true
+      return
+    }
+    onChangeRef.current?.({
+      theme: state.theme,
+      mode: state.mode,
+      followSystem: state.followSystem,
+    })
+  }, [state])
 
   // Track the OS color scheme while following the system.
   useEffect(() => {

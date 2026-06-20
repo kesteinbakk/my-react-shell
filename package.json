@@ -39,6 +39,10 @@
       "import": "./dist/components/index.js"
     },
     "./components/styles.css": "./src/components/components.css",
+    "./icons": {
+      "types": "./dist/icons/index.d.ts",
+      "import": "./dist/icons/index.js"
+    },
     "./styles.css": "./src/index.css"
   },
   "files": [

@@ -194,3 +194,41 @@ Decisions (owner, 2026-06-20):
 Renders against the existing `theme` token contract, incl. the neutral `secondary` and
 the `-strong` semantic text tokens. Ships `docs/guides/component-kit.md`. Origin: T004
 (`docs/2-tasks/T004-component-kit/task.md`).
+
+## D12 — user-preferences component + icons↔emojis display-mode seam
+
+my-react-shell ships a **`<UserPreferences>`** component in the kit
+(`my-react-shell/components`) and a small **`icons` module** (`my-react-shell/icons`) — the
+React-era answer to how the SolidJS `foundation` surfaces a theme picker + an "use emojis
+instead of icons" toggle (`shell/actionRow.tsx` `ThemeAction` + the central
+`kit/icons/Icon.tsx`).
+
+The shaping constraint: `foundation`'s emoji switch works because it **owns** a central
+`<Icon>` every glyph renders through. my-react-shell deliberately owns no icon kit (D3; the
+app-shell renders via the consumer's `config.renderIcon`). So we ship the **seam**, not a
+registry.
+
+Decisions (owner, 2026-06-20):
+
+- **Switcher → a preference seam + a thin `<Icon>`, not a full Icon module.** `icons` ships
+  `IconModeProvider` + `useIconMode` + `<Icon icon emoji>` (swaps a glyph for its emoji on
+  the active mode). **No baked-in registry and no `lucide-react` dependency** — the consumer
+  brings glyphs and typically routes its existing `renderIcon` through `<Icon>`. Keeps the
+  "no icon kit" boundary (D3) intact. (Rejected: porting `foundation`'s lucide-backed Icon
+  registry — a peer dep + a large surface against the boundary.)
+- **Scope → preferences-only, auth-free.** `<UserPreferences>` ships theme palette +
+  light/dark/system + the icons↔emojis toggle, and never imports the auth seam. Account
+  actions (sign out / profile) go through an optional `accountActions` slot, mirroring
+  `foundation`'s split of a preferences modal from its identity menu.
+- **Controlled, persistence-agnostic.** `<UserPreferences>` reads each value and emits an
+  `onChange`, persisting nothing itself — the consumer chooses storage (localStorage via the
+  shipped providers, or a per-user account / Convex). `IconModeProvider` is likewise
+  controllable (localStorage default; `value` + `onChange` to redirect), and `ThemeProvider`
+  gains a non-breaking `onChange` so theme can be mirrored too.
+- **Presentation → Radix Dialog (modal).** Matches `foundation`'s `ThemeAction` and reuses
+  the `@radix-ui/react-dialog` peer `ConfirmDialog` already uses — no
+  `@radix-ui/react-popover` dependency.
+
+Renders against the existing `theme` token contract. Ships `docs/guides/icons.md` and a
+`<UserPreferences>` entry in `docs/guides/component-kit.md`. Origin: T005
+(`docs/2-tasks/T005-user-preferences/task.md`).

@@ -41,4 +41,7 @@ export type { AvatarProps, AvatarGroupProps, AvatarSize } from './Avatar'
 export { Table } from './Table'
 export type { TableProps, TableColumn } from './Table'
 
+export { UserPreferences } from './UserPreferences'
+export type { UserPreferencesProps } from './UserPreferences'
+
 export { cn } from './cn'
