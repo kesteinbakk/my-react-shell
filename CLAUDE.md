@@ -46,8 +46,8 @@ consumers use shadcn directly for. The app-shell ships as an *optional* module, 
 
 > **Status: in progress.** The theme, providers, auth seam, i18n, icons, app-shell,
 > and component-kit modules have landed — each with a guide in `docs/guides/`, plus the
-> module-authoring contract — distributed as a standard node module (prepare-build to
-> `dist/`). The theme tokens
+> module-authoring contract — distributed as a standard node module (a committed,
+> precompiled `dist/`). The theme tokens
 > are now **shared** with the SolidJS `zingularis/foundation` via the `themes`
 > package (D13); foundation otherwise stays the source of truth for its Solid modules.
 
@@ -108,8 +108,8 @@ token won't appear (or renders as a stray "unset" hatch).
 - **Package manager: pnpm** — never `npm install` (it desyncs the lockfile and
   Convex dev then crash-loops). Use `pnpm add` / `pnpm <script>` / `pnpm dlx`.
 - **Distribution:** a **Bitbucket git-dependency**, tag-pinned, consumed like an
-  npm package (`import { … } from 'my-react-shell'`). A `prepare` build compiles
-  `src/ → dist/` on install — no registry, no sync. See [docs/strategy.md](docs/strategy.md) D5.
+  npm package (`import { … } from 'my-react-shell'`). Ships a **committed, precompiled
+  `dist/`** — zero-config install, no build runs, no registry, no sync. See [docs/strategy.md](docs/strategy.md) D5.
 - **Hosting (consumers):** Vercel (static). **Git remote:**
   `git@bitbucket.org:kesteinbakk/my-react-shell.git`.
 

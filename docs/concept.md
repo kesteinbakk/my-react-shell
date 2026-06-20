@@ -91,8 +91,9 @@ Consumed as a **tag-pinned Bitbucket git-dependency**, like an npm package:
 import { ThemeProvider } from 'my-react-shell'
 ```
 
-A `prepare` build compiles `src/ → dist/` on install, so consumers receive compiled
-JS + types with zero bundler config. To ship an update: push + tag; consumers bump
+A **committed, precompiled `dist/`** (JS + types) ships with the package, so the
+install is zero-config — no build runs on the consumer's machine. To ship an update:
+push + tag; consumers bump
 the tag and reinstall. Apps receive updates only to the modules they actually
 import. No npm registry, no Verdaccio, no sync system. Full rationale in
 [strategy.md](strategy.md) D5.

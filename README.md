@@ -31,10 +31,10 @@ install` (it desyncs the lockfile and Convex dev then crash-loops).
   "my-react-shell": "git+https://x-token-auth:$BITBUCKET_TOKEN@bitbucket.org/kesteinbakk/my-react-shell.git#vX.Y.Z"
   ```
 
-On install, the package's `prepare` build compiles `src/ → dist/` (JS + `.d.ts`), so
-the importable library is zero-config — consumers receive compiled JS + types with no
-bundler config. To take an update, bump the tag and reinstall; you receive only the
-modules you import (tree-shaken).
+The package ships a **committed, precompiled `dist/`** (JS + `.d.ts`), so the install
+is zero-config — pnpm checks out pre-built files and runs no build step; you receive
+compiled JS + types with no bundler config. To take an update, bump the tag and
+reinstall; you receive only the modules you import (tree-shaken).
 
 ## Usage
 
@@ -128,9 +128,10 @@ reinstall cycle:
    },
    ```
 
-> The package exports `dist/` (not `src/`) and `prepare` does **not** run for a
-> `link:` dependency, so the link serves stale/missing output until `dist/` is
-> emitted — hence the `build:lib` + `build:lib:watch` steps.
+> The package exports `dist/` (not `src/`). A fresh clone already ships a committed
+> `dist/`, but a `link:` consumer sees your live edits only after `dist/` is rebuilt —
+> hence the `build:lib` + `build:lib:watch` steps. (On commit, the pre-commit guard
+> rebuilds `dist/`, so the committed copy always matches `src/`.)
 
 > **Why step 4 — the `Invalid hook call` footgun.** A `link:` symlinks this
 > checkout, which carries its **own** `node_modules/react` (a devDependency, for the
