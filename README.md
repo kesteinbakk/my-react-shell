@@ -4,7 +4,9 @@ A **modular React foundation** for React + Convex apps: a menu of optional,
 self-contained, versioned **drop-in modules** an app imports à la carte — **theme**
 (semantic-token contract + palettes + light/dark/system), **providers** (Convex
 client + the single `AppProviders` wrapper), an **auth seam** (a TypeScript contract
-plus a Convex Auth default and a bring-your-own path), **i18n** (planned), and an
+plus a Convex Auth default and a bring-your-own path), **i18n** (the `t()` seam —
+central catalog, `{{param}}` interpolation, opt-in compile-time typed keys, dev
+missing-key overlay), and an
 opinionated **component kit** (`my-react-shell/components` — Alert, dialogs, structured
 cards, form fields, … on shadcn/Radix + the theme tokens). It is **not** a framework or
 a fixed app template, and ships only the *opinionated* composites — consumers use

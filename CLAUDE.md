@@ -21,8 +21,10 @@ app template. It ships a set of **self-contained modules** an app picks from:
 - **auth** — a pluggable auth **seam** (a TS contract) + the Convex Auth default
   implementation; bring-your-own for Better Auth / SSO.
 - **i18n** — the `t()` seam at `my-react-shell/i18n`: `<I18nProvider>` + `useTranslation`,
-  a central-key catalog, `{{param}}` interpolation, and a dev-only missing-translation
-  overlay. Convex- and router-free; bring-your-own engine via `resolve`.
+  a central-key catalog, `{{param}}` interpolation, opt-in compile-time typed keys
+  (`createTypedI18n`, generics default to `string` so it's non-breaking), and a
+  dev-only missing-translation overlay. Convex- and router-free; bring-your-own
+  engine via `resolve`.
 - **icons** — an icons↔emojis display-mode seam (`my-react-shell/icons`): a preference
   (`IconModeProvider` / `useIconMode`) + a thin `<Icon>` glyph↔emoji swap. No icon
   registry, no `lucide-react` dep.

@@ -23,8 +23,9 @@ Each module is one capability an app can opt into:
 - **auth** — a pluggable auth **seam** (a TypeScript contract) plus the Convex Auth
   default implementation, shipped at a sub-path so its dependency stays optional.
 - **i18n** — the `t()` seam at `my-react-shell/i18n`: `<I18nProvider>` + `useTranslation`,
-  a central-key catalog, `{{param}}` interpolation, and a dev-only missing-key overlay.
-  Convex- and router-free; bring-your-own engine via `resolve`.
+  a central-key catalog, `{{param}}` interpolation, **opt-in compile-time typed keys**
+  (`createTypedI18n`, defaulting to `string` so it stays non-breaking), and a dev-only
+  missing-key overlay. Convex- and router-free; bring-your-own engine via `resolve`.
 - **components** — an opinionated component kit (Alert, dialogs, structured cards, form
   fields, …) built on shadcn/Radix + the theme tokens, at `my-react-shell/components`.
   Ships only the composites that need an opinion; un-opinionated shadcn primitives stay
