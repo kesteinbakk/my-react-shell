@@ -25,8 +25,10 @@ another module's runtime), and ships a **contract + a guide** so an app can wire
 swap it, or bring its own. New modules are added when a capability is reused
 (rule of two), and every app gets them on the next version bump.
 
-It does **not** ship a UI component kit (Button/Dialog/Table/…) or a mandated
-app-shell. New apps build their own components; reusable ones may become modules later.
+It ships an **opinionated** component kit at `my-react-shell/components` — the composites
+that need a design/layout decision (Alert, dialogs, structured cards, form fields, …) —
+but **not** the un-opinionated shadcn primitives (Button/Input/Checkbox/…), which
+consumers use shadcn directly for. The app-shell ships as an *optional* module, never mandated.
 
 - What this is + boundary: [docs/concept.md](docs/concept.md)
 - Standing decisions + rationale: [docs/strategy.md](docs/strategy.md)
@@ -78,9 +80,10 @@ token won't appear (or renders as a stray "unset" hatch).
   and recommended to consumers; not a module my-react-shell ships, and **not a peer
   dependency** (it's a dev-only harness dep — no shipped module imports a router, so
   consumers bring their own).
-- **UI:** consumers use shadcn/ui + Tailwind v4 directly; my-react-shell does **not**
-  host a registry or ship primitives. It does ship the **theme token contract** the
-  app's components render against.
+- **UI:** consumers use shadcn/ui + Tailwind v4 directly for the un-opinionated
+  primitives; my-react-shell does **not** host a registry. It **does** ship an
+  opinionated component kit (`my-react-shell/components`) for the composites that need a
+  design decision, plus the **theme token contract** every component renders against.
 - **Backend:** Convex (`eu-west-1`, GDPR). **No trailing slash** in
   `VITE_CONVEX_URL`. The Convex client context (`AppProviders`,
   `ConvexClientProvider`, `createConvexClient`) ships in the `providers` module at
@@ -170,11 +173,14 @@ A consumer adds the Bitbucket git-dep, then imports only the modules it wants:
 import { ThemeProvider } from 'my-react-shell'                       // theme — Convex-free core
 import { AppProviders, createConvexClient } from 'my-react-shell/providers'
 import { ConvexAuthDefaultProvider } from 'my-react-shell/auth/convex'
+import { Alert } from 'my-react-shell/components'                    // opinionated kit
 import 'my-react-shell/styles.css'
+import 'my-react-shell/components/styles.css'
 ```
 
 It wraps its own TanStack Router in `AppProviders`, picks an auth provider (the
-Convex Auth default or its own), and builds its own UI with shadcn directly. The
+Convex Auth default or its own), and builds its UI with shadcn primitives plus the
+opinionated `my-react-shell/components` kit. The
 stack-level scaffolding sequence is the `react-framework` skill's guide
 ([.claude/skills/react-framework/react-framework-notes.md](.claude/skills/react-framework/react-framework-notes.md));
 my-react-shell's `docs/guides/` are the authority for each module's exact exports

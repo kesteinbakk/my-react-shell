@@ -1,0 +1,96 @@
+/*
+ * components.css — the component-kit module's own stylesheet.
+ *
+ * my-react-shell ships precompiled JS; a consumer's Tailwind never scans
+ * node_modules, so kit styles live here as stable `mrs-`-prefixed semantic classes
+ * on the theme tokens (the CSS custom properties from styles/base.css), rather than
+ * Tailwind utilities that wouldn't survive the build. Import once:
+ *   import 'my-react-shell/components/styles.css'
+ * Every rule tracks the active theme + mode through the tokens.
+ */
+
+/* ── Alert ───────────────────────────────────────────────────────────────── */
+.mrs-alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.625rem;
+  padding: 0.75rem 0.875rem;
+  border: 1px solid var(--color-border-primary);
+  border-radius: 0.5rem;
+  background: var(--color-surface-secondary);
+  color: var(--color-text-primary);
+}
+
+.mrs-alert__icon {
+  display: inline-flex;
+  flex-shrink: 0;
+  margin-top: 0.0625rem;
+  color: inherit;
+}
+
+.mrs-alert__content {
+  flex: 1;
+  min-width: 0;
+}
+
+.mrs-alert__title {
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.mrs-alert__body {
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: inherit;
+}
+
+.mrs-alert__title + .mrs-alert__body {
+  margin-top: 0.125rem;
+}
+
+.mrs-alert__dismiss {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.125rem;
+  margin: -0.125rem -0.125rem -0.125rem 0;
+  border: none;
+  border-radius: 0.375rem;
+  background: transparent;
+  color: inherit;
+  opacity: 0.7;
+  transition: opacity 120ms ease, background-color 120ms ease;
+}
+
+.mrs-alert__dismiss:hover {
+  opacity: 1;
+  background: var(--color-hover);
+}
+
+/* Variants — tinted surface + matching border + AA-legible on-tint text/icon.
+   `--color-<tone>-strong` is the legible-on-tint shade; title and body share it,
+   the title differing by weight. */
+.mrs-alert--info {
+  background: var(--color-info-bg);
+  border-color: var(--color-info-border);
+  color: var(--color-info-strong);
+}
+
+.mrs-alert--success {
+  background: var(--color-success-bg);
+  border-color: var(--color-success-border);
+  color: var(--color-success-strong);
+}
+
+.mrs-alert--warning {
+  background: var(--color-warning-bg);
+  border-color: var(--color-warning-border);
+  color: var(--color-warning-strong);
+}
+
+.mrs-alert--danger {
+  background: var(--color-danger-bg);
+  border-color: var(--color-danger-border);
+  color: var(--color-danger-strong);
+}

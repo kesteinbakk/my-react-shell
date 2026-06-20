@@ -4,9 +4,11 @@ A **modular React foundation** for React + Convex apps: a menu of optional,
 self-contained, versioned **drop-in modules** an app imports à la carte — **theme**
 (semantic-token contract + palettes + light/dark/system), **providers** (Convex
 client + the single `AppProviders` wrapper), an **auth seam** (a TypeScript contract
-plus a Convex Auth default and a bring-your-own path), and **i18n** (planned). It is
-**not** a framework, a fixed app template, or a UI component kit — consumers build
-their own components with shadcn/ui directly. It is consumed like a standard npm
+plus a Convex Auth default and a bring-your-own path), **i18n** (planned), and an
+opinionated **component kit** (`my-react-shell/components` — Alert, dialogs, structured
+cards, form fields, … on shadcn/Radix + the theme tokens). It is **not** a framework or
+a fixed app template, and ships only the *opinionated* composites — consumers use
+shadcn/ui directly for the un-opinionated primitives. It is consumed like a standard npm
 package, as a **tag-pinned Bitbucket git-dependency**.
 
 See [`docs/concept.md`](docs/concept.md) for what this is and its boundary, and

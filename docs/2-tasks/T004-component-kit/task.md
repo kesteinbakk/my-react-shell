@@ -37,7 +37,7 @@ This also completes issue #3 from the theme review: the `-strong` semantic text
 tokens just landed are the correctness substrate, and a shipped `<Alert>` consumes
 them so consumers can't get the soft-alert contrast wrong by hand.
 
-## Architecture (proposed — owner to confirm)
+## Architecture (resolved — approach A)
 
 - **Build on Radix + CVA + tokens, self-contained.** Each kit component is built on
   the relevant **Radix** headless primitive (optional peer, already incoming via
@@ -85,7 +85,7 @@ Select primitive, Tooltip, Popover, DropdownMenu, Slider.
   "plain shadcn" reference; the new page is the **opinionated kit** gallery.
 - Each kit component is shown across palettes in light + dark.
 
-## Docs & commands to change (the charter update)
+## Comments & docs to change (the charter update)
 
 - `concept.md` — rewrite "What it is NOT → Not a component library" to "ships an
   optional opinionated kit of composites; un-opinionated primitives stay consumer-owned."
@@ -97,8 +97,9 @@ Select primitive, Tooltip, Popover, DropdownMenu, Slider.
 - `README.md` — add the kit to the module list.
 - `docs/guides/component-kit.md` (new) — what it ships, the opinionated/out-of-box
   line, how to wire it, theming, BYO; plus a line in the module-authoring guide.
-- *("commands"): confirm whether this means the project CLAUDE.md guidance (covered
-  above) or something else, e.g. skills/slash-commands — flagged as an open decision.*
+- **Code comments** — sweep for comments that assert the old "no components" stance
+  (e.g. the `base.css` contract preamble naming "app-shell, composites, and consumer
+  code", any module/header comments) and align them to the kit existing.
 
 ## Dependencies (approval-gated at install)
 
@@ -127,15 +128,17 @@ explicit owner approval at install time (root CLAUDE.md → Mandatory User Appro
 5. **Guide + polish** — `docs/guides/component-kit.md`, cross-palette light/dark
    verification in the demo, a11y pass.
 
-## Open decisions (owner)
+## Decisions (resolved 2026-06-20, owner)
 
-1. **Sub-path name:** `my-react-shell/components` (proposed) vs `/kit` (echoes
-   foundation) vs `/ui`.
-2. **Build approach:** Radix + CVA + tokens, self-contained (proposed) vs a thinner
-   "style shadcn copies" approach.
-3. **Ship boundary:** confirm the ship vs demo-only split above (esp. Table, Select,
-   InputField autosave scope, Toast's provider requirement).
-4. **"Commands":** what besides CLAUDE.md/docs does "change the commands" cover?
+1. **Sub-path:** `my-react-shell/components` — confirmed.
+2. **Build approach:** Radix + CVA + semantic-token classes, **self-contained
+   (approach A)** — mirrors the app-shell module (D10). The kit authors minimal
+   token-styled primitives internally where a composite needs one and never imports the
+   consumer's `@/components/ui`. (Rejected B, vendoring shadcn copies — permanent
+   upstream-drift maintenance for no gain, since plain primitives ship demo-only.)
+3. **Ship boundary:** the ship vs demo-only split above — confirmed.
+4. **Charter-edit scope:** "comments **and** docs" (original "commands" was a typo) —
+   update the documentation *and* any code comments asserting the old no-kit stance.
 
 ## References
 

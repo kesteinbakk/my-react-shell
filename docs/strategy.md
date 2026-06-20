@@ -153,3 +153,44 @@ centerpiece):
 
 Renders against the existing `theme` token contract. Ships `docs/guides/app-shell.md`.
 Origin: the approved proposal `docs/1-proposals/app-shell-module.md`.
+
+## D11 — opinionated component kit (`my-react-shell/components`)
+
+my-react-shell ships an **optional opinionated component kit** at the sub-path
+`my-react-shell/components` — React composites that bake a design / layout / behavior
+decision on top of shadcn/Radix primitives and render against the semantic theme
+token contract (light + dark, every palette). It mirrors the SolidJS `foundation` kit
+(`@foundation/kit`) for the React era.
+
+**The scope line:** the kit ships **only components that need an opinion**. The
+un-opinionated shadcn primitives (Button, Input, Checkbox, Label, Switch, Separator,
+plain Tabs/Dialog/Select, Tooltip, Popover) are **not** shipped — a consumer uses
+shadcn directly for those, and the demo shows them as plain examples.
+
+This **supersedes D3's "no UI components"** and resolves the [D8](#d8--the-modular-pivot-supersedes-the-above-shadcn-foundation-framing)
+"deferred composites" clause: composites return, but as one opt-in module — never a
+mandated kit, and never a registry host (D3's "no registry" stands; we ship compiled
+components, not a shadcn registry). Follows the **D10** pattern exactly — a component
+module behind a sub-path with optional peers, isolated from the barrel ([D9](#d9--convex-is-optional-and-isolated-behind-sub-paths-barrel--convex-free-core)).
+
+Decisions (owner, 2026-06-20):
+
+- **Build approach → Radix + CVA + tokens, self-contained.** Components are built on
+  Radix headless primitives (optional peers, shared with app-shell) + `class-variance-authority`
+  variants + a `cn()` (`clsx` + `tailwind-merge`) helper, styled with `mrs-`-prefixed
+  semantic classes. "Based on shadcn" = the same Radix/Tailwind/CVA foundation and
+  variant API — **not** a copy-in registry. The kit never imports the consumer's
+  `@/components/ui`; where a composite needs a thin primitive it builds a minimal
+  token-styled one internally. The plain primitives stay consumer-owned (demo-only).
+- **Styling ships as CSS, not utilities.** Like `app-shell.css`, the kit ships
+  `components.css` (`my-react-shell/components/styles.css`) — a consumer's Tailwind
+  never scans `node_modules`, so styles are stable token-based classes, not utilities.
+  Keeps the D5 zero-bundler-config promise.
+- **New optional peers:** `class-variance-authority`, `clsx`, `tailwind-merge` (tiny,
+  and already present in any shadcn consumer) — optional, behind this sub-path.
+- **Drift follow-up:** the app-shell module predates CVA and styles without it; align
+  it to the kit's CVA / `cn()` conventions at the end of the kit work (tracked in T004).
+
+Renders against the existing `theme` token contract, incl. the neutral `secondary` and
+the `-strong` semantic text tokens. Ships `docs/guides/component-kit.md`. Origin: T004
+(`docs/2-tasks/T004-component-kit/task.md`).

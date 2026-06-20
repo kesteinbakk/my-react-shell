@@ -5,7 +5,9 @@
 **my-react-shell** is a **modular React foundation** for React + Convex apps under
 `~/Developer/` — a menu of optional, self-contained **drop-in modules** an app
 imports à la carte, consumed like a standard npm package from a Bitbucket
-git-dependency. It is **not** a framework, a fixed app template, or a component kit.
+git-dependency. It is **not** a framework or a fixed app template, and not a *full*
+component library — it ships only the **opinionated** composites that need a design
+decision (see `components` below), leaving un-opinionated shadcn primitives to the consumer.
 
 Each module is one capability an app can opt into:
 
@@ -18,6 +20,10 @@ Each module is one capability an app can opt into:
 - **auth** — a pluggable auth **seam** (a TypeScript contract) plus the Convex Auth
   default implementation, shipped at a sub-path so its dependency stays optional.
 - **i18n** *(planned)* — the `t()` seam, central-key policy, and missing-key surface.
+- **components** — an opinionated component kit (Alert, dialogs, structured cards, form
+  fields, …) built on shadcn/Radix + the theme tokens, at `my-react-shell/components`.
+  Ships only the composites that need an opinion; un-opinionated shadcn primitives stay
+  consumer-owned.
 
 ## The two module flavors
 
@@ -51,10 +57,11 @@ when a second app needs it (rule of two), it is contributed back as a new module
 
 ## What it is NOT
 
-- **Not a component library.** It ships no Button / Dialog / Table / etc. Consumers
-  use shadcn/ui directly and build their own components; reusable ones may later
-  become modules. my-react-shell ships the **theme token contract** those components
-  render against, not the components.
+- **Not a *full* component library.** It ships an **opinionated** kit — the composites
+  that need a design/layout/behavior decision (`my-react-shell/components`) — but **not**
+  the un-opinionated primitives: consumers use shadcn/ui directly for Button / Input /
+  Checkbox / plain Dialog / etc. It also ships the **theme token contract** every
+  component renders against.
 - **Not a registry host.** It does not host a shadcn registry or an MCP server.
 - **Not a *fixed* app-shell.** There is no mandated layout/shell. A shared app-shell
   ships as one *optional* module among others (`my-react-shell/app-shell`, strategy
