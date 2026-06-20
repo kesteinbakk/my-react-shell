@@ -85,8 +85,11 @@ export function defineShellConfig(input: ShellConfigInput): ShellConfig {
   if (typeof input.renderIcon !== 'function') {
     throw new ShellConfigError('`renderIcon` is required and must be a function (the module ships no icon kit).')
   }
-  if (!Array.isArray(input.pages) || input.pages.length === 0) {
-    throw new ShellConfigError('`pages` must be a non-empty array.')
+  // `pages` may be empty: a card-dashboard app has no fixed top-level nav for
+  // non-admin roles (it navigates via the home cards + breadcrumbs). Still must
+  // be an array — a missing/non-array `pages` is an authoring error.
+  if (!Array.isArray(input.pages)) {
+    throw new ShellConfigError('`pages` must be an array.')
   }
   const seenIds = new Map<string, string>()
   const seenRoutes = new Map<string, string>()

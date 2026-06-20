@@ -79,7 +79,8 @@ export interface ShellConfigInput {
     appName: string;
     /** Optional custom wordmark render for the brand area. */
     appNameRender?: () => ReactNode;
-    /** Top-level nav entries. At least one. */
+    /** Top-level nav entries. May be empty — a card-dashboard app navigates via
+     *  the home cards + breadcrumbs and has no fixed sidebar nav. */
     pages: PageEntry[];
     /** Page-container defaults. Omitted → `'2xl'`. */
     pageContainer?: ShellPageContainerConfig;
