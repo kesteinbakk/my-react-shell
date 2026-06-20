@@ -35,3 +35,9 @@ the `react-framework-notes.md` file beside this skill.
 For schema, functions, auth setup, migrations, performance — use the existing
 `convex-*` skills + the generated `convex/_generated/ai/guidelines.md`. This
 skill only covers *bootstrapping the React side* and wiring Convex in.
+
+## Wire it into the ecosystem
+
+Bootstrapping is only the app. To join the dev/sync system — `projects.toml`
+block, skill sync, dev-start tab — use the `register-project` skill (run from the
+`~/Developer` root / dev-manager, which owns `projects.toml`).
