@@ -40,11 +40,22 @@ app-shell. New apps build their own components; reusable ones may become modules
 
 ## Demos & visual showcasing
 
+**This repo contains no showcase or demo files.** It ships only the library
+modules and a dev-only harness. Any file whose purpose is to *show off* a
+feature — a gallery, a showcase page, a marketing-style landing, a "look what
+this module can do" surface — does **not** belong here.
+
 **All visual showcasing of this library lives in the sister project
 `my-react-shell-demo`** (`~/Developer/my-react-shell-demo`). When asked to *show* a
 feature, *display* how something works, or *demo* a module, that always means the
 demo project's pages — **not** this repo. Build the showcase there, against the
-modules this library publishes.
+modules this library publishes. Any showcase or demo material that lands in this
+repo is to be **moved to `my-react-shell-demo`**.
+
+`my-react-shell-demo` mirrors the structure of **our foundation showcase**: a
+**landing page of cards** that each point to a different area, behind a **full
+router with navigation** — one route per showcased area, reachable from the
+landing cards and the nav.
 
 The in-repo dev-harness exists only for development and behavior verification (test
 routes that catch what typecheck can't); it is not where features are shown to the
