@@ -1028,15 +1028,18 @@
   box-shadow: 0 4px 12px var(--color-shadow-md);
 }
 
-/* Section — one grid row, full-bleed: a single cell that stretches the consumer's
-   node to fill both axes (a figure / image fills it edge-to-edge). min-* lets the
-   content clip rather than force the row past its φ share; the consumer adds its
-   own padding for inset content. */
+/* Section — one grid row; a single cell that stretches its child to fill. min-* lets
+   the content clip rather than force the row past its φ share. A pure figure (`image`,
+   or a lone `icon`) is full-bleed; text content is padded via `--padded` — the card
+   owns the padding, so a figure's top lines up with the title. */
 .mrs-phi-card__section {
   display: grid;
   min-width: 0;
   min-height: 0;
   overflow: hidden;
+}
+.mrs-phi-card__section--padded {
+  padding: 1.1em; /* `em` → scales with the size-derived base font-size */
 }
 
 /* Figure — the `image` / `icon` props render the top section full-width: an image
@@ -1056,10 +1059,7 @@
   color: var(--color-text-tertiary);
 }
 /* `iconFill` — scale the glyph to fill the figure (aspect preserved: SVGs via their
-   preserveAspectRatio, images via object-fit), with a small inset off the edges. */
-.mrs-phi-card__figure--fill {
-  padding: 0.5rem;
-}
+   preserveAspectRatio, images via object-fit). The padded section provides the inset. */
 .mrs-phi-card__figure--fill svg,
 .mrs-phi-card__figure--fill img {
   width: 100%;
@@ -1067,17 +1067,25 @@
   object-fit: contain;
 }
 
-/* Icon + `upper` together → the original upper-band split: a narrow icon column and
-   a wide content column at 1 : φ (the logo-and-title layout). */
+/* Icon + body together → the original upper-band split: a narrow icon column and a
+   wide body column at 1 : φ (the logo-and-title layout). The padded section insets
+   both columns equally, so the figure's top lines up with the title. */
 .mrs-phi-card__split {
   display: grid;
-  grid-template-columns: 1fr 1.6180339887fr; /* icon : content = 1 : φ */
+  grid-template-columns: 1fr 1.6180339887fr; /* icon : body = 1 : φ */
+  gap: 0.85em;
   min-width: 0;
   min-height: 0;
   overflow: hidden;
 }
-.mrs-phi-card__split-content {
-  display: grid;
+
+/* Body — the card-padded text stack: the title/subtitle (`upper`) with `content`
+   below, top-aligned. The top section's content (or the wide column of the split). */
+.mrs-phi-card__body {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 0.55em;
   min-width: 0;
   min-height: 0;
   overflow: hidden;

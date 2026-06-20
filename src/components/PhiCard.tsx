@@ -49,12 +49,17 @@ export interface PhiCardAction {
 
 export interface PhiCardProps {
   /**
-   * Top section. You own its content and inner layout; it's full-bleed (a single
-   * cell that stretches your node to fill both axes). Add your own padding for inset
-   * content. Ignored when `image` is set. When `icon` is **also** present, `upper`
-   * becomes the wide content column of a 1 : φ top split (icon left, content right).
+   * Top-section heading — typically a title + subtitle. The **card pads it** (don't
+   * add your own padding); it's top-aligned, with `content` (if any) stacked below.
+   * For a full-bleed figure use `image` / `icon` instead. Ignored when `image` is set;
+   * with `icon` also present it's the content column of a 1 : φ top split.
    */
   upper?: ReactNode
+  /**
+   * Main content for the top section, rendered **below** `upper` (the title/subtitle)
+   * and card-padded along with it. The classic card title → subtitle → body stack.
+   */
+  content?: ReactNode
   /**
    * Image URL — rendered full-bleed (full width, `object-fit: cover`) as the top
    * section, giving the classic figure-over-content card with `lower` below. Takes
@@ -64,10 +69,10 @@ export interface PhiCardProps {
   /** Alt text for `image`. Defaults to `''` (treated as decorative). */
   imageAlt?: string
   /**
-   * Icon / figure node for the top section (below `image` in precedence). With no
-   * `upper` it's centered, full-width. With `upper` present the top splits 1 : φ —
-   * a narrow icon column (left) and the `upper` content column (right): the original
-   * logo-and-title layout.
+   * Icon / figure node for the top section (below `image` in precedence). Alone it's
+   * centered. With `upper`/`content` present the top splits 1 : φ — a narrow icon
+   * column (left) and the body column (right): the original logo-and-title layout.
+   * Pair with `iconFill` to scale it to fill the column.
    */
   icon?: ReactNode
   /**
@@ -76,10 +81,10 @@ export interface PhiCardProps {
    */
   iconFill?: boolean
   /**
-   * Bottom section, same contract as `upper`. When it's empty (absent / `null` /
-   * `false`) the section is **not rendered at all** and the **card shrinks to the
-   * top band's height** (`width / φ²`) — shorter by exactly the bottom split, not a
-   * full-height card with the top content centered.
+   * Bottom section (a footer) — **card-padded**. When empty (absent / `null` /
+   * `false`) it's **not rendered at all** and the **card shrinks to the top band's
+   * height** (`width / φ²`) — shorter by exactly the bottom split, not a full-height
+   * card with the top content centered.
    */
   lower?: ReactNode
   /**
@@ -169,13 +174,15 @@ function PhiCardMenu({
 }
 
 /**
- * Golden-ratio card with two consumer-owned sections. Width is the only size knob;
- * height (= width / φ) and the φ:1 split derive from it, and with no bottom section
- * the card shrinks to the top band's height (width / φ²) — shorter by exactly the
- * bottom split. An optional top-right overflow menu takes consumer-supplied actions.
+ * Golden-ratio card. Width is the only size knob; height (= width / φ), the φ:1 split,
+ * and a base font-size derive from it. The card pads its text content (`upper` title/
+ * subtitle + `content`, and the `lower` footer); figures (`image` / `icon`) are
+ * full-bleed. The bottom collapses (card shortens) when `lower` is empty. Optional
+ * top-right overflow menu.
  */
 export function PhiCard({
   upper,
+  content,
   image,
   imageAlt = '',
   icon,
@@ -200,30 +207,46 @@ export function PhiCard({
   const height = hasLower ? width / PHI : width / (PHI * PHI)
   const isHoverable = hoverable ?? !!onClick
 
-  // Top section content. Precedence:
-  //  - `image` → full-bleed image, the whole top.
-  //  - `icon` + `upper` → the original upper-band split: a narrow icon column and a
-  //    wide content column at 1 : φ (the logo-and-title layout).
-  //  - `icon` alone → centered, full-width figure.
-  //  - else → the `upper` node, full-width.
   const hasIcon = !isEmpty(icon)
-  const hasUpper = !isEmpty(upper)
-  const topContent = image ? (
-    <img className="mrs-phi-card__image" src={image} alt={imageAlt} />
-  ) : hasIcon && hasUpper ? (
-    <div className="mrs-phi-card__split">
-      <div className={cn('mrs-phi-card__figure', iconFill && 'mrs-phi-card__figure--fill')}>
-        {icon}
-      </div>
-      <div className="mrs-phi-card__split-content">{upper}</div>
+  const hasBody = !isEmpty(upper) || !isEmpty(content)
+
+  // The card-padded text body: the title/subtitle (`upper`) with `content` stacked
+  // below it, top-aligned.
+  const body = hasBody ? (
+    <div className="mrs-phi-card__body">
+      {upper}
+      {content}
     </div>
-  ) : hasIcon ? (
+  ) : null
+
+  const figure = (
     <div className={cn('mrs-phi-card__figure', iconFill && 'mrs-phi-card__figure--fill')}>
       {icon}
     </div>
-  ) : (
-    upper
   )
+
+  // Top section. `image` is the only full-bleed (edge-to-edge) case; a figure, the
+  // body, or the figure+body split all sit in card padding so a figure's top lines up
+  // with the title. The figure+body split is the original 1:φ logo-and-title layout.
+  let topContent: ReactNode
+  let topPadded = false
+  if (image) {
+    topContent = <img className="mrs-phi-card__image" src={image} alt={imageAlt} />
+  } else if (hasIcon && hasBody) {
+    topContent = (
+      <div className="mrs-phi-card__split">
+        {figure}
+        {body}
+      </div>
+    )
+    topPadded = true
+  } else if (hasIcon) {
+    topContent = figure
+    topPadded = true
+  } else {
+    topContent = body
+    topPadded = hasBody
+  }
 
   // `corner` wins over the built-in menu; otherwise the menu shows only when there
   // are actions. Either way the corner overlay renders only when non-empty. The
@@ -252,8 +275,12 @@ export function PhiCard({
       style={style}
       onClick={onClick}
     >
-      <div className="mrs-phi-card__section">{topContent}</div>
-      {hasLower ? <div className="mrs-phi-card__section">{lower}</div> : null}
+      <div className={cn('mrs-phi-card__section', topPadded && 'mrs-phi-card__section--padded')}>
+        {topContent}
+      </div>
+      {hasLower ? (
+        <div className="mrs-phi-card__section mrs-phi-card__section--padded">{lower}</div>
+      ) : null}
       {cornerNode != null ? (
         <div className="mrs-phi-card__corner" onClick={(e) => e.stopPropagation()}>
           {cornerNode}

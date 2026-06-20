@@ -39,12 +39,13 @@ function PhiCardMenu({ actions, icon, label, }) {
     return (_jsxs(DropdownMenu.Root, { children: [_jsx(DropdownMenu.Trigger, { asChild: true, children: _jsx("button", { type: "button", className: "mrs-phi-card__menu-trigger", "aria-label": label, children: icon ?? DEFAULT_MENU_GLYPH }) }), _jsx(DropdownMenu.Portal, { children: _jsx(DropdownMenu.Content, { className: "mrs-phi-card__menu", align: "end", sideOffset: 4, children: actions.map((action) => (_jsxs(DropdownMenu.Item, { className: cn('mrs-phi-card__menu-item', action.destructive && 'mrs-phi-card__menu-item--danger'), disabled: action.disabled, onSelect: () => action.onSelect(), children: [action.icon != null ? (_jsx("span", { className: "mrs-phi-card__menu-icon", children: action.icon })) : null, _jsx("span", { children: action.label })] }, action.label))) }) })] }));
 }
 /**
- * Golden-ratio card with two consumer-owned sections. Width is the only size knob;
- * height (= width / φ) and the φ:1 split derive from it, and with no bottom section
- * the card shrinks to the top band's height (width / φ²) — shorter by exactly the
- * bottom split. An optional top-right overflow menu takes consumer-supplied actions.
+ * Golden-ratio card. Width is the only size knob; height (= width / φ), the φ:1 split,
+ * and a base font-size derive from it. The card pads its text content (`upper` title/
+ * subtitle + `content`, and the `lower` footer); figures (`image` / `icon`) are
+ * full-bleed. The bottom collapses (card shortens) when `lower` is empty. Optional
+ * top-right overflow menu.
  */
-export function PhiCard({ upper, image, imageAlt = '', icon, iconFill = false, lower, size = 'md', actions, menuIcon, menuLabel = 'Actions', corner, leftBorderColor, onClick, hoverable, className, }) {
+export function PhiCard({ upper, content, image, imageAlt = '', icon, iconFill = false, lower, size = 'md', actions, menuIcon, menuLabel = 'Actions', corner, leftBorderColor, onClick, hoverable, className, }) {
     const width = SIZE_WIDTH_PX[size];
     const hasLower = !isEmpty(lower);
     // No bottom section → the card collapses to the top band's height (W/φ²) — shorter
@@ -53,15 +54,32 @@ export function PhiCard({ upper, image, imageAlt = '', icon, iconFill = false, l
     // band W/φ², so a collapsed card ends right where the split was.)
     const height = hasLower ? width / PHI : width / (PHI * PHI);
     const isHoverable = hoverable ?? !!onClick;
-    // Top section content. Precedence:
-    //  - `image` → full-bleed image, the whole top.
-    //  - `icon` + `upper` → the original upper-band split: a narrow icon column and a
-    //    wide content column at 1 : φ (the logo-and-title layout).
-    //  - `icon` alone → centered, full-width figure.
-    //  - else → the `upper` node, full-width.
     const hasIcon = !isEmpty(icon);
-    const hasUpper = !isEmpty(upper);
-    const topContent = image ? (_jsx("img", { className: "mrs-phi-card__image", src: image, alt: imageAlt })) : hasIcon && hasUpper ? (_jsxs("div", { className: "mrs-phi-card__split", children: [_jsx("div", { className: cn('mrs-phi-card__figure', iconFill && 'mrs-phi-card__figure--fill'), children: icon }), _jsx("div", { className: "mrs-phi-card__split-content", children: upper })] })) : hasIcon ? (_jsx("div", { className: cn('mrs-phi-card__figure', iconFill && 'mrs-phi-card__figure--fill'), children: icon })) : (upper);
+    const hasBody = !isEmpty(upper) || !isEmpty(content);
+    // The card-padded text body: the title/subtitle (`upper`) with `content` stacked
+    // below it, top-aligned.
+    const body = hasBody ? (_jsxs("div", { className: "mrs-phi-card__body", children: [upper, content] })) : null;
+    const figure = (_jsx("div", { className: cn('mrs-phi-card__figure', iconFill && 'mrs-phi-card__figure--fill'), children: icon }));
+    // Top section. `image` is the only full-bleed (edge-to-edge) case; a figure, the
+    // body, or the figure+body split all sit in card padding so a figure's top lines up
+    // with the title. The figure+body split is the original 1:φ logo-and-title layout.
+    let topContent;
+    let topPadded = false;
+    if (image) {
+        topContent = _jsx("img", { className: "mrs-phi-card__image", src: image, alt: imageAlt });
+    }
+    else if (hasIcon && hasBody) {
+        topContent = (_jsxs("div", { className: "mrs-phi-card__split", children: [figure, body] }));
+        topPadded = true;
+    }
+    else if (hasIcon) {
+        topContent = figure;
+        topPadded = true;
+    }
+    else {
+        topContent = body;
+        topPadded = hasBody;
+    }
     // `corner` wins over the built-in menu; otherwise the menu shows only when there
     // are actions. Either way the corner overlay renders only when non-empty. The
     // inline `actions &&` (not a derived flag) lets TS narrow `actions` to non-null.
@@ -73,5 +91,5 @@ export function PhiCard({ upper, image, imageAlt = '', icon, iconFill = false, l
         fontSize: `${SIZE_FONT_REM[size]}rem`,
         ...(leftBorderColor ? { borderLeft: `3px solid ${leftBorderColor}` } : {}),
     };
-    return (_jsxs("div", { className: cn('mrs-phi-card', !hasLower && 'mrs-phi-card--single', isHoverable && 'mrs-phi-card--hoverable', className), style: style, onClick: onClick, children: [_jsx("div", { className: "mrs-phi-card__section", children: topContent }), hasLower ? _jsx("div", { className: "mrs-phi-card__section", children: lower }) : null, cornerNode != null ? (_jsx("div", { className: "mrs-phi-card__corner", onClick: (e) => e.stopPropagation(), children: cornerNode })) : null] }));
+    return (_jsxs("div", { className: cn('mrs-phi-card', !hasLower && 'mrs-phi-card--single', isHoverable && 'mrs-phi-card--hoverable', className), style: style, onClick: onClick, children: [_jsx("div", { className: cn('mrs-phi-card__section', topPadded && 'mrs-phi-card__section--padded'), children: topContent }), hasLower ? (_jsx("div", { className: "mrs-phi-card__section mrs-phi-card__section--padded", children: lower })) : null, cornerNode != null ? (_jsx("div", { className: "mrs-phi-card__corner", onClick: (e) => e.stopPropagation(), children: cornerNode })) : null] }));
 }

@@ -319,10 +319,10 @@ preset, pass a custom `icon` node (a lucide icon or an `<Icon>` from `my-react-s
 
 ### `PhiCard`
 
-A golden-ratio card: outer **W:H = φ:1**, two sections split **φ:1**. You own the content
-of each section — they're **full-bleed** (a single cell that stretches your node to fill, so
-a figure/image fills edge-to-edge; add your own padding for inset content). The **bottom
-section collapses when empty** (`lower` absent / `null` / `false` → not rendered; the card
+A golden-ratio card: outer **W:H = φ:1**, two sections split **φ:1**. The card **pads its
+text content** — `upper` (title/subtitle) with `content` stacked below, plus the `lower`
+footer — top-aligned; figures (`image` / `icon`) are full-bleed and align their top with the
+title. The **bottom section collapses when empty** (`lower` absent / `null` / `false` → not rendered; the card
 **shrinks to the top band's height** `W/φ²`, shorter by exactly the bottom split). Width is the only size knob; `PHI`
 (`1.6180339887`) is exported so you can size layouts against it (height = width / φ).
 For a figure-over-content card, pass **`image`** (full-bleed, `object-fit: cover`) or
@@ -341,12 +341,13 @@ labels. The corner never triggers a clickable card's `onClick`.
 
 | Prop | Default | Meaning |
 |---|---|---|
-| `upper` | — | Top section content. Full-bleed; you own its inner layout. Ignored when `image` is set; with `icon` also present, becomes the wide content column of a 1 : φ top split. |
+| `upper` | — | Top-section heading (title/subtitle). **Card-padded** (don't add your own), top-aligned. Ignored when `image` is set; with `icon`, it's the content column of a 1 : φ split. |
+| `content` | — | Main content under `upper` in the top section, card-padded with it (the title → subtitle → body stack). |
 | `image` | — | Image URL rendered full-bleed (`object-fit: cover`) as the top section. Highest precedence for the top. |
 | `imageAlt` | `''` | Alt text for `image` (decorative by default). |
 | `icon` | — | Icon/figure node for the top (below `image`). Alone → centered, full-width. With `upper` → a narrow icon column in a 1 : φ split (logo-and-title). |
 | `iconFill` | `false` | Scale `icon` to fill its area (full-width figure, aspect preserved), overriding the icon's own size. |
-| `lower` | — | Bottom section content. Empty → not rendered; the card shrinks to the top band's height (`W/φ²`), shorter by exactly the bottom split. |
+| `lower` | — | Bottom section (footer), **card-padded**. Empty → not rendered; the card shrinks to the top band's height (`W/φ²`), shorter by exactly the bottom split. |
 | `size` | `'md'` | Size preset — `sm`·`md`·`lg`·`xl` = 180/240/320/480px wide (height = width / φ). Also sets a base `font-size` the section content inherits, so larger cards get larger text. |
 | `actions` | — | Items for the built-in ⋮ menu: `{ icon?, label, onSelect, destructive?, disabled? }[]`. Empty/absent → no menu. Ignored when `corner` is set. |
 | `menuIcon` | ⋮ | Override the menu trigger glyph. |

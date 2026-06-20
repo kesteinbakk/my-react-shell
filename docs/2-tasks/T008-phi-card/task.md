@@ -24,9 +24,10 @@ Outer:  width : height = φ : 1     (height = width / φ)
 Split:  upperH : lowerH = φ : 1    (the two sections)
 ```
 
-- **Two consumer-owned sections** — `upper` / `lower` (`ReactNode`). Full-bleed: each is
-  a single grid cell that stretches its child to fill both axes, so a figure/image fills
-  edge-to-edge; the consumer adds its own padding for inset content.
+- **Two sections, card-padded text** — `upper` (title/subtitle) + `content` (main body,
+  below it) form the top body; `lower` is the footer. The **card owns the padding**
+  (top-aligned, `em`-scaled so it tracks the size font); figures (`image`/`icon`) stay
+  full-bleed and align their top with the title.
 - **Optional figure** — `image` (full-bleed, `object-fit: cover`) or `icon` (centered)
   renders the **top** section full-width (figure-over-content), with `lower` below. With
   **both `icon` and `upper`**, the top splits **1 : φ** (narrow icon column · wide content)

@@ -26,12 +26,17 @@ export interface PhiCardAction {
 }
 export interface PhiCardProps {
     /**
-     * Top section. You own its content and inner layout; it's full-bleed (a single
-     * cell that stretches your node to fill both axes). Add your own padding for inset
-     * content. Ignored when `image` is set. When `icon` is **also** present, `upper`
-     * becomes the wide content column of a 1 : φ top split (icon left, content right).
+     * Top-section heading — typically a title + subtitle. The **card pads it** (don't
+     * add your own padding); it's top-aligned, with `content` (if any) stacked below.
+     * For a full-bleed figure use `image` / `icon` instead. Ignored when `image` is set;
+     * with `icon` also present it's the content column of a 1 : φ top split.
      */
     upper?: ReactNode;
+    /**
+     * Main content for the top section, rendered **below** `upper` (the title/subtitle)
+     * and card-padded along with it. The classic card title → subtitle → body stack.
+     */
+    content?: ReactNode;
     /**
      * Image URL — rendered full-bleed (full width, `object-fit: cover`) as the top
      * section, giving the classic figure-over-content card with `lower` below. Takes
@@ -41,10 +46,10 @@ export interface PhiCardProps {
     /** Alt text for `image`. Defaults to `''` (treated as decorative). */
     imageAlt?: string;
     /**
-     * Icon / figure node for the top section (below `image` in precedence). With no
-     * `upper` it's centered, full-width. With `upper` present the top splits 1 : φ —
-     * a narrow icon column (left) and the `upper` content column (right): the original
-     * logo-and-title layout.
+     * Icon / figure node for the top section (below `image` in precedence). Alone it's
+     * centered. With `upper`/`content` present the top splits 1 : φ — a narrow icon
+     * column (left) and the body column (right): the original logo-and-title layout.
+     * Pair with `iconFill` to scale it to fill the column.
      */
     icon?: ReactNode;
     /**
@@ -53,10 +58,10 @@ export interface PhiCardProps {
      */
     iconFill?: boolean;
     /**
-     * Bottom section, same contract as `upper`. When it's empty (absent / `null` /
-     * `false`) the section is **not rendered at all** and the **card shrinks to the
-     * top band's height** (`width / φ²`) — shorter by exactly the bottom split, not a
-     * full-height card with the top content centered.
+     * Bottom section (a footer) — **card-padded**. When empty (absent / `null` /
+     * `false`) it's **not rendered at all** and the **card shrinks to the top band's
+     * height** (`width / φ²`) — shorter by exactly the bottom split, not a full-height
+     * card with the top content centered.
      */
     lower?: ReactNode;
     /**
@@ -90,9 +95,10 @@ export interface PhiCardProps {
     className?: string;
 }
 /**
- * Golden-ratio card with two consumer-owned sections. Width is the only size knob;
- * height (= width / φ) and the φ:1 split derive from it, and with no bottom section
- * the card shrinks to the top band's height (width / φ²) — shorter by exactly the
- * bottom split. An optional top-right overflow menu takes consumer-supplied actions.
+ * Golden-ratio card. Width is the only size knob; height (= width / φ), the φ:1 split,
+ * and a base font-size derive from it. The card pads its text content (`upper` title/
+ * subtitle + `content`, and the `lower` footer); figures (`image` / `icon`) are
+ * full-bleed. The bottom collapses (card shortens) when `lower` is empty. Optional
+ * top-right overflow menu.
  */
-export declare function PhiCard({ upper, image, imageAlt, icon, iconFill, lower, size, actions, menuIcon, menuLabel, corner, leftBorderColor, onClick, hoverable, className, }: PhiCardProps): import("react").JSX.Element;
+export declare function PhiCard({ upper, content, image, imageAlt, icon, iconFill, lower, size, actions, menuIcon, menuLabel, corner, leftBorderColor, onClick, hoverable, className, }: PhiCardProps): import("react").JSX.Element;
