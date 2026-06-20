@@ -116,7 +116,7 @@ Use this whenever the question is *"what was the state / what fired / in what or
 ### Adding `devLog()` to code
 
 ```ts
-import { devLog } from "~/foundation/lib/devLog"; // Zingularis path; use your project's devLog elsewhere
+import { devLog } from "foundation/core"; // Zingularis path; use your project's devLog elsewhere
 
 devLog("submit clicked", { formId, dirty });
 devLog.debug("loaded prefs", prefs);
@@ -168,12 +168,12 @@ Just `Read` it. For a long capture, look at the tail-most lines first (`tail -n 
 
 ```typescript
 // Frontend (categorized)
-import { useDebugLog } from '~/foundation/hooks/useDebugLog';
+import { useDebugLog } from 'foundation/core';
 const log = useDebugLog('frontend');
 log.info('Checkpoint', { userId, state });
 
 // Backend
-import { serverLog } from '~/foundation/lib/debug/serverLog';
+import { serverLog } from 'foundation/core';
 const log = serverLog('backend');
 log.info('Request', { params });
 ```

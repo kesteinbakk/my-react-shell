@@ -19,7 +19,7 @@ Always start here. `npx knip` is a reachability analyzer with framework plugins 
 2. Write `knip.json` with these slots filled in:
    - **entry** — the real roots, which depend on the framework. *SolidStart:* framework config (`app.config.ts`), entry files (`src/entry-{client,server}.tsx`, `src/middleware.ts`, `src/app.tsx`), file-routing globs (`src/routes/**/*.{ts,tsx}`). *Vite SPA (React/vanilla):* the HTML entry (`index.html`) and its module root (`src/main.tsx`). Either way add Convex backend globs (`convex/**/*.ts` — every Convex file is callable by string from the client) and test-file globs.
    - **project** — `src/**`, `convex/**`, `scripts/**` (the source set knip considers "yours").
-   - **ignore** — generated output and anything synced from upstream, NEVER editable here: `convex/_generated/**`, plus your project's synced dirs (Zingularis: `src/foundation/**`, `src/locales/synced/**`).
+   - **ignore** — generated output and anything synced from upstream, NEVER editable here: `convex/_generated/**`, plus your project's synced dirs (Zingularis: `src/locales/synced/**`). Foundation is **not** a synced source dir anymore — it's the `foundation` package in `node_modules`, which knip already treats as a dependency, so it needs no ignore entry.
 3. `npx knip` — first run prints "Configuration hints" telling you which entries/projects/ignores are redundant. Apply them and re-run.
 
 ### Why these specific entries
@@ -86,4 +86,4 @@ The cleanup task plan goes through `code-investigator` (design pass) before phas
 
 - **The 360+ "unused exports" first-run number is misleading.** Most are barrel re-exports that disappear once Bucket A1 lands. Re-run knip after Phase 1 to see the real number.
 
-- **Synced-upstream findings are not actionable here.** If knip surfaces anything in a synced dir (Zingularis: `src/foundation/**`), it's the upstream project's task, not yours. The `ignore` glob should prevent this from happening at all.
+- **Synced-upstream findings are not actionable here.** If knip surfaces anything in a synced dir (Zingularis: `src/locales/synced/**`), it's the upstream project's task, not yours. The `ignore` glob should prevent this from happening at all. Foundation is a package dependency now, not a synced dir — knip handles it as a normal dependency (and a genuinely unused `foundation` import would surface as an unused dependency, which is the upstream/consumer dependency question, not editable foundation source).

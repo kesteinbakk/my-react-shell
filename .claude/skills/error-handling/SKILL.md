@@ -29,13 +29,13 @@ description: "Error handling patterns and display mechanisms.\nTRIGGER when: wri
 ## Toast Pattern
 
 `toast` and `ErrorBoundary` come from your project's UI kit — in the Zingularis
-ecosystem that's `~/foundation/kit`; in another stack it's your equivalent (React:
+ecosystem that's `foundation/kit`; in another stack it's your equivalent (React:
 a toast library + an error-boundary component / `react-error-boundary`). The
 decision rules in this skill are framework-independent; only the imports and the
 boundary API differ.
 
 ```tsx
-import { toast } from '~/foundation/kit';
+import { toast } from 'foundation/kit';
 
 const handleSave = async () => {
   try {
@@ -64,7 +64,7 @@ const handleSave = async () => {
 Wrap major sections for unhandled crashes. `reset` re-mounts the subtree, so the retry button is justified only when the crash could be transient (a render that hit a momentarily-undefined value, a one-off fetch failure). If the boundary wraps something that crashed deterministically (bad props, unsupported state), a reset re-runs the identical render and crashes again — drop the button and show only the message + a next step. See "Retry actions" below.
 
 ```tsx
-import { ErrorBoundary } from '~/foundation/kit';
+import { ErrorBoundary } from 'foundation/kit';
 
 <ErrorBoundary
   fallback={(error, reset) => (
