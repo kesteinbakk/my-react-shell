@@ -26,8 +26,8 @@ Split:  upperH : lowerH = φ : 1    (the two sections)
 
 - **Two sections, card-padded text** — `upper` (title/subtitle) + `content` (main body,
   below it) form the top body; `lower` is the footer. The **card owns the padding**
-  (top-aligned, `em`-scaled so it tracks the size font); figures (`image`/`icon`) stay
-  full-bleed and align their top with the title.
+  (`em`-scaled so it tracks the size font); the body is vertically centered (top-aligned
+  with `content`), and figures (`image`/`icon`) stay full-bleed.
 - **Optional figure** — `image` (full-bleed, `object-fit: cover`) or `icon` (centered)
   renders the **top** section full-width (figure-over-content), with `lower` below. With
   **both `icon` and `upper`**, the top splits **1 : φ** (narrow icon column · wide content)

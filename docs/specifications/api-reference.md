@@ -321,8 +321,8 @@ preset, pass a custom `icon` node (a lucide icon or an `<Icon>` from `my-react-s
 
 A golden-ratio card: outer **W:H = φ:1**, two sections split **φ:1**. The card **pads its
 text content** — `upper` (title/subtitle) with `content` stacked below, plus the `lower`
-footer — top-aligned; figures (`image` / `icon`) are full-bleed and align their top with the
-title. The **bottom section collapses when empty** (`lower` absent / `null` / `false` → not rendered; the card
+footer — vertically centered (top-aligned when there's `content`); figures (`image` / `icon`)
+are full-bleed. The **bottom section collapses when empty** (`lower` absent / `null` / `false` → not rendered; the card
 **shrinks to the top band's height** `W/φ²`, shorter by exactly the bottom split). Width is the only size knob; `PHI`
 (`1.6180339887`) is exported so you can size layouts against it (height = width / φ).
 For a figure-over-content card, pass **`image`** (full-bleed, `object-fit: cover`) or

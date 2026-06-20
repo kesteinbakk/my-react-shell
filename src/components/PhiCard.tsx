@@ -208,12 +208,13 @@ export function PhiCard({
   const isHoverable = hoverable ?? !!onClick
 
   const hasIcon = !isEmpty(icon)
-  const hasBody = !isEmpty(upper) || !isEmpty(content)
+  const hasContent = !isEmpty(content)
+  const hasBody = !isEmpty(upper) || hasContent
 
   // The card-padded text body: the title/subtitle (`upper`) with `content` stacked
-  // below it, top-aligned.
+  // below it. Centered by default (logo-and-title); top-aligned when there's content.
   const body = hasBody ? (
-    <div className="mrs-phi-card__body">
+    <div className={cn('mrs-phi-card__body', hasContent && 'mrs-phi-card__body--top')}>
       {upper}
       {content}
     </div>

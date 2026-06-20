@@ -1080,15 +1080,20 @@
 }
 
 /* Body — the card-padded text stack: the title/subtitle (`upper`) with `content`
-   below, top-aligned. The top section's content (or the wide column of the split). */
+   below. The top section's content (or the wide column of the split). Vertically
+   centered (so a title/subtitle sits beside a logo cleanly); `--top` flips to
+   top-aligned when there's `content` to flow from the top. */
 .mrs-phi-card__body {
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
+  justify-content: center;
   gap: 0.55em;
   min-width: 0;
   min-height: 0;
   overflow: hidden;
+}
+.mrs-phi-card__body--top {
+  justify-content: flex-start;
 }
 
 /* Corner — top-right overlay for the actions menu (or a consumer `corner` node).

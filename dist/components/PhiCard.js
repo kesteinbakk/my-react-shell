@@ -55,10 +55,11 @@ export function PhiCard({ upper, content, image, imageAlt = '', icon, iconFill =
     const height = hasLower ? width / PHI : width / (PHI * PHI);
     const isHoverable = hoverable ?? !!onClick;
     const hasIcon = !isEmpty(icon);
-    const hasBody = !isEmpty(upper) || !isEmpty(content);
+    const hasContent = !isEmpty(content);
+    const hasBody = !isEmpty(upper) || hasContent;
     // The card-padded text body: the title/subtitle (`upper`) with `content` stacked
-    // below it, top-aligned.
-    const body = hasBody ? (_jsxs("div", { className: "mrs-phi-card__body", children: [upper, content] })) : null;
+    // below it. Centered by default (logo-and-title); top-aligned when there's content.
+    const body = hasBody ? (_jsxs("div", { className: cn('mrs-phi-card__body', hasContent && 'mrs-phi-card__body--top'), children: [upper, content] })) : null;
     const figure = (_jsx("div", { className: cn('mrs-phi-card__figure', iconFill && 'mrs-phi-card__figure--fill'), children: icon }));
     // Top section. `image` is the only full-bleed (edge-to-edge) case; a figure, the
     // body, or the figure+body split all sit in card padding so a figure's top lines up
