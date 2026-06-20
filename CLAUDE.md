@@ -221,13 +221,20 @@ docs/
 ## Branch & commit model
 
 - Single long-lived branch: **`main`.** No feature branches unless asked.
-- **Commit your own work at natural finish points** — and the user does **not** care
-  about this project's commit history. Prefer committing only your own changes when
-  that's trivial; **when isolating them isn't trivial, just commit everything in the
-  working tree** rather than stall. Never ask the user how to split or isolate a commit,
-  never leave your work uncommitted to avoid touching another session's changes, and
-  never close a turn reporting which of the two you chose. This **overrides** the
-  universal "commit your own changes only" rule (root `CLAUDE.md`) for this repo.
+- **Many agents commit to `main` concurrently — and will keep doing so.** Commit
+  history here is therefore **disposable**, and collisions are normal: your staged
+  work may get swept into another agent's commit, the working tree may hold other
+  sessions' in-flight changes, and commits may land bundled or oddly-messaged. That
+  is all expected and fine.
+- **Commit your own work at natural finish points.** Prefer committing only your own
+  changes when that's trivial; **when isolating them isn't trivial, just commit
+  everything in the working tree** rather than stall. Never ask the user how to split
+  or isolate a commit, never leave your work uncommitted to avoid touching another
+  session's changes, and never close a turn reporting which of the two you chose. This
+  **overrides** the universal "commit your own changes only" rule (root `CLAUDE.md`).
+- **Never rewrite shared history to tidy up.** No `reset` / `rebase` / `amend` / force
+  on commits you didn't just create — a bundled or mislabelled commit is never worth
+  clobbering another agent's work over. Leave it.
 - **Never push** without an explicit instruction (a `push` targets this repo only).
 - A **pre-commit guard** (`.githooks/pre-commit`, enabled via `pnpm setup:hooks`)
   rejects committing a `link:`/`file:` dependency specifier — the local dev-loop
