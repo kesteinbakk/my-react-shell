@@ -21,9 +21,11 @@ Popover) are **not** shipped: use shadcn directly for those. The demo's
 this module.
 
 Shipped today: **`Alert`**, **`InfoBox`**, **`EmptyState`**, **`Spinner`** (+
-`PageSpinner` / `SectionSpinner`), **`ConfirmDialog`**, and the **`Toast`** system
-(`ToastProvider` + `useToast`). The kit grows per T004 (Card, Badge, Chip, Avatar,
-Table, InputField, Select, SegmentedControl).
+`PageSpinner` / `SectionSpinner`), **`ConfirmDialog`**, the **`Toast`** system
+(`ToastProvider` + `useToast`), **`Badge`**, **`Chip`** / **`ChipGroup`**, **`Avatar`** /
+**`AvatarGroup`**, and **`Table`**. (`Card` is intentionally *not* shipped — shadcn's Card
+works out of the box; the kit ships only opinionated composites.) The kit grows per T004
+(InputField, Select, SegmentedControl).
 
 ## Wire it
 
@@ -102,6 +104,25 @@ a per-tone leading icon and an optional dismiss control.
   const toast = useToast()
   toast.success('Saved', { title: 'Success' })
   toast.error('Something went wrong')
+  ```
+
+## Data display
+
+- **`Badge`** — compact status / category badge with semantic tones (`neutral` ·
+  `success` · `warning` · `danger` · `info`) and an optional status `dot`.
+- **`Chip`** / **`ChipGroup`** — a tag that's plain, toggleable (`onClick` + `selected`),
+  or removable (`onRemove`); `ChipGroup` is the wrapping flex layout.
+- **`Avatar`** / **`AvatarGroup`** — image with an initials fallback (also on image error);
+  `AvatarGroup` stacks avatars with an optional `+N` overflow badge.
+- **`Table`** — a column-config data table with optional per-column sorting, zebra
+  striping, a sticky header, and an empty state.
+
+  ```tsx
+  const columns: TableColumn<Row>[] = [
+    { key: 'name', header: 'Name', render: (r) => r.name, sortValue: (r) => r.name },
+    { key: 'n', header: 'Count', align: 'right', render: (r) => r.n, sortValue: (r) => r.n },
+  ]
+  <Table columns={columns} data={rows} rowKey={(r) => r.id} />
   ```
 
 ## How it's built

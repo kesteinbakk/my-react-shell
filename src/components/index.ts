@@ -29,4 +29,16 @@ export type { ConfirmDialogProps } from './ConfirmDialog'
 export { ToastProvider, useToast } from './Toast'
 export type { ToastApi, ToastOptions, ToastProviderProps, ToastTone } from './Toast'
 
+export { Badge } from './Badge'
+export type { BadgeProps, BadgeTone } from './Badge'
+
+export { Chip, ChipGroup } from './Chip'
+export type { ChipProps, ChipGroupProps } from './Chip'
+
+export { Avatar, AvatarGroup } from './Avatar'
+export type { AvatarProps, AvatarGroupProps, AvatarSize } from './Avatar'
+
+export { Table } from './Table'
+export type { TableProps, TableColumn } from './Table'
+
 export { cn } from './cn'
