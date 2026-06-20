@@ -1,6 +1,13 @@
 # T004 — component-kit (opinionated React component kit)
 
-**Status:** planning · **Filed:** 2026-06-20
+**Status:** finished · **Filed:** 2026-06-20
+
+> **Done.** All four phases shipped (feedback · data-display · forms), plus the
+> `Alert`-tokens substrate and a dark-shadow-token elevation fix; `Card` left to
+> shadcn per the scope rule. The app-shell CVA-drift align was **declined** as
+> cosmetic — adopting `cva()`/`cn()` in app-shell would either couple it to the
+> components module's runtime or duplicate the helper, for no user-facing gain.
+> Library + demo typecheck green; the kit is showcased in the demo's `/kit` route.
 
 ## What
 
