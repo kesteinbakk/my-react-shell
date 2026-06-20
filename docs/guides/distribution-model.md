@@ -93,9 +93,12 @@ The *distribution* model is shared; the *build* step differs because the two
 compile differently:
 - **React (`my-react-shell`):** ships **precompiled `dist/`**. A `prepare` build
   runs `tsc -p tsconfig.lib.json` on install → JS + `.d.ts` (bundlers don't transpile
-  `node_modules`, so raw TS can't ship). **Caveat:** `prepare`-on-install is *not*
-  zero-config on pnpm 10/11 — see "Open decision — `prepare`-on-install vs committed
-  `dist/`" below.
+  `node_modules`, so raw TS can't ship). The **dev-harness build** (`pnpm build` =
+  `tsc -b && vite build`) emits to a **separate `dist-harness/`** (`build.outDir` in
+  `vite.config.ts`), never `dist/` — Vite empties its `outDir` on every run, so sharing
+  `dist/` would wipe the shipped module entry points. **Caveat:** `prepare`-on-install
+  is *not* zero-config on pnpm 10/11 — see "Open decision — `prepare`-on-install vs
+  committed `dist/`" below.
 - **Solid (`foundation`):** ships **source under the Solid `"solid"` export
   condition** (JSX preserved), compiled by each consumer's `vite-plugin-solid`.
   A precompiled framework-agnostic dist is not viable for Solid (SSR + SPA
