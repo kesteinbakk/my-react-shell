@@ -666,3 +666,174 @@
   flex-direction: column;
   gap: 0.5rem;
 }
+
+/* ── InputField ──────────────────────────────────────────────────────────── */
+.mrs-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+.mrs-field__label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+.mrs-field__input {
+  height: 2.25rem;
+  padding: 0 0.75rem;
+  border: 1px solid var(--color-border-primary);
+  border-radius: 0.5rem;
+  background: var(--color-surface-primary);
+  color: var(--color-text-primary);
+  font-size: 0.875rem;
+  transition: border-color 120ms ease, box-shadow 120ms ease;
+}
+.mrs-field__input::placeholder {
+  color: var(--color-text-muted);
+}
+.mrs-field__input:hover {
+  border-color: var(--color-border-hover);
+}
+.mrs-field__input:focus {
+  outline: none;
+  border-color: var(--color-focus);
+  box-shadow: 0 0 0 3px var(--color-focus-ring);
+}
+.mrs-field__input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.mrs-field__input--error {
+  border-color: var(--color-danger);
+}
+.mrs-field__input--error:focus {
+  box-shadow: 0 0 0 3px var(--color-danger-bg);
+}
+.mrs-field__desc {
+  font-size: 0.8125rem;
+  color: var(--color-text-secondary);
+}
+.mrs-field__error {
+  font-size: 0.8125rem;
+  color: var(--color-danger-strong);
+}
+
+/* ── SegmentedControl ────────────────────────────────────────────────────── */
+.mrs-segmented {
+  display: inline-flex;
+  gap: 0.125rem;
+  padding: 0.1875rem;
+  border: 1px solid var(--color-border-primary);
+  border-radius: 0.5rem;
+  background: var(--color-surface-tertiary);
+}
+.mrs-segmented__item {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.3125rem 0.75rem;
+  border: 1px solid transparent;
+  border-radius: 0.375rem;
+  background: transparent;
+  color: var(--color-text-secondary);
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color 120ms ease, color 120ms ease;
+}
+.mrs-segmented--sm .mrs-segmented__item {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.8125rem;
+}
+.mrs-segmented__item:hover:not(.mrs-segmented__item--active):not(:disabled) {
+  color: var(--color-text-primary);
+}
+.mrs-segmented__item--active {
+  border-color: var(--color-border-primary);
+  background: var(--color-surface-primary);
+  color: var(--color-text-primary);
+  box-shadow: 0 1px 2px var(--color-shadow-sm);
+}
+.mrs-segmented__item:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ── Select (Radix Select) ───────────────────────────────────────────────── */
+.mrs-select__trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  height: 2.25rem;
+  min-width: 10rem;
+  padding: 0 0.75rem;
+  border: 1px solid var(--color-border-primary);
+  border-radius: 0.5rem;
+  background: var(--color-surface-primary);
+  color: var(--color-text-primary);
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: border-color 120ms ease, box-shadow 120ms ease;
+}
+.mrs-select__trigger:hover {
+  border-color: var(--color-border-hover);
+}
+.mrs-select__trigger:focus {
+  outline: none;
+  border-color: var(--color-focus);
+  box-shadow: 0 0 0 3px var(--color-focus-ring);
+}
+.mrs-select__trigger[data-placeholder] {
+  color: var(--color-text-muted);
+}
+.mrs-select__trigger[data-disabled] {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.mrs-select__chevron {
+  display: inline-flex;
+  color: var(--color-text-tertiary);
+}
+.mrs-select__content {
+  overflow: hidden;
+  min-width: var(--radix-select-trigger-width);
+  border: 1px solid var(--color-border-primary);
+  border-radius: 0.5rem;
+  background: var(--color-surface-elevated);
+  box-shadow: 0 8px 24px var(--color-shadow-lg);
+  z-index: 60;
+}
+.mrs-select__viewport {
+  padding: 0.25rem;
+}
+.mrs-select__item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.375rem 0.625rem;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  color: var(--color-text-primary);
+  cursor: pointer;
+  user-select: none;
+  outline: none;
+}
+.mrs-select__item[data-highlighted] {
+  background: var(--color-hover);
+}
+.mrs-select__item[data-state='checked'] {
+  color: var(--color-primary);
+}
+.mrs-select__item[data-disabled] {
+  opacity: 0.5;
+  pointer-events: none;
+}
+.mrs-select__indicator {
+  display: inline-flex;
+  flex-shrink: 0;
+  width: 1rem;
+  color: var(--color-primary);
+}

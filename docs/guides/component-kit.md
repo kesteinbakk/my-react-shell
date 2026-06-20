@@ -23,9 +23,9 @@ this module.
 Shipped today: **`Alert`**, **`InfoBox`**, **`EmptyState`**, **`Spinner`** (+
 `PageSpinner` / `SectionSpinner`), **`ConfirmDialog`**, the **`Toast`** system
 (`ToastProvider` + `useToast`), **`Badge`**, **`Chip`** / **`ChipGroup`**, **`Avatar`** /
-**`AvatarGroup`**, **`Table`**, and **`UserPreferences`** (a theme / display settings panel).
-(`Card` is intentionally *not* shipped — shadcn's Card works out of the box; the kit ships
-only opinionated composites.) The kit grows per T004 (InputField, Select, SegmentedControl).
+**`AvatarGroup`**, **`Table`**, **`InputField`**, **`SegmentedControl`**, **`Select`**, and
+**`UserPreferences`** (a theme / display settings panel). (`Card` is intentionally *not*
+shipped — shadcn's Card works out of the box; the kit ships only opinionated composites.)
 
 ## Wire it
 
@@ -171,6 +171,34 @@ function PreferencesButton() {
 
 The icons↔emojis switch only *does* something if the rest of your UI renders through
 the `my-react-shell/icons` seam — see the [icons guide](icons.md).
+
+## Forms
+
+The kit ships only the *opinionated* form pieces — for plain inputs / checkboxes /
+switches, use shadcn directly.
+
+- **`InputField`** — a complete field: label + input + helper/description + error,
+  wired for accessibility (`htmlFor`, `aria-invalid`, `aria-describedby`). Spreads
+  native input props, so `type` / `value` / `onChange` / `placeholder` pass through;
+  pass `error` to switch on the error styling.
+- **`SegmentedControl`** — single-select segmented control (a `radiogroup` of options
+  on a track, the active one lifted onto a surface chip). Controlled via `value` /
+  `onChange`; generic over the option value type.
+- **`Select`** — an opinionated select on **Radix Select** (keyboard nav, typeahead,
+  portal, collision handling). Pass an `options` list; controlled via `value` /
+  `onValueChange`. `@radix-ui/react-select` is an optional peer behind this sub-path.
+
+  ```tsx
+  <Select
+    value={value}
+    onValueChange={setValue}
+    placeholder="Pick one…"
+    options={[
+      { value: 'a', label: 'Apple' },
+      { value: 'b', label: 'Banana', disabled: true },
+    ]}
+  />
+  ```
 
 ## How it's built
 

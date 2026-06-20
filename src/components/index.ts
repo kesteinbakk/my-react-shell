@@ -41,6 +41,15 @@ export type { AvatarProps, AvatarGroupProps, AvatarSize } from './Avatar'
 export { Table } from './Table'
 export type { TableProps, TableColumn } from './Table'
 
+export { InputField } from './InputField'
+export type { InputFieldProps } from './InputField'
+
+export { SegmentedControl } from './SegmentedControl'
+export type { SegmentedControlProps, SegmentedOption } from './SegmentedControl'
+
+export { Select } from './Select'
+export type { SelectProps, SelectOption } from './Select'
+
 export { UserPreferences } from './UserPreferences'
 export type { UserPreferencesProps } from './UserPreferences'
 

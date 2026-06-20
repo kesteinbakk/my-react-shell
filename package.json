@@ -68,6 +68,7 @@
     "@radix-ui/react-dialog": "^1.1.17",
     "@radix-ui/react-dropdown-menu": "^2.1.18",
     "@radix-ui/react-popover": "^1.1.17",
+    "@radix-ui/react-select": "^2.3.1",
     "@tanstack/react-router": "^1.170.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -95,6 +96,9 @@
     "@radix-ui/react-popover": {
       "optional": true
     },
+    "@radix-ui/react-select": {
+      "optional": true
+    },
     "@tanstack/react-router": {
       "optional": true
     },
@@ -114,6 +118,7 @@
     "@radix-ui/react-dialog": "^1.1.17",
     "@radix-ui/react-dropdown-menu": "^2.1.18",
     "@radix-ui/react-popover": "^1.1.17",
+    "@radix-ui/react-select": "^2.3.1",
     "@tailwindcss/vite": "^4.3.1",
     "@tanstack/react-router": "^1.170.15",
     "@tanstack/react-router-devtools": "^1.167.0",
