@@ -28,6 +28,22 @@ Per-module exports and contracts live in the other `docs/guides/` files.
   deployment, and its own Vercel project. Distribution adds a dependency edge —
   it never couples deploys or backends.
 
+### Transitive `themes` dependency
+- The `--color-*` token contract + palettes live in the shared **`themes`** package
+  (strategy D6+D13), which my-react-shell depends on. A consumer receives `themes`
+  **transitively** — do **not** add it to the consumer's own `package.json`, and no
+  import changes (`my-react-shell/styles.css` pulls it in).
+- **CI needs access to the `themes` repo too.** It is a second tag-pinned Bitbucket
+  git-dep edge, so the same Vercel/CI token (or SSH/deploy key) must also reach
+  `git@bitbucket.org:kesteinbakk/themes.git`, not only my-react-shell.
+- `themes` is **pure CSS** — it is *not* a `resolve.dedupe` concern (no JS, no React
+  singleton). The dedupe step below stays React/Radix/router-only.
+- **`link:` loop:** the bare `@import 'themes/…'` lives in the *shell's* CSS, so it
+  resolves through the **shell's** `node_modules/themes`, not the consumer's. The
+  linked shell checkout must therefore have `themes` installed — i.e. `themes`
+  published + the shell `pnpm install`ed. Until `themes` is published, a symlink at
+  the shell's `node_modules/themes` is the stopgap; the consumer itself needs nothing.
+
 ### Versioning / release
 - Tag-pinned (`vX.Y.Z`). To ship an update: push, then tag. Consumers bump the
   tag and reinstall, and receive only the modules they import (tree-shaken).
