@@ -61,6 +61,15 @@ The in-repo dev-harness exists only for development and behavior verification (t
 routes that catch what typecheck can't); it is not where features are shown to the
 user.
 
+**Theme edits must reach the demo's color-palette page.** The demo's color palette
+(`my-react-shell-demo/src/sections/PaletteReference.tsx`) shows every `--color-*`
+token, per palette, in light + dark. Whenever you change theme colors or tokens,
+keep it in lockstep: token *values* reflect automatically (the page reads the live
+computed color from each scoped `.theme-<name>-<mode>` class — eyeball the page to
+confirm the change reads correctly), **but adding, removing, or renaming a
+`--color-*` token requires updating that page's `PALETTE_GROUPS` list**, or the
+token won't appear (or renders as a stray "unset" hatch).
+
 ## Stack
 
 - **Frontend:** React 19 + Vite SPA (TypeScript 6). **No SSR** — consumers are
