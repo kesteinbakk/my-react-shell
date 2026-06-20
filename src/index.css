@@ -14,8 +14,9 @@
    brand palette).
 
    The shadcn token bridge (mapping these tokens onto shadcn's `--background` /
-   `--primary` / … names + Tailwind `@theme` exposure) lands with the registry
-   wiring in a later phase; this file is the palette/token source it builds on. */
+   `--primary` / … names + Tailwind `@theme` exposure) is consumer wiring, not
+   shipped here — see docs/guides/theme.md → "Using these tokens with shadcn/ui".
+   This file is the palette/token source that bridge builds on. */
 @import 'themes/contract.css';
 @import './styles/base.css';
 @import 'themes/ocean.css';

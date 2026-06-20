@@ -106,6 +106,16 @@ both repos and were starting to diverge. A color is now edited once in `themes`,
 and a tag bump propagates it everywhere. The Solid `foundation` otherwise stays
 independent and the source of truth for its own Solid modules.
 
+**What this module does not own — the shadcn bridge.** shadcn/ui primitives consume
+their own cssVar names (`--background`, `--muted-foreground`, …), not the `--color-*`
+contract. Mapping the two is **documented consumer wiring** — the canonical mapping
+lives in [theme.md](guides/theme.md) → *Using these tokens with shadcn/ui* —
+deliberately **not shipped**: both current consumers hand-roll it, but the mapping
+carries real per-app latitude (how `secondary` / `popover` / `accent` / `input`
+render, which optional shadcn surfaces — charts, sidebar — get mapped), so a shipped
+one-size CSS would force those choices. Document now; if the latitude narrows,
+rule-of-two can still promote it to a shipped `@import`.
+
 ### D7 — Repo shape: library + dev-harness, showcase elsewhere
 
 One repo, two roles: the **library** consumers import, and a dev-only **harness**
