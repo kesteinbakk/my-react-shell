@@ -59,18 +59,23 @@ never hard-depend on each other's runtime — take only what you want.
 - **i18n central-key policy.** Every user-facing string through `t()` against the
   central catalog; typed keys are opt-in via `createTypedI18n`.
 - **app-shell breadcrumbs are a pure function of the URL** — only a registered route
-  (`pages`/`subPages`/`useDynamicPages`) adds a crumb. Strings arrive as `() => t('…')`
+  (`pages`/`subPages`/`useDynamicPages`) adds a crumb. `subPages` is recursive: each
+  nesting level adds a crumb; non-leaf ancestors render as links, the leaf gets a
+  sibling-switcher dropdown when ≥2 options exist. Strings arrive as `() => t('…')`
   thunks; the shell never imports i18n.
+- **`route: '/'` is reserved.** Never put `'/'` in `pages` — `defineShellConfig` throws
+  `ShellConfigError` at import time. Home is reachable via the brand link and the
+  breadcrumb house icon; register your first feature at a real route (e.g. `/dashboard`).
 - **Updating the library:** bump the pinned git tag (`#vX.Y.Z`) and reinstall — you
   receive only the modules you import. The `link:` dev-loop must dedupe React in the
   consumer's Vite config or first paint throws `Invalid hook call`.
 
 ## Deep guides
 
-The API reference (paths above) is the **single source of truth** — it ships inside the
-package, version-matched to the installed tag, so there is no copy to drift. The per-module
-guides also ship inside the package, at:
+The API reference and per-module guides both ship inside the package, version-matched to
+the installed tag. Read them from:
 
+- `node_modules/my-react-shell/docs/specifications/api-reference.md` — full export surface
 - `node_modules/my-react-shell/docs/guides/app-shell.md` — multilevel pages, subPages,
   useDynamicPages, route '/' constraint, PageTabs vs PageSections
 - `node_modules/my-react-shell/docs/guides/theme.md`
@@ -79,4 +84,4 @@ guides also ship inside the package, at:
 - `node_modules/my-react-shell/docs/guides/icons.md`
 - `node_modules/my-react-shell/docs/guides/providers.md`
 
-The `components` module has no separate guide — the API reference covers it fully.
+`components` has no guide — the API reference covers it fully.
