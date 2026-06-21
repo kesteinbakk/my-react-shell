@@ -1,6 +1,6 @@
 # Distribution Model
 
-last updated: 2026-06-16
+last updated: 2026-06-21
 
 `my-react-shell` (React) and `foundation` (SolidJS) are distributed by **one
 shared model**: each is a standalone Bitbucket repo consumed as a **tag-pinned
@@ -103,6 +103,36 @@ local checkout — this is a **dev-only** redirect:
   breaks every other clone and all Vercel/CI installs (the path won't exist).
   This is enforced by a **pre-commit guard** (`.githooks/pre-commit`, enabled via
   `pnpm setup:hooks`), not by memory.
+
+### Worktrees on the `link:` dev-loop
+Iterating from a git worktree (`.claude/worktrees/<slug>/`) is fine on the `link:`
+loop — but a fresh worktree has **no `node_modules`** (it's gitignored), so
+`my-react-shell`, React, and everything else are unresolvable until you link them.
+The standard worktree step is the *whole* fix; there is nothing my-react-shell-specific
+to add to it beyond knowing *why* it matters:
+```bash
+ln -s ../../../node_modules .claude/worktrees/<slug>/node_modules
+```
+That one symlink also carries the `link:` redirect **and** the dedupe across intact:
+`node_modules/my-react-shell` is an absolute symlink to the shell checkout, so it still
+resolves through the worktree → root → checkout chain, and `resolve.dedupe` lives in the
+**tracked** `vite.config.ts`, so the single-React / single-Radix guarantee is already
+present in the worktree. No extra config, no second dedupe list.
+
+- **Never `pnpm install` inside the worktree — this is the actual trap.** A
+  missing-module error in a fresh worktree tempts a reinstall, but that materializes a
+  *second*, independent `node_modules` — a second React and a second copy of every Radix
+  peer the shell renders. `resolve.dedupe` can no longer collapse them (the worktree now
+  resolves its own freshly-installed copies first), and first paint throws `Invalid hook
+  call` (or Radix's `composeRefs` recursion in the shell's breadcrumb dropdown). Symlink
+  the root `node_modules`; do not reinstall.
+- **Auto `claude/*` worktrees** (`Agent(isolation: "worktree")`) are created *without*
+  this symlink. Make the `ln -s` above the first action inside the worktree, before any
+  pnpm command — the `link:` dep is invisible otherwise. (This is the `worktree-flow`
+  rule; it bites doubly here because the linked package vanishes with it.)
+
+> Same blind spot as the dedupe note above: a green `vite build` / vitest run does **not**
+> exercise this — only a live dev-server boot *from the worktree* does.
 
 ### Build sub-model (differs by language — by necessity)
 The *distribution* model is shared; the *build* step differs because the two

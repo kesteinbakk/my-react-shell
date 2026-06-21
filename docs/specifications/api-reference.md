@@ -565,8 +565,10 @@ inside your router, at the root route's layout — not here.
   light *and* dark, every palette.
 - **`link:` dev-loop must dedupe React** in the consumer's `vite.config.ts`
   (`resolve.dedupe: ['react', 'react-dom', 'react/jsx-runtime']`) or first paint
-  throws `Invalid hook call`. Tag-pinned git-dep installs are unaffected. See
-  [distribution-model.md](../guides/distribution-model.md).
+  throws `Invalid hook call`. Tag-pinned git-dep installs are unaffected. In a git
+  **worktree**, symlink the root `node_modules` in (the standard worktree step) and
+  never `pnpm install` inside it — a reinstall duplicates React and defeats the dedupe.
+  See [distribution-model.md](../guides/distribution-model.md).
 - **Updating:** bump the pinned git tag (`#vX.Y.Z`) and reinstall — you receive only
   the modules you import.
 
