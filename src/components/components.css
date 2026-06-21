@@ -1108,27 +1108,24 @@
   overflow: hidden;
 }
 
-/* Footer — meta lines (left) and badges (right); each column spreads its rows evenly
-   (space-evenly) across the band height. */
+/* Footer — evenly-spread rows; each row pairs a meta line (left) with its badge
+   (right), so an equal-count footer aligns line-to-badge and the badge spacing is the
+   row spacing. */
 .mrs-phi-card__footer {
   display: flex;
-  align-items: stretch;
-  justify-content: space-between;
-  gap: 0.5em;
+  flex-direction: column;
+  justify-content: space-evenly;
   height: 100%;
   min-width: 0;
 }
-.mrs-phi-card__footer-lines {
+.mrs-phi-card__footer-row {
   display: flex;
-  flex-direction: column;
-  justify-content: space-evenly;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5em;
   min-width: 0;
 }
-.mrs-phi-card__footer-badges {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-evenly;
-  align-items: flex-end;
+.mrs-phi-card__footer-badge {
   flex-shrink: 0;
 }
 .mrs-phi-card__footer-line {

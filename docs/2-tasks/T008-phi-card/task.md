@@ -34,10 +34,10 @@ Split:  upperH : lowerH = φ : 1    (the two sections)
   and figure→content gap**; `iconFill` fills the column (aspect preserved, never overflows —
   `minmax(0,…)` on the φ tracks prevents the blowout). Precedence: `image` > `icon`+body
   split > `icon` > body.
-- **Structured footer** — `footer={{ lines, badges }}`: meta lines on the left (optional
-  `date`/`time`/`check` kit glyphs), badges stacked on the right, both `space-evenly`.
-  Per-size caps (lines sm 1·md 2·lg 3·xl 5; badges sm/md 1·lg 2·xl 4) **hard-throw in dev**,
-  as does giving both `footer` and the freeform `lower` escape hatch.
+- **Structured footer** — `footer={{ lines, badges }}`: evenly-spread **rows**, each pairing
+  line[i] (left, optional `date`/`time`/`check` kit glyph) with badge[i] (right), so an
+  equal-count footer aligns line-to-badge. Per-size caps (lines sm 1·md 2·lg 3·xl 5; badges
+  sm/md 1·lg 2·xl 4) **hard-throw in dev**, as does giving both `footer` and freeform `lower`.
 - **Font scales with `size`** — the size preset sets a base `font-size` on the card root
   (sm/md/lg/xl = 0.75/0.875/1.125/1.375rem) that section content inherits, so larger cards
   get larger text by default; consumers override per element.

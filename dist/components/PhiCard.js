@@ -92,7 +92,20 @@ export function PhiCard({ upper, content, image, imageAlt = '', icon, iconFill =
         topContent = body;
         topSectionMod = hasBody ? 'mrs-phi-card__section--padded' : undefined;
     }
-    const footerNode = footer && hasFooter ? (_jsxs("div", { className: "mrs-phi-card__footer", children: [_jsx("div", { className: "mrs-phi-card__footer-lines", children: (footer.lines ?? []).map((line, i) => (_jsxs("span", { className: "mrs-phi-card__footer-line", children: [line.type ? (_jsx("span", { className: "mrs-phi-card__footer-icon", children: FOOTER_GLYPHS[line.type] })) : null, _jsx("span", { className: "mrs-phi-card__footer-text", children: line.text })] }, i))) }), footer.badges && footer.badges.length > 0 ? (_jsx("div", { className: "mrs-phi-card__footer-badges", children: footer.badges.map((b, i) => (_jsx("span", { className: "mrs-phi-card__footer-badge", children: b }, i))) })) : null] })) : null;
+    // Footer = evenly-spread rows, each pairing the line at index `i` (left) with the
+    // badge at index `i` (right) — so an equal-count footer aligns line-to-badge by row,
+    // and the badge spacing is just the row spacing.
+    let footerNode = null;
+    if (footer && hasFooter) {
+        const lines = footer.lines ?? [];
+        const badges = footer.badges ?? [];
+        const rowCount = Math.max(lines.length, badges.length);
+        footerNode = (_jsx("div", { className: "mrs-phi-card__footer", children: Array.from({ length: rowCount }, (_, i) => {
+                const line = lines[i];
+                const badge = badges[i];
+                return (_jsxs("div", { className: "mrs-phi-card__footer-row", children: [_jsxs("span", { className: "mrs-phi-card__footer-line", children: [line?.type ? (_jsx("span", { className: "mrs-phi-card__footer-icon", children: FOOTER_GLYPHS[line.type] })) : null, line ? _jsx("span", { className: "mrs-phi-card__footer-text", children: line.text }) : null] }), badge != null ? (_jsx("span", { className: "mrs-phi-card__footer-badge", children: badge })) : null] }, i));
+            }) }));
+    }
     // `corner` wins over the built-in menu; the inline `actions &&` lets TS narrow.
     const cornerNode = corner ??
         (actions && actions.length > 0 ? (_jsx(PhiCardMenu, { actions: actions, icon: menuIcon, label: menuLabel })) : null);

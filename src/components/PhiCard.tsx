@@ -285,30 +285,36 @@ export function PhiCard({
     topSectionMod = hasBody ? 'mrs-phi-card__section--padded' : undefined
   }
 
-  const footerNode =
-    footer && hasFooter ? (
+  // Footer = evenly-spread rows, each pairing the line at index `i` (left) with the
+  // badge at index `i` (right) — so an equal-count footer aligns line-to-badge by row,
+  // and the badge spacing is just the row spacing.
+  let footerNode: ReactNode = null
+  if (footer && hasFooter) {
+    const lines = footer.lines ?? []
+    const badges = footer.badges ?? []
+    const rowCount = Math.max(lines.length, badges.length)
+    footerNode = (
       <div className="mrs-phi-card__footer">
-        <div className="mrs-phi-card__footer-lines">
-          {(footer.lines ?? []).map((line, i) => (
-            <span key={i} className="mrs-phi-card__footer-line">
-              {line.type ? (
-                <span className="mrs-phi-card__footer-icon">{FOOTER_GLYPHS[line.type]}</span>
-              ) : null}
-              <span className="mrs-phi-card__footer-text">{line.text}</span>
-            </span>
-          ))}
-        </div>
-        {footer.badges && footer.badges.length > 0 ? (
-          <div className="mrs-phi-card__footer-badges">
-            {footer.badges.map((b, i) => (
-              <span key={i} className="mrs-phi-card__footer-badge">
-                {b}
+        {Array.from({ length: rowCount }, (_, i) => {
+          const line = lines[i]
+          const badge = badges[i]
+          return (
+            <div key={i} className="mrs-phi-card__footer-row">
+              <span className="mrs-phi-card__footer-line">
+                {line?.type ? (
+                  <span className="mrs-phi-card__footer-icon">{FOOTER_GLYPHS[line.type]}</span>
+                ) : null}
+                {line ? <span className="mrs-phi-card__footer-text">{line.text}</span> : null}
               </span>
-            ))}
-          </div>
-        ) : null}
+              {badge != null ? (
+                <span className="mrs-phi-card__footer-badge">{badge}</span>
+              ) : null}
+            </div>
+          )
+        })}
       </div>
-    ) : null
+    )
+  }
 
   // `corner` wins over the built-in menu; the inline `actions &&` lets TS narrow.
   const cornerNode =

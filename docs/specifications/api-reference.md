@@ -329,9 +329,10 @@ fill its column. The **bottom collapses when there's no footer** (`footer`/`lowe
 not rendered; the card shrinks to the top band's height `W/φ²`). `size` also sets a base
 inherited `font-size`; `PHI` (`1.6180339887`) is exported (height = width / φ).
 
-**Footer** — pass a structured `footer={{ lines, badges }}` (meta lines on the left, each
-with an optional `date`/`time`/`check` glyph the kit ships; badges stacked on the right; both
-spread evenly), or the freeform `lower` node as an escape hatch. **Throws in dev** if both
+**Footer** — pass a structured `footer={{ lines, badges }}`: the footer is evenly-spread
+**rows**, each pairing the line at index `i` (left, with an optional `date`/`time`/`check`
+glyph the kit ships) with the badge at index `i` (right) — so an equal-count footer aligns
+line-to-badge. Or use the freeform `lower` node as an escape hatch. **Throws in dev** if both
 are given, or if the per-size caps are exceeded — lines: sm 1 · md 2 · lg 3 · xl 5; badges:
 sm/md 1 · lg 2 · xl 4. An inset separator divides the sections (only when there's a footer).
 
@@ -348,7 +349,7 @@ pass translated labels. The corner never triggers a clickable card's `onClick`.
 | `imageAlt` | `''` | Alt text for `image` (decorative by default). |
 | `icon` | — | Figure node for the top. Alone → centered; with a body → a narrow figure column in the 1 : φ split, centered with equal border/content gaps. |
 | `iconFill` | `false` | Scale `icon` to fill its column (aspect preserved, never overflows), overriding the icon's own size. |
-| `footer` | — | Structured footer: `{ lines?: { text, type?: 'date'\|'time'\|'check' }[], badges?: ReactNode[] }`. Lines left + badges right, spread evenly. Per-size caps (throws over). |
+| `footer` | — | Structured footer: `{ lines?: { text, type?: 'date'\|'time'\|'check' }[], badges?: ReactNode[] }`. Evenly-spread rows pairing line[i] (left) with badge[i] (right). Per-size caps (throws over). |
 | `lower` | — | Freeform footer (escape hatch). **Throws if given alongside `footer`.** |
 | `size` | `'md'` | `sm`·`md`·`lg`·`xl` = 180/240/320/480px wide (height = width / φ); also sets a base inherited `font-size`. |
 | `actions` | — | Items for the built-in ⋮ menu: `{ icon?, label, onSelect, destructive?, disabled? }[]`. Ignored when `corner` is set. |
