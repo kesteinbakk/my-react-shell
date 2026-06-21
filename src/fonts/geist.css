@@ -1,0 +1,13 @@
+/* Geist (variable) — self-hosted via @fontsource (no CDN, no network call).
+ *
+ * Import this to make Geist the app's sans face: it registers the @font-face and
+ * points `--font-sans` at it. Import it AFTER `my-react-shell/styles.css` so this
+ * override wins. To use Inter instead, import `my-react-shell/fonts/inter.css`; to
+ * bring your own face, set `--font-sans` yourself and import neither.
+ */
+@import '@fontsource-variable/geist/index.css';
+
+:root {
+  --font-sans: 'Geist Variable', ui-sans-serif, system-ui, sans-serif,
+    'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+}

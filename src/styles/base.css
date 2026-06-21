@@ -9,7 +9,17 @@
  * <ThemeProvider>.
  */
 
+/* Typography. `--font-sans` is the overridable default family — a system stack
+   out of the box. Importing `my-react-shell/fonts/inter.css` or `…/geist.css`
+   (after `styles.css`) swaps in a bundled, self-hosted face by overriding this
+   token; a consumer can also set `--font-sans` itself to bring its own. */
+:root {
+  --font-sans: ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji',
+    'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+}
+
 body {
+  font-family: var(--font-sans);
   background-color: var(--color-background-primary);
   color: var(--color-text-primary);
   transition: background-color 150ms ease, color 150ms ease;

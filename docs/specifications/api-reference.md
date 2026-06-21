@@ -83,6 +83,18 @@ const { theme, isDark, themes, setTheme, toggleMode } = useTheme()
 > Custom palette? Ship a `.theme-<name>-{light,dark}` CSS class pair and list it in
 > `themes` (see the guide).
 
+**Typography (fonts).** The shell applies an overridable `--font-sans` token to
+`body` (a system stack by default). Import **one** bundled, self-hosted face **after**
+`my-react-shell/styles.css` to switch — or neither, and set `--font-sans` yourself:
+
+| CSS import | Face |
+|---|---|
+| `my-react-shell/fonts/inter.css` | Inter Variable (recommended default) |
+| `my-react-shell/fonts/geist.css` | Geist Variable |
+
+Self-hosted via `@fontsource` (no CDN). See [theme.md](../guides/theme.md) →
+*Typography*.
+
 ---
 
 ## `my-react-shell/providers` — Convex client + `AppProviders`

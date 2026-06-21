@@ -60,6 +60,32 @@ listed in the [API reference](../specifications/api-reference.md#surfaces--eleva
 consumer composing its own surfaces should follow the same role mapping so cards, menus,
 and wells read consistently across every palette.
 
+## Typography
+
+The shell ships an opinionated default **sans face** behind an overridable token,
+`--font-sans`, applied to `body` (everything inherits). Out of the box — with only
+`my-react-shell/styles.css` — it's a system stack. To switch in a bundled,
+self-hosted face, import **one** of the two font stylesheets **after** `styles.css`:
+
+```ts
+import 'my-react-shell/styles.css'
+import 'my-react-shell/fonts/inter.css' // Inter — the recommended default, or:
+// import 'my-react-shell/fonts/geist.css' // Geist
+```
+
+Each stylesheet registers its `@font-face` (self-hosted via `@fontsource` — no CDN,
+no network call) and points `--font-sans` at that face; importing it after
+`styles.css` lets the override win. To bring your own face instead, import neither and
+set the token yourself:
+
+```css
+:root { --font-sans: 'Your Font', ui-sans-serif, system-ui, sans-serif; }
+```
+
+`--font-sans` is the single source of truth for the sans family. There is **no font
+*scale* token** yet — sizes are the consumer's Tailwind utilities and the kit's own
+`rem` sizing.
+
 ## Wire it
 
 ```tsx
