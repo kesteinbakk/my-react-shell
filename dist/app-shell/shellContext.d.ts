@@ -20,10 +20,10 @@ export interface ShellContextValue {
     scrollContainer: HTMLElement | null;
     /** Internal — `<AppShell>`'s body-cell ref callback calls this. */
     setScrollContainer: (el: HTMLElement | null) => void;
-    /** Map keyed by parent route → that parent's dynamic children. */
+    /** Map keyed by parent route → that parent's dynamic children (merged across all registrants). */
     dynamicPages: Record<string, DynamicPagesEntry[]>;
-    /** Internal — `useDynamicPages` registers/replaces a parent's children. Returns an unregister. */
-    registerDynamicPages: (parent: string, items: DynamicPagesEntry[]) => () => void;
+    /** Internal — `useDynamicPages` registers a registrant's children under a parent. Returns an unregister. */
+    registerDynamicPages: (registrantId: string, parent: string, items: DynamicPagesEntry[]) => () => void;
     /** Currently-registered page-header spec, or `null`. */
     pageHeaderSpec: ShellPageHeaderSpec | null;
     /** Internal — `<ShellPageHeader>` registers its spec. Returns an unregister. Last-mounted wins. */

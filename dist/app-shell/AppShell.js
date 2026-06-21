@@ -36,24 +36,43 @@ export function AppShell({ config, useMenu, actions, subtitle, titleAdornment, f
         setHeaderStack((prev) => [...prev, spec]);
         return () => setHeaderStack((prev) => prev.filter((s) => s !== spec));
     }, []);
+    // Per-registrant state: parent → registrantId → items.
+    // Multiple layout components can each contribute children to the same parent
+    // route without clobbering each other. The flat view below is what context
+    // and findActiveChain read.
     const [dynamicPages, setDynamicPages] = useState({});
-    const registerDynamicPages = useCallback((parent, items) => {
-        setDynamicPages((prev) => ({ ...prev, [parent]: items }));
+    const registerDynamicPages = useCallback((registrantId, parent, items) => {
+        setDynamicPages((prev) => ({
+            ...prev,
+            [parent]: { ...(prev[parent] ?? {}), [registrantId]: items },
+        }));
         return () => setDynamicPages((prev) => {
+            const byRegistrant = { ...(prev[parent] ?? {}) };
+            delete byRegistrant[registrantId];
             const next = { ...prev };
-            delete next[parent];
+            if (Object.keys(byRegistrant).length === 0) {
+                delete next[parent];
+            }
+            else {
+                next[parent] = byRegistrant;
+            }
             return next;
         });
     }, []);
+    // Flat view: parent → merged children across all registrants.
+    const flatDynamicPages = useMemo(() => Object.fromEntries(Object.entries(dynamicPages).map(([parent, byId]) => [
+        parent,
+        Object.values(byId).flat(),
+    ])), [dynamicPages]);
     const ctx = useMemo(() => ({
         config,
         scrollContainer: scrollEl,
         setScrollContainer: setScrollEl,
-        dynamicPages,
+        dynamicPages: flatDynamicPages,
         registerDynamicPages,
         pageHeaderSpec,
         registerPageHeader,
-    }), [config, scrollEl, dynamicPages, registerDynamicPages, pageHeaderSpec, registerPageHeader]);
+    }), [config, scrollEl, flatDynamicPages, registerDynamicPages, pageHeaderSpec, registerPageHeader]);
     // Document title — single owner; routes without a header fall through to appName.
     const documentTitleText = useMemo(() => {
         const spec = pageHeaderSpec;
@@ -64,7 +83,7 @@ export function AppShell({ config, useMenu, actions, subtitle, titleAdornment, f
             'composed';
         if (mode === 'app')
             return config.appName;
-        const chain = findActiveChain(config.pages, pathname, dynamicPages);
+        const chain = findActiveChain(config.pages, pathname, flatDynamicPages);
         const leaf = spec?.title?.() ?? chain.at(-1)?.entry.label() ?? config.appName;
         if (mode === 'leaf')
             return leaf;
