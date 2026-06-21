@@ -42,6 +42,7 @@ consumers use shadcn directly for. The app-shell ships as an *optional* module, 
 - What this is + boundary: [docs/concept.md](docs/concept.md)
 - **Public API (every export + usage):** [docs/specifications/api-reference.md](docs/specifications/api-reference.md) — the single source of truth; it **ships inside the package** (`package.json` → `files`), so consumer agents read the version-matched copy at `node_modules/my-react-shell/…` via the `my-react-shell` skill
 - Standing decisions + rationale: [docs/strategy.md](docs/strategy.md)
+- **Demo & verification surface (where agents test changes + reproduce reported bugs):** [docs/demo.md](docs/demo.md)
 - Framework decision / from-scratch consumer guide: the `react-framework` skill ([.claude/skills/react-framework/react-framework-notes.md](.claude/skills/react-framework/react-framework-notes.md))
 - Build plan: **T001** in `docs/2-tasks/` (index: `docs/2-tasks/_index/`)
 
@@ -74,6 +75,12 @@ repo is to be **moved to `my-react-shell-demo`**.
 router with navigation** — one route per showcased area, reachable from the
 landing cards and the nav.
 
+**It is also the agent test / bug-reproduction surface.** Because it consumes the
+published modules over the real `link:` loop, it is where you confirm a
+consumer-visible change in-browser and where you reproduce a reported bug — open the
+route that exercises the implicated module. The route map, the demo-vs-harness split,
+and the "never start the dev server" rules are in [docs/demo.md](docs/demo.md).
+
 The in-repo dev-harness exists only for development and behavior verification (test
 routes that catch what typecheck can't); it is not where features are shown to the
 user.
@@ -87,15 +94,16 @@ confirm the change reads correctly), **but adding, removing, or renaming a
 `--color-*` token requires updating that page's `PALETTE_GROUPS` list**, or the
 token won't appear (or renders as a stray "unset" hatch).
 
-**New and changed components must reach the demo's Kit page.** The opinionated kit
-(`my-react-shell/components`) is showcased section-by-section in the demo's Kit page
-(`my-react-shell-demo/src/pages/KitPage.tsx`); the library and its showcase ship
-together, so a component change that never reaches the demo is unfinished. Whenever
-you add a kit component or change one's props / variants / behavior, keep the two in
-lockstep:
+**New and changed components must reach the demo's kit pages.** The opinionated kit
+(`my-react-shell/components`) is showcased section-by-section across the demo's **kit
+pages** (`my-react-shell-demo/src/pages/` — `InputsActionsPage`, `TablesCardsPage`,
+`TagsAvatarsPage`, `FeedbackOverlaysPage`, each grouping related components); the
+library and its showcase ship together, so a component change that never reaches the
+demo is unfinished. Whenever you add a kit component or change one's props / variants
+/ behavior, keep the two in lockstep:
 
-- **A new component won't appear until you add its `PageSection`** to that page's
-  `sections` array — import it and render a live example, mirroring the existing
+- **A new component won't appear until you add its `PageSection`** to the relevant kit
+  page's `sections` array — import it and render a live example, mirroring the existing
   entries (an `id`, a `label`, an `icon` key, a short `Lead` blurb). The section's
   scroll-spy tab also needs that same `icon` key registered in **both** the `ICONS`
   (lucide) and `EMOJIS` maps in `my-react-shell-demo/src/shell-config.tsx`, or the
@@ -104,7 +112,7 @@ lockstep:
   its existing section so the demo renders the new surface.
 
 (Un-opinionated shadcn primitives are *not* kit components: they're shown on the
-demo's Components page, not the Kit page.)
+demo's Components page, not the kit pages.)
 
 ## Porting from the SolidJS foundation
 
