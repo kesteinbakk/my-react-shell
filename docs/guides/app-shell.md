@@ -222,6 +222,11 @@ useDynamicPages({
 })
 ```
 
+> **Demonstrated end-to-end** in the `my-react-shell-demo` nested-pages route
+> (`src/pages/nested/`): a four-level breadcrumb chain — `pages` → `subPages`
+> (regions) → `subPages` (countries) → `useDynamicPages` (cities), with a
+> sibling-switcher dropdown at each level.
+
 ## Page tabs: route-based vs in-page
 
 - **`PageTabs`** — each tab is its own route. Pin it via `<ShellPageHeader tabs={() =>
