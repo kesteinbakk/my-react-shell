@@ -457,10 +457,10 @@ import 'my-react-shell/app-shell/styles.css'
 | `AppShell` | component | Mount once at root. `config`, `useMenu` (sidebar vs banner), `actions[]`, `mobileNav` (`'drawer'`\|`'tabBar'`), `children`. |
 | `AppHeader`, `AppMenu`, `AppBottomNav` | component | Chrome sub-parts (usually composed by `AppShell`). |
 | `ShellPageHeader` | component | Drop in a route subtree; renders `null`, registers `title`/`actions`/`search`/`tabs` into the pinned header. |
-| `findActiveChain` | function | Compute the active breadcrumb chain from a path. |
+| `findActiveChain` | function | Compute the active breadcrumb chain for a pathname — pure function of `(roots, pathname, dynamicByParent)`. Walks `subPages` recursively at each depth level; merges `useDynamicPages` registrations keyed by parent route. |
 | `PageTabs` | component | Route-based tab strip (each tab = a route). Pin via `<ShellPageHeader tabs={…}>`. Scrolls horizontally when it overflows — edge fades + arrow buttons appear on the side(s) with hidden tabs. |
 | `PageSections` | component | In-page sections synced to `?<persistKey>=`. Modes `single` / `list` (scrollspy). Its section-tab strip scrolls horizontally on overflow (edge fades + arrows), like `PageTabs`. |
-| `useDynamicPages(cfg)` | hook | Register runtime breadcrumb levels (record names, slugs) under a `parent` route. |
+| `useDynamicPages(cfg)` | hook | Register runtime breadcrumb levels (record names, slugs) under a `parent` route. Works at any depth — set `parent` to whichever registered route the dynamic items hang under. |
 | `useShellContext()`, `useShellContextOptional()` | hook | Read shell context — incl. `scrollContainer` (the only scroller; use instead of `window`). |
 
 **Contract types:** `PageEntry`, `ShellConfig`, `ShellConfigInput`, `PageContainerMaxWidth`,
@@ -486,11 +486,15 @@ export const shellConfig = defineShellConfig({
 > Start your first page at a real feature route (e.g. `/dashboard`, `/data`).
 >
 > **Three navigation layers, each one job:** `pages` (sidebar/banner) → top-level
-> areas · `subPages` (title dropdown, each a route) → siblings within a feature ·
-> `PageTabs`/`PageSections` → sub-views of one page. **Breadcrumbs are a pure
+> areas · `subPages` (hierarchical sub-areas, recursive, each a breadcrumb level; leaf
+> gets a sibling-switcher dropdown when ≥2 options exist) → siblings/children within a
+> feature · `PageTabs`/`PageSections` → sub-views of one page. **Breadcrumbs are a pure
 > function of the URL** — only a registered route (`pages`/`subPages`/`useDynamicPages`)
-> adds a crumb; `title` overrides only the leaf label. Strings arrive as thunks
-> (`label: () => t('…')`) — the shell never imports i18n.
+> adds a crumb; `title` overrides only the leaf label; non-leaf ancestors render as
+> clickable links. Strings arrive as thunks (`label: () => t('…')`) — the shell never
+> imports i18n.
+>
+> **`PageEntry` optional fields:** `subPages?: PageEntry[]` — nested entries, each a breadcrumb level and a title-dropdown item. `groupBreak?: true` — draws a sidebar divider before this entry; ignored on the first visible page. `tabBar?: true` — opts the entry into the mobile bottom tab bar (top-level entries only; only when `mobileNav='tabBar'`).
 
 ---
 

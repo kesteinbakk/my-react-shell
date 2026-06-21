@@ -56,9 +56,19 @@ export const shellConfig = defineShellConfig({
       route: '/data',
       label: () => t('nav.data'),
       icon: 'data',
-      // sibling pages → the title dropdown (a route each, so the breadcrumb moves)
+      // each subPage adds a breadcrumb level; at the leaf a sibling-switcher dropdown appears
       subPages: [
-        { id: 'data-core', route: '/data/core', label: () => t('nav.core'), icon: 'data' },
+        {
+          id: 'data-core',
+          route: '/data/core',
+          label: () => t('nav.core'),
+          icon: 'data',
+          // subPages nest arbitrarily — this adds a third crumb level under /data/core
+          subPages: [
+            { id: 'data-core-items', route: '/data/core/items', label: () => t('nav.items'), icon: 'data' },
+            { id: 'data-core-archive', route: '/data/core/archive', label: () => t('nav.archive'), icon: 'data' },
+          ],
+        },
         { id: 'data-media', route: '/data/media', label: () => t('nav.media'), icon: 'data' },
       ],
     },
@@ -73,10 +83,12 @@ throws a `ShellConfigError` at import time. Start your first page at a real feat
 route (e.g. `/dashboard`, `/data`).
 
 `label` is a thunk so you can wire `t()` and have it re-evaluate on locale change.
-`renderIcon` is **required**. Optional: `appNameRender`, `pageContainer.defaultMaxWidth`
+`renderIcon` is **required**. Optional config-root fields: `appNameRender`, `pageContainer.defaultMaxWidth`
 (default `'2xl'`), `tabs.variant` (`'underline'` | `'pill'`), `shellPageHeader.border`
 (default `true`) / `.documentTitle`, and `labels` (translated aria-label thunks —
 `home`, `breadcrumb`, `openMenu`, `mainNavigation`, `more`; English fallbacks apply).
+
+Optional per-`PageEntry` fields: `subPages` (nested entries — each becomes a breadcrumb level and a title-dropdown item), `groupBreak: true` (draws a divider above the entry in the sidebar — ignored on the first visible page), and `tabBar: true` (opts the top-level entry into the mobile bottom tab bar — only when `AppShell mobileNav='tabBar'`).
 
 ## Mount the shell
 
@@ -173,13 +185,42 @@ Each layer has one job — don't substitute one for another:
 | Layer | Surface | Use for |
 |---|---|---|
 | `pages` (sidebar / banner) | Persistent sidebar items | Top-level feature areas. |
-| `subPages` | Title dropdown next to the breadcrumb | Sibling pages within a feature (each a route, so the breadcrumb moves). |
+| `subPages` | Each level adds a breadcrumb crumb; a sibling-switcher dropdown appears at the leaf | Hierarchical sub-areas within a feature. Nests arbitrarily deep. |
 | `PageTabs` / `PageSections` | Tab strip below the title | Sub-views of one page. |
 
 The discriminator is the breadcrumb: *should selecting this gain a crumb / a shareable
 URL / a back-button stop?* Yes → a route (`subPages` or a nested route). No → in-page
 (`PageSections`). A list of articles/records is **peer routes**, not `PageSections`
 tabs.
+
+### Multilevel pages (subPages of subPages)
+
+`subPages` is recursive — a sub-page can itself carry `subPages`, creating a 3+ level
+breadcrumb chain. The shell walks the tree on every navigation and builds the chain by
+longest-prefix match at each depth:
+
+```
+🏠  ›  Data  ›  Core  ›  Items ▾
+        link    link    leaf dropdown
+```
+
+- **Non-leaf ancestors** render as clickable links back up the chain.
+- **The leaf** renders as plain text when there is one option at that depth, or as a
+  sibling-switcher dropdown when there are two or more (e.g. switching between
+  `/data/core/items` and `/data/core/archive` without going up a level).
+- **A crumb appears only for registered routes.** Every route that should appear in the
+  chain must be in the config tree (`pages` / `subPages`) or added at runtime via
+  `useDynamicPages`. Unregistered paths fall through to the nearest matching ancestor.
+
+`useDynamicPages` works at any depth — set `parent` to the ancestor route it hangs off:
+
+```tsx
+// Adds: 🏠 › Data › Core › Items › "Invoice #42"
+useDynamicPages({
+  parent: '/data/core/items',
+  items: invoices.map((inv) => ({ id: inv.id, label: inv.name, route: `/data/core/items/${inv.id}` })),
+})
+```
 
 ## Page tabs: route-based vs in-page
 
