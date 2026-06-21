@@ -1536,3 +1536,67 @@
 .mrs-stat-card__cta:hover {
   background: var(--color-primary-hover);
 }
+
+/* Option 1 — plain text link: accent color, no box, underline on hover */
+.mrs-stat-card__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3em;
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 0.85em;
+  font-weight: 600;
+  font-family: inherit;
+  color: var(--mrs-stat-accent, var(--color-primary));
+  cursor: pointer;
+  text-decoration: none;
+  transition: text-decoration 120ms ease;
+}
+.mrs-stat-card__link:hover {
+  text-decoration: underline;
+}
+
+/* Option 2 — ghost chip: transparent bg, accent border + text, faint fill on hover */
+.mrs-stat-card__ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3em;
+  background: transparent;
+  border: 1px solid color-mix(in srgb, var(--mrs-stat-accent, var(--color-primary)) 45%, transparent);
+  border-radius: 2em;
+  padding: 0.38em 0.85em;
+  font-size: 0.8em;
+  font-weight: 600;
+  font-family: inherit;
+  color: var(--mrs-stat-accent, var(--color-primary));
+  cursor: pointer;
+  transition: background-color 150ms ease;
+}
+.mrs-stat-card__ghost:hover {
+  background: color-mix(in srgb, var(--mrs-stat-accent, var(--color-primary)) 10%, transparent);
+}
+
+/* Option 3 — nudge: muted text + accent chevron, no box at all */
+.mrs-stat-card__nudge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35em;
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 0.8em;
+  font-weight: 500;
+  font-family: inherit;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: color 120ms ease;
+}
+.mrs-stat-card__nudge:hover {
+  color: var(--color-text-primary);
+}
+.mrs-stat-card__nudge-arrow {
+  color: var(--mrs-stat-accent, var(--color-primary));
+  font-size: 1.1em;
+  line-height: 1;
+}
