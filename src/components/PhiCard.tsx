@@ -120,6 +120,8 @@ export interface PhiCardProps {
    * dev (lines: sm 1·md 2·lg 3·xl 5 · badges: sm/md 1·lg 2·xl 4).
    */
   footer?: PhiCardFooter
+  /** Draw the inset divider line between the top and footer sections. Default `false`. */
+  divider?: boolean
   /** Size preset — sets the width (height = width / φ) and a base inherited font-size. */
   size?: PhiCardSize
   /** Actions for the built-in top-right ⋮ overflow menu. Ignored when `corner` is set. */
@@ -209,6 +211,7 @@ export function PhiCard({
   iconFill = false,
   lower,
   footer,
+  divider = false,
   size = 'md',
   actions,
   menuIcon,
@@ -343,7 +346,13 @@ export function PhiCard({
     >
       <div className={cn('mrs-phi-card__section', topSectionMod)}>{topContent}</div>
       {hasBottom ? (
-        <div className="mrs-phi-card__section mrs-phi-card__section--lower">
+        <div
+          className={cn(
+            'mrs-phi-card__section',
+            'mrs-phi-card__section--lower',
+            divider && 'mrs-phi-card__section--divider',
+          )}
+        >
           {hasFooter ? footerNode : lower}
         </div>
       ) : null}

@@ -22,6 +22,7 @@ export { Chip, ChipGroup } from './Chip';
 export { Avatar, AvatarGroup } from './Avatar';
 export { Table } from './Table';
 export { PhiCard, PHI } from './PhiCard';
+export { StatCard } from './StatCard';
 export { InputField } from './InputField';
 export { SegmentedControl } from './SegmentedControl';
 export { Select } from './Select';

@@ -68,6 +68,8 @@ export interface PhiCardProps {
      * dev (lines: sm 1·md 2·lg 3·xl 5 · badges: sm/md 1·lg 2·xl 4).
      */
     footer?: PhiCardFooter;
+    /** Draw the inset divider line between the top and footer sections. Default `false`. */
+    divider?: boolean;
     /** Size preset — sets the width (height = width / φ) and a base inherited font-size. */
     size?: PhiCardSize;
     /** Actions for the built-in top-right ⋮ overflow menu. Ignored when `corner` is set. */
@@ -94,4 +96,4 @@ export interface PhiCardProps {
  * the footer (`footer` structured, or `lower` freeform) spreads its rows evenly. The
  * bottom collapses (card shortens) when there's no footer.
  */
-export declare function PhiCard({ upper, content, image, imageAlt, icon, iconFill, lower, footer, size, actions, menuIcon, menuLabel, corner, leftBorderColor, onClick, hoverable, className, }: PhiCardProps): import("react").JSX.Element;
+export declare function PhiCard({ upper, content, image, imageAlt, icon, iconFill, lower, footer, divider, size, actions, menuIcon, menuLabel, corner, leftBorderColor, onClick, hoverable, className, }: PhiCardProps): import("react").JSX.Element;

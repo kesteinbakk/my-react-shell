@@ -249,6 +249,7 @@ import 'my-react-shell/components/styles.css' // REQUIRED (plain prebuilt CSS; a
 | `Avatar`, `AvatarGroup` | component | Image + initials fallback (also on image error); group stacks with `+N` overflow. |
 | `Table` | component | Column-config data table: per-column sort, zebra, sticky header, empty state. |
 | `PhiCard`, `PHI` | component + const | Golden-ratio card (W:H = φ:1): a figure (`icon`/`image`) fills its column, a centered text body (`upper` + `content`), and a structured `footer` (meta lines + stacked badges, per-size caps) or freeform `lower`. Collapses when there's no footer. Top-right ⋮ menu via `actions` or a `corner` slot. Uses the `@radix-ui/react-dropdown-menu` optional peer. |
+| `StatCard` | component | φ-framed KPI/status card (same size system as PhiCard). Title + subtitle, an optional accent badge circle (plain number+label **or** SVG arc-ring when `badge.max` is set), a stats row, and a structured `footer` or freeform `lower`. Accent stripe + badge tint driven by `tone` (semantic tokens) or a raw CSS `color`. Optional emoji `watermark`. Hover-lift via `onClick`/`hoverable`. |
 | `InputField` | component | Full field: label + input + helper + error, a11y-wired (`htmlFor`/`aria-invalid`/`aria-describedby`). Spreads native input props; pass `error` to switch on error styling. |
 | `SegmentedControl` | component | Single-select `radiogroup` on a track; controlled via `value`/`onChange`; generic over value type. |
 | `Select` | component | Opinionated select on Radix Select (keyboard nav, typeahead, portal); `options` list; controlled via `value`/`onValueChange`. |
@@ -259,7 +260,9 @@ Every component has a matching `…Props` type export (e.g. `AlertProps`, `Alert
 `TableProps`, `TableColumn`, `ToastApi`, `ToastOptions`, `ToastTone`, `SelectProps`,
 `SelectOption`, `SegmentedOption`, `BadgeTone`, `AvatarSize`, `ActionType`,
 `ActionPreset`, `ActionButtonVariant`/`Size`/`Layout`, `PhiCardProps`, `PhiCardAction`,
-`PhiCardSize`, `PhiCardFooter`, `PhiCardFooterLine`, `PhiCardFooterLineType`, etc.).
+`PhiCardSize`, `PhiCardFooter`, `PhiCardFooterLine`, `PhiCardFooterLineType`,
+`StatCardProps`, `StatCardBadge`, `StatItem`, `StatCardTone`,
+`StatCardFooter`, `StatCardFooterLine`, `StatCardFooterLineType`, etc.).
 
 ```tsx
 <Alert variant="warning" title="Heads up" onDismiss={() => {}}>Session expires soon.</Alert>
@@ -377,6 +380,53 @@ pass translated labels. The corner never triggers a clickable card's `onClick`.
 // no footer → the card collapses to the top band's height (W/φ²):
 <PhiCard size="md" upper={<MyHeader />} />
 ```
+
+### `StatCard`
+
+φ-framed KPI card — same outer dimensions as `PhiCard` (same `size` system, same W:H = φ:1), with a different internal layout: title + subtitle header, an accent badge circle, a data-stats row, and an optional footer or freeform lower slot. Accent stripe + badge tint are driven by `tone` (semantic tokens) or a raw `color` CSS string.
+
+| Prop | Default | Meaning |
+|---|---|---|
+| `title` | — | Card title. **Required.** |
+| `subtitle` | — | Optional subtitle below the title. |
+| `badge` | — | `{ value, label?, max? }` — the top-right circle. Plain circle (number + label) when `max` is absent; SVG arc-ring showing `value/max` progress when `max` is set. |
+| `tone` | `'neutral'` | `'success'`·`'info'`·`'warning'`·`'danger'`·`'neutral'` — maps to semantic `--color-*` tokens for the accent stripe and badge tint. |
+| `color` | — | Raw CSS color (overrides `tone`). E.g. `'var(--color-primary)'` or `'#7c3aed'`. |
+| `stats` | — | `{ value, label?, max? }[]` — data items. `label` → label above + number below. `max` → compact arc-ring. **Cannot combine `label` and `max` on the same item** (throws in dev). |
+| `footer` | — | `{ lines?, badges? }` — same structured shape as `PhiCard`. Throws if given with `lower`. |
+| `lower` | — | Freeform footer node (e.g. a CTA pill via `.mrs-stat-card__cta`). Throws if given with `footer`. |
+| `watermark` | — | Emoji rendered as a faint oversized background watermark. E.g. `'🏆'`. |
+| `size` | `'md'` | `sm`·`md`·`lg`·`xl` — same widths as `PhiCard`; height = width / φ. |
+| `onClick` | — | Click handler; also enables hover lift. |
+| `hoverable` | `!!onClick` | Hover lift (translateY + shadow). |
+| `className` | — | Extra classes. |
+
+```tsx
+// Plain badge circle:
+<StatCard
+  size="lg" tone="success" title="Vinnere" subtitle="Unike leverandører"
+  badge={{ value: 27, label: 'LEV' }} watermark="🏆"
+  stats={[{ value: 18, label: 'Bredde' }, { value: 14, label: 'Spisset' }]}
+  lower={<button className="mrs-stat-card__cta" onClick={open}>🏆 Vis resultater →</button>}
+  onClick={open}
+/>
+
+// Arc-ring badge (badge.max):
+<StatCard
+  size="lg" tone="warning" title="Leveransemodell"
+  badge={{ value: 10, max: 100 }} watermark="📊"
+  stats={[{ value: 10, label: 'Vurdert' }, { value: 100, label: 'Totalt' }]}
+/>
+
+// Structured footer (same as PhiCard):
+<StatCard size="xl" tone="info" title="Project Atlas"
+  badge={{ value: 12, label: 'TASKS' }}
+  stats={[{ value: 8, label: 'Done' }, { value: 3, label: 'Open' }]}
+  footer={{ lines: [{ type: 'date', text: 'Jun 2026' }], badges: [<Badge tone="success">Live</Badge>] }}
+/>
+```
+
+> **`.mrs-stat-card__cta`** is a pre-styled CTA pill class for the `lower` slot — brand background, rounded, inherits font-size. Style it yourself or use this shortcut.
 
 ### `UserPreferences`
 

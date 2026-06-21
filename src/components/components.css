@@ -1043,13 +1043,13 @@
   padding: 1.1em 1.1em 1.1em 0;
 }
 /* Footer row — horizontal edge padding only; the footer spreads its rows vertically
-   (space-evenly) across the full band, with an inset separator along the top (which
-   only renders when there's a footer, so it auto-hides on a collapsed card). */
+   (space-evenly) across the full band. The inset divider line along the top is opt-in
+   via the `divider` prop (`--divider`); off by default. */
 .mrs-phi-card__section--lower {
   position: relative;
   padding: 0 1.1em;
 }
-.mrs-phi-card__section--lower::before {
+.mrs-phi-card__section--divider::before {
   content: '';
   position: absolute;
   top: 0;
@@ -1226,4 +1226,242 @@
   flex-shrink: 0;
   width: 1rem;
   color: var(--color-text-tertiary);
+}
+
+/* ── StatCard ────────────────────────────────────────────────────────────────
+   KPI / status card sharing the same size-width system as PhiCard (height =
+   width / φ). The accent stripe, badge tint, and watermark are driven by a
+   `--mrs-stat-accent` CSS variable set inline from the `tone` / `color` prop.
+   `--mrs-stat-watermark` stores a quoted CSS string (e.g. `"🏆"`) that the
+   ::after pseudo-element uses as `content`.
+   ───────────────────────────────────────────────────────────────────────── */
+
+.mrs-stat-card {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--color-border-primary);
+  border-radius: 0.5rem;
+  background: var(--color-surface-primary);
+  color: var(--color-text-primary);
+  box-shadow: 0 1px 2px var(--color-shadow-sm);
+  transition: box-shadow 200ms ease, transform 200ms ease;
+}
+
+/* 4 px accent stripe at the top — gradient fades to transparent toward the right */
+.mrs-stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(
+    90deg,
+    var(--mrs-stat-accent, var(--color-primary)),
+    color-mix(in srgb, var(--mrs-stat-accent, var(--color-primary)) 35%, transparent)
+  );
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* Faint oversized emoji watermark behind the card content */
+.mrs-stat-card--watermark::after {
+  content: attr(data-watermark);
+  position: absolute;
+  right: -0.5em;
+  bottom: -0.7em;
+  font-size: 6.5em;
+  line-height: 1;
+  opacity: 0.10;
+  pointer-events: none;
+  transform: rotate(-8deg);
+  z-index: 0;
+  user-select: none;
+}
+
+/* Hover lift — translateY + deeper shadow */
+.mrs-stat-card--hoverable {
+  cursor: pointer;
+}
+.mrs-stat-card--hoverable:hover {
+  box-shadow: 0 10px 26px var(--color-shadow-lg);
+  transform: translateY(-4px);
+}
+.mrs-stat-card--hoverable:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 1px var(--color-focus), 0 10px 26px var(--color-shadow-lg);
+}
+
+/* Inner content — padded flex column, sits above the watermark */
+.mrs-stat-card__inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 1.1em;
+  padding-top: calc(1.1em + 4px); /* compensate for accent stripe */
+  gap: 0.6em;
+  box-sizing: border-box;
+}
+
+/* Header row: title block left, badge right */
+.mrs-stat-card__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75em;
+  flex-shrink: 0;
+}
+
+.mrs-stat-card__head-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2em;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.mrs-stat-card__title {
+  margin: 0;
+  font-size: 1.05em;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--color-text-primary);
+}
+
+.mrs-stat-card__subtitle {
+  margin: 0;
+  font-size: 0.8em;
+  color: var(--color-text-secondary);
+  line-height: 1.3;
+}
+
+/* Badge circle — plain number + label style */
+.mrs-stat-card__badge {
+  flex-shrink: 0;
+  width: 3.75em;
+  height: 3.75em;
+  border-radius: 50%;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.1em;
+  background: color-mix(in srgb, var(--mrs-stat-accent, var(--color-primary)) 22%, var(--color-surface-primary));
+  border: 2px solid color-mix(in srgb, var(--mrs-stat-accent, var(--color-primary)) 55%, transparent);
+  color: var(--color-text-primary);
+}
+
+/* Arc-ring badge variant — transparent bg; the SVG draws its own circle */
+.mrs-stat-card__badge--arc {
+  background: transparent;
+  border: none;
+}
+
+.mrs-stat-card__badge-value {
+  font-size: 1.4em;
+  font-weight: 700;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.mrs-stat-card__badge-label {
+  font-size: 0.4em;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--color-text-secondary);
+  line-height: 1;
+  white-space: nowrap;
+}
+
+/* Arc ring SVG — fills its container (set by badge or stat-arc) */
+.mrs-stat-card__arc {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* Faint track ring (the background circle of the arc) */
+.mrs-stat-card__arc-track {
+  stroke: currentColor;
+  opacity: 0.15;
+}
+
+/* Arc percentage text */
+.mrs-stat-card__arc-text {
+  fill: var(--color-text-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Stats row — flex wrap, each stat is either label+number or a compact arc */
+.mrs-stat-card__stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4em 1.4em;
+  margin: 0;
+  flex: 1 1 auto;
+  align-items: flex-start;
+  align-content: flex-start;
+}
+
+.mrs-stat-card__stat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2em;
+}
+
+/* Arc-ring stat item — sized like the badge but slightly smaller */
+.mrs-stat-card__stat--arc {
+  width: 2.8em;
+  height: 2.8em;
+}
+
+.mrs-stat-card__stat-label {
+  font-size: 0.65em;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-secondary);
+  line-height: 1;
+}
+
+.mrs-stat-card__stat-value {
+  margin: 0;
+  font-size: 1.6em;
+  font-weight: 700;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  color: var(--mrs-stat-accent, var(--color-text-heading));
+}
+
+/* Footer area — pushed to bottom via margin-top: auto */
+.mrs-stat-card__lower {
+  margin-top: auto;
+  flex-shrink: 0;
+}
+
+/* When the lower slot is used (freeform, e.g. a CTA pill), it inherits the
+   footer padding and alignment from the inner container. */
+
+/* CTA pill — a pre-styled action button intended for the `lower` slot.
+   The brand background + rounded pill mirrors the kons-ev crit-open style. */
+.mrs-stat-card__cta {
+  display: inline-block;
+  background: var(--color-primary);
+  color: var(--color-primary-content);
+  border: none;
+  border-radius: 2em;
+  padding: 0.55em 1.1em;
+  font-size: 0.85em;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background-color 150ms ease;
+  white-space: nowrap;
+}
+.mrs-stat-card__cta:hover {
+  background: var(--color-primary-hover);
 }

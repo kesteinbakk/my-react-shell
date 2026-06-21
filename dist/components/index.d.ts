@@ -22,6 +22,8 @@ export { Table } from './Table';
 export type { TableProps, TableColumn } from './Table';
 export { PhiCard, PHI } from './PhiCard';
 export type { PhiCardProps, PhiCardSize, PhiCardAction, PhiCardFooter, PhiCardFooterLine, PhiCardFooterLineType, } from './PhiCard';
+export { StatCard } from './StatCard';
+export type { StatCardProps, StatCardBadge, StatItem, StatCardTone, StatCardFooter, StatCardFooterLine, StatCardFooterLineType, } from './StatCard';
 export { InputField } from './InputField';
 export type { InputFieldProps } from './InputField';
 export { SegmentedControl } from './SegmentedControl';

@@ -64,6 +64,17 @@ export type {
   PhiCardFooterLineType,
 } from './PhiCard'
 
+export { StatCard } from './StatCard'
+export type {
+  StatCardProps,
+  StatCardBadge,
+  StatItem,
+  StatCardTone,
+  StatCardFooter,
+  StatCardFooterLine,
+  StatCardFooterLineType,
+} from './StatCard'
+
 export { InputField } from './InputField'
 export type { InputFieldProps } from './InputField'
 

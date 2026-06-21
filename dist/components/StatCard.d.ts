@@ -1,0 +1,77 @@
+import type { ReactNode } from 'react';
+import type { PhiCardFooter, PhiCardFooterLine, PhiCardFooterLineType, PhiCardSize } from './PhiCard';
+export type { PhiCardFooter as StatCardFooter, PhiCardFooterLine as StatCardFooterLine, PhiCardFooterLineType as StatCardFooterLineType };
+export type StatCardTone = 'success' | 'info' | 'warning' | 'danger' | 'neutral';
+export interface StatCardBadge {
+    /** Primary value shown in the badge circle. */
+    value: number | string;
+    /** Short uppercase label below the value. Omit when `max` is present. */
+    label?: string;
+    /**
+     * When given: renders an SVG arc-ring showing `value / max` progress.
+     * The `label` prop is ignored in arc mode.
+     */
+    max?: number;
+}
+export interface StatItem {
+    value: number | string;
+    /**
+     * Label shown above the number.
+     * **Cannot be combined with `max`** — throws in dev.
+     */
+    label?: string;
+    /**
+     * When given: renders the item as a compact arc-ring.
+     * **Cannot be combined with `label`** — throws in dev.
+     */
+    max?: number;
+}
+export interface StatCardProps {
+    /** Card title. */
+    title: string;
+    /** Optional subtitle shown below the title. */
+    subtitle?: string;
+    /** Circle badge in the top-right corner. */
+    badge?: StatCardBadge;
+    /**
+     * Semantic tone — drives the accent stripe color and badge tint.
+     * Ignored when `color` is set.
+     */
+    tone?: StatCardTone;
+    /** Raw CSS color string for the accent stripe and badge; overrides `tone`. */
+    color?: string;
+    /**
+     * Data stat items displayed below the header.
+     * Each item has a `value` with either a `label` OR a `max` — not both (throws in dev).
+     */
+    stats?: StatItem[];
+    /**
+     * Structured footer (same shape as PhiCard): meta lines on the left, badges on the right.
+     * Throws in dev if given alongside `lower`.
+     */
+    footer?: PhiCardFooter;
+    /**
+     * Freeform footer node — e.g. a CTA pill.
+     * Throws in dev if given alongside `footer`.
+     */
+    lower?: ReactNode;
+    /** Emoji or text rendered as a faint background watermark. E.g. `'🏆'`. */
+    watermark?: string;
+    /** Size preset — same widths as `PhiCard`. Default: `'md'`. */
+    size?: PhiCardSize;
+    /** Click handler; makes the whole card interactive. */
+    onClick?: () => void;
+    /** Hover lift effect. Defaults to `true` when `onClick` is set. */
+    hoverable?: boolean;
+    /** Extra classes on the outer card element. */
+    className?: string;
+}
+/**
+ * Stat card — a φ-framed KPI/status card with a title, an optional accent
+ * badge circle (plain number or arc-ring progress), a row of data stats, and an
+ * optional footer or freeform lower slot. Shares the same size system as PhiCard.
+ *
+ * The accent stripe, badge tint, and watermark are driven by `tone` (mapped to
+ * semantic tokens) or overridden with a raw CSS `color` string.
+ */
+export declare function StatCard({ title, subtitle, badge, tone, color, stats, footer, lower, watermark, size, onClick, hoverable, className, }: StatCardProps): import("react").JSX.Element;
