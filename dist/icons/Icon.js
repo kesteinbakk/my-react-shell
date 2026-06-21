@@ -6,12 +6,12 @@ const EMOJI_STYLE_BASE = {
     alignItems: 'center',
     justifyContent: 'center',
 };
-export function Icon({ icon, emoji, size = 20, label, className }) {
+export function Icon({ icon, emoji, size = 20, label, className, forceIcon = false }) {
     const ctx = useIconModeContextOptional();
     // Label present → announced (role=img); absent → decorative (aria-hidden).
     const role = label !== undefined ? 'img' : undefined;
     const ariaHidden = label === undefined ? true : undefined;
-    if (ctx?.iconMode === 'emoji') {
+    if (!forceIcon && ctx?.iconMode === 'emoji') {
         return (_jsx("span", { className: className, role: role, "aria-label": label, "aria-hidden": ariaHidden, style: { ...EMOJI_STYLE_BASE, fontSize: `${size}px` }, children: emoji }));
     }
     return (_jsx("span", { className: className, role: role, "aria-label": label, "aria-hidden": ariaHidden, style: { display: 'inline-flex' }, children: icon }));

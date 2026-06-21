@@ -23,6 +23,12 @@ export interface IconProps {
   label?: string
   /** Class on the wrapper span (applied in both modes). */
   className?: string
+  /**
+   * Always render the glyph, even when emoji mode is active. For glyphs whose emoji
+   * would misread (a brand mark) or where consistent sizing matters (a spinner).
+   * The per-call counterpart to `createIconRenderer`'s `force` list.
+   */
+  forceIcon?: boolean
 }
 
 const EMOJI_STYLE_BASE: CSSProperties = {
@@ -32,13 +38,13 @@ const EMOJI_STYLE_BASE: CSSProperties = {
   justifyContent: 'center',
 }
 
-export function Icon({ icon, emoji, size = 20, label, className }: IconProps): ReactNode {
+export function Icon({ icon, emoji, size = 20, label, className, forceIcon = false }: IconProps): ReactNode {
   const ctx = useIconModeContextOptional()
   // Label present → announced (role=img); absent → decorative (aria-hidden).
   const role = label !== undefined ? 'img' : undefined
   const ariaHidden = label === undefined ? true : undefined
 
-  if (ctx?.iconMode === 'emoji') {
+  if (!forceIcon && ctx?.iconMode === 'emoji') {
     return (
       <span
         className={className}

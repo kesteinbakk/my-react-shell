@@ -31,7 +31,9 @@ Each module is one capability an app can opt into:
   Ships only the composites that need an opinion; un-opinionated shadcn primitives stay
   consumer-owned. Includes **`UserPreferences`**, a controlled theme/display settings panel.
 - **icons** — the icons↔emojis display-mode seam: a preference (`IconModeProvider` /
-  `useIconMode`) plus a thin `<Icon>` that swaps a glyph for its emoji, at
+  `useIconMode`) plus a thin `<Icon>` that swaps a glyph for its emoji, and an optional
+  `createIconRenderer` that wires a consumer's maps into one `renderIcon` with a
+  compile-time + dev missing-emoji guardrail and a `force` (icon-only) list — at
   `my-react-shell/icons`. No icon registry and no `lucide-react` dep — consumers bring
   their own glyphs.
 

@@ -48,19 +48,54 @@ import { Palette } from 'lucide-react'
 <Icon icon={<Palette size={18} />} emoji="🎨" size={18} label="Theme" />
 ```
 
-**3 — route your icon map through it.** The cleanest place is the one map you already
-keep. With the app-shell, that's `config.renderIcon` — return an `<Icon>` and the whole
-shell (nav, hamburger, breadcrumbs) flips at once:
+**3 — route your icon map through `createIconRenderer`.** The cleanest place is the
+one map you already keep. With the app-shell, that's `config.renderIcon`, and the whole
+shell (nav, hamburger, breadcrumbs) flips at once. Rather than hand-roll the lookup,
+let `createIconRenderer` build the `renderIcon` from a key→glyph map and a key→emoji map
+— it adds the two guardrails a bare `<Icon>` can't (see *Guardrails* below):
 
 ```tsx
-const ICONS = { home: Home, palette: Palette, /* … */ }
-const EMOJIS = { home: '🏠', palette: '🎨', /* … */ }
+import { createIconRenderer, type IconGlyph } from 'my-react-shell/icons'
+import type { LucideIcon } from 'lucide-react'
+import { Home, Palette } from 'lucide-react'
 
-function renderIcon(key: string, size: number) {
-  const Glyph = ICONS[key] ?? Circle
-  return <Icon icon={<Glyph size={size} />} emoji={EMOJIS[key] ?? '●'} size={size} />
-}
+// Glyphs are library-neutral — each key maps to a (size) => node factory. With lucide,
+// the adapter is a one-liner:
+const glyph = (G: LucideIcon): IconGlyph => (size) => <G size={size} />
+
+const ICONS = { home: glyph(Home), palette: glyph(Palette) /* … */ }   // keys infer a union
+const EMOJIS: Record<keyof typeof ICONS, string> = { home: '🏠', palette: '🎨' /* … */ }
+
+export const renderIcon = createIconRenderer(ICONS, EMOJIS)             // → config.renderIcon
 ```
+
+Typing `EMOJIS` as `Record<keyof typeof ICONS, string>` is what makes a forgotten emoji a
+**compile error** instead of a silent `●`. (You can still hand-roll a `renderIcon` with
+the bare `<Icon>` from step 2 if you don't want the helper — it's optional.)
+
+### Guardrails
+
+`createIconRenderer` ports the two things `foundation`'s registry gave you, without a
+registry or a `lucide-react` dependency:
+
+1. **Missing-emoji check, at compile time *and* dev-time.** With the typed `EMOJIS`
+   above, a glyph with no emoji won't compile. For maps built dynamically (where the
+   compiler can't verify coverage), a one-time **dev** `console.warn` lists every glyph
+   key lacking an emoji on first construction — plus any emoji key with no matching glyph
+   (a likely typo). Production builds carry neither check.
+2. **Force a key to stay a glyph** even in emoji mode — for brand marks, spinners, or
+   symbols whose emoji would misread. Pass `force`; those keys also skip the missing-emoji
+   warning (they're icon-only by intent):
+
+   ```tsx
+   createIconRenderer(ICONS, EMOJIS, { force: ['spinner', 'brand'] })
+   ```
+
+   The per-call equivalent is `<Icon forceIcon>` (step 2), which `force` is sugar over.
+
+**Options:** `force` (icon-only keys) · `fallbackEmoji` (default `'●'`, shown for an
+unmapped key in emoji mode) · `fallbackGlyph` (`(size) => node`, shown for a key absent
+from `icons`).
 
 ## API
 
@@ -97,6 +132,22 @@ Feed `iconMode` + `setIconMode` into `<UserPreferences>`.
 | `size` | `20` | Pixel size for the emoji glyph; match your icon's size. |
 | `label` | — | Accessible label. Omit to render decoratively (`aria-hidden`). |
 | `className` | — | Class on the wrapper span (both modes). |
+| `forceIcon` | `false` | Always render the glyph, even in emoji mode (brand marks, spinners). The per-call form of `createIconRenderer`'s `force` list. |
+
+### `createIconRenderer(icons, emojis, options?)`
+
+Builds a `renderIcon(key, size, label?)` from your maps, with the guardrails above. See
+[**Wire it → step 3**](#wire-it) for the full example.
+
+| Arg | Type | Meaning |
+|------|------|---------|
+| `icons` | `Record<K, IconGlyph>` | Key → `(size) => node` glyph factory. Infers the key union `K`. |
+| `emojis` | `Record<K, string>` | Key → emoji. Typed against `icons` — a missing key is a compile error. |
+| `options.force` | `readonly K[]` | Keys that stay glyphs in emoji mode; exempt from the missing-emoji warning. |
+| `options.fallbackEmoji` | `'●'` | Emoji shown for an unmapped key in emoji mode. |
+| `options.fallbackGlyph` | — | `(size) => node` shown for a key absent from `icons`. |
+
+Returns an `IconRenderer` — droppable straight into app-shell's `config.renderIcon`.
 
 ## Pair with `<UserPreferences>`
 

@@ -20,5 +20,11 @@ export interface IconProps {
     label?: string;
     /** Class on the wrapper span (applied in both modes). */
     className?: string;
+    /**
+     * Always render the glyph, even when emoji mode is active. For glyphs whose emoji
+     * would misread (a brand mark) or where consistent sizing matters (a spinner).
+     * The per-call counterpart to `createIconRenderer`'s `force` list.
+     */
+    forceIcon?: boolean;
 }
-export declare function Icon({ icon, emoji, size, label, className }: IconProps): ReactNode;
+export declare function Icon({ icon, emoji, size, label, className, forceIcon }: IconProps): ReactNode;

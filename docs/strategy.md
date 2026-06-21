@@ -180,7 +180,12 @@ ships as a **seam**: the `icons` module (`my-react-shell/icons`) gives
 `IconModeProvider` / `useIconMode` and a thin `<Icon icon emoji>` that swaps a glyph
 for its emoji on the active mode — no baked-in registry, no `lucide-react`
 dependency. Consumers bring their glyphs and route their existing `renderIcon`
-through it. The paired `<UserPreferences>` component (in the kit) is controlled and
+through it. An optional `createIconRenderer(icons, emojis)` builds that `renderIcon`
+from a consumer's maps and ports `foundation`'s two registry guardrails *without* a
+registry: a missing-emoji check (compile-time via key-typed `emojis`, plus a dev
+warning for dynamic maps) and a `force` (icon-only) list — `<Icon>` alone can't do
+this, since it sees one resolved glyph+emoji pair, never the map. The paired
+`<UserPreferences>` component (in the kit) is controlled and
 persistence-agnostic — it reads each value and emits `onChange`, leaving storage to
 the consumer — and stays auth-free, with account actions behind an optional slot.
 

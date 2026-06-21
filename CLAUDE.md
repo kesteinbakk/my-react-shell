@@ -26,8 +26,10 @@ app template. It ships a set of **self-contained modules** an app picks from:
   dev-only missing-translation overlay. Convex- and router-free; bring-your-own
   engine via `resolve`.
 - **icons** — an icons↔emojis display-mode seam (`my-react-shell/icons`): a preference
-  (`IconModeProvider` / `useIconMode`) + a thin `<Icon>` glyph↔emoji swap. No icon
-  registry, no `lucide-react` dep.
+  (`IconModeProvider` / `useIconMode`) + a thin `<Icon>` glyph↔emoji swap, plus an
+  optional `createIconRenderer(icons, emojis)` that wires a consumer's maps into one
+  `renderIcon` with foundation's guardrails — a compile-time + dev missing-emoji check
+  and a `force` (icon-only) list. No icon registry, no `lucide-react` dep.
 
 Each module is **independently importable, self-contained** (never hard-depends on
 another module's runtime), and ships a **contract + a guide** so an app can wire it,

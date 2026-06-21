@@ -418,21 +418,32 @@ A *preference* (render icons or emojis) + a thin `<Icon>` glyph↔emoji swap. **
 registry, no `lucide-react` dep** — you bring the glyphs. **Guide:** [icons.md](../guides/icons.md).
 
 ```ts
-import { IconModeProvider, useIconMode, Icon } from 'my-react-shell/icons'
-import type { IconMode, IconProps, UseIconModeResult, IconModeProviderProps, IconModeContextValue } from 'my-react-shell/icons'
+import { IconModeProvider, useIconMode, Icon, createIconRenderer } from 'my-react-shell/icons'
+import type { IconMode, IconProps, UseIconModeResult, IconModeProviderProps,
+  IconModeContextValue, IconGlyph, IconRenderer, CreateIconRendererOptions } from 'my-react-shell/icons'
 ```
 
 | Export | Kind | Summary |
 |---|---|---|
 | `IconModeProvider` | component | Owns the icon/emoji preference. Uncontrolled (localStorage) or controlled (`value`+`onChange`). `defaultMode` (`'icon'`), `storageKey`. |
 | `useIconMode()` | hook | Returns `{ iconMode, isEmoji, setIconMode, toggleIconMode }`. Throws outside provider. |
-| `Icon` | component | `<Icon icon={<Glyph/>} emoji="🎨" size label />` — shows one or the other per mode. Defaults to `icon` with no provider. |
+| `Icon` | component | `<Icon icon={<Glyph/>} emoji="🎨" size label forceIcon />` — shows one or the other per mode. `forceIcon` always renders the glyph. Defaults to `icon` with no provider. |
+| `createIconRenderer(icons, emojis, options?)` | function | Wires a consumer's key→glyph + key→emoji maps into one `renderIcon(key, size, label?)`. `emojis` is typed against `icons`' keys (a missing emoji is a **compile error**), with a **dev** missing-emoji warning as backstop for dynamic maps. `options.force` = keys that stay glyphs in emoji mode (and skip the warning); `fallbackEmoji` (`'●'`), `fallbackGlyph`. Owns no glyphs / no `lucide-react`. |
 | `IconMode` | type | `'icon' \| 'emoji'`. |
-| `IconProps`, `UseIconModeResult`, `IconModeProviderProps`, `IconModeContextValue` | type | Props / results. |
+| `IconGlyph` | type | `(size: number) => ReactNode` — the library-neutral glyph factory `icons` maps to. |
+| `IconRenderer` | type | `(key: string, size: number, label?: string) => ReactNode` — drop-in for app-shell's `config.renderIcon`. |
+| `IconProps`, `CreateIconRendererOptions`, `UseIconModeResult`, `IconModeProviderProps`, `IconModeContextValue` | type | Props / options / results. |
 
 ```tsx
 <IconModeProvider><App /></IconModeProvider>
-// route your icon map through <Icon> (e.g. app-shell's renderIcon) so the whole UI flips at once.
+
+// One renderIcon from your maps — drop into config.renderIcon so the whole UI flips at once.
+import type { LucideIcon } from 'lucide-react'
+import { Home, Palette } from 'lucide-react'
+const glyph = (G: LucideIcon): IconGlyph => (size) => <G size={size} />     // lucide adapter (one-liner)
+const ICONS = { home: glyph(Home), palette: glyph(Palette) }               // keys infer a union
+const EMOJIS: Record<keyof typeof ICONS, string> = { home: '🏠', palette: '🎨' }  // missing key → compile error
+export const renderIcon = createIconRenderer(ICONS, EMOJIS)
 ```
 
 ---
