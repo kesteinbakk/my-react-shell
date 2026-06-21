@@ -94,18 +94,21 @@ export function findActiveChain(
   dynamicByParent: Record<string, PageEntry[]>,
 ): ChainLevel[] {
   const chain: ChainLevel[] = []
-  let candidates = roots
+  let pool = roots
   // The parent route whose dynamic children merge into the next level. '' keys
   // the top-level dynamic registrations (parent is the shell root).
   let parentKey = ''
 
-  while (candidates.length > 0) {
-    const dynamic = dynamicByParent[parentKey] ?? []
-    const pool = dynamic.length > 0 ? [...candidates, ...dynamic] : candidates
+  while (true) {
+    const dynamicHere = dynamicByParent[parentKey] ?? []
+    const merged = [...pool, ...dynamicHere]
 
     let best: PageEntry | undefined
-    for (const entry of pool) {
-      if (pathname === entry.route || pathname.startsWith(entry.route + '/')) {
+    for (const entry of merged) {
+      if (
+        pathname === entry.route ||
+        (entry.route !== '/' && pathname.startsWith(entry.route + '/'))
+      ) {
         if (best === undefined || entry.route.length > best.route.length) {
           best = entry
         }
@@ -113,9 +116,10 @@ export function findActiveChain(
     }
     if (best === undefined) break
 
-    chain.push({ entry: best, siblings: pool })
-    candidates = best.subPages ?? []
+    chain.push({ entry: best, siblings: merged })
     parentKey = best.route
+    pool = best.subPages ?? []
+    if (pool.length === 0 && !(parentKey in dynamicByParent)) break
   }
 
   return chain
@@ -151,15 +155,20 @@ export function ShellPageHeaderUI(props: ShellPageHeaderUIProps): ReactNode {
 
   // DEV warning when the route resolves to no registered leaf: the breadcrumb
   // can only show ancestors, never this page. Surfaced once per resolution.
+  // Exempt: dynamic parents (the child is transient/data-driven, not a config
+  // bug) and the site root (a chrome-only header at "/" is the correct pattern
+  // since registering "/" as a page now throws).
   useEffect(() => {
     if (!import.meta.env.DEV) return
     if (leafMatchesPath) return
+    if (leaf && leaf.entry.route in shell.dynamicPages) return
+    if (!leaf && pathname === '/') return
     const ancestor = leaf ? leaf.entry.route : '(none)'
     console.warn(
       `[AppShell] No registered page for "${pathname}" (nearest ancestor: ${ancestor}). ` +
         'Register it in shell config `pages` or via useDynamicPages.',
     )
-  }, [pathname, leafMatchesPath, leaf])
+  }, [pathname, leafMatchesPath, leaf, shell.dynamicPages])
 
   const border = config.shellPageHeader?.border ?? true
   // The band exists only to host the mobile hamburger when there is nothing

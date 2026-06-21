@@ -1,6 +1,6 @@
 # T009 — dynamic-leaf breadcrumb parity (app-shell port regression)
 
-- **Status:** planning
+- **Status:** finished
 - **Filed:** 2026-06-21
 - **Working branch:** `main` (no worktree — single-file edit in `src/app-shell/ShellPageHeader.tsx` + rebuild, no parallel mutation)
 - **Origin:** discovered while building the nested-pages demo page in `my-react-shell-demo`; T003 (app-shell module) is the code being corrected. `src/app-shell/ShellPageHeader.tsx` (the file holding both bugs) is unchanged since 2026-06-17 (`111c10b`).
