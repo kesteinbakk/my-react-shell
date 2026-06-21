@@ -1,6 +1,8 @@
 import type { CSSProperties, ReactNode } from 'react'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 import { cn } from './cn'
+import { resolveAccentColor } from './accent'
+import type { AccentPlacement, AccentTone } from './accent'
 
 // Declared locally (browser-only lib, no @types/node). `process.env.NODE_ENV` is
 // replaced by the consumer's bundler, so the dev guards below are stripped in prod.
@@ -132,8 +134,16 @@ export interface PhiCardProps {
   menuLabel?: string
   /** Bring-your-own top-right node; replaces the built-in `actions` menu. */
   corner?: ReactNode
-  /** Color for a 3px left accent border. Pass any CSS color string. */
-  leftBorderColor?: string
+  /**
+   * Semantic accent hue, shown as a stripe (see `accentPlacement`). Opt-in — no
+   * accent when unset. One of `primary`·`info`·`success`·`warning`·`danger`·`neutral`.
+   * `color` overrides it.
+   */
+  tone?: AccentTone
+  /** Raw CSS color for the accent stripe; overrides `tone`. E.g. `'#7c3aed'`. */
+  color?: string
+  /** Where the accent reads: a `'top'` stripe (default) or a `'left'` bar. */
+  accentPlacement?: AccentPlacement
   /** Click handler for the whole card. The corner area never triggers it. */
   onClick?: () => void
   /** Hover affordance. Defaults to `true` when `onClick` is set. */
@@ -217,11 +227,14 @@ export function PhiCard({
   menuIcon,
   menuLabel = 'Actions',
   corner,
-  leftBorderColor,
+  tone,
+  color,
+  accentPlacement = 'top',
   onClick,
   hoverable,
   className,
 }: PhiCardProps) {
+  const accent = resolveAccentColor(tone, color)
   const width = SIZE_WIDTH_PX[size]
   const hasIcon = !isEmpty(icon)
   const hasBody = !isEmpty(upper) || !isEmpty(content)
@@ -326,12 +339,12 @@ export function PhiCard({
       <PhiCardMenu actions={actions} icon={menuIcon} label={menuLabel} />
     ) : null)
 
-  const style: CSSProperties = {
+  const style = {
     width: `${width}px`,
     height: `${height}px`,
     fontSize: `${SIZE_FONT_REM[size]}rem`,
-    ...(leftBorderColor ? { borderLeft: `3px solid ${leftBorderColor}` } : {}),
-  }
+    ...(accent != null ? { '--mrs-phi-accent': accent } : {}),
+  } as unknown as CSSProperties
 
   return (
     <div
@@ -339,6 +352,8 @@ export function PhiCard({
         'mrs-phi-card',
         !hasBottom && 'mrs-phi-card--single',
         isHoverable && 'mrs-phi-card--hoverable',
+        accent != null && 'mrs-phi-card--accent',
+        accent != null && `mrs-phi-card--accent-${accentPlacement}`,
         className,
       )}
       style={style}

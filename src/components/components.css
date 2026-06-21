@@ -9,6 +9,19 @@
  * Every rule tracks the active theme + mode through the tokens.
  */
 
+/* ── Elevation (kit-local) ───────────────────────────────────────────────────
+   Box-shadow GEOMETRY lives here in the kit, not in the shared `themes` token
+   contract (strategy: kit-local first, promote on rule-of-two). The SHADE is the
+   palette's `--color-shadow-*` token, so each elevation tracks palette + mode
+   automatically — dark shadows are far deeper, so a card reads as a lifted layer
+   instead of sitting flat on the page. Two rungs: a soft default lift for cards,
+   a stronger ambient for floating chrome (popovers, dialogs, toasts). */
+:root {
+  --mrs-elevation-card: 0 1px 2px var(--color-shadow-sm), 0 8px 24px var(--color-shadow-md);
+  --mrs-elevation-card-hover: 0 2px 6px var(--color-shadow-md), 0 14px 32px var(--color-shadow-lg);
+  --mrs-elevation-popover: 0 4px 12px var(--color-shadow-md), 0 18px 44px var(--color-shadow-lg);
+}
+
 /* ── Alert ───────────────────────────────────────────────────────────────── */
 .mrs-alert {
   display: flex;
@@ -227,7 +240,7 @@
   border-radius: 0.75rem;
   background: var(--color-surface-elevated);
   color: var(--color-text-primary);
-  box-shadow: 0 10px 30px var(--color-shadow-lg);
+  box-shadow: var(--mrs-elevation-popover);
 }
 .mrs-dialog__title {
   font-size: 1.0625rem;
@@ -301,7 +314,7 @@
 .mrs-toast {
   pointer-events: auto;
   border-radius: 0.5rem;
-  box-shadow: 0 8px 24px var(--color-shadow-md);
+  box-shadow: var(--mrs-elevation-popover);
 }
 
 /* ── Badge ───────────────────────────────────────────────────────────────── */
@@ -455,7 +468,7 @@
   margin-left: 0;
 }
 .mrs-avatar-group__more {
-  background: var(--color-surface-elevated);
+  background: var(--color-surface-secondary);
   color: var(--color-text-tertiary);
   font-size: 0.75rem;
 }
@@ -560,7 +573,7 @@
   border-radius: 0.75rem;
   background: var(--color-surface-elevated);
   color: var(--color-text-primary);
-  box-shadow: 0 10px 30px var(--color-shadow-lg);
+  box-shadow: var(--mrs-elevation-popover);
 }
 .mrs-prefs__header {
   display: flex;
@@ -732,7 +745,9 @@
   padding: 0.1875rem;
   border: 1px solid var(--color-border-primary);
   border-radius: 0.5rem;
-  background: var(--color-surface-tertiary);
+  /* The track is a recessed well (surface-secondary); the active item lifts to
+     surface-primary above it. */
+  background: var(--color-surface-secondary);
 }
 .mrs-segmented__item {
   display: inline-flex;
@@ -809,7 +824,7 @@
   border: 1px solid var(--color-border-primary);
   border-radius: 0.5rem;
   background: var(--color-surface-elevated);
-  box-shadow: 0 8px 24px var(--color-shadow-lg);
+  box-shadow: var(--mrs-elevation-popover);
   z-index: 60;
 }
 .mrs-select__viewport {
@@ -1012,7 +1027,7 @@
   border-radius: 0.5rem;
   background: var(--color-surface-primary);
   color: var(--color-text-primary);
-  box-shadow: 0 1px 2px var(--color-shadow-sm);
+  box-shadow: var(--mrs-elevation-card);
   transition: box-shadow 200ms ease;
 }
 .mrs-phi-card--single {
@@ -1022,7 +1037,41 @@
   cursor: pointer;
 }
 .mrs-phi-card--hoverable:hover {
-  box-shadow: 0 4px 12px var(--color-shadow-md);
+  box-shadow: var(--mrs-elevation-card-hover);
+}
+
+/* Optional accent stripe (opt-in via `tone`/`color`) — a 4px bar along the top
+   edge (default) or the left edge, per the `accentPlacement` modifier. The stripe
+   is an absolute `::before`, so it paints over full-bleed section content but
+   stays below the z-index:1 corner; colour comes from `--mrs-phi-accent` (inline).
+   No z-index needed — an absolute pseudo paints above the in-flow figure/image. */
+.mrs-phi-card--accent-top::before,
+.mrs-phi-card--accent-left::before {
+  content: '';
+  position: absolute;
+  pointer-events: none;
+}
+.mrs-phi-card--accent-top::before {
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(
+    90deg,
+    var(--mrs-phi-accent, var(--color-primary)),
+    color-mix(in srgb, var(--mrs-phi-accent, var(--color-primary)) 35%, transparent)
+  );
+}
+.mrs-phi-card--accent-left::before {
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 4px;
+  background: linear-gradient(
+    180deg,
+    var(--mrs-phi-accent, var(--color-primary)),
+    color-mix(in srgb, var(--mrs-phi-accent, var(--color-primary)) 35%, transparent)
+  );
 }
 
 /* Section — one grid row; a single cell that stretches its child to fill. `image` is
@@ -1193,7 +1242,7 @@
   border: 1px solid var(--color-border-primary);
   border-radius: 0.5rem;
   background: var(--color-surface-elevated);
-  box-shadow: 0 8px 24px var(--color-shadow-lg);
+  box-shadow: var(--mrs-elevation-popover);
   z-index: 60;
 }
 .mrs-phi-card__menu-item {
@@ -1243,14 +1292,21 @@
   border-radius: 0.5rem;
   background: var(--color-surface-primary);
   color: var(--color-text-primary);
-  box-shadow: 0 1px 2px var(--color-shadow-sm);
+  box-shadow: var(--mrs-elevation-card);
   transition: box-shadow 200ms ease, transform 200ms ease;
 }
 
-/* 4 px accent stripe at the top — gradient fades to transparent toward the right */
-.mrs-stat-card::before {
+/* 4px accent stripe — along the top edge (default) or the left edge, per the
+   `accentPlacement` modifier class. The gradient fades to transparent away from
+   the origin edge; colour comes from `--mrs-stat-accent` (set inline). */
+.mrs-stat-card--accent-top::before,
+.mrs-stat-card--accent-left::before {
   content: '';
   position: absolute;
+  z-index: 2;
+  pointer-events: none;
+}
+.mrs-stat-card--accent-top::before {
   top: 0;
   left: 0;
   right: 0;
@@ -1260,8 +1316,17 @@
     var(--mrs-stat-accent, var(--color-primary)),
     color-mix(in srgb, var(--mrs-stat-accent, var(--color-primary)) 35%, transparent)
   );
-  z-index: 2;
-  pointer-events: none;
+}
+.mrs-stat-card--accent-left::before {
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 4px;
+  background: linear-gradient(
+    180deg,
+    var(--mrs-stat-accent, var(--color-primary)),
+    color-mix(in srgb, var(--mrs-stat-accent, var(--color-primary)) 35%, transparent)
+  );
 }
 
 /* Faint oversized emoji watermark behind the card content */
@@ -1284,13 +1349,13 @@
   cursor: pointer;
 }
 .mrs-stat-card--hoverable:hover {
-  box-shadow: 0 10px 26px var(--color-shadow-lg);
+  box-shadow: var(--mrs-elevation-card-hover);
   transform: translateY(-4px);
 }
 .mrs-stat-card--hoverable:focus-visible {
   outline: 2px solid var(--color-focus);
   outline-offset: 2px;
-  box-shadow: 0 0 0 1px var(--color-focus), 0 10px 26px var(--color-shadow-lg);
+  box-shadow: 0 0 0 1px var(--color-focus), var(--mrs-elevation-card-hover);
 }
 
 /* Inner content — padded flex column, sits above the watermark */
@@ -1301,9 +1366,15 @@
   flex-direction: column;
   height: 100%;
   padding: 1.1em;
-  padding-top: calc(1.1em + 4px); /* compensate for accent stripe */
   gap: 0.6em;
   box-sizing: border-box;
+}
+/* Nudge content off the 4px accent stripe, on whichever edge it sits. */
+.mrs-stat-card--accent-top .mrs-stat-card__inner {
+  padding-top: calc(1.1em + 4px);
+}
+.mrs-stat-card--accent-left .mrs-stat-card__inner {
+  padding-left: calc(1.1em + 4px);
 }
 
 /* Header row: title block left, badge right */

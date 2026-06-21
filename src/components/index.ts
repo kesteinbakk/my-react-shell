@@ -8,8 +8,8 @@
 // pieces that need an opinion. Ship the stylesheet too:
 //   import 'my-react-shell/components/styles.css'
 // `class-variance-authority`, `clsx`, and `tailwind-merge` are optional peers behind
-// this sub-path, so the package barrel stays the theme core. See
-// docs/guides/component-kit.md.
+// this sub-path, so the package barrel stays the theme core. The kit's canonical
+// doc is docs/specifications/api-reference.md (it ships no separate guide).
 
 export { Alert } from './Alert'
 export type { AlertProps, AlertVariant } from './Alert'

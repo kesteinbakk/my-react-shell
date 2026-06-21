@@ -29,6 +29,29 @@ required step beyond mounting the provider is importing `my-react-shell/styles.c
 which carries the token contract and every palette's `.theme-<name>-{light,dark}`
 class. Without it the applied classes have no backing CSS.
 
+## The surface ladder
+
+Beyond the palette and mode, components render against a small ladder of **surface**
+tokens — semantic layers of depth, from the page canvas up to floating chrome. Reach
+for a rung by its **role**, not by how light or dark it happens to look in one palette:
+
+| Token | Role |
+|---|---|
+| `--color-background-primary` | The page canvas — the lowest layer everything sits on. |
+| `--color-surface-primary` | The default card / panel surface (the kit cards render here). |
+| `--color-surface-elevated` | Floating chrome that lifts above the page — popovers, dropdowns, dialogs, toasts. |
+| `--color-surface-secondary` | A muted inset within a card — table headers, input/control wells, neutral notes. |
+| `--color-surface-tertiary` | An accent / filled-chip surface — neutral badges, avatars, hover fills. |
+
+(`--color-background-secondary` is a second, subtly distinct canvas zone — a rail or a
+banded region — alongside the primary background.) Depth is reinforced with
+**elevation**: a box-shadow whose *shade* is the palette's `--color-shadow-{sm,md,lg,xl}`
+token, so the same geometry deepens automatically in dark mode. The
+`my-react-shell/components` kit applies both for you (its per-component surface roles are
+listed in the [API reference](../specifications/api-reference.md#surfaces--elevation)); a
+consumer composing its own surfaces should follow the same role mapping so cards, menus,
+and wells read consistently across every palette.
+
 ## Wire it
 
 ```tsx

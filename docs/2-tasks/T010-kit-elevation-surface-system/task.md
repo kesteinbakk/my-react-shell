@@ -1,6 +1,6 @@
 # T010 — kit elevation & surface discipline
 
-Status: planning
+Status: in-progress
 
 ## Summary
 
@@ -64,14 +64,32 @@ the component half.)
 - Adding/removing/renaming `--color-*` tokens, **unless** Decision D below adds an
   elevation token; a pure value/geometry change needs no registry edits.
 
-## Decisions (open)
+## Decisions (resolved)
 
-- **D-A** Elevation as a shared `themes` token vs kit-local CSS. Token = shared
-  with the Solid foundation (consistent elevation across both); kit-local = no
-  ripple, but each ecosystem re-derives it. Lean: kit-local first, promote on
-  rule-of-two.
-- **D-B** Accent API shape on the cards (`accent="info" | "success" | …` semantic
-  key vs a free colour vs a stripe/left-border variant).
+- **D-A → kit-local.** Elevation geometry lives in the kit as `--mrs-elevation-{card,
+  card-hover,popover}` CSS vars in `components.css`, composed over the palette's
+  existing `--color-shadow-*` shade (so depth tracks mode automatically). No edit to
+  the shared `themes` contract and no ripple to the Solid foundation — promote on
+  rule-of-two if a second ecosystem needs shared elevation. (Per the recorded lean +
+  the rule-of-two principle.)
+- **D-B → unified `tone` + `color` + `accentPlacement` on both cards.** Each card
+  takes a semantic `tone` (`primary·info·success·warning·danger·neutral`), a raw
+  `color` override, and `accentPlacement: 'top' | 'left'` (default `'top'`). StatCard
+  keeps its existing `tone`/`color` names (non-breaking — it only gains `accentPlacement`
+  and a `primary` tone); PhiCard gains all three, and its redundant `leftBorderColor`
+  is **removed** and folded into `color` + `accentPlacement="left"` (used in exactly
+  one demo site, migrated; no other consumer used it). Shared vocabulary lives in
+  `src/components/accent.ts`.
+
+## Doc placement note
+
+The plan named `docs/guides/component-kit.md` for the surface-ladder writeup, but the
+`components` module ships **no guide** by standing decision (concept.md / strategy.md:
+the API reference is its canonical doc). So the ladder semantics live in
+`docs/guides/theme.md` (**The surface ladder**) and the per-component surface roles +
+elevation note live in `docs/specifications/api-reference.md` (**Surfaces & elevation**),
+cross-linked. A stale `component-kit.md` reference in `src/components/index.ts` was
+corrected to point at the API reference.
 
 ## Verification
 

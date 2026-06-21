@@ -249,7 +249,7 @@ import 'my-react-shell/components/styles.css' // REQUIRED (plain prebuilt CSS; a
 | `Avatar`, `AvatarGroup` | component | Image + initials fallback (also on image error); group stacks with `+N` overflow. |
 | `Table` | component | Column-config data table: per-column sort, zebra, sticky header, empty state. |
 | `PhiCard`, `PHI` | component + const | Golden-ratio card (W:H = φ:1): a figure (`icon`/`image`) fills its column, a centered text body (`upper` + `content`), and a structured `footer` (meta lines + stacked badges, per-size caps) or freeform `lower`. Collapses when there's no footer. Top-right ⋮ menu via `actions` or a `corner` slot. Uses the `@radix-ui/react-dropdown-menu` optional peer. |
-| `StatCard` | component | φ-framed KPI/status card (same size system as PhiCard). Title + subtitle, an optional accent badge circle (plain number+label **or** SVG arc-ring when `badge.max` is set), a stats row, and a structured `footer` or freeform `lower`. Accent stripe + badge tint driven by `tone` (semantic tokens) or a raw CSS `color`. Optional emoji `watermark`. Hover-lift via `onClick`/`hoverable`. |
+| `StatCard` | component | φ-framed KPI/status card (same size system as PhiCard). Title + subtitle, an optional accent badge circle (plain number+label **or** SVG arc-ring when `badge.max` is set), a stats row, and a structured `footer` or freeform `lower`. Accent stripe (`accentPlacement` top/left) + badge tint driven by `tone` (semantic tokens) or a raw CSS `color`. Optional emoji `watermark`. Hover-lift via `onClick`/`hoverable`. |
 | `InputField` | component | Full field: label + input + helper + error, a11y-wired (`htmlFor`/`aria-invalid`/`aria-describedby`). Spreads native input props; pass `error` to switch on error styling. |
 | `SegmentedControl` | component | Single-select `radiogroup` on a track; controlled via `value`/`onChange`; generic over value type. |
 | `Select` | component | Opinionated select on Radix Select (keyboard nav, typeahead, portal); `options` list; controlled via `value`/`onValueChange`. |
@@ -320,6 +320,25 @@ preset, pass a custom `icon` node (a lucide icon or an `<Icon>` from `my-react-s
 </ActionButtonGroup>
 ```
 
+### Surfaces & elevation
+
+Kit components render on the semantic surface ladder (full definition in the
+[theme guide](../guides/theme.md#the-surface-ladder)); each role maps to one token:
+
+- **`surface-primary`** — the default card / panel fill: `PhiCard`, `StatCard`, the
+  `InputField` / `Select` field, the active `SegmentedControl` item.
+- **`surface-elevated`** — floating chrome that lifts off the page: `ConfirmDialog`,
+  `UserPreferences`, the `Select` menu, the `PhiCard` overflow menu.
+- **`surface-secondary`** — muted inset regions: `InfoBox` / neutral `Alert`, `Chip`,
+  the `Table` header + zebra rows, the `SegmentedControl` track.
+- **`surface-tertiary`** — accent / filled-chip surfaces: neutral `Badge`, `Avatar`.
+
+Cards and floating chrome also carry a real **elevation** — kit-local box-shadow
+geometry over the palette's `--color-shadow-*` shade, so depth tracks light/dark and
+a card reads as a lifted layer instead of sitting flat. A soft lift for cards
+(deeper on hover) and a stronger ambient for floating chrome (dialogs, menus,
+toasts). The geometry is kit-internal (`--mrs-elevation-*`), not a public token.
+
 ### `PhiCard`
 
 A golden-ratio card: outer **W:H = φ:1**, the two sections split **φ:1**. The card owns its
@@ -359,7 +378,9 @@ pass translated labels. The corner never triggers a clickable card's `onClick`.
 | `menuIcon` | ⋮ | Override the menu trigger glyph. |
 | `menuLabel` | `'Actions'` | Accessible name for the menu trigger. |
 | `corner` | — | Bring-your-own top-right node (replaces the `actions` menu). |
-| `leftBorderColor` | — | 3px left accent border in this CSS color. |
+| `tone` | — | Semantic accent hue → a stripe (see `accentPlacement`). **Opt-in** — no accent when unset. `primary`·`info`·`success`·`warning`·`danger`·`neutral`. `color` overrides it. |
+| `color` | — | Raw CSS color for the accent stripe; overrides `tone`. E.g. `'#7c3aed'` or `'var(--color-primary)'`. |
+| `accentPlacement` | `'top'` | Where the accent reads: a `'top'` stripe or a `'left'` bar. |
 | `onClick` | — | Click handler for the whole card; the corner never fires it. |
 | `hoverable` | `!!onClick` | Hover lift (shadow + pointer). |
 | `className` | — | Extra classes on the outer card. |
@@ -390,8 +411,9 @@ pass translated labels. The corner never triggers a clickable card's `onClick`.
 | `title` | — | Card title. **Required.** |
 | `subtitle` | — | Optional subtitle below the title. |
 | `badge` | — | `{ value, label?, max? }` — the top-right circle. Plain circle (number + label) when `max` is absent; SVG arc-ring showing `value/max` progress when `max` is set. |
-| `tone` | `'neutral'` | `'success'`·`'info'`·`'warning'`·`'danger'`·`'neutral'` — maps to semantic `--color-*` tokens for the accent stripe and badge tint. |
+| `tone` | `'neutral'` | `'primary'`·`'info'`·`'success'`·`'warning'`·`'danger'`·`'neutral'` — maps to semantic `--color-*` tokens for the accent stripe and badge tint. |
 | `color` | — | Raw CSS color (overrides `tone`). E.g. `'var(--color-primary)'` or `'#7c3aed'`. |
+| `accentPlacement` | `'top'` | Where the accent reads: a `'top'` stripe or a `'left'` bar. |
 | `stats` | — | `{ value, label?, max? }[]` — data items. `label` → label above + number below. `max` → compact arc-ring. **Cannot combine `label` and `max` on the same item** (throws in dev). |
 | `footer` | — | `{ lines?, badges? }` — same structured shape as `PhiCard`. Throws if given with `lower`. |
 | `lower` | — | Freeform footer node (e.g. a CTA pill via `.mrs-stat-card__cta`). Throws if given with `footer`. |
