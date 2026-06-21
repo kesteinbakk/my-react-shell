@@ -27,6 +27,10 @@ function validatePageEntry(entry, parentRoute, seenIds, seenRoutes) {
     if (typeof entry.route !== 'string' || !entry.route.startsWith('/')) {
         throw new ShellConfigError(`page "${entry.id}" needs a \`route\` starting with "/".`);
     }
+    if (parentRoute === null && entry.route === '/') {
+        throw new ShellConfigError(`page "${entry.id}" uses route "/" which is reserved for home. ` +
+            'Remove it from `pages` — home is always reachable via the brand link and the breadcrumb house icon.');
+    }
     const routeOwner = seenRoutes.get(entry.route);
     if (routeOwner !== undefined) {
         throw new ShellConfigError(`duplicate route "${entry.route}" (already declared by page "${routeOwner}").`);

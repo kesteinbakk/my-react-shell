@@ -51,7 +51,6 @@ export const shellConfig = defineShellConfig({
     return <Icon size={size} />
   },
   pages: [
-    { id: 'home', route: '/', label: () => t('nav.home'), icon: 'home' },
     {
       id: 'data',
       route: '/data',
@@ -67,6 +66,11 @@ export const shellConfig = defineShellConfig({
   ],
 })
 ```
+
+**`route: '/'` is reserved.** The home route is never a page entry — it is always
+reachable via the brand link and the breadcrumb house icon, and adding it to `pages`
+throws a `ShellConfigError` at import time. Start your first page at a real feature
+route (e.g. `/dashboard`, `/data`).
 
 `label` is a thunk so you can wire `t()` and have it re-evaluate on locale change.
 `renderIcon` is **required**. Optional: `appNameRender`, `pageContainer.defaultMaxWidth`

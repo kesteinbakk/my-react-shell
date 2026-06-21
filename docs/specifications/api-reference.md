@@ -475,11 +475,16 @@ import 'my-react-shell/app-shell/styles.css'
 export const shellConfig = defineShellConfig({
   appName: 'Acme',
   renderIcon: (key, size) => { const I = icons[key] ?? Home; return <I size={size} /> }, // REQUIRED
-  pages: [{ id: 'home', route: '/', label: () => t('nav.home'), icon: 'home' }],
+  pages: [{ id: 'dashboard', route: '/dashboard', label: () => t('nav.dashboard'), icon: 'dashboard' }],
 })
 <AppShell config={shellConfig} useMenu actions={[() => <ThemeToggle/>]} mobileNav="drawer"><Outlet/></AppShell>
 ```
 
+> **`route: '/'` is reserved.** Never put `/` in `pages` — `defineShellConfig` throws
+> `ShellConfigError` if you do. Home is always reachable via the brand link and the
+> breadcrumb house icon; it never appears as a named sidebar entry or breadcrumb level.
+> Start your first page at a real feature route (e.g. `/dashboard`, `/data`).
+>
 > **Three navigation layers, each one job:** `pages` (sidebar/banner) → top-level
 > areas · `subPages` (title dropdown, each a route) → siblings within a feature ·
 > `PageTabs`/`PageSections` → sub-views of one page. **Breadcrumbs are a pure

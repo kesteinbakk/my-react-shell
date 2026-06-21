@@ -43,10 +43,12 @@ Every module is shaped to hold these — the goal restated at module scale:
 - **Reuse drives new modules.** A capability becomes a module on the rule of two —
   the second app that needs it — and reaches every app on the next version bump.
 - **One API reference, guides for depth.** The single `docs/specifications/api-reference.md`
-  is the authority for every export and its usage — kept in lockstep with the code (and
-  mirrored to the consumer-facing `my-react-shell` skill). A module additionally ships a
-  `docs/guides/<module>.md` for the *why* + deeper contract when there's more to say than
-  the reference carries; one whose guide would only restate the reference ships none.
+  is the authority for every export and its usage — kept in lockstep with the code. It is
+  the only copy: it **ships inside the package** (`package.json` → `files`), so consumers
+  get the version-matched reference on a tag bump and the `my-react-shell` skill points
+  consumer agents at it. A module additionally ships a `docs/guides/<module>.md` for the
+  *why* + deeper contract when there's more to say than the reference carries; one whose
+  guide would only restate the reference ships none.
 
 ## Standing decisions
 

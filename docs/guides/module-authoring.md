@@ -111,11 +111,12 @@ and the library build (`tsc -p tsconfig.lib.json`) compile:
    (like i18n) needs no peer change.
 5. **Document it in the API reference** (`docs/specifications/api-reference.md`) — a
    section with every export, signatures, and minimal usage. This is **mandatory** and
-   kept in lockstep with the code; mirror the change into the `my-react-shell` skill's
-   bundled `api-reference.md` so consumer agents get it. **Ship a
-   `docs/guides/<module>.md` too** only when there's a *why* / contract / bring-your-own
-   story beyond the reference (as `auth`, `i18n`, `theme`, `app-shell` have); skip it
-   when a guide would only restate the reference (as `components` does).
+   kept in lockstep with the code. It is the single copy and **ships inside the package**
+   (`package.json` → `files`), so consumer agents read it from
+   `node_modules/my-react-shell/…` via the `my-react-shell` skill — no mirror to maintain.
+   **Ship a `docs/guides/<module>.md` too** only when there's a *why* / contract /
+   bring-your-own story beyond the reference (as `auth`, `i18n`, `theme`, `app-shell`
+   have); skip it when a guide would only restate the reference (as `components` does).
 6. **Contribute it back (rule of two).** A capability becomes a module when a second
    app needs it. Once landed, every app picks it up on the next version bump.
 
