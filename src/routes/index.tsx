@@ -40,7 +40,7 @@ function ThemeSmokeTest() {
                 title={t.description}
                 className="rounded-md px-3 py-1.5 text-sm font-medium transition-colors"
                 style={{
-                  backgroundColor: active ? 'var(--color-primary)' : 'var(--color-surface-tertiary)',
+                  backgroundColor: active ? 'var(--color-primary)' : 'var(--color-surface-sunken-deep)',
                   color: active ? 'var(--color-primary-content)' : 'var(--color-text-primary)',
                   border: '1px solid var(--color-border-primary)',
                 }}
@@ -59,7 +59,7 @@ function ThemeSmokeTest() {
           onClick={toggleMode}
           className="rounded-md px-3 py-1.5 text-sm font-medium"
           style={{
-            backgroundColor: 'var(--color-surface-tertiary)',
+            backgroundColor: 'var(--color-surface-sunken-deep)',
             color: 'var(--color-text-primary)',
             border: '1px solid var(--color-border-primary)',
           }}
@@ -71,7 +71,7 @@ function ThemeSmokeTest() {
           onClick={() => setSystemMode(!isSystemMode)}
           className="rounded-md px-3 py-1.5 text-sm font-medium"
           style={{
-            backgroundColor: isSystemMode ? 'var(--color-primary)' : 'var(--color-surface-tertiary)',
+            backgroundColor: isSystemMode ? 'var(--color-primary)' : 'var(--color-surface-sunken-deep)',
             color: isSystemMode ? 'var(--color-primary-content)' : 'var(--color-text-primary)',
             border: '1px solid var(--color-border-primary)',
           }}
@@ -83,7 +83,7 @@ function ThemeSmokeTest() {
           onClick={cycleTheme}
           className="rounded-md px-3 py-1.5 text-sm font-medium"
           style={{
-            backgroundColor: 'var(--color-surface-tertiary)',
+            backgroundColor: 'var(--color-surface-sunken-deep)',
             color: 'var(--color-text-primary)',
             border: '1px solid var(--color-border-primary)',
           }}
@@ -97,13 +97,13 @@ function ThemeSmokeTest() {
       <section
         className="rounded-lg p-5"
         style={{
-          backgroundColor: 'var(--color-surface-elevated)',
+          backgroundColor: 'var(--color-surface-raised)',
           border: '1px solid var(--color-border-primary)',
           boxShadow: '0 4px 12px var(--color-shadow-md)',
         }}
       >
         <h3 style={{ color: 'var(--color-text-heading)' }} className="text-lg font-semibold">
-          Sample card on surface-elevated
+          Sample card on surface-raised
         </h3>
         <p className="mt-1 text-sm" style={{ color: 'var(--color-text-secondary)' }}>
           Body text in <span style={{ color: 'var(--color-text-primary)' }}>primary</span>,{' '}

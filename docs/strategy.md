@@ -211,6 +211,26 @@ argument silently degrades back to `string` — and over a catalog-only API, whi
 awkward when a consumer already keeps a flat union; `DotPaths` is exported so the
 catalog-derived path stays available without being forced.
 
+### D15 — Surface ladder: mode-consistent roles (`raised` + two `sunken` levels)
+
+The surface tokens are addressed by **role**, and each role means the same **depth**
+in both light and dark. The contract is `surface-primary` (card) with
+`surface-raised` *above* it (popovers, dropdowns, dialogs, toasts) and
+`surface-sunken` / `surface-sunken-deep` *below* it (wells, inputs, table headers,
+neutral notes, chips; then filled neutral badges/avatars and nested wells). This
+**replaces** the earlier `surface-elevated` / `surface-secondary` / `surface-tertiary`
+set, which inverted between modes — the "muted inset" tokens were darker than the card
+in light (recessed, correct) but lighter than it in dark (raised, wrong), so a well
+read inset in light and popped in dark. `surface-elevated` was also indistinct from the
+card in light (both white). The new model keeps direction fixed: dark mode carries depth
+with lightness (raised lighter, sunken darker); light mode can't exceed white, so
+`surface-raised` is pure white over a hair-off-white card plus a stronger shadow, and
+the sunken rungs go to a darker grey. Two sunken levels (not one) are kept because the
+SolidJS `foundation` uses two distinct recessed tones in the same element (e.g. a
+rest/hover pair), which a single token would flatten. This is shared-`themes` work, so
+it ripples to `foundation` (D6+D13) on its next themes bump; `dynamic` was also lifted
+off pure black at the same time (OLED smear, and to leave headroom to recess a well).
+
 ---
 
 *Retired log entries, folded into the sections above: **D1** (the modular drop-in

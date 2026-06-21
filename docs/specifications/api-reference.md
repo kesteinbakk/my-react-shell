@@ -327,11 +327,12 @@ Kit components render on the semantic surface ladder (full definition in the
 
 - **`surface-primary`** — the default card / panel fill: `PhiCard`, `StatCard`, the
   `InputField` / `Select` field, the active `SegmentedControl` item.
-- **`surface-elevated`** — floating chrome that lifts off the page: `ConfirmDialog`,
+- **`surface-raised`** — floating chrome that lifts above the card: `ConfirmDialog`,
   `UserPreferences`, the `Select` menu, the `PhiCard` overflow menu.
-- **`surface-secondary`** — muted inset regions: `InfoBox` / neutral `Alert`, `Chip`,
-  the `Table` header + zebra rows, the `SegmentedControl` track.
-- **`surface-tertiary`** — accent / filled-chip surfaces: neutral `Badge`, `Avatar`.
+- **`surface-sunken`** — recessed inset regions (a well below the card): `InfoBox` /
+  neutral `Alert`, `Chip`, the `Table` header + zebra rows, the `SegmentedControl` track.
+- **`surface-sunken-deep`** — a deeper recess, for filled neutral elements: neutral
+  `Badge`, `Avatar`.
 
 Cards and floating chrome also carry a real **elevation** — kit-local box-shadow
 geometry over the palette's `--color-shadow-*` shade, so depth tracks light/dark and

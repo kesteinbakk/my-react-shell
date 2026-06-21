@@ -30,7 +30,7 @@
   padding: 0.75rem 0.875rem;
   border: 1px solid var(--color-border-primary);
   border-radius: 0.5rem;
-  background: var(--color-surface-secondary);
+  background: var(--color-surface-sunken);
   color: var(--color-text-primary);
 }
 
@@ -191,7 +191,7 @@
   padding: 0.75rem 0.875rem;
   border: 1px solid var(--color-border-primary);
   border-radius: 0.5rem;
-  background: var(--color-surface-secondary);
+  background: var(--color-surface-sunken);
   color: var(--color-text-secondary);
   font-size: 0.875rem;
   line-height: 1.5;
@@ -238,7 +238,7 @@
   padding: 1.25rem;
   border: 1px solid var(--color-border-primary);
   border-radius: 0.75rem;
-  background: var(--color-surface-elevated);
+  background: var(--color-surface-raised);
   color: var(--color-text-primary);
   box-shadow: var(--mrs-elevation-popover);
 }
@@ -337,7 +337,7 @@
   background: currentColor;
 }
 .mrs-badge--neutral {
-  background: var(--color-surface-tertiary);
+  background: var(--color-surface-sunken-deep);
   border-color: var(--color-border-primary);
   color: var(--color-text-secondary);
 }
@@ -375,7 +375,7 @@
   padding: 0.25rem 0.625rem;
   border: 1px solid var(--color-border-primary);
   border-radius: 9999px;
-  background: var(--color-surface-secondary);
+  background: var(--color-surface-sunken);
   color: var(--color-text-secondary);
   font-size: 0.8125rem;
   line-height: 1.4;
@@ -430,7 +430,7 @@
   flex-shrink: 0;
   overflow: hidden;
   border-radius: 50%;
-  background: var(--color-surface-tertiary);
+  background: var(--color-surface-sunken-deep);
   color: var(--color-text-secondary);
   font-weight: 500;
   line-height: 1;
@@ -468,7 +468,7 @@
   margin-left: 0;
 }
 .mrs-avatar-group__more {
-  background: var(--color-surface-secondary);
+  background: var(--color-surface-sunken);
   color: var(--color-text-tertiary);
   font-size: 0.75rem;
 }
@@ -490,7 +490,7 @@
   top: 0;
   padding: 0.625rem 0.875rem;
   border-bottom: 1px solid var(--color-border-primary);
-  background: var(--color-surface-secondary);
+  background: var(--color-surface-sunken);
   color: var(--color-text-secondary);
   font-weight: 500;
   text-align: left;
@@ -505,7 +505,7 @@
   border-bottom: none;
 }
 .mrs-table__body--striped tr:nth-child(even) td {
-  background: var(--color-surface-secondary);
+  background: var(--color-surface-sunken);
 }
 .mrs-table__cell--right {
   text-align: right;
@@ -571,7 +571,7 @@
   padding: 1.25rem;
   border: 1px solid var(--color-border-primary);
   border-radius: 0.75rem;
-  background: var(--color-surface-elevated);
+  background: var(--color-surface-raised);
   color: var(--color-text-primary);
   box-shadow: var(--mrs-elevation-popover);
 }
@@ -745,9 +745,9 @@
   padding: 0.1875rem;
   border: 1px solid var(--color-border-primary);
   border-radius: 0.5rem;
-  /* The track is a recessed well (surface-secondary); the active item lifts to
+  /* The track is a recessed well (surface-sunken); the active item lifts to
      surface-primary above it. */
-  background: var(--color-surface-secondary);
+  background: var(--color-surface-sunken);
 }
 .mrs-segmented__item {
   display: inline-flex;
@@ -823,7 +823,7 @@
   min-width: var(--radix-select-trigger-width);
   border: 1px solid var(--color-border-primary);
   border-radius: 0.5rem;
-  background: var(--color-surface-elevated);
+  background: var(--color-surface-raised);
   box-shadow: var(--mrs-elevation-popover);
   z-index: 60;
 }
@@ -1241,7 +1241,7 @@
   padding: 0.25rem;
   border: 1px solid var(--color-border-primary);
   border-radius: 0.5rem;
-  background: var(--color-surface-elevated);
+  background: var(--color-surface-raised);
   box-shadow: var(--mrs-elevation-popover);
   z-index: 60;
 }

@@ -1,6 +1,47 @@
 # T011 — mode-consistent surface-token model
 
-Status: planning
+Status: finished
+
+## Outcome (what shipped)
+
+**Decision (user, 2026-06-21): the role-clear redesign with TWO sunken levels, full
+migration now.** The surface contract is rebuilt to a mode-consistent ladder:
+
+| New token | Replaces | Role |
+|---|---|---|
+| `--color-surface-primary` | (kept) | card / panel |
+| `--color-surface-raised` | `surface-elevated` | popovers, dropdowns, dialogs, toasts (above the card) |
+| `--color-surface-sunken` | `surface-secondary` | wells, inputs, table headers, neutral notes, chips (below the card) |
+| `--color-surface-sunken-deep` | `surface-tertiary` | deeper recess — filled badges, avatars, nested wells, hover-on-sunken |
+
+Direction is now identical in both modes: `raised` reads above the card (lighter in
+dark; pure white over a hair-off-white card + shadow in light), `sunken*` read below
+it (darker than the card in both modes). Two sunken levels were kept (not one)
+because foundation uses two distinct recessed tones in one element; the user noted
+`Toggle3DButton` is unused and that breaking foundation is acceptable ("I can fix
+misses there"), so foundation was migrated by a straight token rename, best-effort.
+
+Landed in:
+- **`themes`** — `contract.css` (new role tokens + doc) and all six palettes
+  (`ocean`/`forest`/`sunset`/`soft`/`dynamic`/`golden`), light + dark, mode-consistent;
+  `dynamic` lifted off pure `#000` (page now `rgb(9,9,11)`); light cards nudged a hair
+  off-white so the white `raised` plane separates.
+- **my-react-shell** — `styles/base.css`, `components/components.css`,
+  `app-shell/app-shell.css`, `i18n/MissingTranslationsOverlay.tsx`, harness
+  `routes/index.tsx`; `dist` rebuilt; `docs/guides/theme.md` (ladder + shadcn bridge),
+  `docs/specifications/api-reference.md` (Surfaces & elevation), `docs/strategy.md` (**D15**).
+- **Demos** — `my-react-shell-demo` `PaletteReference` `PALETTE_GROUPS` + shadcn bridge;
+  `my-react-shell-theme-demo` `SurfacesPage` (new tokens + a both-modes ladder, W4) +
+  shadcn bridge.
+- **SolidJS foundation** — token rename across ~31 files + `themes/base.css` utility
+  classes + a `colors.ts` comment; `tsc` green.
+
+**Deferred (best-effort scope, not done):** the W3 dark-accent desaturation pass and a
+full per-token WCAG audit beyond the surface ladder. The surface model (W1/W2), the
+`dynamic` off-black fix, and the W4 demo upgrade are complete.
+
+---
+
 
 ## Summary
 

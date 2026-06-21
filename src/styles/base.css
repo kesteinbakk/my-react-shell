@@ -75,7 +75,7 @@ button[class*="inline-flex"] {
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--color-surface-secondary);
+  background: var(--color-surface-sunken);
 }
 
 ::-webkit-scrollbar-thumb {

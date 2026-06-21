@@ -32,16 +32,24 @@ class. Without it the applied classes have no backing CSS.
 ## The surface ladder
 
 Beyond the palette and mode, components render against a small ladder of **surface**
-tokens — semantic layers of depth, from the page canvas up to floating chrome. Reach
-for a rung by its **role**, not by how light or dark it happens to look in one palette:
+tokens — semantic layers of depth, from the page canvas through the card up to floating
+chrome, and down into recessed wells. Reach for a rung by its **role**, not by how light
+or dark it happens to look in one palette:
 
 | Token | Role |
 |---|---|
 | `--color-background-primary` | The page canvas — the lowest layer everything sits on. |
 | `--color-surface-primary` | The default card / panel surface (the kit cards render here). |
-| `--color-surface-elevated` | Floating chrome that lifts above the page — popovers, dropdowns, dialogs, toasts. |
-| `--color-surface-secondary` | A muted inset within a card — table headers, input/control wells, neutral notes. |
-| `--color-surface-tertiary` | An accent / filled-chip surface — neutral badges, avatars, hover fills. |
+| `--color-surface-raised` | Floating chrome that lifts **above** the card — popovers, dropdowns, dialogs, toasts. |
+| `--color-surface-sunken` | A recessed well **below** the card — table headers, input/control wells, neutral notes, chips. |
+| `--color-surface-sunken-deep` | A deeper recess — filled neutral badges, avatars, nested wells, hover-on-sunken. |
+
+The direction is **mode-consistent**: in both light and dark, `surface-raised` reads
+*above* the card and the `surface-sunken*` rungs read *below* it. Dark mode does this
+with lightness (raised is lighter, sunken darker); light mode can't go lighter than
+white, so `surface-raised` is pure white over a hair-off-white card and leans on a
+stronger shadow, while the sunken rungs go to a darker grey. The same token therefore
+means the same depth in every palette and mode — no inversion between light and dark.
 
 (`--color-background-secondary` is a second, subtly distinct canvas zone — a rail or a
 banded region — alongside the primary background.) Depth is reinforced with
@@ -154,15 +162,15 @@ to ship. Copy the canonical mapping below and adjust the latitude lines.
   --foreground: var(--color-text-primary);
   --card: var(--color-surface-primary);
   --card-foreground: var(--color-text-primary);
-  --popover: var(--color-surface-elevated);
+  --popover: var(--color-surface-raised);
   --popover-foreground: var(--color-text-primary);
-  --muted: var(--color-surface-secondary);
+  --muted: var(--color-surface-sunken);
   --muted-foreground: var(--color-text-muted);
   --primary: var(--color-primary);
   --primary-foreground: var(--color-primary-content);
   --secondary: var(--color-secondary-bg);          /* soft-chip rendering — see Latitude */
   --secondary-foreground: var(--color-secondary);
-  --accent: var(--color-surface-tertiary);         /* shadcn's hover/active surface */
+  --accent: var(--color-surface-sunken-deep);      /* shadcn's hover/active surface */
   --accent-foreground: var(--color-text-primary);
   --destructive: var(--color-danger);
   --destructive-foreground: var(--color-danger-content);
@@ -219,7 +227,7 @@ declarations always override. No resolution cycle.
   (`--secondary: var(--color-secondary)` + `--secondary-foreground:
   var(--color-secondary-content)`).
 - **`--popover` / `--accent` / `--input`** — map to whichever surface/border reads
-  best (`surface-primary` vs `surface-elevated`; `hover` vs `surface-tertiary`;
+  best (`surface-primary` vs `surface-raised`; `hover` vs `surface-sunken-deep`;
   `border-primary` vs `border-hover`).
 - **Optional surfaces** — add `--chart-1..5` and `--sidebar-*` (in *both* the
   `:root` block and `@theme inline`) only if you pull in shadcn charts or the
