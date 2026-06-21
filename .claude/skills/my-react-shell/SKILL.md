@@ -69,6 +69,14 @@ never hard-depend on each other's runtime — take only what you want.
 - **Updating the library:** bump the pinned git tag (`#vX.Y.Z`) and reinstall — you
   receive only the modules you import. The `link:` dev-loop must dedupe React in the
   consumer's Vite config or first paint throws `Invalid hook call`.
+- **`link:` loop in a git worktree:** a fresh worktree has no `node_modules`, so the
+  linked `my-react-shell` vanishes with it. Symlink the root `node_modules` in (the
+  standard `worktree-flow` step: `ln -s ../../../node_modules .claude/worktrees/<slug>/node_modules`)
+  and **never `pnpm install` inside the worktree** — a reinstall duplicates React/Radix
+  and defeats the dedupe. The absolute `link:` symlink + the tracked `vite.config.ts`
+  dedupe then carry through unchanged. Auto `claude/*` worktrees need the `ln -s` as
+  their first action. Full rationale: distribution-model.md → *Worktrees on the `link:`
+  dev-loop*.
 
 ## Deep guides
 
