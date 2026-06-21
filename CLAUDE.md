@@ -192,10 +192,16 @@ foundation source and match it; don't reconstruct from memory or the happy path.
   (`node_modules/my-react-shell/docs/specifications/api-reference.md`). No mirror to
   maintain — just keep this one file current. Leaving the reference stale is the
   staleness this rule exists to prevent. See root `CLAUDE.md` → docs reflect current state.
-- **Guides are for depth, not the export list.** A module ships a `docs/guides/<module>.md`
-  for the *why* + the contract to fill / how to bring your own — only when there's more to
-  say than the API reference carries. A module whose guide would only restate the reference
-  ships none (e.g. `components`, documented solely in the API reference).
+- **Guides are for depth, not the export list — and must be kept current.** A module ships
+  a `docs/guides/<module>.md` for the *why* + the contract to fill / how to bring your own
+  — only when there's more to say than the API reference carries. A module whose guide would
+  only restate the reference ships none (e.g. `components`). **When a change affects a
+  module's behavior, constraints, or contract — a new validation, a changed default, a
+  new concept, a corrected example — the relevant guide must be updated in the same
+  change.** Guides ship inside the package alongside the API reference (`package.json` →
+  `files`: `docs/guides`), so consumers receive the version-matched guides on their next
+  tag bump and agents can read them at
+  `node_modules/my-react-shell/docs/guides/<module>.md`.
 
 ## Docs & workflow (zingularis conventions)
 

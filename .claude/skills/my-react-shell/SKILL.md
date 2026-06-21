@@ -68,7 +68,15 @@ never hard-depend on each other's runtime — take only what you want.
 ## Deep guides
 
 The API reference (paths above) is the **single source of truth** — it ships inside the
-package, version-matched to the installed tag, so there is no copy to drift. The library
-repo (`~/Developer/my-react-shell`) additionally carries a per-module guide in
-`docs/guides/` for the *why* + deeper contract (theme, providers, auth, i18n, icons,
-app-shell — the `components` module has no separate guide, the reference covers it).
+package, version-matched to the installed tag, so there is no copy to drift. The per-module
+guides also ship inside the package, at:
+
+- `node_modules/my-react-shell/docs/guides/app-shell.md` — multilevel pages, subPages,
+  useDynamicPages, route '/' constraint, PageTabs vs PageSections
+- `node_modules/my-react-shell/docs/guides/theme.md`
+- `node_modules/my-react-shell/docs/guides/auth.md`
+- `node_modules/my-react-shell/docs/guides/i18n.md`
+- `node_modules/my-react-shell/docs/guides/icons.md`
+- `node_modules/my-react-shell/docs/guides/providers.md`
+
+The `components` module has no separate guide — the API reference covers it fully.
