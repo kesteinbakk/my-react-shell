@@ -89,8 +89,8 @@ const { theme, isDark, themes, setTheme, toggleMode } = useTheme()
 
 | CSS import | Face |
 |---|---|
-| `my-react-shell/fonts/inter.css` | Inter Variable (recommended default) |
-| `my-react-shell/fonts/geist.css` | Geist Variable |
+| `my-react-shell/fonts/geist.css` | Geist Variable (recommended default) |
+| `my-react-shell/fonts/inter.css` | Inter Variable |
 
 Self-hosted via `@fontsource` (no CDN). See [theme.md](../guides/theme.md) →
 *Typography*.

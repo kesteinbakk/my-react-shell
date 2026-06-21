@@ -69,8 +69,8 @@ self-hosted face, import **one** of the two font stylesheets **after** `styles.c
 
 ```ts
 import 'my-react-shell/styles.css'
-import 'my-react-shell/fonts/inter.css' // Inter — the recommended default, or:
-// import 'my-react-shell/fonts/geist.css' // Geist
+import 'my-react-shell/fonts/geist.css' // Geist — the recommended default, or:
+// import 'my-react-shell/fonts/inter.css' // Inter
 ```
 
 Each stylesheet registers its `@font-face` (self-hosted via `@fontsource` — no CDN,
