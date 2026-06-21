@@ -287,8 +287,11 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  font-size: 1.125rem;
-  font-weight: 600;
+  /* A quiet trail, deliberately subordinate to the page title (H1) below it:
+     small + regular weight, muted ancestors, with only the interactive leaf
+     accented. */
+  font-size: 0.8125rem;
+  font-weight: 400;
   min-width: 0;
   order: 1;
 }
@@ -297,7 +300,7 @@
   display: inline-flex;
   align-items: center;
   gap: 0.375rem;
-  color: var(--color-text-secondary);
+  color: var(--color-text-muted);
   text-decoration: none;
 }
 .mrs-breadcrumbs__home:hover,
@@ -313,12 +316,13 @@
   border: none;
   padding: 0;
   font: inherit;
+  font-weight: 500; /* the current item is medium — accented, not title-bold */
 }
 button.mrs-breadcrumbs__leaf {
   cursor: pointer;
 }
 .mrs-breadcrumbs__chevron {
-  color: var(--color-text-tertiary);
+  color: var(--color-text-muted);
   display: inline-flex;
 }
 /* Leaf-dropdown panel (Radix DropdownMenu.Content) + its items. */
