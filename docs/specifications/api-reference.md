@@ -248,7 +248,7 @@ import 'my-react-shell/components/styles.css' // REQUIRED (plain prebuilt CSS; a
 | `Chip`, `ChipGroup` | component | Tag: plain / toggleable (`selected`+`onClick`) / removable (`onRemove`). `ChipGroup` wraps. |
 | `Avatar`, `AvatarGroup` | component | Image + initials fallback (also on image error); group stacks with `+N` overflow. |
 | `Table` | component | Column-config data table: per-column sort, zebra, sticky header, empty state. |
-| `PhiCard`, `PHI` | component + const | Golden-ratio card (W:H = φ:1) with two consumer-owned, full-bleed sections (`upper`/`lower`, or an `image`/`icon` figure top); the bottom collapses when empty. Optional top-right ⋮ overflow menu via `actions`, or a `corner` slot. `PHI` is the constant (height = width/φ). Uses the `@radix-ui/react-dropdown-menu` optional peer. |
+| `PhiCard`, `PHI` | component + const | Golden-ratio card (W:H = φ:1): a figure (`icon`/`image`) fills its column, a centered text body (`upper` + `content`), and a structured `footer` (meta lines + stacked badges, per-size caps) or freeform `lower`. Collapses when there's no footer. Top-right ⋮ menu via `actions` or a `corner` slot. Uses the `@radix-ui/react-dropdown-menu` optional peer. |
 | `InputField` | component | Full field: label + input + helper + error, a11y-wired (`htmlFor`/`aria-invalid`/`aria-describedby`). Spreads native input props; pass `error` to switch on error styling. |
 | `SegmentedControl` | component | Single-select `radiogroup` on a track; controlled via `value`/`onChange`; generic over value type. |
 | `Select` | component | Opinionated select on Radix Select (keyboard nav, typeahead, portal); `options` list; controlled via `value`/`onValueChange`. |
@@ -259,7 +259,7 @@ Every component has a matching `…Props` type export (e.g. `AlertProps`, `Alert
 `TableProps`, `TableColumn`, `ToastApi`, `ToastOptions`, `ToastTone`, `SelectProps`,
 `SelectOption`, `SegmentedOption`, `BadgeTone`, `AvatarSize`, `ActionType`,
 `ActionPreset`, `ActionButtonVariant`/`Size`/`Layout`, `PhiCardProps`, `PhiCardAction`,
-`PhiCardSize`, etc.).
+`PhiCardSize`, `PhiCardFooter`, `PhiCardFooterLine`, `PhiCardFooterLineType`, etc.).
 
 ```tsx
 <Alert variant="warning" title="Heads up" onDismiss={() => {}}>Session expires soon.</Alert>
@@ -319,58 +319,61 @@ preset, pass a custom `icon` node (a lucide icon or an `<Icon>` from `my-react-s
 
 ### `PhiCard`
 
-A golden-ratio card: outer **W:H = φ:1**, two sections split **φ:1**. The card **pads its
-text content** — `upper` (title/subtitle) with `content` stacked below, plus the `lower`
-footer — vertically centered (top-aligned when there's `content`); figures (`image` / `icon`)
-are full-bleed. An inset separator divides the two sections (drawn only when there's a
-`lower`). The **bottom section collapses when empty** (`lower` absent / `null` / `false` → not rendered; the card
-**shrinks to the top band's height** `W/φ²`, shorter by exactly the bottom split). Width is the only size knob; `PHI`
-(`1.6180339887`) is exported so you can size layouts against it (height = width / φ).
-For a figure-over-content card, pass **`image`** (full-bleed, `object-fit: cover`) or
-**`icon`** (centered) — it renders the top section full-width, with `lower` the content
-below. Pass **both `icon` and `upper`** → the top splits **1 : φ** (narrow icon column ·
-wide content), the original logo-and-title layout — set `iconFill` to scale the icon to
-fill its column. `size` also sets a base `font-size` the section content inherits, so
-larger cards get larger text.
+A golden-ratio card: outer **W:H = φ:1**, the two sections split **φ:1**. The card owns its
+padding (`em`-scaled by `size`). A **figure** (`icon` / `image`) fills its column, centered
+so the border→figure gap equals the figure→content gap; the **text body** (`upper`
+title/subtitle + `content`) carries no padding of its own — it's vertically centered and
+flush-left at the φ split (or the edge padding when there's no figure). Pass **both `icon`
+and `upper`/`content`** → the original 1 : φ logo-and-title split; `iconFill` makes the icon
+fill its column. The **bottom collapses when there's no footer** (`footer`/`lower` absent →
+not rendered; the card shrinks to the top band's height `W/φ²`). `size` also sets a base
+inherited `font-size`; `PHI` (`1.6180339887`) is exported (height = width / φ).
+
+**Footer** — pass a structured `footer={{ lines, badges }}` (meta lines on the left, each
+with an optional `date`/`time`/`check` glyph the kit ships; badges stacked on the right; both
+spread evenly), or the freeform `lower` node as an escape hatch. **Throws in dev** if both
+are given, or if the per-size caps are exceeded — lines: sm 1 · md 2 · lg 3 · xl 5; badges:
+sm/md 1 · lg 2 · xl 4. An inset separator divides the sections (only when there's a footer).
 
 Top-right **overflow menu**: pass `actions` and the card renders a ⋮ trigger → Radix
-`DropdownMenu` of those items (no actions → no trigger). For anything else — inline icon
-buttons, a custom menu — use the `corner` slot, which replaces the built-in menu. The card
-owns **placement + the menu mechanism + the trigger glyph**; you own the **actions** — the
-kit ships no icon registry and never imports i18n, so you bring glyphs and pass translated
-labels. The corner never triggers a clickable card's `onClick`.
+`DropdownMenu` of those items. For anything else use the `corner` slot (replaces the menu).
+The kit ships no icon registry and never imports i18n — you bring action glyphs / badges and
+pass translated labels. The corner never triggers a clickable card's `onClick`.
 
 | Prop | Default | Meaning |
 |---|---|---|
-| `upper` | — | Top-section heading (title/subtitle). **Card-padded** (don't add your own), top-aligned. Ignored when `image` is set; with `icon`, it's the content column of a 1 : φ split. |
-| `content` | — | Main content under `upper` in the top section, card-padded with it (the title → subtitle → body stack). |
-| `image` | — | Image URL rendered full-bleed (`object-fit: cover`) as the top section. Highest precedence for the top. |
+| `upper` | — | Top-section heading (title/subtitle). No own padding — vertically centered, flush-left at the split / edge. With `icon`/`image` it's the content column of the 1 : φ split. |
+| `content` | — | Main content under `upper`, in the same centered text body. |
+| `image` | — | Image URL, full-bleed (`object-fit: cover`) as the top section. Highest precedence. |
 | `imageAlt` | `''` | Alt text for `image` (decorative by default). |
-| `icon` | — | Icon/figure node for the top (below `image`). Alone → centered, full-width. With `upper` → a narrow icon column in a 1 : φ split (logo-and-title). |
-| `iconFill` | `false` | Scale `icon` to fill its area (aspect preserved), overriding the icon's own size. In the icon+content split it's capped to a logo size so it doesn't swallow the band. |
-| `lower` | — | Bottom section (footer), **card-padded**. Empty → not rendered; the card shrinks to the top band's height (`W/φ²`), shorter by exactly the bottom split. |
-| `size` | `'md'` | Size preset — `sm`·`md`·`lg`·`xl` = 180/240/320/480px wide (height = width / φ). Also sets a base `font-size` the section content inherits, so larger cards get larger text. |
-| `actions` | — | Items for the built-in ⋮ menu: `{ icon?, label, onSelect, destructive?, disabled? }[]`. Empty/absent → no menu. Ignored when `corner` is set. |
+| `icon` | — | Figure node for the top. Alone → centered; with a body → a narrow figure column in the 1 : φ split, centered with equal border/content gaps. |
+| `iconFill` | `false` | Scale `icon` to fill its column (aspect preserved, never overflows), overriding the icon's own size. |
+| `footer` | — | Structured footer: `{ lines?: { text, type?: 'date'\|'time'\|'check' }[], badges?: ReactNode[] }`. Lines left + badges right, spread evenly. Per-size caps (throws over). |
+| `lower` | — | Freeform footer (escape hatch). **Throws if given alongside `footer`.** |
+| `size` | `'md'` | `sm`·`md`·`lg`·`xl` = 180/240/320/480px wide (height = width / φ); also sets a base inherited `font-size`. |
+| `actions` | — | Items for the built-in ⋮ menu: `{ icon?, label, onSelect, destructive?, disabled? }[]`. Ignored when `corner` is set. |
 | `menuIcon` | ⋮ | Override the menu trigger glyph. |
 | `menuLabel` | `'Actions'` | Accessible name for the menu trigger. |
 | `corner` | — | Bring-your-own top-right node (replaces the `actions` menu). |
-| `leftBorderColor` | — | 3px left accent border in this CSS color (pass a token, e.g. `var(--color-primary)`). |
+| `leftBorderColor` | — | 3px left accent border in this CSS color. |
 | `onClick` | — | Click handler for the whole card; the corner never fires it. |
 | `hoverable` | `!!onClick` | Hover lift (shadow + pointer). |
 | `className` | — | Extra classes on the outer card. |
 
 ```tsx
 <PhiCard
-  size="md"
-  upper={<div className="flex h-full flex-col justify-center p-3"><strong>Quarterly report</strong></div>}
-  lower={<div className="flex h-full items-center justify-between p-3"><span>Updated 12 Jun</span><Badge tone="success" dot>Live</Badge></div>}
-  actions={[
-    { icon: <Pencil size={16} />, label: 'Edit', onSelect: onEdit },
-    { icon: <Trash2 size={16} />, label: 'Delete', destructive: true, onSelect: onDelete },
-  ]}
+  size="lg"
+  icon={<Hexagon />}
+  iconFill
+  upper={<><strong>Project Atlas</strong><span className="text-muted-foreground">Logo · title</span></>}
+  footer={{
+    lines: [{ type: 'date', text: '12 Jun 2026' }, { type: 'check', text: 'Reviewed' }],
+    badges: [<Badge key="a" tone="success" dot>Live</Badge>, <Badge key="b">v2</Badge>],
+  }}
+  actions={[{ icon: <Pencil size={16} />, label: 'Edit', onSelect: onEdit }]}
 />
 
-// bottom collapses when empty → single-section card, φ:1 kept:
+// no footer → the card collapses to the top band's height (W/φ²):
 <PhiCard size="md" upper={<MyHeader />} />
 ```
 

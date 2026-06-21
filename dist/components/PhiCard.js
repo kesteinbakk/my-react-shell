@@ -4,13 +4,6 @@ import { cn } from './cn';
 /**
  * φ — the golden ratio. Exported so a consumer can size a layout against the exact
  * constant the card uses (a card's rendered height is `width / PHI`).
- *
- * The card is one scaling unit driven entirely by its width:
- *   Outer:  width : height  = φ : 1
- *   Split:  upperH : lowerH  = φ : 1   (the two sections)
- *
- * The split lives in components.css as an `fr` ratio; the `1.6180339887fr` literal
- * there is this same φ, kept in lockstep with this constant.
  */
 export const PHI = 1.6180339887;
 const SIZE_WIDTH_PX = {
@@ -19,18 +12,22 @@ const SIZE_WIDTH_PX = {
     lg: 320,
     xl: 480,
 };
-// Base font-size (rem) per size — set on the card root so section content inherits
-// it: a larger card gets larger text by default. The consumer overrides per element
-// (e.g. `em`-relative or an explicit class) as needed.
+// Base font-size (rem) per size — set on the card root so section content inherits it.
 const SIZE_FONT_REM = {
     sm: 0.75,
     md: 0.875,
     lg: 1.125,
     xl: 1.375,
 };
-// A section counts as empty (→ not rendered) for the common "no content" signals:
-// an absent prop (undefined), an explicit null, a `false` from `{cond && <X/>}`, or
-// an empty string. Anything else is content.
+// Footer caps per size — exceeding either is misuse and throws in dev (fail loud).
+const FOOTER_LINE_CAP = { sm: 1, md: 2, lg: 3, xl: 5 };
+const FOOTER_BADGE_CAP = { sm: 1, md: 1, lg: 2, xl: 4 };
+const FOOTER_GLYPHS = {
+    date: (_jsxs("svg", { viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", "aria-hidden": "true", children: [_jsx("rect", { x: "3", y: "4", width: "18", height: "18", rx: "2" }), _jsx("path", { d: "M16 2v4M8 2v4M3 10h18" })] })),
+    time: (_jsxs("svg", { viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", "aria-hidden": "true", children: [_jsx("circle", { cx: "12", cy: "12", r: "9" }), _jsx("path", { d: "M12 7v5l3 2" })] })),
+    check: (_jsx("svg", { viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", "aria-hidden": "true", children: _jsx("path", { d: "M20 6 9 17l-5-5" }) })),
+};
+// A section counts as empty (→ not rendered) for the common "no content" signals.
 function isEmpty(node) {
     return node == null || node === false || node === '';
 }
@@ -40,50 +37,63 @@ function PhiCardMenu({ actions, icon, label, }) {
 }
 /**
  * Golden-ratio card. Width is the only size knob; height (= width / φ), the φ:1 split,
- * and a base font-size derive from it. The card pads its text content (`upper` title/
- * subtitle + `content`, and the `lower` footer); figures (`image` / `icon`) are
- * full-bleed. The bottom collapses (card shortens) when `lower` is empty. Optional
- * top-right overflow menu.
+ * and a base font-size derive from it. The card owns its padding: a figure (`icon` /
+ * `image`) fills its column, the text body is centered and flush-left at the split, and
+ * the footer (`footer` structured, or `lower` freeform) spreads its rows evenly. The
+ * bottom collapses (card shortens) when there's no footer.
  */
-export function PhiCard({ upper, content, image, imageAlt = '', icon, iconFill = false, lower, size = 'md', actions, menuIcon, menuLabel = 'Actions', corner, leftBorderColor, onClick, hoverable, className, }) {
+export function PhiCard({ upper, content, image, imageAlt = '', icon, iconFill = false, lower, footer, size = 'md', actions, menuIcon, menuLabel = 'Actions', corner, leftBorderColor, onClick, hoverable, className, }) {
     const width = SIZE_WIDTH_PX[size];
-    const hasLower = !isEmpty(lower);
-    // No bottom section → the card collapses to the top band's height (W/φ²) — shorter
-    // by exactly the bottom split — NOT a full-height φ:1 box with the top content
-    // centered in the leftover space. (Full card H = W/φ; the φ:1 split makes the top
-    // band W/φ², so a collapsed card ends right where the split was.)
-    const height = hasLower ? width / PHI : width / (PHI * PHI);
-    const isHoverable = hoverable ?? !!onClick;
     const hasIcon = !isEmpty(icon);
-    const hasContent = !isEmpty(content);
-    const hasBody = !isEmpty(upper) || hasContent;
-    // The card-padded text body: the title/subtitle (`upper`) with `content` stacked
-    // below it. Centered by default (logo-and-title); top-aligned when there's content.
-    const body = hasBody ? (_jsxs("div", { className: cn('mrs-phi-card__body', hasContent && 'mrs-phi-card__body--top'), children: [upper, content] })) : null;
+    const hasBody = !isEmpty(upper) || !isEmpty(content);
+    const hasLowerContent = !isEmpty(lower);
+    const lineCount = footer?.lines?.length ?? 0;
+    const badgeCount = footer?.badges?.length ?? 0;
+    const hasFooter = !!footer && (lineCount > 0 || badgeCount > 0);
+    // Dev guards — fail loud on misuse (stripped from production builds).
+    if (process.env.NODE_ENV !== 'production') {
+        if (footer && hasLowerContent) {
+            throw new Error('PhiCard: provide either `footer` or `lower`, not both.');
+        }
+        if (lineCount > FOOTER_LINE_CAP[size]) {
+            throw new Error(`PhiCard: size="${size}" allows ${FOOTER_LINE_CAP[size]} footer line(s), got ${lineCount}.`);
+        }
+        if (badgeCount > FOOTER_BADGE_CAP[size]) {
+            throw new Error(`PhiCard: size="${size}" allows ${FOOTER_BADGE_CAP[size]} footer badge(s), got ${badgeCount}.`);
+        }
+    }
+    const hasBottom = hasFooter || hasLowerContent;
+    // No bottom section → collapse to the top band's height (W/φ²), shorter by exactly
+    // the bottom split rather than a full-height φ:1 box.
+    const height = hasBottom ? width / PHI : width / (PHI * PHI);
+    const isHoverable = hoverable ?? !!onClick;
+    // The card-padded text body: title/subtitle (`upper`) + `content`, vertically
+    // centered, flush-left.
+    const body = hasBody ? (_jsxs("div", { className: "mrs-phi-card__body", children: [upper, content] })) : null;
     const figure = (_jsx("div", { className: cn('mrs-phi-card__figure', iconFill && 'mrs-phi-card__figure--fill'), children: icon }));
-    // Top section. `image` is the only full-bleed (edge-to-edge) case; a figure, the
-    // body, or the figure+body split all sit in card padding so a figure's top lines up
-    // with the title. The figure+body split is the original 1:φ logo-and-title layout.
+    // Top section. `image` is full-bleed; a figure+body splits 1 : φ (the figure column
+    // runs to the card edge so it centers with equal border/content gaps); a lone figure
+    // or a lone body sits in the edge padding.
     let topContent;
-    let topPadded = false;
+    let topSectionMod;
     if (image) {
         topContent = _jsx("img", { className: "mrs-phi-card__image", src: image, alt: imageAlt });
+        topSectionMod = undefined;
     }
     else if (hasIcon && hasBody) {
         topContent = (_jsxs("div", { className: "mrs-phi-card__split", children: [figure, body] }));
-        topPadded = true;
+        topSectionMod = 'mrs-phi-card__section--split';
     }
     else if (hasIcon) {
         topContent = figure;
-        topPadded = true;
+        topSectionMod = 'mrs-phi-card__section--padded';
     }
     else {
         topContent = body;
-        topPadded = hasBody;
+        topSectionMod = hasBody ? 'mrs-phi-card__section--padded' : undefined;
     }
-    // `corner` wins over the built-in menu; otherwise the menu shows only when there
-    // are actions. Either way the corner overlay renders only when non-empty. The
-    // inline `actions &&` (not a derived flag) lets TS narrow `actions` to non-null.
+    const footerNode = footer && hasFooter ? (_jsxs("div", { className: "mrs-phi-card__footer", children: [_jsx("div", { className: "mrs-phi-card__footer-lines", children: (footer.lines ?? []).map((line, i) => (_jsxs("span", { className: "mrs-phi-card__footer-line", children: [line.type ? (_jsx("span", { className: "mrs-phi-card__footer-icon", children: FOOTER_GLYPHS[line.type] })) : null, _jsx("span", { className: "mrs-phi-card__footer-text", children: line.text })] }, i))) }), footer.badges && footer.badges.length > 0 ? (_jsx("div", { className: "mrs-phi-card__footer-badges", children: footer.badges.map((b, i) => (_jsx("span", { className: "mrs-phi-card__footer-badge", children: b }, i))) })) : null] })) : null;
+    // `corner` wins over the built-in menu; the inline `actions &&` lets TS narrow.
     const cornerNode = corner ??
         (actions && actions.length > 0 ? (_jsx(PhiCardMenu, { actions: actions, icon: menuIcon, label: menuLabel })) : null);
     const style = {
@@ -92,5 +102,5 @@ export function PhiCard({ upper, content, image, imageAlt = '', icon, iconFill =
         fontSize: `${SIZE_FONT_REM[size]}rem`,
         ...(leftBorderColor ? { borderLeft: `3px solid ${leftBorderColor}` } : {}),
     };
-    return (_jsxs("div", { className: cn('mrs-phi-card', !hasLower && 'mrs-phi-card--single', isHoverable && 'mrs-phi-card--hoverable', className), style: style, onClick: onClick, children: [_jsx("div", { className: cn('mrs-phi-card__section', topPadded && 'mrs-phi-card__section--padded'), children: topContent }), hasLower ? (_jsx("div", { className: "mrs-phi-card__section mrs-phi-card__section--padded mrs-phi-card__section--lower", children: lower })) : null, cornerNode != null ? (_jsx("div", { className: "mrs-phi-card__corner", onClick: (e) => e.stopPropagation(), children: cornerNode })) : null] }));
+    return (_jsxs("div", { className: cn('mrs-phi-card', !hasBottom && 'mrs-phi-card--single', isHoverable && 'mrs-phi-card--hoverable', className), style: style, onClick: onClick, children: [_jsx("div", { className: cn('mrs-phi-card__section', topSectionMod), children: topContent }), hasBottom ? (_jsx("div", { className: "mrs-phi-card__section mrs-phi-card__section--lower", children: hasFooter ? footerNode : lower })) : null, cornerNode != null ? (_jsx("div", { className: "mrs-phi-card__corner", onClick: (e) => e.stopPropagation(), children: cornerNode })) : null] }));
 }

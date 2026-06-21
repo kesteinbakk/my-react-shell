@@ -1000,15 +1000,13 @@
 }
 
 /* ── PhiCard ─────────────────────────────────────────────────────────────── */
-/* Golden-ratio card, two consumer-owned sections. Outer width:height = φ:1 (both
-   set inline from the exported PHI constant); the two sections split φ:1 via the
-   `1.6180339887fr` literal below — φ, kept in lockstep with PHI. The card owns the
-   surface, the proportion, and the corner overlay; the section content is the
-   consumer's. */
+/* Golden-ratio card. Outer width:height = φ:1 (both set inline from PHI); the two
+   sections split φ:1 via the `1.6180339887fr` literals (φ, kept in lockstep with PHI).
+   `minmax(0, …)` keeps a tall figure or footer from blowing the φ tracks open. */
 .mrs-phi-card {
   position: relative;
   display: grid;
-  grid-template-rows: 1.6180339887fr 1fr; /* upper : lower = φ : 1 */
+  grid-template-rows: minmax(0, 1.6180339887fr) minmax(0, 1fr); /* upper : lower = φ : 1 */
   overflow: hidden;
   border: 1px solid var(--color-border-primary);
   border-radius: 0.5rem;
@@ -1018,8 +1016,7 @@
   transition: box-shadow 200ms ease;
 }
 .mrs-phi-card--single {
-  grid-template-rows: 1fr; /* bottom section absent → the single row fills the card,
-                              whose inline height is already collapsed to the top band (W/φ²) */
+  grid-template-rows: minmax(0, 1fr); /* no footer → single row; inline height already W/φ² */
 }
 .mrs-phi-card--hoverable {
   cursor: pointer;
@@ -1028,10 +1025,11 @@
   box-shadow: 0 4px 12px var(--color-shadow-md);
 }
 
-/* Section — one grid row; a single cell that stretches its child to fill. min-* lets
-   the content clip rather than force the row past its φ share. A pure figure (`image`,
-   or a lone `icon`) is full-bleed; text content is padded via `--padded` — the card
-   owns the padding, so a figure's top lines up with the title. */
+/* Section — one grid row; a single cell that stretches its child to fill. `image` is
+   full-bleed (no padding); a lone figure / text body gets edge padding (`--padded`);
+   the split drops its LEFT padding (`--split`) so the figure column runs to the card
+   edge and centers with equal border / content gaps. Edge padding is `em`-based, so
+   it scales with the size font. */
 .mrs-phi-card__section {
   display: grid;
   min-width: 0;
@@ -1039,15 +1037,17 @@
   overflow: hidden;
 }
 .mrs-phi-card__section--padded {
-  padding: 1.1em; /* `em` → scales with the size-derived base font-size */
+  padding: 1.1em;
 }
-/* Inset separator between the upper and lower sections — doesn't run edge to edge.
-   Only the lower section renders when `lower` is present, so it's auto-hidden else. */
+.mrs-phi-card__section--split {
+  padding: 1.1em 1.1em 1.1em 0;
+}
+/* Footer row — horizontal edge padding only; the footer spreads its rows vertically
+   (space-evenly) across the full band, with an inset separator along the top (which
+   only renders when there's a footer, so it auto-hides on a collapsed card). */
 .mrs-phi-card__section--lower {
   position: relative;
-  /* The footer band is the φ-small row; keep its horizontal padding but trim the
-     vertical so a footer (e.g. a fixed-height badge) fits on the smallest cards. */
-  padding: 0.5em 1.1em;
+  padding: 0 1.1em;
 }
 .mrs-phi-card__section--lower::before {
   content: '';
@@ -1058,8 +1058,8 @@
   border-top: 1px solid var(--color-border-primary);
 }
 
-/* Figure — the `image` / `icon` props render the top section full-width: an image
-   fills it (object-fit: cover); an icon node sits centered on the surface. */
+/* Figure — `image` fills (object-fit: cover); a bare `icon` sits centered; `iconFill`
+   scales the glyph to fill its box (aspect preserved), bounded so it never overflows. */
 .mrs-phi-card__image {
   display: block;
   width: 100%;
@@ -1072,53 +1072,87 @@
   justify-content: center;
   width: 100%;
   height: 100%;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
   color: var(--color-text-tertiary);
 }
-/* `iconFill` — scale the glyph to fill the figure (aspect preserved: SVGs via their
-   preserveAspectRatio, images via object-fit). The padded section provides the inset. */
 .mrs-phi-card__figure--fill svg,
 .mrs-phi-card__figure--fill img {
   width: 100%;
   height: 100%;
   object-fit: contain;
 }
-/* …but in the split (logo + title) a filled icon must not swallow the tall φ-band —
-   cap it to a logo-sized figure (em-scaled, so it tracks the card size), centered. */
-.mrs-phi-card__split .mrs-phi-card__figure--fill svg,
-.mrs-phi-card__split .mrs-phi-card__figure--fill img {
-  width: auto;
-  height: 100%;
-  max-width: 100%;
-  max-height: 2.75em;
-}
 
-/* Icon + body together → the original upper-band split: a narrow icon column and a
-   wide body column at 1 : φ (the logo-and-title layout). The padded section insets
-   both columns equally, so the figure's top lines up with the title. */
+/* Icon + body split → the original 1 : φ upper layout. The figure column runs to the
+   card's left edge (the section drops its left padding), so the figure centers with an
+   equal gap to the border and to the content. No column gap — the content sits flush on
+   the φ line; the figure's own centering inset is the only space between them. */
 .mrs-phi-card__split {
   display: grid;
-  grid-template-columns: 1fr 1.6180339887fr; /* icon : body = 1 : φ */
-  gap: 0.85em;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.6180339887fr); /* figure : content = 1 : φ */
   min-width: 0;
   min-height: 0;
   overflow: hidden;
 }
 
-/* Body — the card-padded text stack: the title/subtitle (`upper`) with `content`
-   below. The top section's content (or the wide column of the split). Vertically
-   centered (so a title/subtitle sits beside a logo cleanly); `--top` flips to
-   top-aligned when there's `content` to flow from the top. */
+/* Body — the text stack (`upper` title/subtitle + `content`), vertically centered and
+   flush-left; no padding of its own (the section / split own the inset). */
 .mrs-phi-card__body {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 0.55em;
+  gap: 0.4em;
   min-width: 0;
   min-height: 0;
   overflow: hidden;
 }
-.mrs-phi-card__body--top {
-  justify-content: flex-start;
+
+/* Footer — meta lines (left) and badges (right); each column spreads its rows evenly
+   (space-evenly) across the band height. */
+.mrs-phi-card__footer {
+  display: flex;
+  align-items: stretch;
+  justify-content: space-between;
+  gap: 0.5em;
+  height: 100%;
+  min-width: 0;
+}
+.mrs-phi-card__footer-lines {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  min-width: 0;
+}
+.mrs-phi-card__footer-badges {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: flex-end;
+  flex-shrink: 0;
+}
+.mrs-phi-card__footer-line {
+  display: flex;
+  align-items: center;
+  gap: 0.4em;
+  min-width: 0;
+  font-size: 0.85em;
+  color: var(--color-text-secondary);
+}
+.mrs-phi-card__footer-icon {
+  display: inline-flex;
+  flex-shrink: 0;
+  color: var(--color-text-tertiary);
+}
+.mrs-phi-card__footer-icon svg {
+  width: 1.1em;
+  height: 1.1em;
+}
+.mrs-phi-card__footer-text {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 /* Corner — top-right overlay for the actions menu (or a consumer `corner` node).

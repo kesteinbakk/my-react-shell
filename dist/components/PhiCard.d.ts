@@ -2,13 +2,6 @@ import type { ReactNode } from 'react';
 /**
  * φ — the golden ratio. Exported so a consumer can size a layout against the exact
  * constant the card uses (a card's rendered height is `width / PHI`).
- *
- * The card is one scaling unit driven entirely by its width:
- *   Outer:  width : height  = φ : 1
- *   Split:  upperH : lowerH  = φ : 1   (the two sections)
- *
- * The split lives in components.css as an `fr` ratio; the `1.6180339887fr` literal
- * there is this same φ, kept in lockstep with this constant.
  */
 export declare const PHI = 1.6180339887;
 export type PhiCardSize = 'sm' | 'md' | 'lg' | 'xl';
@@ -24,82 +17,81 @@ export interface PhiCardAction {
     destructive?: boolean;
     disabled?: boolean;
 }
+/** Leading glyph for a footer line — the kit ships these (no icon registry needed). */
+export type PhiCardFooterLineType = 'date' | 'time' | 'check';
+/** One left-side footer line: text with an optional kit-shipped leading glyph. */
+export interface PhiCardFooterLine {
+    text: ReactNode;
+    type?: PhiCardFooterLineType;
+}
+/** Structured footer: meta lines on the left, badges stacked on the right. */
+export interface PhiCardFooter {
+    /** Left column, evenly spread vertically. Cap by size: sm 1 · md 2 · lg 3 · xl 5. */
+    lines?: PhiCardFooterLine[];
+    /** Right column, stacked + evenly spread. Cap by size: sm/md 1 · lg 2 · xl 4. */
+    badges?: ReactNode[];
+}
 export interface PhiCardProps {
     /**
-     * Top-section heading — typically a title + subtitle. The **card pads it** (don't
-     * add your own padding); it's top-aligned, with `content` (if any) stacked below.
-     * For a full-bleed figure use `image` / `icon` instead. Ignored when `image` is set;
-     * with `icon` also present it's the content column of a 1 : φ top split.
+     * Top-section heading — typically a title + subtitle. The card pads it (no padding
+     * of your own); it's vertically centered and flush-left at the split (or the edge
+     * padding when there's no figure). With `image`/`icon` present it's the wide content
+     * column of the 1 : φ top split.
      */
     upper?: ReactNode;
-    /**
-     * Main content for the top section, rendered **below** `upper` (the title/subtitle)
-     * and card-padded along with it. The classic card title → subtitle → body stack.
-     */
+    /** Main content, stacked under `upper` in the same centered, flush-left text body. */
     content?: ReactNode;
-    /**
-     * Image URL — rendered full-bleed (full width, `object-fit: cover`) as the top
-     * section, giving the classic figure-over-content card with `lower` below. Takes
-     * precedence over `icon` and `upper`.
-     */
+    /** Image URL — rendered full-bleed (`object-fit: cover`) as the top section. */
     image?: string;
-    /** Alt text for `image`. Defaults to `''` (treated as decorative). */
+    /** Alt text for `image`. Defaults to `''` (decorative). */
     imageAlt?: string;
     /**
-     * Icon / figure node for the top section (below `image` in precedence). Alone it's
-     * centered. With `upper`/`content` present the top splits 1 : φ — a narrow icon
-     * column (left) and the body column (right): the original logo-and-title layout.
-     * Pair with `iconFill` to scale it to fill the column.
+     * Icon / figure node for the top section. Alone it's centered; with `upper`/`content`
+     * the top splits 1 : φ — a narrow figure column (centered so the border→figure gap
+     * equals the figure→content gap) and the content column. Pair with `iconFill` to fill.
      */
     icon?: ReactNode;
     /**
-     * Scale `icon` to **fill** its area (aspect preserved), overriding the icon node's
-     * own width/height. A standalone figure fills the section; in the icon+content
-     * split it's capped to a logo size so it doesn't swallow the tall band.
+     * Scale `icon` to **fill** its column (aspect preserved, a small inset, never
+     * overflows), overriding the icon node's own width/height.
      */
     iconFill?: boolean;
     /**
-     * Bottom section (a footer) — **card-padded**. When empty (absent / `null` /
-     * `false`) it's **not rendered at all** and the **card shrinks to the top band's
-     * height** (`width / φ²`) — shorter by exactly the bottom split, not a full-height
-     * card with the top content centered.
+     * Freeform bottom section (a footer) — the bring-your-own escape hatch. Use `footer`
+     * for the structured meta-lines + badges layout. **Throws if both are given.** When
+     * neither is present the card **collapses** to the top band's height (`width / φ²`).
      */
     lower?: ReactNode;
     /**
-     * Size preset — sets the width (height = width / φ) **and** a base `font-size` the
-     * section content inherits, so larger cards get larger text by default (override
-     * per element as needed). `sm`/`md`/`lg`/`xl` = 180/240/320/480px. Default: `'md'`.
+     * Structured footer: `lines` (left, with optional `date`/`time`/`check` glyphs) and
+     * `badges` (right, stacked) — both evenly spread vertically. Per-size caps throw in
+     * dev (lines: sm 1·md 2·lg 3·xl 5 · badges: sm/md 1·lg 2·xl 4).
      */
+    footer?: PhiCardFooter;
+    /** Size preset — sets the width (height = width / φ) and a base inherited font-size. */
     size?: PhiCardSize;
-    /**
-     * Actions for the built-in top-right overflow menu — a ⋮ trigger that opens a
-     * dropdown of these items. Empty / absent → no trigger is rendered. Ignored when
-     * `corner` is set (that replaces the built-in menu).
-     */
+    /** Actions for the built-in top-right ⋮ overflow menu. Ignored when `corner` is set. */
     actions?: PhiCardAction[];
-    /** Override the ⋮ trigger glyph (its own chrome — defaults to a vertical ellipsis). */
+    /** Override the ⋮ trigger glyph. */
     menuIcon?: ReactNode;
     /** Accessible name for the menu trigger. Default: `'Actions'`. */
     menuLabel?: string;
-    /**
-     * Bring-your-own top-right node (your own icon buttons, a custom menu, …). Replaces
-     * the built-in `actions` menu entirely; rendered only when set.
-     */
+    /** Bring-your-own top-right node; replaces the built-in `actions` menu. */
     corner?: ReactNode;
-    /** Color for a 3px left accent border. Pass any CSS color string (e.g. a token). */
+    /** Color for a 3px left accent border. Pass any CSS color string. */
     leftBorderColor?: string;
     /** Click handler for the whole card. The corner area never triggers it. */
     onClick?: () => void;
-    /** Hover affordance (shadow lift + pointer). Defaults to `true` when `onClick` is set. */
+    /** Hover affordance. Defaults to `true` when `onClick` is set. */
     hoverable?: boolean;
     /** Extra classes on the outer card, merged via `cn()`. */
     className?: string;
 }
 /**
  * Golden-ratio card. Width is the only size knob; height (= width / φ), the φ:1 split,
- * and a base font-size derive from it. The card pads its text content (`upper` title/
- * subtitle + `content`, and the `lower` footer); figures (`image` / `icon`) are
- * full-bleed. The bottom collapses (card shortens) when `lower` is empty. Optional
- * top-right overflow menu.
+ * and a base font-size derive from it. The card owns its padding: a figure (`icon` /
+ * `image`) fills its column, the text body is centered and flush-left at the split, and
+ * the footer (`footer` structured, or `lower` freeform) spreads its rows evenly. The
+ * bottom collapses (card shortens) when there's no footer.
  */
-export declare function PhiCard({ upper, content, image, imageAlt, icon, iconFill, lower, size, actions, menuIcon, menuLabel, corner, leftBorderColor, onClick, hoverable, className, }: PhiCardProps): import("react").JSX.Element;
+export declare function PhiCard({ upper, content, image, imageAlt, icon, iconFill, lower, footer, size, actions, menuIcon, menuLabel, corner, leftBorderColor, onClick, hoverable, className, }: PhiCardProps): import("react").JSX.Element;

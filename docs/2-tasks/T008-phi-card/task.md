@@ -24,21 +24,24 @@ Outer:  width : height = φ : 1     (height = width / φ)
 Split:  upperH : lowerH = φ : 1    (the two sections)
 ```
 
-- **Two sections, card-padded text** — `upper` (title/subtitle) + `content` (main body,
-  below it) form the top body; `lower` is the footer. The **card owns the padding**
-  (`em`-scaled so it tracks the size font); the body is vertically centered (top-aligned
-  with `content`), and figures (`image`/`icon`) stay full-bleed. An inset separator
-  divides the two sections, drawn only when a `lower` is present.
-- **Optional figure** — `image` (full-bleed, `object-fit: cover`) or `icon` (centered)
-  renders the **top** section full-width (figure-over-content), with `lower` below. With
-  **both `icon` and `upper`**, the top splits **1 : φ** (narrow icon column · wide content)
-  — the original foundation logo-and-title layout. Top-section precedence: `image` >
-  `icon`+`upper` split > `icon` > `upper`. `iconFill` scales the icon to fill its area
-  (full-width figure, aspect preserved) instead of its intrinsic size.
+- **Card-owned padding, centered flush-left body** — the text body (`upper` title/subtitle
+  + `content`) carries **no padding of its own**; the card pads (`em`-scaled by size) and the
+  body is **vertically centered, flush-left** at the φ split (or the edge padding when
+  there's no figure). An inset separator divides the sections (only when there's a footer).
+- **Figure fills + centers** — `image` (full-bleed `object-fit: cover`) or `icon` renders
+  the top; with a body the top splits **1 : φ** (the foundation logo-and-title layout). The
+  figure column runs to the card edge so the figure **centers with an equal border→figure
+  and figure→content gap**; `iconFill` fills the column (aspect preserved, never overflows —
+  `minmax(0,…)` on the φ tracks prevents the blowout). Precedence: `image` > `icon`+body
+  split > `icon` > body.
+- **Structured footer** — `footer={{ lines, badges }}`: meta lines on the left (optional
+  `date`/`time`/`check` kit glyphs), badges stacked on the right, both `space-evenly`.
+  Per-size caps (lines sm 1·md 2·lg 3·xl 5; badges sm/md 1·lg 2·xl 4) **hard-throw in dev**,
+  as does giving both `footer` and the freeform `lower` escape hatch.
 - **Font scales with `size`** — the size preset sets a base `font-size` on the card root
   (sm/md/lg/xl = 0.75/0.875/1.125/1.375rem) that section content inherits, so larger cards
   get larger text by default; consumers override per element.
-- **Bottom collapses when empty** — `lower` absent / `null` / `false` → the section is not
+- **Bottom collapses when there's no footer** — no `footer`/`lower` → the section is not
   rendered and the **card shrinks to the top band's height** (`width / φ²`), shorter by
   exactly the bottom split. Replaces the old `singleBand` prop.
 - **Top-right overflow menu** — `actions: PhiCardAction[]` → a ⋮ trigger opening a Radix
