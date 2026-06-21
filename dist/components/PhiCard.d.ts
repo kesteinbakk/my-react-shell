@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import type { AccentPlacement, AccentTone } from './accent';
 /**
  * φ — the golden ratio. Exported so a consumer can size a layout against the exact
  * constant the card uses (a card's rendered height is `width / PHI`).
@@ -80,8 +81,16 @@ export interface PhiCardProps {
     menuLabel?: string;
     /** Bring-your-own top-right node; replaces the built-in `actions` menu. */
     corner?: ReactNode;
-    /** Color for a 3px left accent border. Pass any CSS color string. */
-    leftBorderColor?: string;
+    /**
+     * Semantic accent hue, shown as a stripe (see `accentPlacement`). Opt-in — no
+     * accent when unset. One of `primary`·`info`·`success`·`warning`·`danger`·`neutral`.
+     * `color` overrides it.
+     */
+    tone?: AccentTone;
+    /** Raw CSS color for the accent stripe; overrides `tone`. E.g. `'#7c3aed'`. */
+    color?: string;
+    /** Where the accent reads: a `'top'` stripe (default) or a `'left'` bar. */
+    accentPlacement?: AccentPlacement;
     /** Click handler for the whole card. The corner area never triggers it. */
     onClick?: () => void;
     /** Hover affordance. Defaults to `true` when `onClick` is set. */
@@ -96,4 +105,4 @@ export interface PhiCardProps {
  * the footer (`footer` structured, or `lower` freeform) spreads its rows evenly. The
  * bottom collapses (card shortens) when there's no footer.
  */
-export declare function PhiCard({ upper, content, image, imageAlt, icon, iconFill, lower, footer, divider, size, actions, menuIcon, menuLabel, corner, leftBorderColor, onClick, hoverable, className, }: PhiCardProps): import("react").JSX.Element;
+export declare function PhiCard({ upper, content, image, imageAlt, icon, iconFill, lower, footer, divider, size, actions, menuIcon, menuLabel, corner, tone, color, accentPlacement, onClick, hoverable, className, }: PhiCardProps): import("react").JSX.Element;

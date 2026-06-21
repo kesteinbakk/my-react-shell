@@ -1,6 +1,7 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { cn } from './cn';
+import { resolveAccentColor } from './accent';
 /**
  * φ — the golden ratio. Exported so a consumer can size a layout against the exact
  * constant the card uses (a card's rendered height is `width / PHI`).
@@ -42,7 +43,8 @@ function PhiCardMenu({ actions, icon, label, }) {
  * the footer (`footer` structured, or `lower` freeform) spreads its rows evenly. The
  * bottom collapses (card shortens) when there's no footer.
  */
-export function PhiCard({ upper, content, image, imageAlt = '', icon, iconFill = false, lower, footer, divider = false, size = 'md', actions, menuIcon, menuLabel = 'Actions', corner, leftBorderColor, onClick, hoverable, className, }) {
+export function PhiCard({ upper, content, image, imageAlt = '', icon, iconFill = false, lower, footer, divider = false, size = 'md', actions, menuIcon, menuLabel = 'Actions', corner, tone, color, accentPlacement = 'top', onClick, hoverable, className, }) {
+    const accent = resolveAccentColor(tone, color);
     const width = SIZE_WIDTH_PX[size];
     const hasIcon = !isEmpty(icon);
     const hasBody = !isEmpty(upper) || !isEmpty(content);
@@ -113,7 +115,7 @@ export function PhiCard({ upper, content, image, imageAlt = '', icon, iconFill =
         width: `${width}px`,
         height: `${height}px`,
         fontSize: `${SIZE_FONT_REM[size]}rem`,
-        ...(leftBorderColor ? { borderLeft: `3px solid ${leftBorderColor}` } : {}),
+        ...(accent != null ? { '--mrs-phi-accent': accent } : {}),
     };
-    return (_jsxs("div", { className: cn('mrs-phi-card', !hasBottom && 'mrs-phi-card--single', isHoverable && 'mrs-phi-card--hoverable', className), style: style, onClick: onClick, children: [_jsx("div", { className: cn('mrs-phi-card__section', topSectionMod), children: topContent }), hasBottom ? (_jsx("div", { className: cn('mrs-phi-card__section', 'mrs-phi-card__section--lower', divider && 'mrs-phi-card__section--divider'), children: hasFooter ? footerNode : lower })) : null, cornerNode != null ? (_jsx("div", { className: "mrs-phi-card__corner", onClick: (e) => e.stopPropagation(), children: cornerNode })) : null] }));
+    return (_jsxs("div", { className: cn('mrs-phi-card', !hasBottom && 'mrs-phi-card--single', isHoverable && 'mrs-phi-card--hoverable', accent != null && 'mrs-phi-card--accent', accent != null && `mrs-phi-card--accent-${accentPlacement}`, className), style: style, onClick: onClick, children: [_jsx("div", { className: cn('mrs-phi-card__section', topSectionMod), children: topContent }), hasBottom ? (_jsx("div", { className: cn('mrs-phi-card__section', 'mrs-phi-card__section--lower', divider && 'mrs-phi-card__section--divider'), children: hasFooter ? footerNode : lower })) : null, cornerNode != null ? (_jsx("div", { className: "mrs-phi-card__corner", onClick: (e) => e.stopPropagation(), children: cornerNode })) : null] }));
 }

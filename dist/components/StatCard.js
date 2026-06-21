@@ -1,5 +1,6 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import { cn } from './cn';
+import { ACCENT_TONE_COLOR, resolveAccentColor } from './accent';
 const SIZE_WIDTH_PX = {
     sm: 180,
     md: 240,
@@ -14,13 +15,6 @@ const SIZE_FONT_REM = {
 };
 // The golden ratio — height = width / PHI (same constant as PhiCard).
 const PHI = 1.6180339887;
-const TONE_COLOR = {
-    success: 'var(--color-success)',
-    info: 'var(--color-info)',
-    warning: 'var(--color-warning)',
-    danger: 'var(--color-danger)',
-    neutral: 'var(--color-text-secondary)',
-};
 // ── Footer glyphs (same kit-shipped icons as PhiCard) ────────────────────────
 const FOOTER_GLYPHS = {
     date: (_jsxs("svg", { viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", "aria-hidden": "true", children: [_jsx("rect", { x: "3", y: "4", width: "18", height: "18", rx: "2" }), _jsx("path", { d: "M16 2v4M8 2v4M3 10h18" })] })),
@@ -53,8 +47,9 @@ function ArcRing({ value, max, className, }) {
  * The accent stripe, badge tint, and watermark are driven by `tone` (mapped to
  * semantic tokens) or overridden with a raw CSS `color` string.
  */
-export function StatCard({ title, subtitle, badge, tone = 'neutral', color, stats, footer, lower, watermark, size = 'md', onClick, hoverable, className, }) {
-    const accentColor = color ?? TONE_COLOR[tone];
+export function StatCard({ title, subtitle, badge, tone = 'neutral', color, accentPlacement = 'top', stats, footer, lower, watermark, size = 'md', onClick, hoverable, className, }) {
+    // tone defaults to 'neutral', so this is always defined (StatCard always accents).
+    const accentColor = resolveAccentColor(tone, color) ?? ACCENT_TONE_COLOR.neutral;
     const width = SIZE_WIDTH_PX[size];
     const height = width / PHI;
     const isHoverable = hoverable ?? !!onClick;
@@ -99,7 +94,7 @@ export function StatCard({ title, subtitle, badge, tone = 'neutral', color, stat
             badgeNode = (_jsxs("div", { className: "mrs-stat-card__badge", children: [_jsx("span", { className: "mrs-stat-card__badge-value", children: badge.value }), badge.label ? _jsx("span", { className: "mrs-stat-card__badge-label", children: badge.label }) : null] }));
         }
     }
-    return (_jsx("div", { className: cn('mrs-stat-card', isHoverable && 'mrs-stat-card--hoverable', watermark && 'mrs-stat-card--watermark', className), style: style, "data-watermark": watermark, onClick: onClick, children: _jsxs("div", { className: "mrs-stat-card__inner", children: [_jsxs("div", { className: "mrs-stat-card__header", children: [_jsxs("div", { className: "mrs-stat-card__head-text", children: [_jsx("p", { className: "mrs-stat-card__title", children: title }), subtitle ? _jsx("p", { className: "mrs-stat-card__subtitle", children: subtitle }) : null] }), badgeNode] }), stats && stats.length > 0 ? (_jsx("dl", { className: "mrs-stat-card__stats", children: stats.map((item, i) => {
+    return (_jsx("div", { className: cn('mrs-stat-card', `mrs-stat-card--accent-${accentPlacement}`, isHoverable && 'mrs-stat-card--hoverable', watermark && 'mrs-stat-card--watermark', className), style: style, "data-watermark": watermark, onClick: onClick, children: _jsxs("div", { className: "mrs-stat-card__inner", children: [_jsxs("div", { className: "mrs-stat-card__header", children: [_jsxs("div", { className: "mrs-stat-card__head-text", children: [_jsx("p", { className: "mrs-stat-card__title", children: title }), subtitle ? _jsx("p", { className: "mrs-stat-card__subtitle", children: subtitle }) : null] }), badgeNode] }), stats && stats.length > 0 ? (_jsx("dl", { className: "mrs-stat-card__stats", children: stats.map((item, i) => {
                         if (item.max != null) {
                             // Arc-ring stat
                             return (_jsx("div", { className: "mrs-stat-card__stat mrs-stat-card__stat--arc", children: _jsx(ArcRing, { value: item.value, max: item.max }) }, i));

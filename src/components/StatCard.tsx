@@ -1,5 +1,7 @@
 import type { CSSProperties, ReactNode } from 'react'
 import { cn } from './cn'
+import { ACCENT_TONE_COLOR, resolveAccentColor } from './accent'
+import type { AccentPlacement, AccentTone } from './accent'
 import type { PhiCardFooter, PhiCardFooterLine, PhiCardFooterLineType, PhiCardSize } from './PhiCard'
 
 // Re-export the footer types (same shape as PhiCard) so consumers import from one place.
@@ -24,15 +26,8 @@ const SIZE_FONT_REM: Record<PhiCardSize, number> = {
 // The golden ratio — height = width / PHI (same constant as PhiCard).
 const PHI = 1.6180339887
 
-export type StatCardTone = 'success' | 'info' | 'warning' | 'danger' | 'neutral'
-
-const TONE_COLOR: Record<StatCardTone, string> = {
-  success: 'var(--color-success)',
-  info: 'var(--color-info)',
-  warning: 'var(--color-warning)',
-  danger: 'var(--color-danger)',
-  neutral: 'var(--color-text-secondary)',
-}
+/** Semantic accent hue — shared with `PhiCard` (adds `primary` to the original set). */
+export type StatCardTone = AccentTone
 
 // ── Badge ─────────────────────────────────────────────────────────────────────
 
@@ -80,6 +75,8 @@ export interface StatCardProps {
   tone?: StatCardTone
   /** Raw CSS color string for the accent stripe and badge; overrides `tone`. */
   color?: string
+  /** Where the accent reads: a `'top'` stripe (default) or a `'left'` bar. */
+  accentPlacement?: AccentPlacement
   /**
    * Data stat items displayed below the header.
    * Each item has a `value` with either a `label` OR a `max` — not both (throws in dev).
@@ -222,6 +219,7 @@ export function StatCard({
   badge,
   tone = 'neutral',
   color,
+  accentPlacement = 'top',
   stats,
   footer,
   lower,
@@ -231,7 +229,8 @@ export function StatCard({
   hoverable,
   className,
 }: StatCardProps) {
-  const accentColor = color ?? TONE_COLOR[tone]
+  // tone defaults to 'neutral', so this is always defined (StatCard always accents).
+  const accentColor = resolveAccentColor(tone, color) ?? ACCENT_TONE_COLOR.neutral
   const width = SIZE_WIDTH_PX[size]
   const height = width / PHI
   const isHoverable = hoverable ?? !!onClick
@@ -313,6 +312,7 @@ export function StatCard({
     <div
       className={cn(
         'mrs-stat-card',
+        `mrs-stat-card--accent-${accentPlacement}`,
         isHoverable && 'mrs-stat-card--hoverable',
         watermark && 'mrs-stat-card--watermark',
         className,

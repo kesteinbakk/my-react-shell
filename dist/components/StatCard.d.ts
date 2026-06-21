@@ -1,7 +1,9 @@
 import type { ReactNode } from 'react';
+import type { AccentPlacement, AccentTone } from './accent';
 import type { PhiCardFooter, PhiCardFooterLine, PhiCardFooterLineType, PhiCardSize } from './PhiCard';
 export type { PhiCardFooter as StatCardFooter, PhiCardFooterLine as StatCardFooterLine, PhiCardFooterLineType as StatCardFooterLineType };
-export type StatCardTone = 'success' | 'info' | 'warning' | 'danger' | 'neutral';
+/** Semantic accent hue — shared with `PhiCard` (adds `primary` to the original set). */
+export type StatCardTone = AccentTone;
 export interface StatCardBadge {
     /** Primary value shown in the badge circle. */
     value: number | string;
@@ -40,6 +42,8 @@ export interface StatCardProps {
     tone?: StatCardTone;
     /** Raw CSS color string for the accent stripe and badge; overrides `tone`. */
     color?: string;
+    /** Where the accent reads: a `'top'` stripe (default) or a `'left'` bar. */
+    accentPlacement?: AccentPlacement;
     /**
      * Data stat items displayed below the header.
      * Each item has a `value` with either a `label` OR a `max` — not both (throws in dev).
@@ -74,4 +78,4 @@ export interface StatCardProps {
  * The accent stripe, badge tint, and watermark are driven by `tone` (mapped to
  * semantic tokens) or overridden with a raw CSS `color` string.
  */
-export declare function StatCard({ title, subtitle, badge, tone, color, stats, footer, lower, watermark, size, onClick, hoverable, className, }: StatCardProps): import("react").JSX.Element;
+export declare function StatCard({ title, subtitle, badge, tone, color, accentPlacement, stats, footer, lower, watermark, size, onClick, hoverable, className, }: StatCardProps): import("react").JSX.Element;
