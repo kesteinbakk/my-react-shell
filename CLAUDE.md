@@ -272,8 +272,10 @@ docs/
 
 ## Dev servers (agent rules)
 
-- **The user owns dev servers.** Never run `pnpm dev`, `vite`, or `convex dev`
-  (long-running, interactive, shared backend). If one is down, report and stop.
+- **The user owns dev servers.** Never run `pnpm dev`, `vite`, `convex dev`, or the
+  `build:lib:watch` sidecar (long-running, shared; the watcher is started by the
+  dev-manager's `dev start` via `watch = true` in the registry). If one is down,
+  report and stop.
 - Get approval before installing/changing any dependency or editing any `.env*`
   file — state the exact change first.
 

@@ -55,6 +55,14 @@ The release loop is for *releases*. To iterate locally, point the consumer at th
 local checkout — this is a **dev-only** redirect:
 - In the consumer, set the dependency to a local link:
   `"my-react-shell": "link:../my-react-shell"` (or `pnpm link --dir ../my-react-shell`), then `pnpm install`.
+- **Keep `dist/` fresh while iterating.** A `link:` consumer reads the shell's
+  committed `dist/`, never its `src/` — so a `src/` edit is invisible until `dist/`
+  rebuilds. `dev start` handles this automatically: my-react-shell carries `watch = true`
+  in the dev registry (`~/Developer/scripts/projects.toml`), so a `tsc --watch` sidecar
+  (`rs:watch`) rebuilds `dist/` on every save and the demo's Vite hot-reloads. Outside a
+  `dev start` session, run `pnpm build:lib:watch` in the shell checkout yourself. The
+  pre-commit guard still rebuilds `dist/` at commit time — the watcher only covers the
+  in-between iteration.
 - **Dedupe React (and the shared Convex-React layer) in the consumer's bundler.**
   This step applies **only to the `link:` loop** — not the tag-pinned git-dep path.
   A `link:` symlinks the shell's checkout, which carries its **own**
