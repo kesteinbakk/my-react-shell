@@ -1268,7 +1268,7 @@
 .mrs-stat-card--watermark::after {
   content: attr(data-watermark);
   position: absolute;
-  right: -5%;
+  right: 2%;
   bottom: -8%;
   font-size: 5.5em;
   line-height: 1;
