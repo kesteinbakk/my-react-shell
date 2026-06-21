@@ -72,6 +72,17 @@ demo project's pages — **not** this repo. Build the showcase there, against th
 modules this library publishes. Any showcase or demo material that lands in this
 repo is to be **moved to `my-react-shell-demo`**.
 
+**Demos show only what the shell ships — never pimp a demo.** Everything a demo
+renders (`my-react-shell-demo` and `my-react-shell-theme-demo`) must be **exactly what
+the library exports out of the box**, with its real, shipped appearance. **Never** add
+demo-local CSS, style overrides, bespoke components, or hand-tuned values that make a
+module *look* better than it actually ships — a flattered demo misrepresents the
+library, so the user believes the shell is wonderful and is then disappointed building
+a real app on it. If something looks wrong in a demo, the fix belongs in the **shell**
+(or a task against it), never papered over in the demo. Demo-only scaffolding — page
+layout, nav, explanatory copy, how examples are arranged and labelled — is fine;
+faking the *product* (the actual exported components, tokens, and defaults) is not.
+
 `my-react-shell-demo` mirrors the structure of **our foundation showcase**: a
 **landing page of cards** that each point to a different area, behind a **full
 router with navigation** — one route per showcased area, reachable from the
