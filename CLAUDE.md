@@ -271,6 +271,18 @@ docs/
   app's and first paint crashes with `Invalid hook call`. `link:`-only — the
   git-dep path is unaffected. See `docs/guides/distribution-model.md` → Local
   dev-loop for the exact package list and why.
+- **A `link:` consumer's dev server sees shell *and* `themes` edits live — only its
+  git-dep/production build lags.** A dev project on `link:../my-react-shell` (the demos,
+  evaluering) reads the shell checkout directly: a `src`→`dist` rebuild (the `rs:watch`
+  sidecar) shows on reload, and a **`themes`** edit propagates too — the bare
+  `@import 'themes/…'` lives in the *shell's* CSS, so it resolves through the **shell's**
+  `node_modules/themes`; symlink that at the local checkout
+  (`ln -sf ~/Developer/themes node_modules/themes`, the distribution-model stopgap) and
+  one edit reaches **every** link consumer's dev server at once. So "your dev projects
+  won't see the change" is **false** on the link loop — that only holds for a consumer's
+  **production / git-dep install** (pinned tag; needs push + tag + dep bump). Corollary:
+  a *breaking* shell/`themes` change (a renamed token) hits link consumers' dev
+  immediately, so migrate them in the same change.
 
 ## Dev servers (agent rules)
 
