@@ -28,4 +28,6 @@ export { SegmentedControl } from './SegmentedControl';
 export { Select } from './Select';
 export { ColorPicker } from './ColorPicker';
 export { UserPreferences } from './UserPreferences';
+export { Collapsible } from './Collapsible';
+export { Accordion } from './Accordion';
 export { cn } from './cn';

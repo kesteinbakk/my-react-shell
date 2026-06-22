@@ -1835,3 +1835,249 @@
   font-variant-numeric: tabular-nums;
   text-align: center;
 }
+
+/* ── Collapsible (Radix Collapsible) ─────────────────────────────────────────
+   A single disclosure. The trigger carries the variant/size/layout; the content
+   region animates its height via Radix's --radix-collapsible-content-height var,
+   over the per-instance --mrs-collapsible-duration the component sets inline. */
+.mrs-collapsible {
+  width: 100%;
+}
+.mrs-collapsible__trigger {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--color-text-primary);
+  font: inherit;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 120ms ease, border-color 120ms ease, color 120ms ease;
+}
+.mrs-collapsible__trigger:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+.mrs-collapsible__trigger:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Layout: chevron pushed to the right edge (spread) vs. directly after content */
+.mrs-collapsible__trigger--spread {
+  justify-content: space-between;
+}
+.mrs-collapsible__trigger--inline {
+  justify-content: flex-start;
+  gap: 0.5rem;
+}
+
+/* Sizes */
+.mrs-collapsible__trigger--sm {
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.375rem;
+  font-size: 0.8125rem;
+}
+.mrs-collapsible__trigger--md {
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+}
+.mrs-collapsible__trigger--lg {
+  padding: 0.75rem 1rem;
+  border-radius: 0.625rem;
+  font-size: 1rem;
+}
+
+/* Variants */
+.mrs-collapsible__trigger--default:hover:not(:disabled),
+.mrs-collapsible__trigger--ghost:hover:not(:disabled) {
+  background: var(--color-hover);
+}
+.mrs-collapsible__trigger--bordered {
+  border-color: var(--color-border-primary);
+}
+.mrs-collapsible__trigger--bordered:hover:not(:disabled) {
+  border-color: var(--color-border-hover);
+  background: var(--color-hover);
+}
+.mrs-collapsible__trigger--filled {
+  background: var(--color-surface-sunken);
+}
+.mrs-collapsible__trigger--filled:hover:not(:disabled) {
+  background: var(--color-surface-sunken-deep);
+}
+
+.mrs-collapsible__label {
+  min-width: 0;
+}
+.mrs-collapsible__chevron {
+  display: inline-flex;
+  flex-shrink: 0;
+  color: var(--color-text-secondary);
+  transition: transform 200ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+.mrs-collapsible__chevron--open {
+  transform: rotate(180deg);
+}
+
+.mrs-collapsible__content {
+  overflow: hidden;
+}
+.mrs-collapsible__content[data-state='open'] {
+  animation: mrs-collapsible-down var(--mrs-collapsible-duration, 200ms) cubic-bezier(0.4, 0, 0.2, 1);
+}
+.mrs-collapsible__content[data-state='closed'] {
+  animation: mrs-collapsible-up var(--mrs-collapsible-duration, 200ms) cubic-bezier(0.4, 0, 0.2, 1);
+}
+.mrs-collapsible__body {
+  padding-top: 0.5rem;
+}
+
+@keyframes mrs-collapsible-down {
+  from { height: 0; }
+  to { height: var(--radix-collapsible-content-height); }
+}
+@keyframes mrs-collapsible-up {
+  from { height: var(--radix-collapsible-content-height); }
+  to { height: 0; }
+}
+
+/* ── Accordion (Radix Accordion) ─────────────────────────────────────────────
+   A set of disclosures with roving arrow-key focus + single/multiple-open
+   behavior. Each panel animates its height via Radix's
+   --radix-accordion-content-height, over the --mrs-accordion-duration the
+   component sets inline on the root. */
+.mrs-accordion {
+  width: 100%;
+}
+.mrs-accordion__item {
+  border-bottom: 1px solid var(--color-border-primary);
+}
+.mrs-accordion__header {
+  display: flex;
+  margin: 0;
+}
+.mrs-accordion__trigger {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  width: 100%;
+  border: none;
+  background: transparent;
+  color: var(--color-text-primary);
+  font: inherit;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 120ms ease, color 120ms ease;
+}
+.mrs-accordion__trigger:hover:not(:disabled) {
+  background: var(--color-hover);
+}
+.mrs-accordion__trigger:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: -2px;
+}
+.mrs-accordion__trigger:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.mrs-accordion__label {
+  min-width: 0;
+}
+.mrs-accordion__chevron {
+  display: inline-flex;
+  flex-shrink: 0;
+  color: var(--color-text-secondary);
+  transition: transform 200ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+.mrs-accordion__trigger[data-state='open'] .mrs-accordion__chevron {
+  transform: rotate(180deg);
+}
+
+.mrs-accordion__content {
+  overflow: hidden;
+  color: var(--color-text-secondary);
+}
+.mrs-accordion__content[data-state='open'] {
+  animation: mrs-accordion-down var(--mrs-accordion-duration, 200ms) cubic-bezier(0.4, 0, 0.2, 1);
+}
+.mrs-accordion__content[data-state='closed'] {
+  animation: mrs-accordion-up var(--mrs-accordion-duration, 200ms) cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes mrs-accordion-down {
+  from { height: 0; }
+  to { height: var(--radix-accordion-content-height); }
+}
+@keyframes mrs-accordion-up {
+  from { height: var(--radix-accordion-content-height); }
+  to { height: 0; }
+}
+
+/* Sizes — trigger padding/type + content body padding (no top padding, so the
+   body sits flush under its trigger). */
+.mrs-accordion--sm .mrs-accordion__trigger {
+  padding: 0.5rem 0.625rem;
+  font-size: 0.8125rem;
+}
+.mrs-accordion--sm .mrs-accordion__body {
+  padding: 0 0.625rem 0.625rem;
+  font-size: 0.8125rem;
+}
+.mrs-accordion--md .mrs-accordion__trigger {
+  padding: 0.75rem 0.875rem;
+  font-size: 0.875rem;
+}
+.mrs-accordion--md .mrs-accordion__body {
+  padding: 0 0.875rem 0.875rem;
+  font-size: 0.875rem;
+}
+.mrs-accordion--lg .mrs-accordion__trigger {
+  padding: 1rem 1.125rem;
+  font-size: 1rem;
+}
+.mrs-accordion--lg .mrs-accordion__body {
+  padding: 0 1.125rem 1.125rem;
+  font-size: 0.9375rem;
+}
+
+/* Variants */
+.mrs-accordion--default .mrs-accordion__item:last-child {
+  border-bottom: none;
+}
+.mrs-accordion--bordered {
+  border: 1px solid var(--color-border-primary);
+  border-radius: 0.5rem;
+  background: var(--color-surface-primary);
+  overflow: hidden;
+}
+.mrs-accordion--bordered .mrs-accordion__item:last-child {
+  border-bottom: none;
+}
+.mrs-accordion--separated {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.mrs-accordion--separated .mrs-accordion__item {
+  border: 1px solid var(--color-border-primary);
+  border-radius: 0.5rem;
+  background: var(--color-surface-primary);
+  overflow: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mrs-collapsible__content,
+  .mrs-accordion__content,
+  .mrs-collapsible__chevron,
+  .mrs-accordion__chevron {
+    animation: none;
+    transition: none;
+  }
+}

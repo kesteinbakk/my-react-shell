@@ -267,6 +267,8 @@ import 'my-react-shell/components/styles.css' // REQUIRED (plain prebuilt CSS; a
 | `Select` | component | Opinionated select on Radix Select (keyboard nav, typeahead, portal); `options` list; controlled via `value`/`onValueChange`. |
 | `ColorPicker` | component | General popover color picker. **Free** by default — a full hue/saturation range (via the `react-colorful` optional peer); `onChange` emits in `format` (`hex`·`rgb`·`hsl`). Pass a `colors` set to **constrain** it to a swatch grid. Controlled; `value` is a directly-usable CSS color string. See [below](#colorpicker). |
 | `UserPreferences` | component | Controlled theme/display settings panel (palette + light/dark/system + optional icons↔emojis). Persists nothing — emits `onChange`. Auth-free (`accountActions` slot). |
+| `Collapsible` | component | Single disclosure on Radix Collapsible: one trigger toggles one region. Controlled (`expanded`) / uncontrolled (`defaultExpanded`); static `trigger` or `renderTrigger(expanded)`; rotating chevron; `variant` (`default`·`bordered`·`ghost`·`filled`), `size`, `inlineChevron`, `animationDuration`. Uses the `@radix-ui/react-collapsible` optional peer. See [below](#collapsible). |
+| `Accordion` | component | Grouped disclosures on Radix Accordion: roving arrow-key focus, single (one-open) or `multiple` open. Data-driven via `items`; controlled `value`/`onValueChange` or `defaultValue`; `variant` (`default`·`bordered`·`separated`), `size`. Uses the `@radix-ui/react-accordion` optional peer. See [below](#accordion). |
 | `cn(...)` | function | `clsx` + `tailwind-merge` class combiner. |
 
 Every component has a matching `…Props` type export (e.g. `AlertProps`, `AlertVariant`,
@@ -276,7 +278,8 @@ Every component has a matching `…Props` type export (e.g. `AlertProps`, `Alert
 `PhiCardSize`, `PhiCardFooter`, `PhiCardFooterLine`, `PhiCardFooterLineType`,
 `StatCardProps`, `StatCardBadge`, `StatItem`, `StatCardTone`,
 `StatCardFooter`, `StatCardFooterLine`, `StatCardFooterLineType`, `ColorPickerProps`,
-`ColorFormat`, etc.).
+`ColorFormat`, `CollapsibleProps`, `CollapsibleVariant`, `CollapsibleSize`,
+`AccordionProps`, `AccordionItem`, `AccordionVariant`, `AccordionSize`, etc.).
 
 ```tsx
 <Alert variant="warning" title="Heads up" onDismiss={() => {}}>Session expires soon.</Alert>
@@ -375,6 +378,81 @@ const [color, setColor] = useState('#3b82f6')
 <ColorPicker colors={['#ef4444', '#22c55e', '#3b82f6']} value={color} onChange={setColor} />
 ```
 
+### `Collapsible`
+
+A single disclosure — one trigger toggling one collapsible region — on Radix
+Collapsible (open-state management, `aria-expanded`/`aria-controls`, the
+`--radix-collapsible-content-height` var the height animation reads). Works
+**controlled** (`expanded` + `onExpandedChange`) or **uncontrolled**
+(`defaultExpanded`). For a set of disclosures with one-open-at-a-time /
+roving-focus behavior, use [`Accordion`](#accordion).
+
+| Prop | Default | Meaning |
+|---|---|---|
+| `trigger` | — | Static trigger content. |
+| `renderTrigger` | — | `(expanded) => node` — trigger as a function of the open state; takes precedence over `trigger`. |
+| `children` | — | The revealed content. |
+| `expanded` | — | Controlled open state. Omit for uncontrolled. |
+| `defaultExpanded` | `false` | Initial open state when uncontrolled. |
+| `onExpandedChange` | — | Fires on every open-state change (controlled + uncontrolled). |
+| `variant` | `'default'` | Trigger surface: `default`·`bordered`·`ghost`·`filled`. |
+| `size` | `'md'` | Trigger padding + type scale: `sm`·`md`·`lg`. |
+| `showArrow` | `true` | Render the rotating chevron. |
+| `inlineChevron` | `false` | Chevron directly after the label instead of pushed to the right edge. |
+| `animationDuration` | `200` | Expand/collapse duration (ms). |
+| `disabled` | — | Disable the trigger. |
+| `className` / `triggerClassName` / `contentClassName` / `arrowClassName` | — | Class overrides on root / trigger / content / chevron. |
+
+```tsx
+// Uncontrolled, open by default:
+<Collapsible defaultExpanded trigger="Shipping & returns">
+  <p>Free shipping over 500 kr…</p>
+</Collapsible>
+
+// Controlled, trigger reflects state:
+const [open, setOpen] = useState(false)
+<Collapsible variant="bordered" expanded={open} onExpandedChange={setOpen}
+  renderTrigger={(o) => <span>{o ? 'Hide details' : 'Show details'}</span>}>
+  <p>…</p>
+</Collapsible>
+```
+
+### `Accordion`
+
+A vertical set of disclosures with group behavior — roving arrow-key focus between
+headers, and single (one-open-at-a-time) or multiple-open mode — on Radix Accordion.
+**Data-driven** via `items`; the open set is **controlled** (`value` /
+`onValueChange`) or **uncontrolled** (`defaultValue`). For a lone trigger+region,
+use [`Collapsible`](#collapsible).
+
+`AccordionItem`: `{ value: string; trigger: ReactNode; content: ReactNode; disabled?: boolean }`.
+
+| Prop | Default | Meaning |
+|---|---|---|
+| `items` | — | The panels, in order (`AccordionItem[]`). **Required.** |
+| `type` | `'single'` | `single` (one open at a time) or `multiple` (independent). |
+| `collapsible` | `true` | For `type="single"`, allow closing the open panel so none is open. Ignored for `multiple`. |
+| `value` | — | Controlled open value(s): `string` for `single`, `string[]` for `multiple`. |
+| `defaultValue` | — | Uncontrolled initial open value(s) — same shape as `value`. |
+| `onValueChange` | — | Fires on open-set change — same shape as `value`. |
+| `variant` | `'default'` | `default` (flat list + dividers) · `bordered` (one bordered container) · `separated` (each item its own card). |
+| `size` | `'md'` | Trigger + body padding/type: `sm`·`md`·`lg`. |
+| `showArrow` | `true` | Render the rotating chevron on each item. |
+| `animationDuration` | `200` | Expand/collapse duration (ms). |
+| `className` | — | Class override on the root. |
+
+```tsx
+const items = [
+  { value: 'a', trigger: 'First', content: <p>…</p> },
+  { value: 'b', trigger: 'Second', content: <p>…</p> },
+]
+// Single (default) — opening one closes the rest:
+<Accordion variant="bordered" defaultValue="a" items={items} />
+
+// Multiple — independent:
+<Accordion type="multiple" variant="separated" defaultValue={['a', 'b']} items={items} />
+```
+
 ### Surfaces & elevation
 
 Kit components render on the semantic surface ladder (full definition in the
@@ -382,12 +460,13 @@ Kit components render on the semantic surface ladder (full definition in the
 
 - **`surface-primary`** — the default card / panel fill: `PhiCard`, `StatCard`, the
   `InputField` / `Select` field, the `ColorPicker` trigger, the active
-  `SegmentedControl` item.
+  `SegmentedControl` item, the `Accordion` `bordered` / `separated` container.
 - **`surface-raised`** — floating chrome that lifts above the card: `ConfirmDialog`,
   `UserPreferences`, the `Select` menu, the `ColorPicker` popover, the `PhiCard`
   overflow menu.
 - **`surface-sunken`** — recessed inset regions (a well below the card): `InfoBox` /
-  neutral `Alert`, `Chip`, the `Table` header + zebra rows, the `SegmentedControl` track.
+  neutral `Alert`, `Chip`, the `Table` header + zebra rows, the `SegmentedControl`
+  track, the `filled` `Collapsible` trigger.
 - **`surface-sunken-deep`** — a deeper recess, for filled neutral elements: neutral
   `Badge`, `Avatar`.
 

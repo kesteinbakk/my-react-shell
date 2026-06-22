@@ -34,4 +34,8 @@ export { ColorPicker } from './ColorPicker';
 export type { ColorPickerProps, ColorFormat } from './ColorPicker';
 export { UserPreferences } from './UserPreferences';
 export type { UserPreferencesProps } from './UserPreferences';
+export { Collapsible } from './Collapsible';
+export type { CollapsibleProps, CollapsibleVariant, CollapsibleSize } from './Collapsible';
+export { Accordion } from './Accordion';
+export type { AccordionProps, AccordionItem, AccordionVariant, AccordionSize, } from './Accordion';
 export { cn } from './cn';
