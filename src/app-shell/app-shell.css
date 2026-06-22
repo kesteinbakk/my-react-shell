@@ -265,7 +265,7 @@
 
 /* ── Page header chrome (ShellPageHeaderUI) ──────────────────────────────── */
 .mrs-page-header {
-  padding-top: 0.75rem;
+  padding-top: 0.375rem;
   padding-bottom: 0.25rem;
 }
 .mrs-page-header[data-border='true'] {
@@ -274,7 +274,7 @@
 .mrs-page-header__row {
   display: flex;
   flex-wrap: wrap;
-  align-items: flex-start;
+  align-items: center;
   column-gap: 1rem;
   row-gap: 0.5rem;
 }
@@ -427,6 +427,8 @@ button.mrs-breadcrumbs__leaf {
 .mrs-page-header__actions .mrs-action-btn {
   flex-direction: row;
   gap: 0.5rem;
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
 }
 .mrs-page-header__search {
   position: relative;
