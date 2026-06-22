@@ -265,7 +265,7 @@
 
 /* ── Page header chrome (ShellPageHeaderUI) ──────────────────────────────── */
 .mrs-page-header {
-  padding-top: 0.375rem;
+  padding-top: 0.25rem;
   padding-bottom: 0.25rem;
 }
 .mrs-page-header[data-border='true'] {
@@ -275,6 +275,7 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
+  min-height: 2.25rem;
   column-gap: 1rem;
   row-gap: 0.5rem;
 }
@@ -285,7 +286,7 @@
   /* A quiet trail, deliberately subordinate to the page title (H1) below it:
      small + regular weight, muted ancestors, with only the interactive leaf
      accented. */
-  font-size: 0.8125rem;
+  font-size: 0.875rem;
   font-weight: 400;
   min-width: 0;
   order: 1;
@@ -427,8 +428,6 @@ button.mrs-breadcrumbs__leaf {
 .mrs-page-header__actions .mrs-action-btn {
   flex-direction: row;
   gap: 0.5rem;
-  padding-top: 0.25rem;
-  padding-bottom: 0.25rem;
 }
 .mrs-page-header__search {
   position: relative;
