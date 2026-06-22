@@ -85,8 +85,11 @@ export interface StatCardProps {
    * side gauge can read at once.
    *
    * **Checked, not defaulted:** `undefined` renders no gauge; `0` renders the gauge
-   * (faint track, empty fill). Throws in dev if combined with
-   * `accentPlacement='left'` — both occupy the left edge.
+   * (faint track, empty fill).
+   *
+   * Combining with `accentPlacement='left'` throws in dev (both occupy the left
+   * edge); in production the gauge takes precedence and the left accent stripe is
+   * suppressed, so they never overlap.
    */
   sideBarCompleteness?: number
   /**
@@ -272,6 +275,11 @@ export function StatCard({
   const gaugeFraction = hasGauge ? Math.min(1, Math.max(0, sideBarCompleteness)) : 0
   const gaugePct = Math.round(gaugeFraction * 100)
 
+  // The gauge owns the left edge. If a consumer also forces the accent stripe there
+  // (`accentPlacement='left'`), the gauge wins and the stripe is suppressed, so they
+  // can never overlap. Dev throws below; this is the prod-safe fallback.
+  const accentSuppressed = hasGauge && accentPlacement === 'left'
+
   // Dev guards
   if (process.env.NODE_ENV !== 'production') {
     if (footer && lower != null) {
@@ -354,7 +362,7 @@ export function StatCard({
     <div
       className={cn(
         'mrs-stat-card',
-        `mrs-stat-card--accent-${accentPlacement}`,
+        !accentSuppressed && `mrs-stat-card--accent-${accentPlacement}`,
         hasGauge && 'mrs-stat-card--gauge',
         isHoverable && 'mrs-stat-card--hoverable',
         watermark && 'mrs-stat-card--watermark',

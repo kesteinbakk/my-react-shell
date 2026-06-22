@@ -52,8 +52,11 @@ export interface StatCardProps {
      * side gauge can read at once.
      *
      * **Checked, not defaulted:** `undefined` renders no gauge; `0` renders the gauge
-     * (faint track, empty fill). Throws in dev if combined with
-     * `accentPlacement='left'` — both occupy the left edge.
+     * (faint track, empty fill).
+     *
+     * Combining with `accentPlacement='left'` throws in dev (both occupy the left
+     * edge); in production the gauge takes precedence and the left accent stripe is
+     * suppressed, so they never overlap.
      */
     sideBarCompleteness?: number;
     /**
