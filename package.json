@@ -49,11 +49,7 @@
   },
   "files": [
     "dist",
-    "src/index.css",
-    "src/styles",
-    "src/fonts",
-    "src/app-shell/app-shell.css",
-    "src/components/components.css",
+    "src/**/*.css",
     "docs/specifications/api-reference.md",
     "docs/guides"
   ],

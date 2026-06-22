@@ -163,15 +163,27 @@ compile differently:
   build`) emits to a **separate `dist-harness/`** (`build.outDir` in `vite.config.ts`),
   never `dist/` — Vite empties its `outDir` on every run, so sharing `dist/` would wipe
   the shipped module entry points.
-  - **CSS ships uncompiled, straight from `src/` — never `dist/`.** Plain CSS isn't
-    compiled, so the `*.css` export subpaths resolve into `src/`
-    (`./components/styles.css` → `src/components/components.css`,
-    `./styles.css` → `src/index.css`, `./app-shell/styles.css` → …), and those exact
-    files sit in the `files` allowlist directly. Two consequences: (1) **rebuilding
-    `dist/` never updates a CSS export** — `build:lib` only touches JS + `.d.ts`, so a
-    CSS-only change that "won't show up" is never a stale-`dist/` problem; (2) on the
-    `link:` loop CSS is therefore **live** (the demo reads `src/` and Vite hot-reloads
-    on save), while JS still needs the `dist/` rebuild the `rs:watch` sidecar provides.
+  - **CSS ships uncompiled, straight from `src/` — never `dist/`.** The flagship CSS
+    export `./styles.css` → `src/index.css` is a **Tailwind v4 source entry**
+    (`@import 'tailwindcss'` + the `themes/*` palettes), expanded by the *consumer's*
+    build against *their* content scan — it has no precompiled form, so it **must** ship
+    as source. The finished kit/app-shell stylesheets (`./components/styles.css` →
+    `src/components/components.css`, `./app-shell/styles.css` → `src/app-shell/app-shell.css`)
+    are static `mrs-`-prefixed token CSS; they ship from `src/` too, so the rule is
+    uniform — **authored CSS in `src/`, compiled JS + `.d.ts` in `dist/`**. Two
+    consequences: (1) **rebuilding `dist/` never updates a CSS export** — `build:lib`
+    only touches JS + `.d.ts`, so a CSS-only change that "won't show up" is never a
+    stale-`dist/` problem; (2) on the `link:` loop CSS is therefore **live** (the demo
+    reads `src/` and Vite hot-reloads on save), while JS still needs the `dist/` rebuild
+    the `rs:watch` sidecar provides.
+  - **Packing is self-maintaining — `files` ships `src/**/*.css` by glob, not a
+    per-file list.** Because a CSS export resolves into `src/`, the file must also sit in
+    the `files` allowlist or it resolves on the `link:` loop (whole checkout is visible)
+    yet is **absent from the git-dep tarball** — a dev/prod skew that only bites the first
+    real consumer. The glob removes that footgun mechanically: any `.css` under `src/` is
+    packed automatically, so adding a CSS export is a **one-list** change (the `exports`
+    map), not two. Verify a packing change with `npm pack --dry-run` (read-only — no
+    install, no lockfile touch).
 - **Solid (`foundation`):** ships **source under the Solid `"solid"` export
   condition** (JSX preserved), compiled by each consumer's `vite-plugin-solid`.
   A precompiled framework-agnostic dist is not viable for Solid (SSR + SPA
@@ -185,9 +197,9 @@ compile differently:
 **D5**: git-dep, committed `dist/`, full `exports` / `peerDependencies`), and
 distribution is in place: it ships a **committed, precompiled `dist/`** (built by
 `build:lib`, no source maps), the dev-harness builds separately to `dist-harness/`,
-the `files` allowlist is narrowed to `dist/` plus the CSS the `styles.css` export
-needs, and two pre-commit guards (above) are wired — the committed-`link:` guard and
-the `dist/` freshness guard.
+the `files` allowlist is narrowed to `dist/` plus the authored CSS (`src/**/*.css`,
+globbed so it self-maintains — see the CSS note above), and two pre-commit guards
+(above) are wired — the committed-`link:` guard and the `dist/` freshness guard.
 
 ### No router peer
 
