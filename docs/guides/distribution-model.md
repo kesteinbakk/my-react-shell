@@ -18,9 +18,9 @@ Per-module exports and contracts live in the other `docs/guides/` files.
 ## The model (shared by both repos)
 
 ### Consumption contract
-- A consumer adds a tag-pinned git dependency:
-  - dev machines (SSH): `"my-react-shell": "git+ssh://git@github.com:kesteinbakk/my-react-shell.git#vX.Y.Z"`
-  - Vercel / CI (HTTPS + token): `"my-react-shell": "git+https://x-access-token:$GITHUB_TOKEN@github.com/kesteinbakk/my-react-shell.git#vX.Y.Z"`
+- A consumer adds a tag-pinned git dependency. `my-react-shell` is **public**, so one
+  tokenless HTTPS spec works everywhere (dev machines and Vercel/CI):
+  `"my-react-shell": "git+https://github.com/kesteinbakk/my-react-shell.git#vX.Y.Z"`
 - The consumer imports by **bare specifier**: `import { … } from 'my-react-shell'`
   (plus the documented sub-paths). Never a relative path, never a `~/`-aliased
   copy in the consumer's own `src/`.
@@ -250,7 +250,8 @@ These are **dependency changes** and need explicit approval before they land:
   brings its own router.
 - One package manager only — **pnpm**. Settle any repo that still has an `npm`
   `package-lock.json` onto `pnpm` before adopting.
-- Configure the Vercel/CI GitHub token (`GITHUB_TOKEN`) for the `git+https` specifier.
+- No Vercel/CI token — `my-react-shell` is public, so the `git+https` specifier clones
+  without auth. (A private shell fork would need a `GITHUB_TOKEN` + SSH→HTTPS install rewrite.)
 - Install the committed-link guard in the consumer — a pre-commit hook that blocks
   committing the dev-loop `link:`/`file:` redirect, then `git config core.hooksPath
   .githooks`. Use the **link-check logic only**: the shell's own `.githooks/pre-commit`

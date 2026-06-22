@@ -25,14 +25,15 @@ model is documented in [`docs/guides/distribution-model.md`](docs/guides/distrib
 Add it as a tag-pinned git dependency (`#vX.Y.Z`). **pnpm only** — never `npm
 install` (it desyncs the lockfile and Convex dev then crash-loops).
 
-- **Dev machines (SSH):**
-  ```jsonc
-  "my-react-shell": "git+ssh://git@github.com:kesteinbakk/my-react-shell.git#vX.Y.Z"
-  ```
-- **Vercel / CI (HTTPS + token):**
-  ```jsonc
-  "my-react-shell": "git+https://x-access-token:$GITHUB_TOKEN@github.com/kesteinbakk/my-react-shell.git#vX.Y.Z"
-  ```
+**Public repo — one spec everywhere, no token:**
+
+```jsonc
+"my-react-shell": "git+https://github.com/kesteinbakk/my-react-shell.git#vX.Y.Z"
+```
+
+It clones over HTTPS with no credentials, on dev machines and on Vercel/CI alike. (Only
+if you fork the shell *private* do you need an SSH spec on dev + a `GITHUB_TOKEN`
+install-command rewrite on CI.)
 
 The package ships a **committed, precompiled `dist/`** (JS + `.d.ts`), so the install
 is zero-config — pnpm checks out pre-built files and runs no build step; you receive
