@@ -43,16 +43,17 @@ contain the colours you edited), bumps the version, commits, tags `vX.Y.Z`, and
 pushes. Then it prints the next step: bump the pin in the shell.
 
 After it: set the shell's themes pin to the new tag (one edit), then release the
-shell:
+shell (next section):
 
-```bash
-# in ~/Developer/my-react-shell/package.json → devDependencies.themes:
-#   "git+ssh://git@bitbucket.org:kesteinbakk/themes.git#vX.Y.Z"
-cd ~/Developer/themes && git checkout vX.Y.Z      # so the shell vendors the exact tag
+```jsonc
+// ~/Developer/my-react-shell/package.json → devDependencies.themes:
+"themes": "git+ssh://git@bitbucket.org:kesteinbakk/themes.git#vX.Y.Z"
 ```
 
-(foundation, the other themes consumer, bumps its own pin independently — themes
-stays the shared source of truth, D13.)
+Right after a themes release, `../themes` HEAD is already at `vX.Y.Z`, so the shell
+release preflight passes with no further checkout. (foundation, the other themes
+consumer, bumps its own pin independently — themes stays the shared source of
+truth, D13.)
 
 ---
 
