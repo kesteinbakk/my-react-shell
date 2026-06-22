@@ -127,6 +127,14 @@ resolves through the worktree → root → checkout chain, and `resolve.dedupe` 
 **tracked** `vite.config.ts`, so the single-React / single-Radix guarantee is already
 present in the worktree. No extra config, no second dedupe list.
 
+> **But a `link:` consumer reads the *primary* checkout, not your worktree.**
+> `link:../my-react-shell` resolves to the primary working tree's path, so any edit you
+> make **inside** a `.claude/worktrees/<slug>/` worktree — JS *or* CSS — is invisible to
+> the demo until it lands on the branch the primary tree has checked out (`main`).
+> Rebuilding `dist/` in the worktree doesn't help: the demo isn't reading the worktree at
+> all. So verify worktree changes by landing them on `main` first (then the `rs:watch`
+> rebuild + Vite hot-reload pick them up), not by staring at a demo that can't see them.
+
 - **Never `pnpm install` inside the worktree — this is the actual trap.** A
   missing-module error in a fresh worktree tempts a reinstall, but that materializes a
   *second*, independent `node_modules` — a second React and a second copy of every Radix
@@ -155,6 +163,15 @@ compile differently:
   build`) emits to a **separate `dist-harness/`** (`build.outDir` in `vite.config.ts`),
   never `dist/` — Vite empties its `outDir` on every run, so sharing `dist/` would wipe
   the shipped module entry points.
+  - **CSS ships uncompiled, straight from `src/` — never `dist/`.** Plain CSS isn't
+    compiled, so the `*.css` export subpaths resolve into `src/`
+    (`./components/styles.css` → `src/components/components.css`,
+    `./styles.css` → `src/index.css`, `./app-shell/styles.css` → …), and those exact
+    files sit in the `files` allowlist directly. Two consequences: (1) **rebuilding
+    `dist/` never updates a CSS export** — `build:lib` only touches JS + `.d.ts`, so a
+    CSS-only change that "won't show up" is never a stale-`dist/` problem; (2) on the
+    `link:` loop CSS is therefore **live** (the demo reads `src/` and Vite hot-reloads
+    on save), while JS still needs the `dist/` rebuild the `rs:watch` sidecar provides.
 - **Solid (`foundation`):** ships **source under the Solid `"solid"` export
   condition** (JSX preserved), compiled by each consumer's `vite-plugin-solid`.
   A precompiled framework-agnostic dist is not viable for Solid (SSR + SPA
