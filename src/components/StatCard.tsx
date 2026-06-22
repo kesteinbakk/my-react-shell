@@ -78,6 +78,18 @@ export interface StatCardProps {
   /** Where the accent reads: a `'top'` stripe (default) or a `'left'` bar. */
   accentPlacement?: AccentPlacement
   /**
+   * Left-edge completion gauge — a vertical bar whose colored fill rises from the
+   * bottom to `value × height`, interpolating **red → amber → green**
+   * (`danger → warning → success` tokens) as it climbs. A `0`–`1` fraction
+   * (clamped). Independent of `accentPlacement`, so a top accent stripe and this
+   * side gauge can read at once.
+   *
+   * **Checked, not defaulted:** `undefined` renders no gauge; `0` renders the gauge
+   * (faint track, empty fill). Throws in dev if combined with
+   * `accentPlacement='left'` — both occupy the left edge.
+   */
+  sideBarCompleteness?: number
+  /**
    * Data stat items displayed below the header.
    * Each item has a `value` with either a `label` OR a `max` — not both (throws in dev).
    */
@@ -203,6 +215,24 @@ function ArcRing({
   )
 }
 
+// ── Completion gauge ──────────────────────────────────────────────────────────
+
+/**
+ * Completion-gauge fill paint: interpolate the semantic signal tokens
+ * `danger → warning → success` across `[0,1]` with `color-mix`, in two segments
+ * (`0→0.5` danger→warning, `0.5→1` warning→success). The stops are theme tokens,
+ * so the fill stays palette- and dark-mode-correct. Input is clamped.
+ */
+function completenessFill(value: number): string {
+  const v = Math.min(1, Math.max(0, value))
+  if (v <= 0.5) {
+    const t = (v / 0.5) * 100
+    return `color-mix(in srgb, var(--color-warning) ${t}%, var(--color-danger))`
+  }
+  const t = ((v - 0.5) / 0.5) * 100
+  return `color-mix(in srgb, var(--color-success) ${t}%, var(--color-warning))`
+}
+
 // ── Component ─────────────────────────────────────────────────────────────────
 
 /**
@@ -220,6 +250,7 @@ export function StatCard({
   tone = 'neutral',
   color,
   accentPlacement = 'top',
+  sideBarCompleteness,
   stats,
   footer,
   lower,
@@ -235,10 +266,21 @@ export function StatCard({
   const height = width / PHI
   const isHoverable = hoverable ?? !!onClick
 
+  // `undefined` → no gauge; `0` → gauge with an empty fill. Checked, never
+  // truthy-tested, so `0` is rendered rather than swallowed.
+  const hasGauge = sideBarCompleteness !== undefined
+  const gaugeFraction = hasGauge ? Math.min(1, Math.max(0, sideBarCompleteness)) : 0
+  const gaugePct = Math.round(gaugeFraction * 100)
+
   // Dev guards
   if (process.env.NODE_ENV !== 'production') {
     if (footer && lower != null) {
       throw new Error('StatCard: provide either `footer` or `lower`, not both.')
+    }
+    if (hasGauge && accentPlacement === 'left') {
+      throw new Error(
+        "StatCard: `sideBarCompleteness` can't combine with `accentPlacement='left'` — both occupy the left edge. Keep the default `accentPlacement='top'` (or omit it) alongside the gauge.",
+      )
     }
     stats?.forEach((item, i) => {
       if (item.label !== undefined && item.max !== undefined) {
@@ -313,6 +355,7 @@ export function StatCard({
       className={cn(
         'mrs-stat-card',
         `mrs-stat-card--accent-${accentPlacement}`,
+        hasGauge && 'mrs-stat-card--gauge',
         isHoverable && 'mrs-stat-card--hoverable',
         watermark && 'mrs-stat-card--watermark',
         className,
@@ -321,6 +364,21 @@ export function StatCard({
       data-watermark={watermark}
       onClick={onClick}
     >
+      {hasGauge ? (
+        <div
+          className="mrs-stat-card__gauge"
+          role="meter"
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-valuenow={gaugePct}
+          aria-label={`${gaugePct}%`}
+        >
+          <div
+            className="mrs-stat-card__gauge-fill"
+            style={{ height: `${gaugeFraction * 100}%`, background: completenessFill(gaugeFraction) }}
+          />
+        </div>
+      ) : null}
       <div className="mrs-stat-card__inner">
         {/* Header: title block + badge */}
         <div className="mrs-stat-card__header">

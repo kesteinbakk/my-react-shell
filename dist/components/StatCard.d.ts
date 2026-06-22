@@ -45,6 +45,18 @@ export interface StatCardProps {
     /** Where the accent reads: a `'top'` stripe (default) or a `'left'` bar. */
     accentPlacement?: AccentPlacement;
     /**
+     * Left-edge completion gauge — a vertical bar whose colored fill rises from the
+     * bottom to `value × height`, interpolating **red → amber → green**
+     * (`danger → warning → success` tokens) as it climbs. A `0`–`1` fraction
+     * (clamped). Independent of `accentPlacement`, so a top accent stripe and this
+     * side gauge can read at once.
+     *
+     * **Checked, not defaulted:** `undefined` renders no gauge; `0` renders the gauge
+     * (faint track, empty fill). Throws in dev if combined with
+     * `accentPlacement='left'` — both occupy the left edge.
+     */
+    sideBarCompleteness?: number;
+    /**
      * Data stat items displayed below the header.
      * Each item has a `value` with either a `label` OR a `max` — not both (throws in dev).
      */
@@ -78,4 +90,4 @@ export interface StatCardProps {
  * The accent stripe, badge tint, and watermark are driven by `tone` (mapped to
  * semantic tokens) or overridden with a raw CSS `color` string.
  */
-export declare function StatCard({ title, subtitle, badge, tone, color, accentPlacement, stats, footer, lower, watermark, size, onClick, hoverable, className, }: StatCardProps): import("react").JSX.Element;
+export declare function StatCard({ title, subtitle, badge, tone, color, accentPlacement, sideBarCompleteness, stats, footer, lower, watermark, size, onClick, hoverable, className, }: StatCardProps): import("react").JSX.Element;

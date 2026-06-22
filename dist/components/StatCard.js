@@ -38,6 +38,22 @@ function ArcRing({ value, max, className, }) {
     }
     return (_jsxs("svg", { className: cn('mrs-stat-card__arc', className), viewBox: `0 0 ${SIZE} ${SIZE}`, role: "img", "aria-label": `${pctInt}%`, children: [_jsx("circle", { cx: cx, cy: cx, r: r, fill: "none", strokeWidth: STROKE, className: "mrs-stat-card__arc-track" }), _jsx("circle", { cx: cx, cy: cx, r: r, fill: "none", strokeWidth: STROKE, strokeDasharray: circum, strokeDashoffset: offset, strokeLinecap: "round", transform: `rotate(-90 ${cx} ${cx})`, style: { stroke: 'var(--mrs-stat-accent, currentColor)' } }), _jsxs("text", { x: cx, y: cx, textAnchor: "middle", dominantBaseline: "central", fontSize: 12, fontWeight: "700", fill: "currentColor", className: "mrs-stat-card__arc-text", children: [pctInt, "%"] })] }));
 }
+// ── Completion gauge ──────────────────────────────────────────────────────────
+/**
+ * Completion-gauge fill paint: interpolate the semantic signal tokens
+ * `danger → warning → success` across `[0,1]` with `color-mix`, in two segments
+ * (`0→0.5` danger→warning, `0.5→1` warning→success). The stops are theme tokens,
+ * so the fill stays palette- and dark-mode-correct. Input is clamped.
+ */
+function completenessFill(value) {
+    const v = Math.min(1, Math.max(0, value));
+    if (v <= 0.5) {
+        const t = (v / 0.5) * 100;
+        return `color-mix(in srgb, var(--color-warning) ${t}%, var(--color-danger))`;
+    }
+    const t = ((v - 0.5) / 0.5) * 100;
+    return `color-mix(in srgb, var(--color-success) ${t}%, var(--color-warning))`;
+}
 // ── Component ─────────────────────────────────────────────────────────────────
 /**
  * Stat card — a φ-framed KPI/status card with a title, an optional accent
@@ -47,16 +63,24 @@ function ArcRing({ value, max, className, }) {
  * The accent stripe, badge tint, and watermark are driven by `tone` (mapped to
  * semantic tokens) or overridden with a raw CSS `color` string.
  */
-export function StatCard({ title, subtitle, badge, tone = 'neutral', color, accentPlacement = 'top', stats, footer, lower, watermark, size = 'md', onClick, hoverable, className, }) {
+export function StatCard({ title, subtitle, badge, tone = 'neutral', color, accentPlacement = 'top', sideBarCompleteness, stats, footer, lower, watermark, size = 'md', onClick, hoverable, className, }) {
     // tone defaults to 'neutral', so this is always defined (StatCard always accents).
     const accentColor = resolveAccentColor(tone, color) ?? ACCENT_TONE_COLOR.neutral;
     const width = SIZE_WIDTH_PX[size];
     const height = width / PHI;
     const isHoverable = hoverable ?? !!onClick;
+    // `undefined` → no gauge; `0` → gauge with an empty fill. Checked, never
+    // truthy-tested, so `0` is rendered rather than swallowed.
+    const hasGauge = sideBarCompleteness !== undefined;
+    const gaugeFraction = hasGauge ? Math.min(1, Math.max(0, sideBarCompleteness)) : 0;
+    const gaugePct = Math.round(gaugeFraction * 100);
     // Dev guards
     if (process.env.NODE_ENV !== 'production') {
         if (footer && lower != null) {
             throw new Error('StatCard: provide either `footer` or `lower`, not both.');
+        }
+        if (hasGauge && accentPlacement === 'left') {
+            throw new Error("StatCard: `sideBarCompleteness` can't combine with `accentPlacement='left'` — both occupy the left edge. Keep the default `accentPlacement='top'` (or omit it) alongside the gauge.");
         }
         stats?.forEach((item, i) => {
             if (item.label !== undefined && item.max !== undefined) {
@@ -94,11 +118,11 @@ export function StatCard({ title, subtitle, badge, tone = 'neutral', color, acce
             badgeNode = (_jsxs("div", { className: "mrs-stat-card__badge", children: [_jsx("span", { className: "mrs-stat-card__badge-value", children: badge.value }), badge.label ? _jsx("span", { className: "mrs-stat-card__badge-label", children: badge.label }) : null] }));
         }
     }
-    return (_jsx("div", { className: cn('mrs-stat-card', `mrs-stat-card--accent-${accentPlacement}`, isHoverable && 'mrs-stat-card--hoverable', watermark && 'mrs-stat-card--watermark', className), style: style, "data-watermark": watermark, onClick: onClick, children: _jsxs("div", { className: "mrs-stat-card__inner", children: [_jsxs("div", { className: "mrs-stat-card__header", children: [_jsxs("div", { className: "mrs-stat-card__head-text", children: [_jsx("p", { className: "mrs-stat-card__title", children: title }), subtitle ? _jsx("p", { className: "mrs-stat-card__subtitle", children: subtitle }) : null] }), badgeNode] }), stats && stats.length > 0 ? (_jsx("dl", { className: "mrs-stat-card__stats", children: stats.map((item, i) => {
-                        if (item.max != null) {
-                            // Arc-ring stat
-                            return (_jsx("div", { className: "mrs-stat-card__stat mrs-stat-card__stat--arc", children: _jsx(ArcRing, { value: item.value, max: item.max }) }, i));
-                        }
-                        return (_jsxs("div", { className: "mrs-stat-card__stat", children: [item.label ? (_jsx("dt", { className: "mrs-stat-card__stat-label", children: item.label })) : null, _jsx("dd", { className: "mrs-stat-card__stat-value", children: item.value })] }, i));
-                    }) })) : null, hasFooter ? (_jsx("div", { className: "mrs-stat-card__lower", children: footer ? footerNode : lower })) : null] }) }));
+    return (_jsxs("div", { className: cn('mrs-stat-card', `mrs-stat-card--accent-${accentPlacement}`, hasGauge && 'mrs-stat-card--gauge', isHoverable && 'mrs-stat-card--hoverable', watermark && 'mrs-stat-card--watermark', className), style: style, "data-watermark": watermark, onClick: onClick, children: [hasGauge ? (_jsx("div", { className: "mrs-stat-card__gauge", role: "meter", "aria-valuemin": 0, "aria-valuemax": 100, "aria-valuenow": gaugePct, "aria-label": `${gaugePct}%`, children: _jsx("div", { className: "mrs-stat-card__gauge-fill", style: { height: `${gaugeFraction * 100}%`, background: completenessFill(gaugeFraction) } }) })) : null, _jsxs("div", { className: "mrs-stat-card__inner", children: [_jsxs("div", { className: "mrs-stat-card__header", children: [_jsxs("div", { className: "mrs-stat-card__head-text", children: [_jsx("p", { className: "mrs-stat-card__title", children: title }), subtitle ? _jsx("p", { className: "mrs-stat-card__subtitle", children: subtitle }) : null] }), badgeNode] }), stats && stats.length > 0 ? (_jsx("dl", { className: "mrs-stat-card__stats", children: stats.map((item, i) => {
+                            if (item.max != null) {
+                                // Arc-ring stat
+                                return (_jsx("div", { className: "mrs-stat-card__stat mrs-stat-card__stat--arc", children: _jsx(ArcRing, { value: item.value, max: item.max }) }, i));
+                            }
+                            return (_jsxs("div", { className: "mrs-stat-card__stat", children: [item.label ? (_jsx("dt", { className: "mrs-stat-card__stat-label", children: item.label })) : null, _jsx("dd", { className: "mrs-stat-card__stat-value", children: item.value })] }, i));
+                        }) })) : null, hasFooter ? (_jsx("div", { className: "mrs-stat-card__lower", children: footer ? footerNode : lower })) : null] })] }));
 }
