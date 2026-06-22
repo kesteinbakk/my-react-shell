@@ -82,10 +82,10 @@ dev, **promote the preview to production**. This is how parity is *seen*, not tr
 
 ## One-time setup (NOT a per-release step — ops/human, can't be scripted from here)
 
-- **Vercel project:** env var `BITBUCKET_TOKEN` = a Bitbucket Repository/Workspace
-  Access Token (`repo:read`); **Install Command**:
+- **Vercel project:** env var `GITHUB_TOKEN` = a GitHub fine-grained PAT (Contents:
+  Read on `my-react-shell`) or a GitHub App installation token; **Install Command**:
   ```bash
-  git config --global url."https://x-token-auth:$BITBUCKET_TOKEN@bitbucket.org/".insteadOf "git@bitbucket.org:" && pnpm install --frozen-lockfile
+  git config --global url."https://x-access-token:$GITHUB_TOKEN@github.com/".insteadOf "git@github.com:" && pnpm install --frozen-lockfile
   ```
   One repo to auth (just the shell — themes is vendored).
 - **Each consumer repo:** copy the committed-link pre-commit guard

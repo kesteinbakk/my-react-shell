@@ -3,7 +3,7 @@
 You are the **my-react-shell-master** — you build and maintain a **modular React
 foundation**: a menu of optional, versioned **drop-in modules** (theme, providers,
 auth seam, i18n, …) that new React + Convex apps under `~/Developer/` import à la
-carte. It is consumed like a standard npm package, from a Bitbucket git-dependency.
+carte. It is consumed like a standard npm package, from a GitHub git-dependency.
 Changes to a module ripple to every app that imports it, on version bump.
 
 Project guidance for agents. Short by design; depth lives in `docs/`.
@@ -178,11 +178,13 @@ foundation source and match it; don't reconstruct from memory or the happy path.
   Convex ≥ 1.25), SSO, or MFA implements the seam itself.
 - **Package manager: pnpm** — never `npm install` (it desyncs the lockfile and
   Convex dev then crash-loops). Use `pnpm add` / `pnpm <script>` / `pnpm dlx`.
-- **Distribution:** a **Bitbucket git-dependency**, tag-pinned, consumed like an
+- **Distribution:** a **GitHub git-dependency**, tag-pinned, consumed like an
   npm package (`import { … } from 'my-react-shell'`). Ships a **committed, precompiled
   `dist/`** — zero-config install, no build runs, no registry, no sync. See [docs/strategy.md](docs/strategy.md) D5.
 - **Hosting (consumers):** Vercel (static). **Git remote:**
-  `git@bitbucket.org:kesteinbakk/my-react-shell.git`.
+  `git@github.com:kesteinbakk/my-react-shell.git` (Bitbucket kept as the `bitbucket`
+  mirror remote). The shared `themes` package is still on Bitbucket — but vendored,
+  so it is never a consumer dependency.
 
 ## Conventions (what every module upholds)
 
@@ -329,7 +331,7 @@ parity and an unfailable, fully-scripted release.
 
 ## How consumers use my-react-shell
 
-A consumer adds the Bitbucket git-dep, then imports only the modules it wants:
+A consumer adds the GitHub git-dep, then imports only the modules it wants:
 
 ```ts
 import { ThemeProvider } from 'my-react-shell'                       // theme — Convex-free core

@@ -77,15 +77,15 @@ my-react-shell hosts no shadcn registry and no MCP server. It ships an opinionat
 component kit as compiled components (D11), not a registry of copy-in sources; the
 un-opinionated primitives stay the consumer's, straight from shadcn.
 
-### D5 — Distribution: a tag-pinned Bitbucket git-dependency
+### D5 — Distribution: a tag-pinned GitHub git-dependency
 
-Consumed like an npm package from its Bitbucket repo
-(`git+ssh://git@bitbucket.org:kesteinbakk/my-react-shell.git#<tag>`), pinned by tag
+Consumed like an npm package from its GitHub repo
+(`git+ssh://git@github.com:kesteinbakk/my-react-shell.git#<tag>`), pinned by tag
 — no npm registry or Verdaccio to run. Consumers receive compiled **JS + `.d.ts`**
 and import it with no bundler config (`import { … } from 'my-react-shell'`); raw TS
 wouldn't work, since bundlers don't transpile `node_modules`. To ship an update:
 push + tag; consumers bump the tag and reinstall, receiving updates only to the
-modules they import. Git auth is plain git (SSH on dev machines; a Bitbucket
+modules they import. Git auth is plain git (SSH on dev machines; a GitHub
 token/deploy key in CI).
 
 Builds ship as a **committed `dist/`** (compiled by `build:lib`, source maps off), so

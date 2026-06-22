@@ -11,7 +11,7 @@ opinionated **component kit** (`my-react-shell/components` — Alert, dialogs, s
 cards, form fields, … on shadcn/Radix + the theme tokens). It is **not** a framework or
 a fixed app template, and ships only the *opinionated* composites — consumers use
 shadcn/ui directly for the un-opinionated primitives. It is consumed like a standard npm
-package, as a **tag-pinned Bitbucket git-dependency**.
+package, as a **tag-pinned GitHub git-dependency**.
 
 **The fast path for "what's exported and how do I use it":**
 [`docs/specifications/api-reference.md`](docs/specifications/api-reference.md) — every
@@ -27,11 +27,11 @@ install` (it desyncs the lockfile and Convex dev then crash-loops).
 
 - **Dev machines (SSH):**
   ```jsonc
-  "my-react-shell": "git+ssh://git@bitbucket.org:kesteinbakk/my-react-shell.git#vX.Y.Z"
+  "my-react-shell": "git+ssh://git@github.com:kesteinbakk/my-react-shell.git#vX.Y.Z"
   ```
 - **Vercel / CI (HTTPS + token):**
   ```jsonc
-  "my-react-shell": "git+https://x-token-auth:$BITBUCKET_TOKEN@bitbucket.org/kesteinbakk/my-react-shell.git#vX.Y.Z"
+  "my-react-shell": "git+https://x-access-token:$GITHUB_TOKEN@github.com/kesteinbakk/my-react-shell.git#vX.Y.Z"
   ```
 
 The package ships a **committed, precompiled `dist/`** (JS + `.d.ts`), so the install

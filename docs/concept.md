@@ -4,7 +4,7 @@
 
 **my-react-shell** is a **modular React foundation** for React + Convex apps under
 `~/Developer/` — a menu of optional, self-contained **drop-in modules** an app
-imports à la carte, consumed like a standard npm package from a Bitbucket
+imports à la carte, consumed like a standard npm package from a GitHub
 git-dependency. It is **not** a framework or a fixed app template, and not a *full*
 component library — it ships only the **opinionated** composites that need a design
 decision (see `components` below), leaving un-opinionated shadcn primitives to the consumer.
@@ -91,7 +91,7 @@ when a second app needs it (rule of two), it is contributed back as a new module
 
 ## Distribution
 
-Consumed as a **tag-pinned Bitbucket git-dependency**, like an npm package:
+Consumed as a **tag-pinned GitHub git-dependency**, like an npm package:
 
 ```ts
 import { ThemeProvider } from 'my-react-shell'

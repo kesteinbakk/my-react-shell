@@ -3,8 +3,8 @@
 last updated: 2026-06-21
 
 `my-react-shell` (React) and `foundation` (SolidJS) are distributed by **one
-shared model**: each is a standalone Bitbucket repo consumed as a **tag-pinned
-git-dependency** with a simple package import (`import { … } from 'my-react-shell'`,
+shared model**: each is a standalone repo (`my-react-shell` on GitHub, `foundation` on
+Bitbucket) consumed as a **tag-pinned git-dependency** with a simple package import (`import { … } from 'my-react-shell'`,
 `import { kit } from 'foundation'`). No file-copy sync, no npm / Verdaccio
 registry, no pnpm workspace.
 
@@ -19,8 +19,8 @@ Per-module exports and contracts live in the other `docs/guides/` files.
 
 ### Consumption contract
 - A consumer adds a tag-pinned git dependency:
-  - dev machines (SSH): `"my-react-shell": "git+ssh://git@bitbucket.org:kesteinbakk/my-react-shell.git#vX.Y.Z"`
-  - Vercel / CI (HTTPS + token): `"my-react-shell": "git+https://x-token-auth:$BITBUCKET_TOKEN@bitbucket.org/kesteinbakk/my-react-shell.git#vX.Y.Z"`
+  - dev machines (SSH): `"my-react-shell": "git+ssh://git@github.com:kesteinbakk/my-react-shell.git#vX.Y.Z"`
+  - Vercel / CI (HTTPS + token): `"my-react-shell": "git+https://x-access-token:$GITHUB_TOKEN@github.com/kesteinbakk/my-react-shell.git#vX.Y.Z"`
 - The consumer imports by **bare specifier**: `import { … } from 'my-react-shell'`
   (plus the documented sub-paths). Never a relative path, never a `~/`-aliased
   copy in the consumer's own `src/`.
@@ -250,7 +250,7 @@ These are **dependency changes** and need explicit approval before they land:
   brings its own router.
 - One package manager only — **pnpm**. Settle any repo that still has an `npm`
   `package-lock.json` onto `pnpm` before adopting.
-- Configure the Vercel/CI Bitbucket token for the `git+https` specifier.
+- Configure the Vercel/CI GitHub token (`GITHUB_TOKEN`) for the `git+https` specifier.
 - Copy the committed-link guard: drop `.githooks/pre-commit` into the consumer repo
   and run `git config core.hooksPath .githooks` (or add the same `setup:hooks`
   script). It blocks committing the dev-loop `link:`/`file:` redirect.
