@@ -80,13 +80,13 @@ un-opinionated primitives stay the consumer's, straight from shadcn.
 ### D5 — Distribution: a tag-pinned GitHub git-dependency
 
 Consumed like an npm package from its GitHub repo
-(`git+ssh://git@github.com:kesteinbakk/my-react-shell.git#<tag>`), pinned by tag
+(`git+https://github.com/kesteinbakk/my-react-shell.git#<tag>`), pinned by tag
 — no npm registry or Verdaccio to run. Consumers receive compiled **JS + `.d.ts`**
 and import it with no bundler config (`import { … } from 'my-react-shell'`); raw TS
 wouldn't work, since bundlers don't transpile `node_modules`. To ship an update:
 push + tag; consumers bump the tag and reinstall, receiving updates only to the
-modules they import. Git auth is plain git (SSH on dev machines; a GitHub
-token/deploy key in CI).
+modules they import. The repo is **public**, so the git-dep clones tokenless over
+HTTPS — no auth on dev machines or in CI.
 
 Builds ship as a **committed `dist/`** (compiled by `build:lib`, source maps off), so
 a git-dep install runs no build step and is zero-config — a pre-commit guard keeps
