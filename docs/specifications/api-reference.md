@@ -329,10 +329,11 @@ preset, pass a custom `icon` node (a lucide icon or an `<Icon>` from `my-react-s
 | `disabled` / `type` / `onClick` / `aria-label` / `className` | — | Usual button props; `aria-label` falls back to the visible label, then `hint`, then the preset label. |
 
 > **Header band forces inline.** The `vertical` default is for standalone toolbars and
-> action grids. An `ActionButton` placed in `ShellPageHeader`'s `actions` slot always
-> renders **inline** (glyph before label) regardless of `layout` — the app-shell
-> stylesheet overrides it, because a stacked label blows out the header band's height.
-> Pass `layout="inline"` there anyway for clarity; icon-only actions are unaffected.
+> action grids. An `ActionButton` placed in the page-header band's `actions` slot (via
+> `usePageHeader({ actions })`) always renders **inline** (glyph before label) regardless
+> of `layout` — the app-shell stylesheet overrides it, because a stacked label blows out
+> the header band's height. Pass `layout="inline"` there anyway for clarity; icon-only
+> actions are unaffected.
 
 ```tsx
 <ActionButtonGroup>
@@ -690,9 +691,9 @@ shell-config contract, and page-tab primitives. Router-coupled (TanStack Router)
 Radix — both optional peers. **Guide:** [app-shell.md](../guides/app-shell.md).
 
 ```ts
-import { AppShell, ShellPageHeader, PageTabs, PageSections, useDynamicPages,
+import { AppShell, usePageHeader, PageTabs, PageSections, useDynamicPages,
          defineShellConfig, ShellConfigError, useShellContext } from 'my-react-shell/app-shell'
-import type { ShellConfig, ShellConfigInput, PageEntry /* … */ } from 'my-react-shell/app-shell'
+import type { ShellConfig, ShellConfigInput, PageEntry, PageHeaderOptions /* … */ } from 'my-react-shell/app-shell'
 import 'my-react-shell/app-shell/styles.css'
 ```
 
@@ -702,9 +703,9 @@ import 'my-react-shell/app-shell/styles.css'
 | `ShellConfigError` | class | Thrown on a bad config shape. |
 | `AppShell` | component | Mount once at root. `config`, `useMenu` (sidebar vs banner), `actions[]`, `mobileNav` (`'drawer'`\|`'tabBar'`), `children`. |
 | `AppHeader`, `AppMenu`, `AppBottomNav` | component | Chrome sub-parts (usually composed by `AppShell`). |
-| `ShellPageHeader` | component | Drop in a route subtree; renders `null`, registers `title`/`actions`/`search`/`tabs` into the pinned header. |
+| `usePageHeader(options)` | hook | Call from a route subtree to add page chrome to the band — `title`/`actions`/`search`/`tabs`/`documentTitle`/`className`. The band shows **automatically** from the URL chain; call this only to *add* chrome. When more than one call is active (e.g. a layout band + a leaf's actions), the **deepest-mounted wins** and updates in place — no flicker. |
 | `findActiveChain` | function | Compute the active breadcrumb chain for a pathname — pure function of `(roots, pathname, dynamicByParent)`. Walks `subPages` recursively at each depth level; merges `useDynamicPages` registrations keyed by parent route. |
-| `PageTabs` | component | Route-based tab strip (each tab = a route). Pin via `<ShellPageHeader tabs={…}>`. Scrolls horizontally when it overflows — edge fades + arrow buttons appear on the side(s) with hidden tabs. |
+| `PageTabs` | component | Route-based tab strip (each tab = a route). Pin via `usePageHeader({ tabs: () => <PageTabs … /> })`. Scrolls horizontally when it overflows — edge fades + arrow buttons appear on the side(s) with hidden tabs. |
 | `PageSections` | component | In-page sections synced to `?<persistKey>=`. Modes `single` / `list` (scrollspy). Its section-tab strip scrolls horizontally on overflow (edge fades + arrows), like `PageTabs`. |
 | `useDynamicPages(cfg)` | hook | Register runtime breadcrumb levels (record names, slugs) under a `parent` route. Works at any depth — set `parent` to whichever registered route the dynamic items hang under. |
 | `useShellContext()`, `useShellContextOptional()` | hook | Read shell context — incl. `scrollContainer` (the only scroller; use instead of `window`). |
@@ -714,7 +715,7 @@ import 'my-react-shell/app-shell/styles.css'
 `ShellBreadcrumbCollapseConfig`,
 `ShellPageHeaderSearchSlot`, `ShellDocumentTitleMode`, `ShellIconRenderer`,
 `ShellChromeLabels`, plus component props (`AppShellProps`, `AppShellMobileNav`,
-`AppShellContentPadding`, `ShellPageHeaderProps`, `ChainLevel`, `PageTab`, `PageTabsProps`,
+`AppShellContentPadding`, `PageHeaderOptions`, `ChainLevel`, `PageTab`, `PageTabsProps`,
 `PageSection`, `PageSectionsMode`, `PageSectionsProps`, `DynamicPageInput`,
 `DynamicPagesConfig`, `ShellContextValue`).
 
@@ -727,7 +728,7 @@ export const shellConfig = defineShellConfig({
 <AppShell config={shellConfig} useMenu actions={[() => <ThemeToggle/>]} mobileNav="drawer"><Outlet/></AppShell>
 ```
 
-> **`ShellPageHeader` actions render inline.** An `ActionButton` mounted in the
+> **Band actions render inline.** An `ActionButton` mounted in `usePageHeader`'s
 > `actions` slot always lays out inline (glyph before label) — the band's stylesheet
 > overrides its `layout` prop, since the kit default `vertical` stacks the label under
 > the glyph and blows out the band height. Pass `layout="inline"` anyway for clarity;
@@ -747,7 +748,13 @@ export const shellConfig = defineShellConfig({
 > clickable links. Strings arrive as thunks (`label: () => t('…')`) — the shell never
 > imports i18n.
 >
-> **`PageEntry` optional fields:** `subPages?: PageEntry[]` — nested entries, each a breadcrumb level and a title-dropdown item. `groupBreak?: true` — draws a sidebar divider before this entry; ignored on the first visible page. `tabBar?: true` — opts the entry into the mobile bottom tab bar (top-level entries only; only when `mobileNav='tabBar'`).
+> **The band renders automatically.** Breadcrumbs appear whenever the URL resolves to a
+> chain — a page mounts **nothing** to show them. `usePageHeader({ … })` only *adds* chrome
+> (actions/search/tabs/title) on top; when two calls are active (e.g. a layout band + a
+> leaf's actions), the **deepest-mounted wins** and updates in place, so the winner never
+> flickers. At `/` (no chain, no chrome) there is no band.
+>
+> **`PageEntry` optional fields:** `subPages?: PageEntry[]` — nested entries, each a breadcrumb level and a title-dropdown item. `groupBreak?: true` — draws a sidebar divider before this entry; ignored on the first visible page. `tabBar?: true` — opts the entry into the mobile bottom tab bar (top-level entries only; only when `mobileNav='tabBar'`). `hideCrumb?: () => boolean` — reactive predicate that **omits this level from the rendered breadcrumb trail** while keeping it structurally in the chain (URL + descendants intact; the leaf is never hidden). Hide an access-gated ancestor a user can't open even though they can reach a child (`hideCrumb: () => !canAccess(route)`); the shell stays role-agnostic — you supply the access logic.
 >
 > **Breadcrumb overflow — single-line always.** Every crumb is width-capped and ellipsizes (so a long dynamic record name at *any* level can't blow out the band); home icon + chevrons never compress; the trail never wraps. Cap the label width per app with the `--mrs-breadcrumb-label-max` CSS var (default `14rem`). A deep chain also **collapses its middle**: with more than `leading + trailing` levels, the first `leading` crumbs show, then a `…` overflow dropdown of the hidden ancestors, then the last `trailing`. Configure via `shellPageHeader.breadcrumbCollapse?: { leading?: number; trailing?: number } | false` — default `{ leading: 1, trailing: 2 }`; `trailing` clamps to ≥ 1 (leaf always shown), `leading` to ≥ 0; `false` disables collapse (truncation still applies). The `…` dropdown reuses the `labels.more` aria-label.
 >

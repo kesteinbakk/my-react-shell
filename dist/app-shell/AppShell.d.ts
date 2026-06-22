@@ -2,8 +2,9 @@
  * AppShell — the outer chrome orchestrator.
  *
  * Renders EITHER an <AppHeader> (top banner) OR an <AppMenu> (sidebar), never
- * both. Splits its content area into a pinned page-header chrome slot (where a
- * registered <ShellPageHeader> lands) and a single scrolling body cell
+ * both. Splits its content area into a pinned page-header chrome slot (the band,
+ * which renders automatically from the URL breadcrumb chain, plus any chrome a
+ * `usePageHeader` call contributes) and a single scrolling body cell
  * (`[data-shell-content]`, the only scroller — Hard Rule #1). Owns the shell
  * context (config + scroll container + page-header registration + dynamic
  * pages), the document title, and the mobile drawer.

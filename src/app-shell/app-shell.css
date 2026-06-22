@@ -271,11 +271,6 @@
 .mrs-page-header[data-border='true'] {
   border-bottom: 1px solid var(--color-border-primary);
 }
-@media (min-width: 1024px) {
-  .mrs-page-header[data-menu-only='true'] {
-    display: none;
-  }
-}
 .mrs-page-header__row {
   display: flex;
   flex-wrap: wrap;

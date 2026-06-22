@@ -1,7 +1,7 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 /**
  * PageSections — page-level tabbed content, rendered inside the scrolling body
- * of `<AppShell>` (below the pinned `<ShellPageHeader>` chrome).
+ * of `<AppShell>` (below the pinned page-header chrome).
  *
  * Two display modes (`mode` prop, default `'single'`):
  *   - `single` — only the active section is mounted (traditional tabs).

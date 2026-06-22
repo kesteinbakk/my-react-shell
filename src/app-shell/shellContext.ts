@@ -27,10 +27,22 @@ export interface ShellContextValue {
   dynamicPages: Record<string, DynamicPagesEntry[]>
   /** Internal — `useDynamicPages` registers a registrant's children under a parent. Returns an unregister. */
   registerDynamicPages: (registrantId: string, parent: string, items: DynamicPagesEntry[]) => () => void
-  /** Currently-registered page-header spec, or `null`. */
+  /** The winning page-header spec (deepest-mounted contributor), or `null`. */
   pageHeaderSpec: ShellPageHeaderSpec | null
-  /** Internal — `<ShellPageHeader>` registers its spec. Returns an unregister. Last-mounted wins. */
-  registerPageHeader: (spec: ShellPageHeaderSpec) => () => void
+  /**
+   * Internal — `usePageHeader` registers its spec under a render-order token
+   * (`order`). `<AppShell>` renders the chrome of the entry with the **highest**
+   * token — i.e. the **deepest-mounted** `usePageHeader` (React renders parent→child,
+   * so an ancestor's order is lower than a descendant's), matching foundation's
+   * parent-first `onMount`. Returns a handle that splits **identity** (a fixed slot,
+   * set once on mount) from **content**: `update` replaces this slot's spec in place
+   * without changing its order, so the winner can't flip when a header re-renders;
+   * `unregister` removes the slot (the next-deepest then wins).
+   */
+  registerPageHeader: (order: number, spec: ShellPageHeaderSpec) => {
+    update: (next: ShellPageHeaderSpec) => void
+    unregister: () => void
+  }
 }
 
 export const ShellContext = createContext<ShellContextValue | null>(null)

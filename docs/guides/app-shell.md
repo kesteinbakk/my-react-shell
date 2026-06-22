@@ -10,7 +10,7 @@ package barrel stays the theme core.
 ```ts
 import {
   AppShell,
-  ShellPageHeader,
+  usePageHeader,
   PageTabs,
   PageSections,
   useDynamicPages,
@@ -152,22 +152,35 @@ on that route, or throw `notFound()` from a loader when an id resolves to nothin
 
 ## The page header
 
-Drop `<ShellPageHeader>` anywhere in a route's subtree. It renders `null` and registers
-its props onto the shell, which renders the chrome in the pinned slot:
+The breadcrumb band renders **automatically** — whenever the current URL resolves to a
+breadcrumb chain, the band appears with no work from the page. A page calls
+`usePageHeader(...)` only to **add chrome** on top of the band:
 
 ```tsx
-<ShellPageHeader
-  title={() => t('data.title')}            // overrides only the leaf breadcrumb label
-  actions={[() => <NewItemButton />]}
-  search={{ onChange: setQuery, placeholder: () => t('common.search') }}
-  tabs={() => <PageTabs tabs={dataTabs} />} // pins a route-tab strip with the breadcrumbs
-/>
+usePageHeader({
+  title: () => t('data.title'),             // overrides only the leaf breadcrumb label
+  actions: [() => <NewItemButton />],
+  search: { onChange: setQuery, placeholder: () => t('common.search') },
+  tabs: () => <PageTabs tabs={dataTabs} />, // pins a route-tab strip under the breadcrumbs
+})
 ```
+
+Stable thunks (`useCallback` / `useMemo` / module-level) are nice but not required — the
+hook updates the band **in place** on every change, so inline thunks (`actions: [() =>
+<Btn/>]`) are fine and never cause flicker.
 
 An `ActionButton` in the `actions` slot always renders **inline** (glyph before label):
 the band's stylesheet overrides its `layout` prop, since the kit default `vertical`
 would stack the label under the glyph and blow out the band height. A stacked
 header-band action is therefore impossible; icon-only actions are unaffected.
+
+**A layout can own the band; a leaf can add to it.** Because the band is automatic, a
+layout that just wants breadcrumbs present mounts nothing — it only registers crumbs (via
+`subPages` / `useDynamicPages`). A leaf that needs page chrome calls `usePageHeader`. When
+**both** are active (a layout-level band + a leaf's actions), the **deepest-mounted call
+wins** and its chrome shows — deterministically, never flipping when either re-renders.
+There is no "mount exactly one" rule: layering a leaf's chrome over a layout band is the
+supported pattern.
 
 **The breadcrumb chain is a pure function of the URL pathname.** It is built by walking
 the config `pages` tree (plus any `useDynamicPages` registrations) against the current
@@ -183,6 +196,29 @@ useDynamicPages({
   items: sites.map((s) => ({ id: s.id, label: s.name, route: `/sites/${s.id}` })),
 })
 ```
+
+### Hiding an access-gated crumb
+
+Sometimes a route segment exists structurally but isn't somewhere a given user can go —
+they can open `/company/item/leaf` but not the bare `/company` page. Set `hideCrumb` on
+that level's `PageEntry` to **omit it from the trail** while keeping it in the chain (the
+URL is unchanged and its descendants stay navigable):
+
+```tsx
+useDynamicPages({
+  parent: '/company',
+  items: [
+    { id: 'item', label: () => name, route: '/company/item',
+      hideCrumb: () => !canAccess('/company') },
+  ],
+})
+// Renders 🏠 › item › leaf instead of 🏠 › company › item › leaf — no dead
+// "company" crumb that would error on click for a user who can't open it.
+```
+
+`hideCrumb` is a reactive predicate **you** supply (the shell never imports your roles).
+The **leaf (current page) is never hidden**, so the trail can't go empty. It works on
+static `pages` / `subPages` entries too.
 
 ## The three navigation layers
 
@@ -270,8 +306,8 @@ useDynamicPages({
 
 ## Page tabs: route-based vs in-page
 
-- **`PageTabs`** — each tab is its own route. Pin it via `<ShellPageHeader tabs={() =>
-  <PageTabs tabs={…} />}>`. Selecting a tab navigates; the breadcrumb can move.
+- **`PageTabs`** — each tab is its own route. Pin it via `usePageHeader({ tabs: () =>
+  <PageTabs tabs={…} /> })`. Selecting a tab navigates; the breadcrumb can move.
 - **`PageSections`** — splits one page into in-page sections synced to `?<persistKey>=`
   (deep-linkable, shareable). Modes: `single` (one section at a time) or `list`
   (scrollspy + click-to-scroll over the body cell; sections may be `lazy`). Section

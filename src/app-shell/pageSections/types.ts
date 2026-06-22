@@ -41,7 +41,7 @@ export interface PageSection {
   tooltip?: () => string
   /**
    * Section-level action thunks rendered right-aligned in the **list-mode**
-   * header bar, mirroring `<ShellPageHeader>`'s `actions` slot. Each entry is a
+   * header bar, mirroring the page-header band's `actions` slot. Each entry is a
    * `() => ReactNode` so it evaluates inside the rendered branch.
    *
    * Only rendered in `list` mode — `single` mode mounts section content with no

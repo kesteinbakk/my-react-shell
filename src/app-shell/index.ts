@@ -22,8 +22,9 @@ export { AppBottomNav } from './AppBottomNav'
 export type { AppBottomNavProps } from './AppBottomNav'
 
 // ── page header + config ──────────────────────────────────────────────────────
-export { ShellPageHeader, findActiveChain } from './ShellPageHeader'
-export type { ShellPageHeaderProps, ChainLevel } from './ShellPageHeader'
+export { usePageHeader } from './usePageHeader'
+export { findActiveChain } from './ShellPageHeader'
+export type { ChainLevel } from './ShellPageHeader'
 export { useDynamicPages } from './useDynamicPages'
 export type { DynamicPageInput, DynamicPagesConfig } from './useDynamicPages'
 export { defineShellConfig, ShellConfigError } from './defineShellConfig'
@@ -50,4 +51,5 @@ export type {
   ShellDocumentTitleMode,
   ShellIconRenderer,
   ShellChromeLabels,
+  PageHeaderOptions,
 } from './shellContract'

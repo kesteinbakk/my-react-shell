@@ -2,35 +2,6 @@ import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate, useRouterState } from '@tanstack/react-router';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
-import { useShellContext } from './shellContext';
-/**
- * Registers its spec onto shell context and renders nothing. The effect
- * re-registers whenever a prop changes (deps below), pushing a fresh spec and
- * re-rendering the chrome; the cleanup pops it.
- */
-export function ShellPageHeader(props) {
-    const shell = useShellContext();
-    useEffect(() => {
-        const spec = {
-            title: props.title,
-            actions: props.actions,
-            search: props.search,
-            tabs: props.tabs,
-            documentTitle: props.documentTitle,
-            className: props.className,
-        };
-        return shell.registerPageHeader(spec);
-    }, [
-        shell.registerPageHeader,
-        props.title,
-        props.actions,
-        props.search,
-        props.tabs,
-        props.documentTitle,
-        props.className,
-    ]);
-    return null;
-}
 /**
  * Resolve the breadcrumb chain for a pathname. PURE — a function of the URL
  * pathname plus the static `roots` tree and the runtime `dynamicByParent` map.
@@ -97,16 +68,11 @@ export function ShellPageHeaderUI(props) {
             'Register it in shell config `pages` or via useDynamicPages.');
     }, [pathname, leafMatchesPath, leaf, shell.dynamicPages]);
     const border = config.shellPageHeader?.border ?? true;
-    // The band exists only to host the mobile hamburger when there is nothing
-    // else to show: no crumbs beyond home, no actions, no search, no tabs.
     const hasActions = (spec.actions?.length ?? 0) > 0;
-    const hasSearch = spec.search !== undefined;
-    const hasTabs = spec.tabs !== undefined;
-    const menuOnly = chain.length === 0 && !hasActions && !hasSearch && !hasTabs;
     const className = spec.className
         ? `mrs-page-header ${spec.className}`
         : 'mrs-page-header';
-    return (_jsxs("div", { className: className, "data-border": border, "data-menu-only": menuOnly, children: [_jsxs("div", { className: "mrs-page-header__row", children: [_jsx(Breadcrumbs, { chain: chain, shell: shell, spec: spec, leafMatchesPath: leafMatchesPath, showMenuButton: showMenuButton, onOpenMenu: onOpenMenu }), hasActions ? (_jsx("div", { className: "mrs-page-header__actions", children: spec.actions.map((thunk, i) => (_jsx("span", { children: thunk() }, i))) })) : null, spec.search ? _jsx(SearchInput, { slot: spec.search, shell: shell }) : null] }), spec.tabs ? (_jsx("div", { className: "mrs-page-header__tabs", children: spec.tabs() })) : null] }));
+    return (_jsxs("div", { className: className, "data-border": border, children: [_jsxs("div", { className: "mrs-page-header__row", children: [_jsx(Breadcrumbs, { chain: chain, shell: shell, spec: spec, leafMatchesPath: leafMatchesPath, showMenuButton: showMenuButton, onOpenMenu: onOpenMenu }), hasActions ? (_jsx("div", { className: "mrs-page-header__actions", children: spec.actions.map((thunk, i) => (_jsx("span", { children: thunk() }, i))) })) : null, spec.search ? _jsx(SearchInput, { slot: spec.search, shell: shell }) : null] }), spec.tabs ? (_jsx("div", { className: "mrs-page-header__tabs", children: spec.tabs() })) : null] }));
 }
 /** Default middle-collapse: keep the first crumb + the last two (incl. leaf). */
 const DEFAULT_BREADCRUMB_COLLAPSE = {
@@ -144,11 +110,18 @@ function Breadcrumbs(props) {
     const homeLabel = config.labels?.home?.() ?? 'Home';
     const navLabel = config.labels?.breadcrumb?.() ?? 'Breadcrumb';
     const openMenuLabel = config.labels?.openMenu?.() ?? 'Open menu';
-    const lastIndex = chain.length - 1;
+    // Drop access-hidden ancestor levels (`PageEntry.hideCrumb()` returns true). The
+    // leaf (current page) is never hidden, so the rendered trail can't go empty; the
+    // hidden level stays in the chain for descent, so its descendants stay navigable.
+    const visibleChain = chain.filter((level, i) => {
+        const isLeaf = i === chain.length - 1;
+        return isLeaf || level.entry.hideCrumb?.() !== true;
+    });
+    const lastIndex = visibleChain.length - 1;
     // The spec title overrides only the leaf label, and only when the resolved
     // leaf is the current page (Hard Rule #2: title never adds a level).
     const leafOverride = spec.title && leafMatchesPath ? spec.title() : undefined;
-    const slots = buildCrumbSlots(chain, config.shellPageHeader?.breadcrumbCollapse);
+    const slots = buildCrumbSlots(visibleChain, config.shellPageHeader?.breadcrumbCollapse);
     return (_jsxs("nav", { className: "mrs-breadcrumbs", "aria-label": navLabel, children: [showMenuButton ? (_jsx("button", { type: "button", className: "mrs-page-header__hamburger", "aria-label": openMenuLabel, onClick: onOpenMenu, children: config.renderIcon('menu', 20) })) : null, _jsx(Link, { to: "/", className: "mrs-breadcrumbs__home", title: homeLabel, children: config.renderIcon('home', 18) }), slots.map(slot => {
                 const chevron = (_jsx("span", { className: "mrs-breadcrumbs__chevron", children: config.renderIcon('chevronRight', 14) }));
                 if (slot.kind === 'overflow') {

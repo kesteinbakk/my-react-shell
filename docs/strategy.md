@@ -156,9 +156,10 @@ off in its `zing-shell` module.
 
 An optional `app-shell` module at `my-react-shell/app-shell` re-implements the
 SolidJS foundation's shell for React: the chrome (`AppShell` header-or-sidebar +
-mobile drawer + optional bottom nav + the single scrolling body), `ShellPageHeader`
-(URL-derived breadcrumbs + actions + search + subPages dropdown),
-`defineShellConfig`, and the page-tab primitives. It **excludes** app-specific glue
+mobile drawer + optional bottom nav + the single scrolling body), the URL-derived
+breadcrumb band (automatic) + the `usePageHeader` hook for page chrome (actions +
+search + tabs + leaf-title override; see D16), `defineShellConfig`, and the page-tab
+primitives. It **excludes** app-specific glue
 (notifications, feedback modal, command bar) — the consumer wires its own into the
 header's action slot.
 
@@ -242,6 +243,36 @@ SolidJS `foundation` uses two distinct recessed tones in the same element (e.g. 
 rest/hover pair), which a single token would flatten. This is shared-`themes` work, so
 it ripples to `foundation` (D6+D13) on its next themes bump; `dynamic` was also lifted
 off pure black at the same time (OLED smear, and to leave headroom to recess a well).
+
+### D16 — Page header: a `usePageHeader` hook + an automatic breadcrumb band
+
+The React shell registers page chrome through a **`usePageHeader(...)` hook** and renders
+the **breadcrumb band automatically** from the URL chain — three deliberate divergences
+from the SolidJS `foundation`, which uses a render-null `<ShellPageHeader>` *component*,
+gates the band on a registered spec, and has no per-level hide mechanism.
+
+The motivation is a design problem the component idiom created in React but not in Solid.
+Foundation registers page chrome in `onMount` (parent-first), so a layout's band and a
+leaf's actions compose deterministically with the leaf winning. The React port registered
+in a `useEffect` keyed on the props, so unstable inline thunks re-pushed a last-writer-wins
+stack — and, worse, React fires effects child-first, so a register-once fix made the
+*layout* win and hid the leaf's actions. Coupling band visibility to a mounted component
+also forced an empty header on nearly every page just to surface breadcrumbs (the demo
+carried a dozen bare mounts).
+
+The redesign fixes the root: band visibility derives from whether the URL resolves to a
+chain (or a `usePageHeader` added chrome), not from mounting anything — so a page that just
+wants breadcrumbs mounts nothing. Page chrome moves to a hook (the React-idiomatic shape,
+consistent with the sibling `useDynamicPages`). When two contributors are active the
+**deepest-mounted wins**, resolved by a render-order token (React renders parent→child, so
+an ancestor's token is lower) and updated in place so the winner never flips — matching
+foundation's parent-first order without depending on effect timing. The `<ShellPageHeader>`
+component is removed outright (clean break, no compat shim).
+
+A new `PageEntry.hideCrumb?: () => boolean` predicate lets a consumer **omit an access-gated
+ancestor crumb** from the trail while keeping the level in the chain (URL + descendants
+intact). The shell stays role-agnostic — the consumer supplies the predicate, mirroring the
+auth seam. Foundation has no equivalent; this is net-new React-side behavior.
 
 ---
 

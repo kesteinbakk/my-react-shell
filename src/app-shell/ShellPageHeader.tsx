@@ -1,19 +1,17 @@
 /**
- * ShellPageHeader — the page-header registration component + the chrome renderer.
+ * ShellPageHeader internals — the breadcrumb chain (pure) + the chrome renderer.
  *
- * `<ShellPageHeader>` mounts anywhere in a route's subtree, renders `null`, and
- * registers its spec onto shell context via an effect (deps = the props); the
- * cleanup unregisters. `<AppShell>` renders the registered spec in its pinned
- * chrome slot through `ShellPageHeaderUI`. Because the spec carries thunks
- * (`title`, `actions[]`, `tabs`) rather than computed values, the deps compare
- * thunk identities — consumers should pass stable thunks (`useCallback` or
- * module-level) to avoid re-registration churn, but correctness does not depend
- * on it: re-register is idempotent (pop-old-by-identity, push-new).
+ * The page-chrome registration API is the `usePageHeader` hook (see
+ * `usePageHeader.ts`); this file holds what `<AppShell>` renders in the band.
  *
  * `findActiveChain` is the breadcrumb's SOLE input: a pure function of
- * `(roots, pathname, dynamicByParent)`. Longest-prefix match per level,
- * descending via `subPages` and merging dynamic children by parent route. It is
- * also imported by `<AppShell>` for the document-title leaf — defined here once.
+ * `(roots, pathname, dynamicByParent)`. Longest-prefix match per level, descending
+ * via `subPages` and merging dynamic children by parent route. `<AppShell>` also
+ * uses it for the document-title leaf and the automatic band-visibility gate — so
+ * the band renders whenever the URL resolves to a chain, no component required.
+ * `ShellPageHeaderUI` renders the band (breadcrumbs + actions + search + pinned
+ * tabs). A level whose `PageEntry.hideCrumb()` returns true is dropped from the
+ * rendered trail (never the leaf) — see `Breadcrumbs`.
  *
  * No i18n import (strings are config/prop thunks with English fallbacks) and no
  * icon import (all glyphs via `shell.config.renderIcon`). TanStack Router feeds
@@ -27,58 +25,10 @@ import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 import type {
   PageEntry,
   ShellBreadcrumbCollapseConfig,
-  ShellDocumentTitleMode,
   ShellPageHeaderSearchSlot,
   ShellPageHeaderSpec,
 } from './shellContract'
 import type { ShellContextValue } from './shellContext'
-import { useShellContext } from './shellContext'
-
-/* ── Public registration component ───────────────────────────────────────── */
-
-export interface ShellPageHeaderProps {
-  title?: () => string
-  /**
-   * Action thunks rendered in the band's horizontal strip. An `ActionButton` here
-   * always lays out inline (glyph before label) — the band's stylesheet overrides
-   * its `layout` prop, since the kit default `vertical` would stack the label under
-   * the glyph and blow out the band height. Pass `layout="inline"` anyway for clarity.
-   */
-  actions?: Array<() => ReactNode>
-  search?: ShellPageHeaderSearchSlot
-  tabs?: () => ReactNode
-  documentTitle?: ShellDocumentTitleMode | (() => string)
-  className?: string
-}
-
-/**
- * Registers its spec onto shell context and renders nothing. The effect
- * re-registers whenever a prop changes (deps below), pushing a fresh spec and
- * re-rendering the chrome; the cleanup pops it.
- */
-export function ShellPageHeader(props: ShellPageHeaderProps): null {
-  const shell = useShellContext()
-  useEffect(() => {
-    const spec: ShellPageHeaderSpec = {
-      title: props.title,
-      actions: props.actions,
-      search: props.search,
-      tabs: props.tabs,
-      documentTitle: props.documentTitle,
-      className: props.className,
-    }
-    return shell.registerPageHeader(spec)
-  }, [
-    shell.registerPageHeader,
-    props.title,
-    props.actions,
-    props.search,
-    props.tabs,
-    props.documentTitle,
-    props.className,
-  ])
-  return null
-}
 
 /* ── Breadcrumb chain (pure) ─────────────────────────────────────────────── */
 
@@ -178,24 +128,14 @@ export function ShellPageHeaderUI(props: ShellPageHeaderUIProps): ReactNode {
   }, [pathname, leafMatchesPath, leaf, shell.dynamicPages])
 
   const border = config.shellPageHeader?.border ?? true
-  // The band exists only to host the mobile hamburger when there is nothing
-  // else to show: no crumbs beyond home, no actions, no search, no tabs.
   const hasActions = (spec.actions?.length ?? 0) > 0
-  const hasSearch = spec.search !== undefined
-  const hasTabs = spec.tabs !== undefined
-  const menuOnly =
-    chain.length === 0 && !hasActions && !hasSearch && !hasTabs
 
   const className = spec.className
     ? `mrs-page-header ${spec.className}`
     : 'mrs-page-header'
 
   return (
-    <div
-      className={className}
-      data-border={border}
-      data-menu-only={menuOnly}
-    >
+    <div className={className} data-border={border}>
       <div className="mrs-page-header__row">
         <Breadcrumbs
           chain={chain}
@@ -293,7 +233,15 @@ function Breadcrumbs(props: BreadcrumbsProps): ReactNode {
   const homeLabel = config.labels?.home?.() ?? 'Home'
   const navLabel = config.labels?.breadcrumb?.() ?? 'Breadcrumb'
   const openMenuLabel = config.labels?.openMenu?.() ?? 'Open menu'
-  const lastIndex = chain.length - 1
+
+  // Drop access-hidden ancestor levels (`PageEntry.hideCrumb()` returns true). The
+  // leaf (current page) is never hidden, so the rendered trail can't go empty; the
+  // hidden level stays in the chain for descent, so its descendants stay navigable.
+  const visibleChain = chain.filter((level, i) => {
+    const isLeaf = i === chain.length - 1
+    return isLeaf || level.entry.hideCrumb?.() !== true
+  })
+  const lastIndex = visibleChain.length - 1
 
   // The spec title overrides only the leaf label, and only when the resolved
   // leaf is the current page (Hard Rule #2: title never adds a level).
@@ -301,7 +249,7 @@ function Breadcrumbs(props: BreadcrumbsProps): ReactNode {
     spec.title && leafMatchesPath ? spec.title() : undefined
 
   const slots = buildCrumbSlots(
-    chain,
+    visibleChain,
     config.shellPageHeader?.breadcrumbCollapse,
   )
 

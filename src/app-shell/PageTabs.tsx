@@ -8,8 +8,7 @@
  *
  * Mounted by parent layouts that have multiple sub-routes (e.g. a `sites` layout
  * rendering `<PageTabs>` then its child routes). To pin the strip into the
- * `<ShellPageHeader>` chrome slot, mount it as `<ShellPageHeader tabs={() =>
- * <PageTabs … />}>`.
+ * page-header band, register it via `usePageHeader({ tabs: () => <PageTabs … /> })`.
  *
  * No registration channel — the parent layout owns the tab list as a prop.
  *

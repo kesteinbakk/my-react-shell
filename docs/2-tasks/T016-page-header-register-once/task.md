@@ -1,8 +1,15 @@
 # T016 — page header: register once, update in place (deterministic stack)
 
-- **Status:** planning
+- **Status:** superseded by [T017](../T017-page-header-hook-auto-band/task.md)
 - **Filed:** 2026-06-22
-- **Working branch:** `main` (no worktree — focused edit in `src/app-shell/` + rebuild)
+- **Working branch:** `main` (worktree `quirky-perlman-5a8c08` — focused edit in `src/app-shell/` + rebuild)
+
+> **Superseded by T017.** Investigation showed the narrow register-once fix would have
+> entrenched a deeper design problem (band visibility coupled to component mounting; the
+> override winner inverted vs. foundation by React's child-first effect order). T017
+> redesigns the API (`usePageHeader` hook + automatic band + `hideCrumb`); this task's
+> determinism work (register-once + in-place update, descendant-wins) folds in there as
+> the internal tiebreak. The code changes already in the worktree are reworked under T017.
 - **Origin:** user question — "agents constantly raise that the shell's header stack
   is last-writer-wins; with `foundation` I never heard this." Investigation confirmed
   the mechanism is an identical 1:1 port in both shells, but React's rendering model

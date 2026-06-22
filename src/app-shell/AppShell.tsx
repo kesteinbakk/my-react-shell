@@ -2,8 +2,9 @@
  * AppShell — the outer chrome orchestrator.
  *
  * Renders EITHER an <AppHeader> (top banner) OR an <AppMenu> (sidebar), never
- * both. Splits its content area into a pinned page-header chrome slot (where a
- * registered <ShellPageHeader> lands) and a single scrolling body cell
+ * both. Splits its content area into a pinned page-header chrome slot (the band,
+ * which renders automatically from the URL breadcrumb chain, plus any chrome a
+ * `usePageHeader` call contributes) and a single scrolling body cell
  * (`[data-shell-content]`, the only scroller — Hard Rule #1). Owns the shell
  * context (config + scroll container + page-header registration + dynamic
  * pages), the document title, and the mobile drawer.
@@ -24,6 +25,13 @@ import { ShellPageHeaderUI, findActiveChain } from './ShellPageHeader'
 import { AppHeader } from './AppHeader'
 import { AppMenu } from './AppMenu'
 import { AppBottomNav } from './AppBottomNav'
+
+/**
+ * Empty chrome spec — handed to the band renderer when only breadcrumbs exist (no
+ * `usePageHeader` contributed chrome). A stable module-level ref so the renderer
+ * isn't fed a fresh object every render.
+ */
+const EMPTY_HEADER_SPEC: ShellPageHeaderSpec = {}
 
 export type AppShellContentPadding = 'default' | 'none'
 export type AppShellMobileNav = 'drawer' | 'tabBar'
@@ -94,11 +102,30 @@ export function AppShell({
 
   const [scrollEl, setScrollEl] = useState<HTMLElement | null>(null)
 
-  const [headerStack, setHeaderStack] = useState<ShellPageHeaderSpec[]>([])
-  const pageHeaderSpec = headerStack.at(-1) ?? null
-  const registerPageHeader = useCallback((spec: ShellPageHeaderSpec) => {
-    setHeaderStack((prev) => [...prev, spec])
-    return () => setHeaderStack((prev) => prev.filter((s) => s !== spec))
+  // Page-chrome contributors (`usePageHeader`), keyed by a stable id + a render-order
+  // token. The band renders the chrome of the entry with the HIGHEST order — the
+  // deepest-mounted contributor (React renders parent→child, so an ancestor's order
+  // is lower than a descendant's), matching foundation's parent-first `onMount`.
+  // `update` rewrites an entry's spec in place (same id + order), never reordering,
+  // so the winner can't flip when a contributor re-renders with fresh inline thunks.
+  const [headerStack, setHeaderStack] = useState<
+    { id: symbol; order: number; spec: ShellPageHeaderSpec }[]
+  >([])
+  const pageHeaderSpec =
+    headerStack.reduce<{ order: number; spec: ShellPageHeaderSpec } | null>(
+      (best, e) => (best === null || e.order > best.order ? e : best),
+      null,
+    )?.spec ?? null
+  const registerPageHeader = useCallback((order: number, spec: ShellPageHeaderSpec) => {
+    const id = Symbol('shell-page-header')
+    setHeaderStack((prev) => [...prev, { id, order, spec }])
+    return {
+      update: (next: ShellPageHeaderSpec) =>
+        setHeaderStack((prev) =>
+          prev.map((e) => (e.id === id ? { id, order, spec: next } : e)),
+        ),
+      unregister: () => setHeaderStack((prev) => prev.filter((e) => e.id !== id)),
+    }
   }, [])
 
   // Per-registrant state: parent → registrantId → items.
@@ -142,6 +169,15 @@ export function AppShell({
     [dynamicPages],
   )
 
+  // The breadcrumb chain for the current URL — drives the document title, and the
+  // automatic band-visibility gate below. Pure function of (pages, pathname,
+  // dynamic children); the band shows whenever this resolves to ≥1 level, so a page
+  // never mounts a header just to surface breadcrumbs.
+  const activeChain = useMemo(
+    () => findActiveChain(config.pages, pathname, flatDynamicPages),
+    [config.pages, pathname, flatDynamicPages],
+  )
+
   const ctx = useMemo<ShellContextValue>(
     () => ({
       config,
@@ -164,11 +200,10 @@ export function AppShell({
       config.shellPageHeader?.documentTitle ??
       'composed'
     if (mode === 'app') return config.appName
-    const chain = findActiveChain(config.pages, pathname, flatDynamicPages)
-    const leaf = spec?.title?.() ?? chain.at(-1)?.entry.label() ?? config.appName
+    const leaf = spec?.title?.() ?? activeChain.at(-1)?.entry.label() ?? config.appName
     if (mode === 'leaf') return leaf
     return leaf === config.appName ? config.appName : `${leaf} · ${config.appName}`
-  }, [config, pageHeaderSpec, pathname, dynamicPages])
+  }, [config, pageHeaderSpec, activeChain])
 
   useEffect(() => {
     document.title = documentTitleText
@@ -194,6 +229,18 @@ export function AppShell({
   const maxWidth = config.pageContainer?.defaultMaxWidth ?? '2xl'
   const containerPadding = contentPadding ?? 'default'
 
+  // Automatic band visibility — the band shows whenever the URL resolves to
+  // breadcrumbs, OR a `usePageHeader` contributed chrome (actions/search/tabs). No
+  // registered spec is needed for breadcrumbs. `title` alone never shows the band
+  // (it only relabels an existing leaf crumb). At `/` (empty chain, no chrome) the
+  // band is omitted, as before.
+  const hasPageChrome =
+    pageHeaderSpec !== null &&
+    ((pageHeaderSpec.actions?.length ?? 0) > 0 ||
+      pageHeaderSpec.search !== undefined ||
+      pageHeaderSpec.tabs !== undefined)
+  const showBand = activeChain.length > 0 || hasPageChrome
+
   const brand = (): ReactNode => (config.appNameRender ? config.appNameRender() : config.appName)
   const openMenuLabel = config.labels?.openMenu?.() ?? 'Open menu'
   const navLabel = config.labels?.mainNavigation?.() ?? 'Main navigation'
@@ -217,11 +264,11 @@ export function AppShell({
           )}
 
           <div className="mrs-shell__page-area">
-            {pageHeaderSpec ? (
+            {showBand ? (
               <div className="mrs-shell__chrome">
                 <div className="mrs-shell__container">
                   <ShellPageHeaderUI
-                    spec={pageHeaderSpec}
+                    spec={pageHeaderSpec ?? EMPTY_HEADER_SPEC}
                     shell={ctx}
                     showMenuButton={showMenu && !useTabBar}
                     onOpenMenu={() => setMobileMenuOpen(true)}
