@@ -233,7 +233,7 @@ docs/
 ├── 1-proposals/      # goals-only proposals (_template.md)
 ├── 2-tasks/          # TXXX-slug/task.md   (index: _index/<YYYY-MM>.md)
 ├── 3-bugs/           # BXXX-slug/bug.md    (index: _index/<YYYY-MM>.md)
-├── 4-reports/        # reviews/ security/ research/ status/
+├── 4-reports/        # reviews/ research/ status/
 ├── specifications/   # present-tense specs of what EXISTS (+ README index)
 ├── guides/           # one guide per module + the module-authoring contract
 ├── concept.md        # what this is
