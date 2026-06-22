@@ -1,6 +1,6 @@
 {
   "name": "my-react-shell",
-  "version": "0.2.0",
+  "version": "0.3.1",
   "private": true,
   "type": "module",
   "description": "Modular React foundation — optional, versioned drop-in modules (theme, providers, auth seam, i18n) for Vite + Convex SPAs. Consumed as a Bitbucket git-dependency.",
@@ -125,7 +125,7 @@
   "devDependencies": {
     "@auth/core": "0.41.1",
     "@convex-dev/auth": "0.0.94",
-    "themes": "git+ssh://git@bitbucket.org:kesteinbakk/themes.git#v0.1.0",
+    "themes": "git+ssh://git@bitbucket.org:kesteinbakk/themes.git#v0.2.0",
     "@radix-ui/react-dialog": "^1.1.17",
     "@radix-ui/react-dropdown-menu": "^2.1.18",
     "@radix-ui/react-popover": "^1.1.17",
