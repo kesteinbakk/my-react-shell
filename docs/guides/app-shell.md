@@ -164,6 +164,11 @@ its props onto the shell, which renders the chrome in the pinned slot:
 />
 ```
 
+An `ActionButton` in the `actions` slot always renders **inline** (glyph before label):
+the band's stylesheet overrides its `layout` prop, since the kit default `vertical`
+would stack the label under the glyph and blow out the band height. A stacked
+header-band action is therefore impossible; icon-only actions are unaffected.
+
 **The breadcrumb chain is a pure function of the URL pathname.** It is built by walking
 the config `pages` tree (plus any `useDynamicPages` registrations) against the current
 path. Nothing else feeds it — an in-page primitive can never add a crumb, and

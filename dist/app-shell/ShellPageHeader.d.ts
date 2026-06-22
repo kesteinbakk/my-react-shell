@@ -24,6 +24,12 @@ import type { PageEntry, ShellDocumentTitleMode, ShellPageHeaderSearchSlot, Shel
 import type { ShellContextValue } from './shellContext';
 export interface ShellPageHeaderProps {
     title?: () => string;
+    /**
+     * Action thunks rendered in the band's horizontal strip. An `ActionButton` here
+     * always lays out inline (glyph before label) — the band's stylesheet overrides
+     * its `layout` prop, since the kit default `vertical` would stack the label under
+     * the glyph and blow out the band height. Pass `layout="inline"` anyway for clarity.
+     */
     actions?: Array<() => ReactNode>;
     search?: ShellPageHeaderSearchSlot;
     tabs?: () => ReactNode;

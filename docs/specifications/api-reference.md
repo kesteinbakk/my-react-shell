@@ -328,6 +328,12 @@ preset, pass a custom `icon` node (a lucide icon or an `<Icon>` from `my-react-s
 | `hint` | — | Native tooltip (`title` attribute). |
 | `disabled` / `type` / `onClick` / `aria-label` / `className` | — | Usual button props; `aria-label` falls back to the visible label, then `hint`, then the preset label. |
 
+> **Header band forces inline.** The `vertical` default is for standalone toolbars and
+> action grids. An `ActionButton` placed in `ShellPageHeader`'s `actions` slot always
+> renders **inline** (glyph before label) regardless of `layout` — the app-shell
+> stylesheet overrides it, because a stacked label blows out the header band's height.
+> Pass `layout="inline"` there anyway for clarity; icon-only actions are unaffected.
+
 ```tsx
 <ActionButtonGroup>
   <ActionButton action="add" showLabel onClick={onAdd} />
@@ -721,6 +727,12 @@ export const shellConfig = defineShellConfig({
 <AppShell config={shellConfig} useMenu actions={[() => <ThemeToggle/>]} mobileNav="drawer"><Outlet/></AppShell>
 ```
 
+> **`ShellPageHeader` actions render inline.** An `ActionButton` mounted in the
+> `actions` slot always lays out inline (glyph before label) — the band's stylesheet
+> overrides its `layout` prop, since the kit default `vertical` stacks the label under
+> the glyph and blows out the band height. Pass `layout="inline"` anyway for clarity;
+> icon-only actions are unaffected.
+>
 > **`route: '/'` is reserved.** Never put `/` in `pages` — `defineShellConfig` throws
 > `ShellConfigError` if you do. Home is always reachable via the brand link and the
 > breadcrumb house icon; it never appears as a named sidebar entry or breadcrumb level.

@@ -31,7 +31,12 @@ interface ActionButtonBaseProps {
     variant?: ActionButtonVariant;
     /** Size — drives padding, glyph size, and label size. Defaults to `sm`. */
     size?: ActionButtonSize;
-    /** `vertical` (glyph over label, default) or `inline` (glyph left of label). */
+    /**
+     * `vertical` (glyph over label, default) or `inline` (glyph left of label). The
+     * `vertical` default is for standalone toolbars / action grids. Actions placed in
+     * `ShellPageHeader`'s band always render **inline** regardless of this prop — the
+     * band's stylesheet forces it, because a stacked label blows out the band height.
+     */
     layout?: ActionButtonLayout;
     /** When true the label takes the variant colour; otherwise it stays neutral. */
     coloredLabel?: boolean;

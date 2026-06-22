@@ -421,6 +421,18 @@ button.mrs-breadcrumbs__leaf {
     order: 3;
   }
 }
+/* Header-band guard: any ActionButton in the actions slot lays out inline (glyph
+   before label), overriding its `layout` prop. The kit's ActionButton defaults to
+   `vertical`, which stacks the label under the glyph — right for standalone
+   toolbars, but in this band it blows out the row height and misaligns every
+   sibling. Two class selectors outrank `.mrs-action-btn--vertical`, so this wins
+   regardless of the caller's prop or stylesheet order. A soft class reference
+   only — when the component kit isn't installed it matches nothing — and
+   icon-only actions (no label) are unaffected. */
+.mrs-page-header__actions .mrs-action-btn {
+  flex-direction: row;
+  gap: 0.5rem;
+}
 .mrs-page-header__search {
   position: relative;
   flex-basis: 100%;
