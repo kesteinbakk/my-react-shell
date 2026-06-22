@@ -6,7 +6,10 @@ dist-harness/
 .env.*
 !.env.example
 logs/
-.claude/settings.local.json
+# Local agent tooling — ecosystem-coupled (the SessionStart hook points outside the
+# repo) and skill-synced, so it's regenerated locally and never belongs in this public
+# repo. Kept on disk, untracked.
+.claude/
 .DS_Store
 
 # generated
