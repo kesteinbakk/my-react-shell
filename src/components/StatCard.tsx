@@ -93,6 +93,18 @@ export interface StatCardProps {
    */
   sideBarCompleteness?: number
   /**
+   * When `true`, the whole accent — top stripe, badge tint, and stat numbers —
+   * takes the **gauge's** completeness color (red → amber → green) instead of
+   * `tone`/`color`, so the card reads as one coherent color, and the stripe is
+   * forced to the top edge.
+   *
+   * Bound to `sideBarCompleteness`: the top stripe renders only when a gauge is
+   * present — `sideBarCompleteness === undefined` → **no top stripe** (badge and
+   * stat numbers fall back to `tone`/`color`). Throws in dev if combined with
+   * `accentPlacement='left'`. Default `false`.
+   */
+  topStripeFollowsGauge?: boolean
+  /**
    * Data stat items displayed below the header.
    * Each item has a `value` with either a `label` OR a `max` — not both (throws in dev).
    */
@@ -254,6 +266,7 @@ export function StatCard({
   color,
   accentPlacement = 'top',
   sideBarCompleteness,
+  topStripeFollowsGauge = false,
   stats,
   footer,
   lower,
@@ -263,8 +276,6 @@ export function StatCard({
   hoverable,
   className,
 }: StatCardProps) {
-  // tone defaults to 'neutral', so this is always defined (StatCard always accents).
-  const accentColor = resolveAccentColor(tone, color) ?? ACCENT_TONE_COLOR.neutral
   const width = SIZE_WIDTH_PX[size]
   const height = width / PHI
   const isHoverable = hoverable ?? !!onClick
@@ -275,10 +286,26 @@ export function StatCard({
   const gaugeFraction = hasGauge ? Math.min(1, Math.max(0, sideBarCompleteness)) : 0
   const gaugePct = Math.round(gaugeFraction * 100)
 
-  // The gauge owns the left edge. If a consumer also forces the accent stripe there
-  // (`accentPlacement='left'`), the gauge wins and the stripe is suppressed, so they
-  // can never overlap. Dev throws below; this is the prod-safe fallback.
-  const accentSuppressed = hasGauge && accentPlacement === 'left'
+  // `topStripeFollowsGauge`: the whole accent (top stripe + badge tint + stat
+  // numbers) takes the gauge's completeness colour, so the card reads as one
+  // coherent colour, and the stripe is forced to the top edge.
+  const followGauge = topStripeFollowsGauge && hasGauge
+  const effectiveAccentPlacement = topStripeFollowsGauge ? 'top' : accentPlacement
+
+  // Accent paint: the gauge colour when following it, else tone/color (tone/color
+  // is also the fallback when the mode is on but there's no gauge to follow). tone
+  // defaults to 'neutral', so the non-follow branch is always defined.
+  const accentColor = followGauge
+    ? completenessFill(gaugeFraction)
+    : resolveAccentColor(tone, color) ?? ACCENT_TONE_COLOR.neutral
+
+  // When to drop the accent stripe entirely:
+  //  • mode on but no gauge → the top stripe has nothing to follow (no stripe);
+  //  • gauge + a left accent → the gauge owns the left edge (suppress the stripe).
+  // Dev throws on both contradictions below; these are the prod-safe fallbacks.
+  const accentSuppressed =
+    (topStripeFollowsGauge && !hasGauge) ||
+    (!topStripeFollowsGauge && hasGauge && accentPlacement === 'left')
 
   // Dev guards
   if (process.env.NODE_ENV !== 'production') {
@@ -288,6 +315,11 @@ export function StatCard({
     if (hasGauge && accentPlacement === 'left') {
       throw new Error(
         "StatCard: `sideBarCompleteness` can't combine with `accentPlacement='left'` — both occupy the left edge. Keep the default `accentPlacement='top'` (or omit it) alongside the gauge.",
+      )
+    }
+    if (topStripeFollowsGauge && accentPlacement === 'left') {
+      throw new Error(
+        "StatCard: `topStripeFollowsGauge` drives the top stripe — it can't combine with `accentPlacement='left'`. Keep the default `accentPlacement='top'` (or omit it).",
       )
     }
     stats?.forEach((item, i) => {
@@ -362,7 +394,7 @@ export function StatCard({
     <div
       className={cn(
         'mrs-stat-card',
-        !accentSuppressed && `mrs-stat-card--accent-${accentPlacement}`,
+        !accentSuppressed && `mrs-stat-card--accent-${effectiveAccentPlacement}`,
         hasGauge && 'mrs-stat-card--gauge',
         isHoverable && 'mrs-stat-card--hoverable',
         watermark && 'mrs-stat-card--watermark',

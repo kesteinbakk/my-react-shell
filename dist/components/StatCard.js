@@ -63,9 +63,7 @@ function completenessFill(value) {
  * The accent stripe, badge tint, and watermark are driven by `tone` (mapped to
  * semantic tokens) or overridden with a raw CSS `color` string.
  */
-export function StatCard({ title, subtitle, badge, tone = 'neutral', color, accentPlacement = 'top', sideBarCompleteness, stats, footer, lower, watermark, size = 'md', onClick, hoverable, className, }) {
-    // tone defaults to 'neutral', so this is always defined (StatCard always accents).
-    const accentColor = resolveAccentColor(tone, color) ?? ACCENT_TONE_COLOR.neutral;
+export function StatCard({ title, subtitle, badge, tone = 'neutral', color, accentPlacement = 'top', sideBarCompleteness, topStripeFollowsGauge = false, stats, footer, lower, watermark, size = 'md', onClick, hoverable, className, }) {
     const width = SIZE_WIDTH_PX[size];
     const height = width / PHI;
     const isHoverable = hoverable ?? !!onClick;
@@ -74,10 +72,23 @@ export function StatCard({ title, subtitle, badge, tone = 'neutral', color, acce
     const hasGauge = sideBarCompleteness !== undefined;
     const gaugeFraction = hasGauge ? Math.min(1, Math.max(0, sideBarCompleteness)) : 0;
     const gaugePct = Math.round(gaugeFraction * 100);
-    // The gauge owns the left edge. If a consumer also forces the accent stripe there
-    // (`accentPlacement='left'`), the gauge wins and the stripe is suppressed, so they
-    // can never overlap. Dev throws below; this is the prod-safe fallback.
-    const accentSuppressed = hasGauge && accentPlacement === 'left';
+    // `topStripeFollowsGauge`: the whole accent (top stripe + badge tint + stat
+    // numbers) takes the gauge's completeness colour, so the card reads as one
+    // coherent colour, and the stripe is forced to the top edge.
+    const followGauge = topStripeFollowsGauge && hasGauge;
+    const effectiveAccentPlacement = topStripeFollowsGauge ? 'top' : accentPlacement;
+    // Accent paint: the gauge colour when following it, else tone/color (tone/color
+    // is also the fallback when the mode is on but there's no gauge to follow). tone
+    // defaults to 'neutral', so the non-follow branch is always defined.
+    const accentColor = followGauge
+        ? completenessFill(gaugeFraction)
+        : resolveAccentColor(tone, color) ?? ACCENT_TONE_COLOR.neutral;
+    // When to drop the accent stripe entirely:
+    //  • mode on but no gauge → the top stripe has nothing to follow (no stripe);
+    //  • gauge + a left accent → the gauge owns the left edge (suppress the stripe).
+    // Dev throws on both contradictions below; these are the prod-safe fallbacks.
+    const accentSuppressed = (topStripeFollowsGauge && !hasGauge) ||
+        (!topStripeFollowsGauge && hasGauge && accentPlacement === 'left');
     // Dev guards
     if (process.env.NODE_ENV !== 'production') {
         if (footer && lower != null) {
@@ -85,6 +96,9 @@ export function StatCard({ title, subtitle, badge, tone = 'neutral', color, acce
         }
         if (hasGauge && accentPlacement === 'left') {
             throw new Error("StatCard: `sideBarCompleteness` can't combine with `accentPlacement='left'` — both occupy the left edge. Keep the default `accentPlacement='top'` (or omit it) alongside the gauge.");
+        }
+        if (topStripeFollowsGauge && accentPlacement === 'left') {
+            throw new Error("StatCard: `topStripeFollowsGauge` drives the top stripe — it can't combine with `accentPlacement='left'`. Keep the default `accentPlacement='top'` (or omit it).");
         }
         stats?.forEach((item, i) => {
             if (item.label !== undefined && item.max !== undefined) {
@@ -122,7 +136,7 @@ export function StatCard({ title, subtitle, badge, tone = 'neutral', color, acce
             badgeNode = (_jsxs("div", { className: "mrs-stat-card__badge", children: [_jsx("span", { className: "mrs-stat-card__badge-value", children: badge.value }), badge.label ? _jsx("span", { className: "mrs-stat-card__badge-label", children: badge.label }) : null] }));
         }
     }
-    return (_jsxs("div", { className: cn('mrs-stat-card', !accentSuppressed && `mrs-stat-card--accent-${accentPlacement}`, hasGauge && 'mrs-stat-card--gauge', isHoverable && 'mrs-stat-card--hoverable', watermark && 'mrs-stat-card--watermark', className), style: style, "data-watermark": watermark, onClick: onClick, children: [hasGauge ? (_jsx("div", { className: "mrs-stat-card__gauge", role: "meter", "aria-valuemin": 0, "aria-valuemax": 100, "aria-valuenow": gaugePct, "aria-label": `${gaugePct}%`, children: _jsx("div", { className: "mrs-stat-card__gauge-fill", style: { height: `${gaugeFraction * 100}%`, background: completenessFill(gaugeFraction) } }) })) : null, _jsxs("div", { className: "mrs-stat-card__inner", children: [_jsxs("div", { className: "mrs-stat-card__header", children: [_jsxs("div", { className: "mrs-stat-card__head-text", children: [_jsx("p", { className: "mrs-stat-card__title", children: title }), subtitle ? _jsx("p", { className: "mrs-stat-card__subtitle", children: subtitle }) : null] }), badgeNode] }), stats && stats.length > 0 ? (_jsx("dl", { className: "mrs-stat-card__stats", children: stats.map((item, i) => {
+    return (_jsxs("div", { className: cn('mrs-stat-card', !accentSuppressed && `mrs-stat-card--accent-${effectiveAccentPlacement}`, hasGauge && 'mrs-stat-card--gauge', isHoverable && 'mrs-stat-card--hoverable', watermark && 'mrs-stat-card--watermark', className), style: style, "data-watermark": watermark, onClick: onClick, children: [hasGauge ? (_jsx("div", { className: "mrs-stat-card__gauge", role: "meter", "aria-valuemin": 0, "aria-valuemax": 100, "aria-valuenow": gaugePct, "aria-label": `${gaugePct}%`, children: _jsx("div", { className: "mrs-stat-card__gauge-fill", style: { height: `${gaugeFraction * 100}%`, background: completenessFill(gaugeFraction) } }) })) : null, _jsxs("div", { className: "mrs-stat-card__inner", children: [_jsxs("div", { className: "mrs-stat-card__header", children: [_jsxs("div", { className: "mrs-stat-card__head-text", children: [_jsx("p", { className: "mrs-stat-card__title", children: title }), subtitle ? _jsx("p", { className: "mrs-stat-card__subtitle", children: subtitle }) : null] }), badgeNode] }), stats && stats.length > 0 ? (_jsx("dl", { className: "mrs-stat-card__stats", children: stats.map((item, i) => {
                             if (item.max != null) {
                                 // Arc-ring stat
                                 return (_jsx("div", { className: "mrs-stat-card__stat mrs-stat-card__stat--arc", children: _jsx(ArcRing, { value: item.value, max: item.max }) }, i));

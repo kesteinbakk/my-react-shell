@@ -60,6 +60,18 @@ export interface StatCardProps {
      */
     sideBarCompleteness?: number;
     /**
+     * When `true`, the whole accent — top stripe, badge tint, and stat numbers —
+     * takes the **gauge's** completeness color (red → amber → green) instead of
+     * `tone`/`color`, so the card reads as one coherent color, and the stripe is
+     * forced to the top edge.
+     *
+     * Bound to `sideBarCompleteness`: the top stripe renders only when a gauge is
+     * present — `sideBarCompleteness === undefined` → **no top stripe** (badge and
+     * stat numbers fall back to `tone`/`color`). Throws in dev if combined with
+     * `accentPlacement='left'`. Default `false`.
+     */
+    topStripeFollowsGauge?: boolean;
+    /**
      * Data stat items displayed below the header.
      * Each item has a `value` with either a `label` OR a `max` — not both (throws in dev).
      */
@@ -93,4 +105,4 @@ export interface StatCardProps {
  * The accent stripe, badge tint, and watermark are driven by `tone` (mapped to
  * semantic tokens) or overridden with a raw CSS `color` string.
  */
-export declare function StatCard({ title, subtitle, badge, tone, color, accentPlacement, sideBarCompleteness, stats, footer, lower, watermark, size, onClick, hoverable, className, }: StatCardProps): import("react").JSX.Element;
+export declare function StatCard({ title, subtitle, badge, tone, color, accentPlacement, sideBarCompleteness, topStripeFollowsGauge, stats, footer, lower, watermark, size, onClick, hoverable, className, }: StatCardProps): import("react").JSX.Element;
