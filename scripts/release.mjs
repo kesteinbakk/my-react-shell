@@ -1,20 +1,23 @@
 #!/usr/bin/env node
-// release — cut a my-react-shell release.
+// release — cut a my-react-shell release. RUN BY AGENTS, every time. Never hand
+// the steps to a human. See docs/guides/release-runbook.md (the agent rulebook).
 //
-// Vendors the shared `themes` palette CSS from the pinned tag, rebuilds dist/,
-// bumps the version, commits, and tags. The PREFLIGHT is the point: it refuses
-// unless the `themes` this release will ship is clean + pushed + exactly at the
-// pinned tag — so the shell can NEVER ship against an unreleased or incompatible
-// themes (the dev/prod skew this whole model exists to kill). See
-// docs/guides/release-runbook.md.
+// This ONE command handles the whole upstream chain automatically:
+//   1. CASCADE THEMES — inspect the sibling ../themes checkout and, if it has
+//      unreleased work, release + (with --push) push it; then pin the shell to the
+//      resulting themes tag. So you never have to release themes separately.
+//   2. Vendor the pinned themes → src/themes, rebuild dist/, typecheck.
+//   3. Bump the shell version, commit, tag, and (with --push) push.
 //
 // Usage:
-//   pnpm release              bump patch (0.3.0 → 0.3.1)
-//   pnpm release minor        bump minor (0.3.0 → 0.4.0)   [major|minor|patch]
-//   pnpm release 0.4.0        explicit version
-//   pnpm release <ver> --push   also push branch + tag (runs typecheck + build first)
+//   pnpm release                 patch bump, local only
+//   pnpm release minor           minor bump (shell)        [major|minor|patch|X.Y.Z]
+//   pnpm release minor --push    release + push (themes too); the prod path
+//   pnpm release --themes minor  bump level to use IF themes needs a cascade release
+//                                (default: patch)
 //
-// NEVER auto-pushes without --push (push is the user's call — root CLAUDE.md).
+// Abundant guard rails; it refuses only when a human must decide (uncommitted
+// themes work, a divergent themes checkout). NEVER auto-pushes without --push.
 
 import { execFileSync } from 'node:child_process'
 import { readFileSync as read, writeFileSync as write } from 'node:fs'
@@ -23,112 +26,161 @@ import { fileURLToPath } from 'node:url'
 
 const SHELL_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const THEMES_DIR = resolve(SHELL_ROOT, '..', 'themes')
+const THEMES_SPEC = (tag) => `git+ssh://git@bitbucket.org:kesteinbakk/themes.git#${tag}`
 
-const die = (msg) => {
-  console.error(`\n✖ release aborted:\n${msg}\n`)
+const die = (m) => {
+  console.error(`\n✖ release aborted:\n${m}\n`)
   process.exit(1)
 }
-const ok = (msg) => console.error(`✓ ${msg}`)
-const sh = (cmd, args, cwd = SHELL_ROOT) =>
-  execFileSync(cmd, args, { cwd, encoding: 'utf8' }).trim()
-const shGit = (cwd, ...args) => sh('git', args, cwd)
+const ok = (m) => console.error(`✓ ${m}`)
+const step = (m) => console.error(`\n— ${m} —`)
+const run = (cmd, args, cwd = SHELL_ROOT) => execFileSync(cmd, args, { cwd, stdio: 'inherit' })
+const cap = (cmd, args, cwd = SHELL_ROOT) => execFileSync(cmd, args, { cwd, encoding: 'utf8' }).trim()
+const git = (cwd, ...args) => cap('git', args, cwd)
+const tryGit = (cwd, ...args) => {
+  try {
+    return git(cwd, ...args)
+  } catch {
+    return null
+  }
+}
 
 // ---- args ----
 const argv = process.argv.slice(2)
 const push = argv.includes('--push')
-const verArg = argv.find((a) => !a.startsWith('--')) ?? 'patch'
+const themesIdx = argv.indexOf('--themes')
+const themesBump = themesIdx !== -1 ? argv[themesIdx + 1] : 'patch'
+const verArg = argv.filter((a, i) => !a.startsWith('--') && i !== themesIdx + 1)[0] ?? 'patch'
 
-// ---- read package.json + pinned themes tag ----
-const pkgPath = resolve(SHELL_ROOT, 'package.json')
-const pkg = JSON.parse(read(pkgPath, 'utf8'))
-const themesSpec = pkg.devDependencies?.themes ?? ''
-const pinMatch = themesSpec.match(/#(v[\d]+\.[\d]+\.[\d]+)/)
-if (!pinMatch) die(`could not read the themes pin from devDependencies.themes:\n  "${themesSpec}"`)
-const themesTag = pinMatch[1]
-
-// ---- compute next version ----
 function nextVersion(current, bump) {
   if (/^\d+\.\d+\.\d+$/.test(bump)) return bump
   const [maj, min, pat] = current.split('.').map(Number)
   if (bump === 'major') return `${maj + 1}.0.0`
   if (bump === 'minor') return `${maj}.${min + 1}.0`
   if (bump === 'patch') return `${maj}.${min}.${pat + 1}`
-  die(`unknown version arg "${bump}" (use major|minor|patch or an explicit X.Y.Z)`)
+  die(`unknown version arg "${bump}" (use major|minor|patch or X.Y.Z)`)
 }
-const newVersion = nextVersion(pkg.version, verArg)
-const newTag = `v${newVersion}`
 
-console.error(`\n— my-react-shell release ${pkg.version} → ${newVersion} (themes pinned ${themesTag}) —\n`)
+function latestTag(cwd) {
+  const tags = (tryGit(cwd, 'tag', '-l', 'v*') ?? '')
+    .split('\n')
+    .filter((t) => /^v\d+\.\d+\.\d+$/.test(t))
+    .map((t) => t.slice(1).split('.').map(Number))
+    .sort((a, b) => a[0] - b[0] || a[1] - b[1] || a[2] - b[2])
+  const top = tags.at(-1)
+  return top ? `v${top.join('.')}` : null
+}
+const latestThemesTag = () => latestTag(THEMES_DIR)
 
-// ---- PREFLIGHT: the themes this release vendors must be released + matched ----
-try {
-  shGit(THEMES_DIR, 'rev-parse', '--is-inside-work-tree')
-} catch {
+// ============================================================================
+// STEP 1 — CASCADE THEMES (every time)
+// ============================================================================
+step('themes cascade')
+
+if (!tryGit(THEMES_DIR, 'rev-parse', '--is-inside-work-tree')) {
   die(`themes checkout not found at ${THEMES_DIR}.\n  Check out ~/Developer/themes beside the shell.`)
 }
 
-const themesDirty = shGit(THEMES_DIR, 'status', '--porcelain')
+const themesDirty = git(THEMES_DIR, 'status', '--porcelain')
 if (themesDirty) {
   die(
-    `the themes working tree (${THEMES_DIR}) has uncommitted changes:\n${themesDirty}\n` +
-      `  Release themes first:  cd ../themes && pnpm release`,
+    `../themes has UNCOMMITTED changes — a human must commit them with a meaningful\n` +
+      `message before they can ship (the release won't author themes content commits):\n${themesDirty}\n` +
+      `  Fix: cd ../themes && git add -A && git commit, then re-run.`,
   )
 }
 
-let tagCommit
-try {
-  tagCommit = shGit(THEMES_DIR, 'rev-list', '-n', '1', themesTag)
-} catch {
-  die(`themes tag ${themesTag} does not exist locally in ${THEMES_DIR}.\n  Release themes at ${themesTag} first: cd ../themes && pnpm release`)
-}
+let themesTag = latestThemesTag()
+const themesHead = git(THEMES_DIR, 'rev-parse', 'HEAD')
 
-const onOrigin = shGit(THEMES_DIR, 'ls-remote', '--tags', 'origin', themesTag)
-if (!onOrigin) {
-  die(`themes tag ${themesTag} is not on origin — consumers' CI can't fetch it.\n  Push it: cd ../themes && git push origin ${themesTag}`)
-}
+// Is HEAD at-or-ahead of the latest tag (releasable), behind/divergent (human), or untagged?
+const unreleased = themesTag ? Number(git(THEMES_DIR, 'rev-list', `${themesTag}..HEAD`, '--count')) : null
+const tagIsAncestor = themesTag ? tryGit(THEMES_DIR, 'merge-base', '--is-ancestor', themesTag, 'HEAD') !== null : false
 
-const themesHead = shGit(THEMES_DIR, 'rev-parse', 'HEAD')
-if (themesHead !== tagCommit) {
+if (themesTag && !tagIsAncestor) {
   die(
-    `themes HEAD (${themesHead.slice(0, 8)}) is not at the pinned tag ${themesTag} (${tagCommit.slice(0, 8)}).\n` +
-      `  The shell pins themes ${themesTag} but the checkout is on a different commit.\n` +
-      `  Either: bump the themes pin in package.json to the tag you want, OR\n` +
-      `          cd ../themes && git checkout ${themesTag}\n` +
-      `  (If ../themes is ahead with unreleased work — release it: cd ../themes && pnpm release — then bump the pin here.)`,
+    `../themes HEAD (${themesHead.slice(0, 8)}) is behind/divergent from its latest tag ${themesTag}.\n` +
+      `  A human should reconcile the themes checkout (likely: git checkout main).`,
   )
 }
-ok(`themes ${themesTag} is released, pushed, and matches ../themes HEAD`)
 
-// ---- vendor + build ----
-sh('node', ['scripts/sync-themes.mjs'])
+if (!themesTag || unreleased > 0) {
+  // Unreleased themes work → release it (and push it iff the shell push is requested).
+  ok(`themes has ${themesTag ? `${unreleased} unreleased commit(s) after ${themesTag}` : 'no tags'} → releasing themes (${themesBump}${push ? ', push' : ', local'})`)
+  run('pnpm', push ? ['release', themesBump, '--push'] : ['release', themesBump], THEMES_DIR)
+  themesTag = latestThemesTag()
+  ok(`themes released ${themesTag}`)
+} else {
+  // HEAD == latest tag. Make sure it (and main) are on origin when pushing.
+  ok(`themes is at its latest tag ${themesTag} (no new work)`)
+  if (push) {
+    if (!git(THEMES_DIR, 'ls-remote', '--tags', 'origin', themesTag)) {
+      run('git', ['push', 'origin', themesTag], THEMES_DIR)
+      ok(`pushed existing themes ${themesTag} to origin`)
+    }
+    if (Number(tryGit(THEMES_DIR, 'rev-list', '@{u}..HEAD', '--count') ?? '0') > 0) {
+      run('git', ['push'], THEMES_DIR)
+      ok('pushed themes main to origin')
+    }
+  } else if (!git(THEMES_DIR, 'ls-remote', '--tags', 'origin', themesTag)) {
+    console.error(`  note: themes ${themesTag} is not on origin yet — it will be pushed when you release the shell with --push.`)
+  }
+}
+
+// ============================================================================
+// STEP 2 — pin the shell to the resolved themes tag + vendor + build
+// ============================================================================
+step(`pin themes ${themesTag} + vendor + build`)
+
+const pkgPath = resolve(SHELL_ROOT, 'package.json')
+let pkg = JSON.parse(read(pkgPath, 'utf8'))
+const wantSpec = THEMES_SPEC(themesTag)
+if (pkg.devDependencies?.themes !== wantSpec) {
+  pkg.devDependencies.themes = wantSpec
+  write(pkgPath, JSON.stringify(pkg, null, 2) + '\n')
+  ok(`pinned devDependencies.themes → ${themesTag}`)
+  run('pnpm', ['install', '--lockfile-only']) // reconcile the lockfile to the new pin
+}
+
+run('node', ['scripts/sync-themes.mjs']) // vendor from ../themes (== themesTag)
 ok('vendored themes → src/themes')
-sh('pnpm', ['build:lib'])
+run('pnpm', ['build:lib'])
 ok('rebuilt dist/')
-sh('pnpm', ['typecheck'])
+run('pnpm', ['typecheck'])
 ok('typecheck passed')
 
-// ---- bump version, commit, tag ----
+// ============================================================================
+// STEP 3 — bump shell version, commit, tag, (push)
+// ============================================================================
+pkg = JSON.parse(read(pkgPath, 'utf8')) // re-read (lockfile-only may have touched nothing else)
+// Base the bump on the LATEST TAG, not package.json — tags are the source of truth
+// for released versions and package.json can lag (disposable history).
+const semverGt = (a, b) => {
+  const pa = a.split('.').map(Number)
+  const pb = b.split('.').map(Number)
+  return pa[0] - pb[0] || pa[1] - pb[1] || pa[2] - pb[2]
+}
+const shellLatest = latestTag(SHELL_ROOT)
+const base = shellLatest && semverGt(shellLatest.slice(1), pkg.version) > 0 ? shellLatest.slice(1) : pkg.version
+const newVersion = nextVersion(base, verArg)
+const newTag = `v${newVersion}`
+step(`my-react-shell ${pkg.version} (latest tag ${shellLatest ?? 'none'}) → ${newVersion}`)
+if (tryGit(SHELL_ROOT, 'rev-parse', newTag)) die(`shell tag ${newTag} already exists.`)
+
 pkg.version = newVersion
 write(pkgPath, JSON.stringify(pkg, null, 2) + '\n')
-ok(`package.json → ${newVersion}`)
-
-shGit(SHELL_ROOT, 'add', '-A')
-shGit(SHELL_ROOT, 'commit', '-m', `release: my-react-shell ${newTag} (themes ${themesTag})`)
-shGit(SHELL_ROOT, 'tag', newTag)
+git(SHELL_ROOT, 'add', '-A')
+git(SHELL_ROOT, 'commit', '-m', `release: my-react-shell ${newTag} (themes ${themesTag})`)
+git(SHELL_ROOT, 'tag', newTag)
 ok(`committed + tagged ${newTag}`)
 
-// ---- push (only with --push) ----
 if (push) {
-  sh('pnpm', ['build']) // full build = pre-push sanity (catches CSS/harness breakage)
+  run('pnpm', ['build']) // full build = pre-push sanity (catches CSS/harness breakage)
   ok('full build passed (pre-push)')
-  shGit(SHELL_ROOT, 'push')
-  shGit(SHELL_ROOT, 'push', 'origin', newTag)
+  run('git', ['push'], SHELL_ROOT)
+  run('git', ['push', 'origin', newTag], SHELL_ROOT)
   ok(`pushed ${newTag} to origin`)
-  console.error(`\n✅ Released my-react-shell ${newTag}. Bump consumers: cd ../<app> && pnpm release\n`)
+  console.error(`\n✅ Released my-react-shell ${newTag} (themes ${themesTag}). Bump consumers: cd ../<app> && pnpm release\n`)
 } else {
-  console.error(
-    `\n✅ Tagged ${newTag} locally (not pushed). To publish:\n` +
-      `   git push && git push origin ${newTag}\n` +
-      `   (or re-run with --push)\n`,
-  )
+  console.error(`\n✅ Tagged ${newTag} locally (not pushed). Publish: git push && git push origin ${newTag} (or re-run with --push)\n`)
 }

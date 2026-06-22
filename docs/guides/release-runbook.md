@@ -1,147 +1,100 @@
-# Release runbook
+# Release rulebook (for agents)
 
 last updated: 2026-06-22
 
-How to ship a change from `themes` and/or `my-react-shell` all the way to a
-consumer in production, repeatably and **without remembering manual steps**. Each
-repo has one `pnpm release` command; the preflight checks make the chain
-unfailable. The single human judgement left is *looking at the Vercel preview
-before promoting* — which is how you get "prod looks exactly like dev."
+**This is an instruction set for agents, not a how-to for the human.** Releasing
+`themes` / `my-react-shell` / a consumer is an **agent responsibility** — you run
+the commands, every time. Never hand a list of release steps to the user and never
+say "here's your runbook." The user expects 100% dev↔prod visual parity and an
+unfailable, fully-scripted release; the scripts below enforce it. This file must
+make sense to an agent that has none of this conversation's context.
 
-> **Why this is simple now.** A consumer depends on **only `my-react-shell`**. The
-> shared `themes` palette CSS is **vendored** into the shell's shipped `src/themes/`
-> at release time, so there is no transitive `themes` git-dep — no second repo for
-> CI to authenticate to, no second tag to keep in lockstep, and no way for the shell
-> and themes to drift into an incompatible pair. See
-> [distribution-model.md](distribution-model.md) → *Transitive `themes` dependency*.
+## Model in one paragraph
 
----
+A consumer depends on **only `my-react-shell`**. The shared `themes` palette CSS is
+**vendored into the shell's shipped `src/themes/`** at release time, so there is no
+transitive `themes` git-dep for a consumer to resolve or authenticate to. The
+shell↔themes pair is contract-coupled, so the shell release **owns** the themes
+release: `pnpm release` in the shell auto-cascades into themes. See
+[distribution-model.md](distribution-model.md).
 
-## The dependency chain
+## The chain
 
 ```
-themes  ──(vendored at shell release)──►  my-react-shell  ──(git-dep tag)──►  consumer (evaluering, demos)
+themes  ──(vendored at shell release)──►  my-react-shell  ──(git-dep tag)──►  consumer (evaluering)
 ```
 
-- A `themes` change reaches consumers **only** after themes is tagged **and** the
-  shell re-releases (re-vendoring the new tag).
-- A `my-react-shell` change reaches a consumer **only** after the shell is tagged
-  **and** the consumer bumps its pin.
-- Dev (the `link:` loop) sees both live, with no tagging — see *Development* below.
-
----
-
-## Release `themes` (only when colours/tokens changed)
+## Rule 1 — to ship shell and/or themes changes, run ONE command
 
 ```bash
-cd ~/Developer/themes
-pnpm release minor --push        # or: patch | major | X.Y.Z
+cd ~/Developer/my-react-shell && pnpm release minor --push    # [major|minor|patch|X.Y.Z]
 ```
 
-What it does: refuses if you have uncommitted palette changes (the tag must
-contain the colours you edited), bumps the version, commits, tags `vX.Y.Z`, and
-pushes. Then it prints the next step: bump the pin in the shell.
+`pnpm release` (script: `scripts/release.mjs`) does, in order, automatically:
 
-After it: set the shell's themes pin to the new tag (one edit), then release the
-shell (next section):
+1. **Cascades themes.** Inspects the sibling `../themes` checkout. If it has
+   unreleased commits (or no tag), it **releases themes** (`pnpm release` in
+   `../themes`) and — with `--push` — pushes it. If themes is already at its latest
+   tag, it just makes sure that tag is on origin. Bump level for a cascade themes
+   release defaults to `patch`; override with `--themes minor`.
+2. **Pins** the shell's `devDependencies.themes` to the resolved themes tag and
+   reconciles the lockfile.
+3. **Vendors** themes → `src/themes/`, rebuilds `dist/`, runs typecheck (and a full
+   build before pushing).
+4. **Bumps** the shell version (based on the latest shell **tag**), commits, tags,
+   and — with `--push` — pushes branch + tag.
 
-```jsonc
-// ~/Developer/my-react-shell/package.json → devDependencies.themes:
-"themes": "git+ssh://git@bitbucket.org:kesteinbakk/themes.git#vX.Y.Z"
-```
+So you do **not** release themes separately. Releasing the shell handles it.
 
-Right after a themes release, `../themes` HEAD is already at `vX.Y.Z`, so the shell
-release preflight passes with no further checkout. (foundation, the other themes
-consumer, bumps its own pin independently — themes stays the shared source of
-truth, D13.)
+**It aborts only when a human must decide** — and you relay the message, you don't
+work around it:
+- `../themes` has **uncommitted** changes → a person must commit them with a real
+  message (the release won't author themes content commits).
+- `../themes` is **behind/divergent** from its latest tag → reconcile the checkout.
 
----
+`--push` is required to publish. Without it, everything is local (tag not pushed) —
+use that only for a dry run. Pushing is gated by the `pre-push-checks` skill
+(clean tree, typecheck, build); the script performs the equivalent.
 
-## Release `my-react-shell`
+## Rule 2 — to release themes ALONE (rare)
+
+Only when you want a themes tag without a shell release (e.g. for `foundation`):
 
 ```bash
-cd ~/Developer/my-react-shell
-pnpm release minor --push        # or: patch | major | X.Y.Z
+cd ~/Developer/themes && pnpm release minor --push
 ```
 
-**Preflight (this is the guarantee).** It refuses unless the `themes` it will
-vendor is:
-- **clean** — no uncommitted changes in `../themes`,
-- **released** — the pinned tag exists on `themes` origin (so it's reproducible), and
-- **matched** — `../themes` HEAD is *exactly* the pinned tag.
+Normally you don't — Rule 1 cascades it.
 
-So the shell can **never** ship against unreleased or mismatched themes — the
-class of bug that rendered every surface transparent in prod while dev looked
-fine. If it aborts, it tells you precisely what to fix (usually: release themes,
-or bump/checkout the pin).
-
-Then it: vendors `themes` → `src/themes/`, rebuilds `dist/`, runs typecheck (and a
-full build before pushing), bumps the version, commits, tags, and pushes.
-
-After it: bump the pin in each consumer.
-
----
-
-## Release a consumer (evaluering)
+## Rule 3 — to deploy a consumer (evaluering)
 
 ```bash
-cd ~/Developer/evaluering
-pnpm release v0.4.0 --push       # the my-react-shell tag to pin; omit to use the latest
+cd ~/Developer/evaluering && pnpm release v0.X.Y --push   # the my-react-shell tag to pin
 ```
 
-What it does: verifies the shell tag is on origin, pins
-`my-react-shell` to `git+ssh://…#vX.Y.Z` (the consumer depends on **only** this —
-no themes), updates the lockfile, commits, and pushes. The push triggers a
-**Vercel preview deployment** built from the real pinned tag, then restores the
-local `link:` for continued development.
+Pins `my-react-shell` to the tag (the consumer's only foundation dep — no themes),
+updates the lockfile, commits, pushes → triggers a **Vercel preview build** from the
+real pinned tag.
 
-**The parity gate — do not skip.** Open the Vercel **preview** URL and look at it.
-It is the actual production artifact (real pinned-tag install, real build), so what
-you see is what prod will be. When it matches dev, **promote the preview to
-production** in Vercel. This is the step that makes "looks good in dev, broken in
-prod" structurally impossible — you are looking at prod before it is prod.
+**Then the parity gate (do not skip):** open the Vercel **preview** URL and look at
+it. It is the actual production artifact, so it is what prod will be. When it matches
+dev, **promote the preview to production**. This is how parity is *seen*, not trusted.
 
----
+## One-time setup (NOT a per-release step — ops/human, can't be scripted from here)
 
-## One-time setup (per machine / per Vercel project)
-
-These are done **once**, not per release.
-
-**Vercel project (one repo to auth — just the shell):**
-1. Add an env var `BITBUCKET_TOKEN` = a Bitbucket **Repository/Workspace Access
-   Token** with `repo:read` (one credential; it only needs to reach the
-   `my-react-shell` repo now — themes is vendored, so no second repo).
-2. Set the **Install Command** to rewrite SSH→HTTPS+token before install, so the
-   committed `git+ssh://…` spec resolves on CI without an SSH key:
-   ```bash
-   git config --global url."https://x-token-auth:$BITBUCKET_TOKEN@bitbucket.org/".insteadOf "git@bitbucket.org:" && pnpm install --frozen-lockfile
-   ```
-
-**Each consumer repo (once):** copy the committed-link pre-commit guard so the
-local `link:` redirect can never be committed (it would break Vercel installs):
-```bash
-cp ~/Developer/my-react-shell/.githooks/pre-commit .githooks/pre-commit
-git config core.hooksPath .githooks
-```
-
-**Each dev clone (once):** check out `themes` beside the shell
-(`~/Developer/themes`) — the shell's dev watcher and release vendor read it from
-`../themes`.
-
----
+- **Vercel project:** env var `BITBUCKET_TOKEN` = a Bitbucket Repository/Workspace
+  Access Token (`repo:read`); **Install Command**:
+  ```bash
+  git config --global url."https://x-token-auth:$BITBUCKET_TOKEN@bitbucket.org/".insteadOf "git@bitbucket.org:" && pnpm install --frozen-lockfile
+  ```
+  One repo to auth (just the shell — themes is vendored).
+- **Each consumer repo:** copy the committed-link pre-commit guard
+  (`cp ~/Developer/my-react-shell/.githooks/pre-commit .githooks/ && git config core.hooksPath .githooks`).
+- **Each dev clone:** check out `themes` at `~/Developer/themes` (the shell's vendor
+  + watcher read `../themes`).
 
 ## Development (no releases, no tags)
 
-The `link:` dev-loop shows **every** shell and themes edit live, with no tagging:
-
-- **Shell CSS / TS edits** — the `rs:watch` sidecar (`pnpm dev` via `dev start`)
-  rebuilds `dist/` and the consumer's Vite hot-reloads.
-- **themes edits** (`~/Developer/themes/*.css`) — the same sidecar
-  (`scripts/dev-watch.mjs`) mirrors the themes checkout into the shell's
-  `src/themes/` on save, so the colour change HMRs straight into link consumers.
-
-Tags exist only for releases. You never tag to see a change in dev.
-
-> The vendor sources the **sibling `../themes` checkout**, never
-> `node_modules/themes` — the latter is re-materialized to the pinned tag by every
-> `pnpm install`, so sourcing it would silently revert dev to an older themes.
+The `link:` loop shows every shell and themes edit live with **no tagging**: the
+`rs:watch` sidecar rebuilds `dist/` and mirrors `../themes` → `src/themes/` on save,
+so colour edits HMR into link consumers. Tags exist only for releases.
