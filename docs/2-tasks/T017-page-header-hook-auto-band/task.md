@@ -1,6 +1,6 @@
 # T017 — page header: `usePageHeader` hook + automatic band + `hideCrumb`
 
-- **Status:** planning (awaiting user sign-off)
+- **Status:** finished (code + docs landed on `main`; evaluering + both demos migrated, typecheck/tests green. Remaining: user's in-browser visual parity check — the demo showcase + evaluering setup-leaf actions.)
 - **Filed:** 2026-06-22
 - **Working branch:** `main` (worktree `quirky-perlman-5a8c08`)
 - **Supersedes:** **T016** (page-header-register-once). T016's determinism fix
