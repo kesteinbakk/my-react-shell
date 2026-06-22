@@ -362,7 +362,7 @@ range from the current value (resolving a swatch token to its concrete hex).
 | `disabled` / `aria-label` / `className` | — | Usual control props; `aria-label` falls back to a string `label`. |
 
 ```tsx
-const [color, setColor] = useState('var(--color-accent-indigo)')
+const [color, setColor] = useState('var(--color-accent-violet)')
 <ColorPicker label="Brand color" value={color} onChange={setColor} />
 
 // Swatch-only (no react-colorful needed):
@@ -371,9 +371,11 @@ const [color, setColor] = useState('var(--color-accent-indigo)')
 <ColorPicker swatches={[]} value={color} onChange={setColor} />
 ```
 
-`ACCENT_SWATCHES` — the default swatch set: `indigo · violet · purple · pink · rose · orange ·
-amber · emerald · teal · sky` (each a shared `--color-accent-<name>` token from
-`my-react-shell/styles.css`).
+`ACCENT_SWATCHES` — the default swatch set: `rose · amber · emerald · sky · violet` — exactly
+the accent tokens the shared `themes` contract guarantees in **every** palette, so each one
+always resolves (each a `--color-accent-<name>` token from `my-react-shell/styles.css`). A
+palette that defines further accents, or a consumer with its own, can pass a wider `swatches`
+list.
 
 ### Surfaces & elevation
 

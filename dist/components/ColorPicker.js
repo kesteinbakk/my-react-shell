@@ -6,22 +6,14 @@ import { SegmentedControl } from './SegmentedControl';
 import { cn } from './cn';
 /**
  * The built-in theme accent vocabulary — the swatch set offered by the Theme tab
- * unless the consumer passes its own `swatches`. Each name resolves to the shared
- * `--color-accent-<name>` token (shipped by `my-react-shell/styles.css`), so a
- * swatch stays theme-adaptive: the same picked value tracks light/dark and palette.
+ * unless the consumer passes its own `swatches`. These are exactly the accent tokens
+ * the shared `themes` contract guarantees in **every** palette, so each one always
+ * resolves; each name maps to `--color-accent-<name>` (shipped by
+ * `my-react-shell/styles.css`), keeping a pick theme-adaptive — it tracks light/dark
+ * and the active palette. A palette that defines further accents (or a consumer with
+ * its own) can pass a wider `swatches` list.
  */
-export const ACCENT_SWATCHES = [
-    'indigo',
-    'violet',
-    'purple',
-    'pink',
-    'rose',
-    'orange',
-    'amber',
-    'emerald',
-    'teal',
-    'sky',
-];
+export const ACCENT_SWATCHES = ['rose', 'amber', 'emerald', 'sky', 'violet'];
 const caretGlyph = (_jsx("svg", { width: 14, height: 14, viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: 2, strokeLinecap: "round", strokeLinejoin: "round", "aria-hidden": "true", children: _jsx("path", { d: "m6 9 6 6 6-6" }) }));
 const swatchVar = (name) => `var(--color-accent-${name})`;
 /** The swatch name whose `var(...)` equals `value`, or `null` when `value` is custom/absent. */

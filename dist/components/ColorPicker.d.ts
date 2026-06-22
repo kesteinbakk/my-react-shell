@@ -1,11 +1,14 @@
 import type { ReactNode } from 'react';
 /**
  * The built-in theme accent vocabulary — the swatch set offered by the Theme tab
- * unless the consumer passes its own `swatches`. Each name resolves to the shared
- * `--color-accent-<name>` token (shipped by `my-react-shell/styles.css`), so a
- * swatch stays theme-adaptive: the same picked value tracks light/dark and palette.
+ * unless the consumer passes its own `swatches`. These are exactly the accent tokens
+ * the shared `themes` contract guarantees in **every** palette, so each one always
+ * resolves; each name maps to `--color-accent-<name>` (shipped by
+ * `my-react-shell/styles.css`), keeping a pick theme-adaptive — it tracks light/dark
+ * and the active palette. A palette that defines further accents (or a consumer with
+ * its own) can pass a wider `swatches` list.
  */
-export declare const ACCENT_SWATCHES: readonly ["indigo", "violet", "purple", "pink", "rose", "orange", "amber", "emerald", "teal", "sky"];
+export declare const ACCENT_SWATCHES: readonly ["rose", "amber", "emerald", "sky", "violet"];
 export interface ColorPickerProps {
     /**
      * Selected color as a directly-usable CSS color string — either a theme swatch
