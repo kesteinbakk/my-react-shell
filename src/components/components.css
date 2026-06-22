@@ -1428,6 +1428,12 @@
   line-height: 1.2;
   color: var(--color-text-primary);
 }
+/* Auto-fit: very long titles step the font size down (up to three steps) so they
+   stay within ~two lines without resizing the card. Driven by `data-fit` (set from
+   the title's character count); the attribute is absent at step 0 (no reduction). */
+.mrs-stat-card__title[data-fit='1'] { font-size: 0.95em; }
+.mrs-stat-card__title[data-fit='2'] { font-size: 0.85em; }
+.mrs-stat-card__title[data-fit='3'] { font-size: 0.78em; line-height: 1.25; }
 
 .mrs-stat-card__subtitle {
   margin: 0;

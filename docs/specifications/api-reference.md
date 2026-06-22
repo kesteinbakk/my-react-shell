@@ -466,7 +466,7 @@ pass translated labels. The corner never triggers a clickable card's `onClick`.
 
 | Prop | Default | Meaning |
 |---|---|---|
-| `title` | — | Card title. **Required.** |
+| `title` | — | Card title. **Required.** Auto-fits: a very long title steps its font size down in up to three steps (by character count) so it stays within ~two lines without resizing the card. Short titles are unaffected. |
 | `subtitle` | — | Optional subtitle below the title. |
 | `badge` | — | `{ value, label?, max? }` — the top-right circle. Plain circle (number + label) when `max` is absent; SVG arc-ring showing `value/max` progress when `max` is set. |
 | `tone` | `'neutral'` | `'primary'`·`'info'`·`'success'`·`'warning'`·`'danger'`·`'neutral'` — maps to semantic `--color-*` tokens for the accent stripe and badge tint. |

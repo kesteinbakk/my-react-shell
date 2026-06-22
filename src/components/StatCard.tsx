@@ -248,6 +248,23 @@ function completenessFill(value: number): string {
   return `color-mix(in srgb, var(--color-success) ${t}%, var(--color-warning))`
 }
 
+// ── Title auto-fit ──────────────────────────────────────────────────────────
+
+/**
+ * Very long titles step the font size down (up to three steps) so they stay within
+ * roughly two lines without changing the card geometry. Length-based: the title font
+ * scales with `size`, so characters-per-line is roughly constant across presets, and
+ * raw `title.length` is a good cross-size proxy for "is this title very long".
+ * Returns `0` (no reduction) through `3` (smallest).
+ */
+function titleFitStep(title: string): 0 | 1 | 2 | 3 {
+  const n = title.length
+  if (n > 68) return 3
+  if (n > 48) return 2
+  if (n > 32) return 1
+  return 0
+}
+
 // ── Component ─────────────────────────────────────────────────────────────────
 
 /**
@@ -423,7 +440,7 @@ export function StatCard({
         {/* Header: title block + badge */}
         <div className="mrs-stat-card__header">
           <div className="mrs-stat-card__head-text">
-            <p className="mrs-stat-card__title">{title}</p>
+            <p className="mrs-stat-card__title" data-fit={titleFitStep(title) || undefined}>{title}</p>
             {subtitle ? <p className="mrs-stat-card__subtitle">{subtitle}</p> : null}
           </div>
           {badgeNode}
