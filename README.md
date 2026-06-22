@@ -163,6 +163,9 @@ pnpm setup:hooks   # sets core.hooksPath to .githooks
 This installs a **pre-commit committed-link guard** (`.githooks/pre-commit`) that
 rejects any staged `package.json` carrying a `link:` / `file:` dependency specifier —
 the local dev-loop redirect above must never be committed. Bypass intentionally with
-`git commit --no-verify`. A consumer of my-react-shell gets the same protection by
-copying `.githooks/pre-commit` into its repo and running the same `core.hooksPath`
-setup.
+`git commit --no-verify`. A consumer of my-react-shell gets the same protection with
+the **committed-link guard only** — the shell's `.githooks/pre-commit` *also* carries
+dist/ + themes guards specific to this repo (they run `pnpm build:lib` / `sync-themes`,
+which a consumer does not have and which would block its commits), so a consumer
+installs a **trimmed hook containing just the link check**, not the whole file, then
+runs the same `core.hooksPath` setup.

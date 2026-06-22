@@ -251,9 +251,11 @@ These are **dependency changes** and need explicit approval before they land:
 - One package manager only — **pnpm**. Settle any repo that still has an `npm`
   `package-lock.json` onto `pnpm` before adopting.
 - Configure the Vercel/CI GitHub token (`GITHUB_TOKEN`) for the `git+https` specifier.
-- Copy the committed-link guard: drop `.githooks/pre-commit` into the consumer repo
-  and run `git config core.hooksPath .githooks` (or add the same `setup:hooks`
-  script). It blocks committing the dev-loop `link:`/`file:` redirect.
+- Install the committed-link guard in the consumer — a pre-commit hook that blocks
+  committing the dev-loop `link:`/`file:` redirect, then `git config core.hooksPath
+  .githooks`. Use the **link-check logic only**: the shell's own `.githooks/pre-commit`
+  also runs dist/ + themes guards (`pnpm build:lib`, `sync-themes`) that a consumer
+  lacks and that would block its commits — copy just the link guard, not the whole file.
 - **When developing against the `link:` loop, dedupe React in the consumer's Vite
   config** so the symlinked shell's own React copy doesn't collide with the app's and
   crash first paint with `Invalid hook call` — see the dedupe step under "Local
