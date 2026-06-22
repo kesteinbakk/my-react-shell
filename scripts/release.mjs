@@ -39,7 +39,9 @@ const cap = (cmd, args, cwd = SHELL_ROOT) => execFileSync(cmd, args, { cwd, enco
 const git = (cwd, ...args) => cap('git', args, cwd)
 const tryGit = (cwd, ...args) => {
   try {
-    return git(cwd, ...args)
+    // stderr ignored: tryGit is for existence/state checks where failure is expected
+    // (e.g. rev-parse of a not-yet-created tag) — don't print git's "fatal:" noise.
+    return execFileSync('git', args, { cwd, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim()
   } catch {
     return null
   }
@@ -50,7 +52,9 @@ const argv = process.argv.slice(2)
 const push = argv.includes('--push')
 const themesIdx = argv.indexOf('--themes')
 const themesBump = themesIdx !== -1 ? argv[themesIdx + 1] : 'patch'
-const verArg = argv.filter((a, i) => !a.startsWith('--') && i !== themesIdx + 1)[0] ?? 'patch'
+// Exclude the `--themes <level>` VALUE — but only when --themes is actually present
+// (themesIdx === -1 would otherwise wrongly exclude argv[0], the shell bump arg).
+const verArg = argv.filter((a, i) => !a.startsWith('--') && !(themesIdx !== -1 && i === themesIdx + 1))[0] ?? 'patch'
 
 function nextVersion(current, bump) {
   if (/^\d+\.\d+\.\d+$/.test(bump)) return bump
