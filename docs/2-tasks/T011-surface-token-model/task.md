@@ -36,9 +36,15 @@ Landed in:
 - **SolidJS foundation** — token rename across ~31 files + `themes/base.css` utility
   classes + a `colors.ts` comment; `tsc` green.
 
-**Deferred (best-effort scope, not done):** the W3 dark-accent desaturation pass and a
-full per-token WCAG audit beyond the surface ladder. The surface model (W1/W2), the
-`dynamic` off-black fix, and the W4 demo upgrade are complete.
+**W3 — done.** The dark-accent desaturation pass (~20pp on ocean/forest/sunset/golden;
+soft/dynamic were already calibrated) and the full per-token WCAG AA audit (15 light-mode
+`--color-text-muted` failures fixed across all six palettes; no dark-mode failures) were
+completed in `themes` (commit `abc3499`). Audit report:
+[`docs/4-reports/reviews/2026-06-21-t011-w3-wcag-desaturation-audit.md`](../../4-reports/reviews/2026-06-21-t011-w3-wcag-desaturation-audit.md)
+— it had been stranded on branch `claude/stoic-mclaren-ce5ad2` and is now restored to main.
+With W1/W2, the `dynamic` off-black fix, and the W4 demo upgrade, **all of T011 is
+complete.** The consumer-side counterpart — auditing evaluering's *own* colours (score
+scale, shadcn bridge, hardcoded) — is filed as evaluering **T051**.
 
 ---
 
