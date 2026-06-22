@@ -1,31 +1,23 @@
 import type { ReactNode } from 'react';
-/**
- * The built-in theme accent vocabulary — the swatch set offered by the Theme tab
- * unless the consumer passes its own `swatches`. These are exactly the accent tokens
- * the shared `themes` contract guarantees in **every** palette, so each one always
- * resolves; each name maps to `--color-accent-<name>` (shipped by
- * `my-react-shell/styles.css`), keeping a pick theme-adaptive — it tracks light/dark
- * and the active palette. A palette that defines further accents (or a consumer with
- * its own) can pass a wider `swatches` list.
- */
-export declare const ACCENT_SWATCHES: readonly ["rose", "amber", "emerald", "sky", "violet"];
+/** Output format of the free picker — what `onChange` emits and `value` is read as. */
+export type ColorFormat = 'hex' | 'rgb' | 'hsl';
 export interface ColorPickerProps {
     /**
-     * Selected color as a directly-usable CSS color string — either a theme swatch
-     * reference `var(--color-accent-<name>)` (theme-adaptive) or a custom `#rrggbb`
-     * hex. Drop it straight into a `style`/`background`. Omit for "nothing picked yet".
+     * Selected color (controlled). A CSS color string: in free mode it is in `format`
+     * (`#rrggbb`, `rgb(…)`, or `hsl(…)`); in constrained mode it is whichever entry of
+     * `colors` is selected. Omit for "nothing picked yet".
      */
     value?: string;
-    /** Emits the new CSS color string (a swatch `var(...)` or a `#rrggbb` hex). */
+    /** Emits the new color string (in `format`, or the picked `colors` entry verbatim). */
     onChange: (value: string) => void;
     /**
-     * Accent swatch names offered in the Theme tab. Defaults to {@link ACCENT_SWATCHES};
-     * each renders as `var(--color-accent-<name>)`. Pass `[]` to hide the Theme tab
-     * (custom-only).
+     * Constrain selection to a fixed set of colors, shown as a swatch grid. Each may be
+     * **any** CSS color string (hex, `rgb()`, `hsl()`, `var(--token)`, a named color).
+     * Omit (or pass `[]`) for a free full-range pick.
      */
-    swatches?: readonly string[];
-    /** Show the full-range (custom hex) tab. Default `true`. Set `false` for swatch-only. */
-    allowCustom?: boolean;
+    colors?: readonly string[];
+    /** Output format of the free picker. Default `'hex'`. Ignored when `colors` is set. */
+    format?: ColorFormat;
     /** Field label above the trigger. */
     label?: ReactNode;
     /** Helper text below the label. */
@@ -35,21 +27,19 @@ export interface ColorPickerProps {
     /** Trigger text when nothing is selected. Default `'Pick a color'`. */
     placeholder?: string;
     disabled?: boolean;
-    /** Accessible label for the trigger (falls back to `label` when a string). */
+    /** Accessible label for the trigger (falls back to a string `label`). */
     'aria-label'?: string;
-    /** Tab labels (English defaults; pass translated strings via your `t()`). */
-    swatchesLabel?: ReactNode;
-    customLabel?: ReactNode;
     className?: string;
 }
 /**
- * <ColorPicker> — a compact, controlled color picker with two modes behind a popover
- * trigger: **Theme** (pick a theme accent swatch — semantic, theme-adaptive) and
- * **Custom** (a full hue/saturation range + hex input, via `react-colorful`).
+ * <ColorPicker> — a general, controlled color picker behind a compact popover trigger.
  *
- * Controlled via `value` / `onChange`; `value` is always a directly-usable CSS color
- * string (`var(--color-accent-<name>)` for a swatch, `#rrggbb` for custom). Persists
- * nothing itself. The full-range tab uses the `react-colorful` optional peer — install
- * it when you use this component (swatch styling and the popover stay shell-owned).
+ * - **Free** (default): a full hue/saturation range (via `react-colorful`, an optional
+ *   peer). `onChange` emits a CSS color string in `format` (`hex` · `rgb` · `hsl`).
+ * - **Constrained**: pass a `colors` set and the picker is limited to that set, shown as
+ *   a swatch grid; `onChange` emits the picked entry verbatim.
+ *
+ * Controlled via `value` / `onChange`; persists nothing. `value` is always a
+ * directly-usable CSS color string — drop it into a `style`/`background`.
  */
-export declare function ColorPicker({ value, onChange, swatches, allowCustom, label, description, align, placeholder, disabled, swatchesLabel, customLabel, className, ...rest }: ColorPickerProps): import("react").JSX.Element;
+export declare function ColorPicker({ value, onChange, colors, format, label, description, align, placeholder, disabled, className, ...rest }: ColorPickerProps): import("react").JSX.Element;

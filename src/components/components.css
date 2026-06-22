@@ -1816,3 +1816,16 @@
 .mrs-color-picker__hex-input::placeholder {
   color: var(--color-text-muted);
 }
+/* Read-only value display for non-hex formats (rgb/hsl) — react-colorful ships no
+   editable input for those, so the current string is shown verbatim. */
+.mrs-color-picker__readout {
+  display: block;
+  padding: 0.5rem 0.625rem;
+  border: 1px solid var(--color-border-primary);
+  border-radius: 0.5rem;
+  background: var(--color-surface-sunken);
+  color: var(--color-text-secondary);
+  font-size: 0.8125rem;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}

@@ -265,7 +265,7 @@ import 'my-react-shell/components/styles.css' // REQUIRED (plain prebuilt CSS; a
 | `InputField` | component | Full field: label + input + helper + error, a11y-wired (`htmlFor`/`aria-invalid`/`aria-describedby`). Spreads native input props; pass `error` to switch on error styling. |
 | `SegmentedControl` | component | Single-select `radiogroup` on a track; controlled via `value`/`onChange`; generic over value type. |
 | `Select` | component | Opinionated select on Radix Select (keyboard nav, typeahead, portal); `options` list; controlled via `value`/`onValueChange`. |
-| `ColorPicker`, `ACCENT_SWATCHES` | component + const | Compact popover color picker, two modes: **Theme** (theme accent swatches — semantic, theme-adaptive) and **Custom** (full hue/saturation range + hex, via the `react-colorful` optional peer). Controlled; `value`/`onChange` is a directly-usable CSS color string (`var(--color-accent-<name>)` or `#rrggbb`). `ACCENT_SWATCHES` is the default swatch set. See [below](#colorpicker). |
+| `ColorPicker` | component | General popover color picker. **Free** by default — a full hue/saturation range (via the `react-colorful` optional peer); `onChange` emits in `format` (`hex`·`rgb`·`hsl`). Pass a `colors` set to **constrain** it to a swatch grid. Controlled; `value` is a directly-usable CSS color string. See [below](#colorpicker). |
 | `UserPreferences` | component | Controlled theme/display settings panel (palette + light/dark/system + optional icons↔emojis). Persists nothing — emits `onChange`. Auth-free (`accountActions` slot). |
 | `cn(...)` | function | `clsx` + `tailwind-merge` class combiner. |
 
@@ -275,7 +275,8 @@ Every component has a matching `…Props` type export (e.g. `AlertProps`, `Alert
 `ActionPreset`, `ActionButtonVariant`/`Size`/`Layout`, `PhiCardProps`, `PhiCardAction`,
 `PhiCardSize`, `PhiCardFooter`, `PhiCardFooterLine`, `PhiCardFooterLineType`,
 `StatCardProps`, `StatCardBadge`, `StatItem`, `StatCardTone`,
-`StatCardFooter`, `StatCardFooterLine`, `StatCardFooterLineType`, `ColorPickerProps`, etc.).
+`StatCardFooter`, `StatCardFooterLine`, `StatCardFooterLineType`, `ColorPickerProps`,
+`ColorFormat`, etc.).
 
 ```tsx
 <Alert variant="warning" title="Heads up" onDismiss={() => {}}>Session expires soon.</Alert>
@@ -335,47 +336,44 @@ preset, pass a custom `icon` node (a lucide icon or an `<Icon>` from `my-react-s
 
 ### `ColorPicker`
 
-A compact, controlled color picker behind a popover trigger, with two modes:
+A general, controlled color picker behind a compact popover trigger. Two behaviours,
+chosen by whether you constrain it:
 
-- **Theme** — a grid of theme accent swatches (`ACCENT_SWATCHES` by default, or a custom
-  `swatches` list). A swatch emits `var(--color-accent-<name>)`, so the picked value stays
-  **theme-adaptive** — it tracks light/dark and the active palette. Swatches are
-  `Tab`-navigable radios (the same a11y model as `SegmentedControl`).
-- **Custom** — a full hue/saturation range + hex input (the `react-colorful` optional peer;
-  install it when you use `ColorPicker`). Emits a `#rrggbb` hex.
+- **Free** (default) — a full hue/saturation range (the `react-colorful` optional peer;
+  install it when you use `ColorPicker`). `onChange` emits a CSS color string in `format`
+  (`hex` · `rgb` · `hsl`). The hex format also gets an editable hex field; rgb/hsl show the
+  current value read-only below the canvas.
+- **Constrained** — pass a `colors` set and the picker is **limited** to it, shown as a
+  `Tab`-navigable swatch grid (the same a11y model as `SegmentedControl`). Each entry may be
+  **any** CSS color string; `onChange` emits the picked entry verbatim. `format` is ignored.
 
 It is **controlled** and persists nothing: `value` / `onChange` is always a **directly-usable
-CSS color string** — drop it into a `style`/`background`. The active swatch is the one whose
-`var(...)` equals `value`; any other value reads as custom. Opening the Custom tab seeds the
-range from the current value (resolving a swatch token to its concrete hex).
+CSS color string** — drop it into a `style`/`background`. In free mode pass / read `value` in
+the same `format`.
 
 | Prop | Default | Meaning |
 |---|---|---|
-| `value` | — | Selected color: `var(--color-accent-<name>)` (swatch) or `#rrggbb` (custom). Omit for "nothing picked". |
-| `onChange` | — | Emits the new CSS color string. **Required.** |
-| `swatches` | `ACCENT_SWATCHES` | Accent swatch names for the Theme tab; each renders as `var(--color-accent-<name>)`. Pass `[]` to hide the Theme tab. |
-| `allowCustom` | `true` | Show the Custom (full-range) tab. `false` → swatch-only (and `react-colorful` is never reached). |
+| `value` | — | Selected color (CSS string). Free mode: in `format`. Constrained: the selected `colors` entry. Omit for "nothing picked". |
+| `onChange` | — | Emits the new color string. **Required.** |
+| `colors` | — | Constrain to this fixed set (any CSS color strings) as a swatch grid. Omit / `[]` → free pick. |
+| `format` | `'hex'` | Free-mode output: `'hex'` (`#rrggbb`) · `'rgb'` (`rgb(…)`) · `'hsl'` (`hsl(…)`). Ignored when `colors` is set. |
 | `label` / `description` | — | Field label + helper text above the trigger. |
 | `align` | `'start'` | Popover alignment (`start`·`center`·`end`). |
 | `placeholder` | `'Pick a color'` | Trigger text when nothing is selected. |
-| `swatchesLabel` / `customLabel` | `'Theme'` / `'Custom'` | Tab labels (pass translated strings via your `t()`). |
 | `disabled` / `aria-label` / `className` | — | Usual control props; `aria-label` falls back to a string `label`. |
 
 ```tsx
-const [color, setColor] = useState('var(--color-accent-violet)')
-<ColorPicker label="Brand color" value={color} onChange={setColor} />
+// Free pick — hex (default):
+const [color, setColor] = useState('#3b82f6')
+<ColorPicker label="Any color" value={color} onChange={setColor} />
 
-// Swatch-only (no react-colorful needed):
-<ColorPicker allowCustom={false} value={color} onChange={setColor} />
-// Custom-only:
-<ColorPicker swatches={[]} value={color} onChange={setColor} />
+// Free pick — rgb / hsl output:
+<ColorPicker format="rgb" value={rgb} onChange={setRgb} /> // → "rgb(59, 130, 246)"
+<ColorPicker format="hsl" value={hsl} onChange={setHsl} /> // → "hsl(217, 91%, 60%)"
+
+// Constrained to a fixed set:
+<ColorPicker colors={['#ef4444', '#22c55e', '#3b82f6']} value={color} onChange={setColor} />
 ```
-
-`ACCENT_SWATCHES` — the default swatch set: `rose · amber · emerald · sky · violet` — exactly
-the accent tokens the shared `themes` contract guarantees in **every** palette, so each one
-always resolves (each a `--color-accent-<name>` token from `my-react-shell/styles.css`). A
-palette that defines further accents, or a consumer with its own, can pass a wider `swatches`
-list.
 
 ### Surfaces & elevation
 
