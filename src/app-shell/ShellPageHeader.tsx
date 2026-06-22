@@ -26,6 +26,7 @@ import { Link, useNavigate, useRouterState } from '@tanstack/react-router'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 import type {
   PageEntry,
+  ShellBreadcrumbCollapseConfig,
   ShellDocumentTitleMode,
   ShellPageHeaderSearchSlot,
   ShellPageHeaderSpec,
@@ -228,6 +229,56 @@ interface BreadcrumbsProps {
   onOpenMenu?: () => void
 }
 
+/** Default middle-collapse: keep the first crumb + the last two (incl. leaf). */
+const DEFAULT_BREADCRUMB_COLLAPSE: Required<ShellBreadcrumbCollapseConfig> = {
+  leading: 1,
+  trailing: 2,
+}
+
+/**
+ * One rendered breadcrumb position: a resolved chain level (carrying its original
+ * index so the leaf can be identified) or the "…" overflow placeholder holding the
+ * hidden ancestor levels.
+ */
+type CrumbSlot =
+  | { kind: 'level'; level: ChainLevel; index: number }
+  | { kind: 'overflow'; hidden: ChainLevel[] }
+
+/**
+ * Collapse the middle of a long chain. With `collapse === false`, every level is
+ * shown. Otherwise, when the chain has more than `leading + trailing` levels, the
+ * middle ones fold into a single overflow slot. `trailing` is clamped to ≥ 1 so the
+ * leaf always survives, `leading` to ≥ 0.
+ */
+function buildCrumbSlots(
+  chain: ChainLevel[],
+  collapse: ShellBreadcrumbCollapseConfig | false | undefined,
+): CrumbSlot[] {
+  const all: CrumbSlot[] = chain.map((level, index) => ({
+    kind: 'level',
+    level,
+    index,
+  }))
+  if (collapse === false) return all
+
+  const leading = Math.max(
+    0,
+    collapse?.leading ?? DEFAULT_BREADCRUMB_COLLAPSE.leading,
+  )
+  const trailing = Math.max(
+    1,
+    collapse?.trailing ?? DEFAULT_BREADCRUMB_COLLAPSE.trailing,
+  )
+  if (chain.length <= leading + trailing) return all
+
+  const hidden = chain.slice(leading, chain.length - trailing)
+  return [
+    ...all.slice(0, leading),
+    { kind: 'overflow', hidden },
+    ...all.slice(chain.length - trailing),
+  ]
+}
+
 function Breadcrumbs(props: BreadcrumbsProps): ReactNode {
   const { chain, shell, spec, leafMatchesPath, showMenuButton, onOpenMenu } =
     props
@@ -242,6 +293,11 @@ function Breadcrumbs(props: BreadcrumbsProps): ReactNode {
   // leaf is the current page (Hard Rule #2: title never adds a level).
   const leafOverride =
     spec.title && leafMatchesPath ? spec.title() : undefined
+
+  const slots = buildCrumbSlots(
+    chain,
+    config.shellPageHeader?.breadcrumbCollapse,
+  )
 
   return (
     <nav className="mrs-breadcrumbs" aria-label={navLabel}>
@@ -260,20 +316,31 @@ function Breadcrumbs(props: BreadcrumbsProps): ReactNode {
         {config.renderIcon('home', 18)}
       </Link>
 
-      {chain.map((level, i) => {
-        const isLeaf = i === lastIndex
+      {slots.map(slot => {
+        const chevron = (
+          <span className="mrs-breadcrumbs__chevron">
+            {config.renderIcon('chevronRight', 14)}
+          </span>
+        )
+
+        if (slot.kind === 'overflow') {
+          return (
+            <span key="overflow" className="mrs-breadcrumbs__crumb">
+              {chevron}
+              <OverflowCrumb shell={shell} hidden={slot.hidden} />
+            </span>
+          )
+        }
+
+        const { level, index } = slot
+        const isLeaf = index === lastIndex
         const label =
           isLeaf && leafOverride !== undefined
             ? leafOverride
             : level.entry.label()
         return (
-          <span
-            key={level.entry.id}
-            style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', minWidth: 0 }}
-          >
-            <span className="mrs-breadcrumbs__chevron">
-              {config.renderIcon('chevronRight', 14)}
-            </span>
+          <span key={level.entry.id} className="mrs-breadcrumbs__crumb">
+            {chevron}
             {isLeaf ? (
               level.siblings.length > 1 ? (
                 <LeafDropdown
@@ -283,20 +350,68 @@ function Breadcrumbs(props: BreadcrumbsProps): ReactNode {
                   selectedId={level.entry.id}
                 />
               ) : (
-                <span className="mrs-breadcrumbs__leaf">{label}</span>
+                <span className="mrs-breadcrumbs__leaf" title={label}>
+                  <span className="mrs-breadcrumbs__label">{label}</span>
+                </span>
               )
             ) : (
               <Link
                 to={level.entry.route}
                 className="mrs-breadcrumbs__link"
+                title={label}
               >
-                {label}
+                <span className="mrs-breadcrumbs__label">{label}</span>
               </Link>
             )}
           </span>
         )
       })}
     </nav>
+  )
+}
+
+/* ── Overflow crumb (collapsed middle) ───────────────────────────────────── */
+
+interface OverflowCrumbProps {
+  shell: ShellContextValue
+  hidden: ChainLevel[]
+}
+
+/**
+ * The "…" placeholder standing in for the collapsed middle of a long chain. Opens a
+ * dropdown listing the hidden ancestor crumbs, each a link back up the chain.
+ */
+function OverflowCrumb(props: OverflowCrumbProps): ReactNode {
+  const { shell, hidden } = props
+  const navigate = useNavigate()
+  const moreLabel = shell.config.labels?.more?.() ?? 'More'
+
+  return (
+    <DropdownMenu.Root>
+      <DropdownMenu.Trigger asChild>
+        <button
+          type="button"
+          className="mrs-breadcrumbs__overflow"
+          aria-label={moreLabel}
+        >
+          …
+        </button>
+      </DropdownMenu.Trigger>
+      <DropdownMenu.Portal>
+        <DropdownMenu.Content className="mrs-breadcrumbs__menu">
+          {hidden.map(level => (
+            <DropdownMenu.Item
+              key={level.entry.id}
+              className="mrs-breadcrumbs__menu-item"
+              onSelect={() => navigate({ to: level.entry.route })}
+            >
+              {shell.config.renderIcon(level.entry.icon, 16)}
+              {level.entry.label()}
+            </DropdownMenu.Item>
+          ))}
+        </DropdownMenu.Content>
+      </DropdownMenu.Portal>
+    </DropdownMenu.Root>
   )
 }
 
@@ -316,9 +431,11 @@ function LeafDropdown(props: LeafDropdownProps): ReactNode {
   return (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild>
-        <button type="button" className="mrs-breadcrumbs__leaf">
-          {label}
-          {shell.config.renderIcon('chevronDown', 16)}
+        <button type="button" className="mrs-breadcrumbs__leaf" title={label}>
+          <span className="mrs-breadcrumbs__label">{label}</span>
+          <span className="mrs-breadcrumbs__caret">
+            {shell.config.renderIcon('chevronDown', 16)}
+          </span>
         </button>
       </DropdownMenu.Trigger>
       <DropdownMenu.Portal>

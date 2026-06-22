@@ -58,11 +58,30 @@ export interface ShellTabsConfig {
   variant: ShellTabsVariant
 }
 
+/**
+ * Breadcrumb middle-collapse. When the chain has more than `leading + trailing`
+ * levels, the breadcrumb renders the first `leading` crumbs, a single "…" overflow
+ * item (a dropdown listing the hidden ancestor crumbs), then the last `trailing`
+ * crumbs. `trailing` is clamped to ≥ 1 (the leaf is always shown), `leading` to ≥ 0.
+ * Per-crumb truncation always applies regardless of this setting.
+ */
+export interface ShellBreadcrumbCollapseConfig {
+  /** Crumbs kept at the start (after the home icon). Default `1`. */
+  leading?: number
+  /** Crumbs kept at the end, including the leaf. Default `2`. */
+  trailing?: number
+}
+
 export interface ShellPageHeaderConfig {
   /** Header band gets a bottom border. Default `true`. */
   border: boolean
   /** Project-wide default browser-tab mode. Default `'composed'`. */
   documentTitle?: ShellDocumentTitleMode
+  /**
+   * Breadcrumb middle-collapse. Default `{ leading: 1, trailing: 2 }`; pass
+   * `false` to disable collapse (per-crumb truncation still applies).
+   */
+  breadcrumbCollapse?: ShellBreadcrumbCollapseConfig | false
 }
 
 /**

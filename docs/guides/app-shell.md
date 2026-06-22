@@ -85,8 +85,9 @@ route (e.g. `/dashboard`, `/data`).
 `label` is a thunk so you can wire `t()` and have it re-evaluate on locale change.
 `renderIcon` is **required**. Optional config-root fields: `appNameRender`, `pageContainer.defaultMaxWidth`
 (default `'2xl'`), `tabs.variant` (`'underline'` | `'pill'`), `shellPageHeader.border`
-(default `true`) / `.documentTitle`, and `labels` (translated aria-label thunks —
-`home`, `breadcrumb`, `openMenu`, `mainNavigation`, `more`; English fallbacks apply).
+(default `true`) / `.documentTitle` / `.breadcrumbCollapse` (breadcrumb middle-collapse
+— see below), and `labels` (translated aria-label thunks — `home`, `breadcrumb`,
+`openMenu`, `mainNavigation`, `more`; English fallbacks apply).
 
 Optional per-`PageEntry` fields: `subPages` (nested entries — each becomes a breadcrumb level and a title-dropdown item), `groupBreak: true` (draws a divider above the entry in the sidebar — ignored on the first visible page), and `tabBar: true` (opts the top-level entry into the mobile bottom tab bar — only when `AppShell mobileNav='tabBar'`).
 
@@ -211,6 +212,41 @@ longest-prefix match at each depth:
 - **A crumb appears only for registered routes.** Every route that should appear in the
   chain must be in the config tree (`pages` / `subPages`) or added at runtime via
   `useDynamicPages`. Unregistered paths fall through to the nearest matching ancestor.
+
+#### Overflow: the trail never breaks
+
+The band stays on **one line** no matter how deep the chain or how long a label
+(dynamic record names — a project name, a long task title — can land at *any* level):
+
+- **Every crumb is width-capped and ellipsizes.** Home icon, chevrons, and the leaf's
+  dropdown caret never compress; only label text gives up width. Hovering a clipped
+  crumb shows its full text (native `title`). Tune the cap per app with the
+  `--mrs-breadcrumb-label-max` CSS variable (default `14rem`):
+
+  ```css
+  .mrs-breadcrumbs { --mrs-breadcrumb-label-max: 18rem; }
+  ```
+
+- **The middle collapses when the chain is deep.** With more than `leading + trailing`
+  levels, the trail renders the first `leading` crumbs, a `…` overflow button (a
+  dropdown listing the hidden ancestors, each a link back up the chain), then the last
+  `trailing`:
+
+  ```
+  🏠  ›  Ikomm  ›  …  ›  Bestilling  ›  BE-05: Å få varsel per epost…
+  ```
+
+  Configure via `shellPageHeader.breadcrumbCollapse` — default
+  `{ leading: 1, trailing: 2 }`. `trailing` clamps to ≥ 1 (the leaf is always shown),
+  `leading` to ≥ 0. Pass `false` to disable the collapse (per-crumb truncation still
+  applies). The `…` dropdown's aria-label comes from `labels.more`.
+
+  ```ts
+  defineShellConfig({
+    // …
+    shellPageHeader: { breadcrumbCollapse: { leading: 2, trailing: 3 } },
+  })
+  ```
 
 `useDynamicPages` works at any depth — set `parent` to the ancestor route it hangs off:
 

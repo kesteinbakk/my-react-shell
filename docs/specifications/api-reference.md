@@ -626,6 +626,7 @@ import 'my-react-shell/app-shell/styles.css'
 
 **Contract types:** `PageEntry`, `ShellConfig`, `ShellConfigInput`, `PageContainerMaxWidth`,
 `ShellPageContainerConfig`, `ShellTabsConfig`, `ShellTabsVariant`, `ShellPageHeaderConfig`,
+`ShellBreadcrumbCollapseConfig`,
 `ShellPageHeaderSearchSlot`, `ShellDocumentTitleMode`, `ShellIconRenderer`,
 `ShellChromeLabels`, plus component props (`AppShellProps`, `AppShellMobileNav`,
 `AppShellContentPadding`, `ShellPageHeaderProps`, `ChainLevel`, `PageTab`, `PageTabsProps`,
@@ -656,6 +657,8 @@ export const shellConfig = defineShellConfig({
 > imports i18n.
 >
 > **`PageEntry` optional fields:** `subPages?: PageEntry[]` — nested entries, each a breadcrumb level and a title-dropdown item. `groupBreak?: true` — draws a sidebar divider before this entry; ignored on the first visible page. `tabBar?: true` — opts the entry into the mobile bottom tab bar (top-level entries only; only when `mobileNav='tabBar'`).
+>
+> **Breadcrumb overflow — single-line always.** Every crumb is width-capped and ellipsizes (so a long dynamic record name at *any* level can't blow out the band); home icon + chevrons never compress; the trail never wraps. Cap the label width per app with the `--mrs-breadcrumb-label-max` CSS var (default `14rem`). A deep chain also **collapses its middle**: with more than `leading + trailing` levels, the first `leading` crumbs show, then a `…` overflow dropdown of the hidden ancestors, then the last `trailing`. Configure via `shellPageHeader.breadcrumbCollapse?: { leading?: number; trailing?: number } | false` — default `{ leading: 1, trailing: 2 }`; `trailing` clamps to ≥ 1 (leaf always shown), `leading` to ≥ 0; `false` disables collapse (truncation still applies). The `…` dropdown reuses the `labels.more` aria-label.
 >
 > **Multi-level usage demonstrated** in the `my-react-shell-demo` nested-pages route (`src/pages/nested/`): a four-level chain — `pages` → `subPages` (regions) → `subPages` (countries) → `useDynamicPages` (cities).
 
