@@ -84,6 +84,7 @@
     "convex": "^1.41.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-colorful": "^5.7.0",
     "tailwind-merge": "^3.6.0"
   },
   "peerDependenciesMeta": {
@@ -117,6 +118,9 @@
     "clsx": {
       "optional": true
     },
+    "react-colorful": {
+      "optional": true
+    },
     "tailwind-merge": {
       "optional": true
     }
@@ -140,6 +144,7 @@
     "clsx": "^2.1.1",
     "convex": "^1.41.0",
     "react": "^19.2.7",
+    "react-colorful": "^5.7.0",
     "react-dom": "^19.2.7",
     "tailwind-merge": "^3.6.0",
     "tailwindcss": "^4.3.1",

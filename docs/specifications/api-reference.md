@@ -27,7 +27,7 @@ contract of any module, follow the **Guide** link in its section.
 | `my-react-shell/providers` | **providers** (Convex client + `AppProviders`) | `convex` | — |
 | `my-react-shell/auth/convex` | **auth** Convex Auth default | `convex`, `@convex-dev/auth`, `@auth/core` | — |
 | `my-react-shell/i18n` | **i18n** (`t()` seam) | — (zero-dep) | — |
-| `my-react-shell/components` | **component kit** (opinionated composites) | `class-variance-authority`, `clsx`, `tailwind-merge`, some `@radix-ui/*` | `my-react-shell/components/styles.css` |
+| `my-react-shell/components` | **component kit** (opinionated composites) | `class-variance-authority`, `clsx`, `tailwind-merge`, some `@radix-ui/*`, `react-colorful` (only for `ColorPicker`) | `my-react-shell/components/styles.css` |
 | `my-react-shell/icons` | **icons↔emojis seam** | — (pure React) | — |
 | `my-react-shell/app-shell` | **app-shell** (chrome, page header, tabs) | `@tanstack/react-router`, `@radix-ui/react-dialog`, `@radix-ui/react-dropdown-menu`, `@radix-ui/react-popover` | `my-react-shell/app-shell/styles.css` |
 
@@ -265,6 +265,7 @@ import 'my-react-shell/components/styles.css' // REQUIRED (plain prebuilt CSS; a
 | `InputField` | component | Full field: label + input + helper + error, a11y-wired (`htmlFor`/`aria-invalid`/`aria-describedby`). Spreads native input props; pass `error` to switch on error styling. |
 | `SegmentedControl` | component | Single-select `radiogroup` on a track; controlled via `value`/`onChange`; generic over value type. |
 | `Select` | component | Opinionated select on Radix Select (keyboard nav, typeahead, portal); `options` list; controlled via `value`/`onValueChange`. |
+| `ColorPicker`, `ACCENT_SWATCHES` | component + const | Compact popover color picker, two modes: **Theme** (theme accent swatches — semantic, theme-adaptive) and **Custom** (full hue/saturation range + hex, via the `react-colorful` optional peer). Controlled; `value`/`onChange` is a directly-usable CSS color string (`var(--color-accent-<name>)` or `#rrggbb`). `ACCENT_SWATCHES` is the default swatch set. See [below](#colorpicker). |
 | `UserPreferences` | component | Controlled theme/display settings panel (palette + light/dark/system + optional icons↔emojis). Persists nothing — emits `onChange`. Auth-free (`accountActions` slot). |
 | `cn(...)` | function | `clsx` + `tailwind-merge` class combiner. |
 
@@ -274,7 +275,7 @@ Every component has a matching `…Props` type export (e.g. `AlertProps`, `Alert
 `ActionPreset`, `ActionButtonVariant`/`Size`/`Layout`, `PhiCardProps`, `PhiCardAction`,
 `PhiCardSize`, `PhiCardFooter`, `PhiCardFooterLine`, `PhiCardFooterLineType`,
 `StatCardProps`, `StatCardBadge`, `StatItem`, `StatCardTone`,
-`StatCardFooter`, `StatCardFooterLine`, `StatCardFooterLineType`, etc.).
+`StatCardFooter`, `StatCardFooterLine`, `StatCardFooterLineType`, `ColorPickerProps`, etc.).
 
 ```tsx
 <Alert variant="warning" title="Heads up" onDismiss={() => {}}>Session expires soon.</Alert>
@@ -332,15 +333,59 @@ preset, pass a custom `icon` node (a lucide icon or an `<Icon>` from `my-react-s
 </ActionButtonGroup>
 ```
 
+### `ColorPicker`
+
+A compact, controlled color picker behind a popover trigger, with two modes:
+
+- **Theme** — a grid of theme accent swatches (`ACCENT_SWATCHES` by default, or a custom
+  `swatches` list). A swatch emits `var(--color-accent-<name>)`, so the picked value stays
+  **theme-adaptive** — it tracks light/dark and the active palette. Swatches are
+  `Tab`-navigable radios (the same a11y model as `SegmentedControl`).
+- **Custom** — a full hue/saturation range + hex input (the `react-colorful` optional peer;
+  install it when you use `ColorPicker`). Emits a `#rrggbb` hex.
+
+It is **controlled** and persists nothing: `value` / `onChange` is always a **directly-usable
+CSS color string** — drop it into a `style`/`background`. The active swatch is the one whose
+`var(...)` equals `value`; any other value reads as custom. Opening the Custom tab seeds the
+range from the current value (resolving a swatch token to its concrete hex).
+
+| Prop | Default | Meaning |
+|---|---|---|
+| `value` | — | Selected color: `var(--color-accent-<name>)` (swatch) or `#rrggbb` (custom). Omit for "nothing picked". |
+| `onChange` | — | Emits the new CSS color string. **Required.** |
+| `swatches` | `ACCENT_SWATCHES` | Accent swatch names for the Theme tab; each renders as `var(--color-accent-<name>)`. Pass `[]` to hide the Theme tab. |
+| `allowCustom` | `true` | Show the Custom (full-range) tab. `false` → swatch-only (and `react-colorful` is never reached). |
+| `label` / `description` | — | Field label + helper text above the trigger. |
+| `align` | `'start'` | Popover alignment (`start`·`center`·`end`). |
+| `placeholder` | `'Pick a color'` | Trigger text when nothing is selected. |
+| `swatchesLabel` / `customLabel` | `'Theme'` / `'Custom'` | Tab labels (pass translated strings via your `t()`). |
+| `disabled` / `aria-label` / `className` | — | Usual control props; `aria-label` falls back to a string `label`. |
+
+```tsx
+const [color, setColor] = useState('var(--color-accent-indigo)')
+<ColorPicker label="Brand color" value={color} onChange={setColor} />
+
+// Swatch-only (no react-colorful needed):
+<ColorPicker allowCustom={false} value={color} onChange={setColor} />
+// Custom-only:
+<ColorPicker swatches={[]} value={color} onChange={setColor} />
+```
+
+`ACCENT_SWATCHES` — the default swatch set: `indigo · violet · purple · pink · rose · orange ·
+amber · emerald · teal · sky` (each a shared `--color-accent-<name>` token from
+`my-react-shell/styles.css`).
+
 ### Surfaces & elevation
 
 Kit components render on the semantic surface ladder (full definition in the
 [theme guide](../guides/theme.md#the-surface-ladder)); each role maps to one token:
 
 - **`surface-primary`** — the default card / panel fill: `PhiCard`, `StatCard`, the
-  `InputField` / `Select` field, the active `SegmentedControl` item.
+  `InputField` / `Select` field, the `ColorPicker` trigger, the active
+  `SegmentedControl` item.
 - **`surface-raised`** — floating chrome that lifts above the card: `ConfirmDialog`,
-  `UserPreferences`, the `Select` menu, the `PhiCard` overflow menu.
+  `UserPreferences`, the `Select` menu, the `ColorPicker` popover, the `PhiCard`
+  overflow menu.
 - **`surface-sunken`** — recessed inset regions (a well below the card): `InfoBox` /
   neutral `Alert`, `Chip`, the `Table` header + zebra rows, the `SegmentedControl` track.
 - **`surface-sunken-deep`** — a deeper recess, for filled neutral elements: neutral

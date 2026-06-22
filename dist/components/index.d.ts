@@ -30,6 +30,8 @@ export { SegmentedControl } from './SegmentedControl';
 export type { SegmentedControlProps, SegmentedOption } from './SegmentedControl';
 export { Select } from './Select';
 export type { SelectProps, SelectOption } from './Select';
+export { ColorPicker, ACCENT_SWATCHES } from './ColorPicker';
+export type { ColorPickerProps } from './ColorPicker';
 export { UserPreferences } from './UserPreferences';
 export type { UserPreferencesProps } from './UserPreferences';
 export { cn } from './cn';

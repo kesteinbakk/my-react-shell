@@ -26,5 +26,6 @@ export { StatCard } from './StatCard';
 export { InputField } from './InputField';
 export { SegmentedControl } from './SegmentedControl';
 export { Select } from './Select';
+export { ColorPicker, ACCENT_SWATCHES } from './ColorPicker';
 export { UserPreferences } from './UserPreferences';
 export { cn } from './cn';
