@@ -1,0 +1,250 @@
+/* Soft — muted, gentle colors with subtle contrasts and warm undertones.
+   Light and dark modes. */
+
+/* Soft Light Mode */
+.theme-soft-light {
+  /* ===== Surface Colors — the depth ladder (light) =====
+     The card already carries a subtle blue-tinted off-white, so the pure-white
+     `raised` plane lifts above it; sunken levels go darker (recessed). */
+  --color-surface-primary: rgb(252, 253, 255);     /* card — white with subtle blue tint */
+  --color-surface-raised: rgb(255, 255, 255);      /* popovers/dialogs — pure white, lifts above the card */
+  --color-surface-sunken: rgb(247, 249, 251);      /* recessed well — cool gray-50 */
+  --color-surface-sunken-deep: rgb(242, 244, 247); /* deeper recess — cool gray-100 */
+  --color-surface-neutral: rgb(156, 163, 175); /* gray-400 - mid-gray for color indicators */
+
+  /* ===== Background Colors ===== */
+  --color-background-primary: rgb(249, 250, 252); /* very light cool gray */
+  --color-background-secondary: rgb(244, 246, 248); /* light cool gray */
+
+  /* ===== Border Colors ===== */
+  --color-border-primary: rgb(218, 224, 231); /* soft slate-200 */
+  --color-border-secondary: rgb(196, 205, 217); /* soft slate-300 */
+  --color-border-hover: rgb(160, 174, 192); /* muted slate-400 */
+
+  /* ===== Text Hierarchy ===== */
+  --color-text-primary: rgb(28, 36, 48); /* softer than pure black */
+  --color-text-secondary: rgb(64, 79, 98); /* muted slate-700 */
+  --color-text-tertiary: rgb(92, 107, 125); /* deepened so captions clear AA on tints */
+  --color-text-muted: rgb(95, 108, 124); /* darkened to clear WCAG 4.5:1 on all light surfaces */
+  --color-text-heading: rgb(40, 122, 176); /* softer sky-600 for headings */
+
+  /* ===== Interactive States ===== */
+  --color-hover: rgb(236, 241, 247); /* very subtle blue-gray */
+  --color-active: rgb(226, 232, 240); /* slate-200 */
+  --color-selected: rgb(219, 237, 249); /* soft sky-100 */
+
+  /* ===== Brand Colors ===== */
+  --color-primary: rgb(31, 107, 163); /* deepened soft sky so white labels + link text clear AA */
+  --color-primary-hover: rgb(24, 90, 140);
+  --color-primary-active: rgb(19, 74, 117);
+  --color-primary-content: rgb(255, 255, 255); /* white */
+  --color-primary-bg: rgb(235, 246, 253); /* very soft sky-50 */
+
+  --color-secondary: rgb(82, 97, 119); /* neutral low-emphasis button — label / solid fill */
+  --color-secondary-hover: rgb(64, 79, 98);
+  --color-secondary-content: rgb(255, 255, 255); /* label on the solid fill */
+  --color-secondary-bg: rgb(226, 232, 240); /* slate-200 — soft surface for the bordered secondary button */
+
+  /* ===== Semantic Colors ===== */
+  --color-success: rgb(28, 128, 78); /* deepened soft green so white text clears AA */
+  --color-success-hover: rgb(22, 112, 68);
+  --color-success-content: rgb(255, 255, 255); /* white text */
+  --color-success-bg: rgb(220, 247, 235); /* very soft green */
+
+  --color-warning: rgb(214, 154, 48); /* softer amber — pairs with dark content */
+  --color-warning-hover: rgb(190, 134, 40);
+  --color-warning-content: rgb(61, 43, 8); /* dark text (white on amber is illegible) */
+  --color-warning-bg: rgb(254, 243, 218); /* very soft amber */
+
+  --color-danger: rgb(199, 72, 72); /* deepened soft red so white text clears AA */
+  --color-danger-hover: rgb(176, 55, 55);
+  --color-danger-content: rgb(255, 255, 255); /* white text */
+  --color-danger-bg: rgb(254, 226, 226); /* very soft red */
+
+  --color-info: rgb(31, 107, 163); /* same as primary for consistency */
+  --color-info-hover: rgb(24, 90, 140);
+  --color-info-content: rgb(255, 255, 255);
+  --color-info-bg: rgb(235, 246, 253);
+
+  /* Semantic strong text — legible colored text on the matching -bg tint */
+  --color-success-strong: var(--color-green-800);
+  --color-warning-strong: var(--color-amber-800);
+  --color-danger-strong: var(--color-red-800);
+  --color-info-strong: var(--color-blue-800);
+
+  /* ===== Semantic / Share Border Colors (softer/lighter shade of each hue) ===== */
+  --color-success-border: rgb(150, 220, 185);
+  --color-warning-border: rgb(235, 200, 130);
+  --color-danger-border: rgb(238, 170, 170);
+  --color-info-border: rgb(150, 200, 235);
+  --color-share-public-border: var(--color-blue-300);
+  --color-share-shared-border: var(--color-teal-300);
+  --color-share-private-border: var(--color-green-300);
+
+  /* ===== Focus States ===== */
+  --color-focus: rgb(56, 155, 214); /* soft blue */
+  --color-focus-ring: rgba(147, 197, 253, 0.5); /* soft blue with transparency */
+
+  /* ===== Overlay ===== */
+  --color-overlay: rgba(0, 0, 0, 0.5);
+
+  /* ===== Shadows ===== */
+  --color-shadow-sm: rgba(0, 0, 0, 0.08);
+  --color-shadow-md: rgba(0, 0, 0, 0.15);
+  --color-shadow-lg: rgba(0, 0, 0, 0.25);
+  --color-shadow-xl: rgba(0, 0, 0, 0.35);
+
+  /* ===== Accent Colors ===== */
+  --color-accent-sky: rgb(56, 189, 248);
+  --color-accent-sky-bg: rgb(224, 242, 254);
+  --color-accent-sky-hover: rgb(14, 165, 233);
+
+  --color-accent-emerald: rgb(52, 211, 153);
+  --color-accent-emerald-bg: rgb(209, 250, 229);
+  --color-accent-emerald-hover: rgb(16, 185, 129);
+
+  --color-accent-amber: rgb(251, 191, 36);
+  --color-accent-amber-bg: rgb(254, 243, 199);
+  --color-accent-amber-hover: rgb(245, 158, 11);
+
+  --color-accent-violet: rgb(139, 92, 246);
+  --color-accent-violet-bg: rgb(237, 233, 254);
+  --color-accent-violet-hover: rgb(124, 58, 237);
+
+  --color-accent-rose: rgb(244, 114, 182);
+  --color-accent-rose-bg: rgb(252, 231, 243);
+  --color-accent-rose-hover: rgb(236, 72, 153);
+
+  /* ===== Share Status Colors ===== */
+  --color-share-public: var(--color-blue-500);
+  --color-share-public-bg: var(--color-blue-50);
+  --color-share-shared: var(--color-teal-500);
+  --color-share-shared-bg: var(--color-teal-50);
+  --color-share-private: var(--color-green-700);
+  --color-share-private-bg: var(--color-green-50);
+}
+
+/* Soft Dark Mode */
+.theme-soft-dark {
+  /* ===== Surface Colors — the depth ladder (dark) =====
+     Mode-consistent: `raised` is LIGHTER than the card, `sunken` / `sunken-deep`
+     are DARKER (recessed). */
+  --color-surface-primary: rgb(28, 29, 33);     /* card — warm dark gray */
+  --color-surface-raised: rgb(42, 44, 51);      /* popovers/dropdowns — lifted above the card */
+  --color-surface-sunken: rgb(23, 24, 28);      /* recessed well — darker than the card */
+  --color-surface-sunken-deep: rgb(19, 20, 24); /* deeper recess — near the page floor */
+  --color-surface-neutral: rgb(107, 114, 128); /* gray-500 - mid-gray for color indicators */
+
+  /* ===== Background Colors ===== */
+  --color-background-primary: rgb(18, 19, 22); /* very dark with warm tint */
+  --color-background-secondary: rgb(24, 25, 29); /* dark warm gray */
+
+  /* ===== Border Colors ===== */
+  --color-border-primary: rgb(58, 61, 69); /* visible but soft */
+  --color-border-secondary: rgb(72, 76, 85); /* slightly brighter */
+  --color-border-hover: rgb(92, 96, 107); /* clear hover state */
+
+  /* ===== Text Hierarchy ===== */
+  --color-text-primary: rgb(236, 237, 239); /* soft white */
+  --color-text-secondary: rgb(196, 199, 205); /* warm gray-300 */
+  --color-text-tertiary: rgb(170, 174, 184); /* brightened so captions clear AA */
+  --color-text-muted: rgb(152, 158, 170); /* brightened so muted body text clears AA */
+  --color-text-heading: rgb(125, 182, 251); /* softer blue-400 for headings */
+
+  /* ===== Interactive States =====
+     Hover/active must contrast with both surface-primary and surface-raised
+     (where dropdowns/popovers/tooltips live); active sits one stop above hover. */
+  --color-hover: rgb(66, 70, 78); /* clearly visible hover on any surface stop */
+  --color-active: rgb(78, 82, 91); /* one stop higher than hover */
+  --color-selected: rgb(37, 56, 88); /* soft blue selection */
+
+  /* ===== Brand Colors ===== */
+  --color-primary: rgb(125, 182, 251); /* softer blue-400 */
+  --color-primary-hover: rgb(99, 153, 246); /* softer blue-500 */
+  --color-primary-active: rgb(59, 130, 246); /* blue-500 */
+  --color-primary-content: rgb(16, 26, 46); /* dark text — accent is light in dark mode */
+  --color-primary-bg: rgb(30, 41, 72); /* muted blue-950 */
+
+  --color-secondary: rgb(202, 213, 226); /* slate-300 — neutral low-emphasis button — label / solid fill */
+  --color-secondary-hover: rgb(226, 232, 240);
+  --color-secondary-content: rgb(20, 24, 33); /* dark label on the solid fill */
+  --color-secondary-bg: rgb(51, 65, 85); /* slate-700 — soft surface for the bordered secondary button */
+
+  /* ===== Semantic Colors ===== */
+  --color-success: rgb(110, 231, 164); /* softer green-400 */
+  --color-success-hover: rgb(74, 222, 128); /* green-400 */
+  --color-success-content: rgb(8, 32, 19); /* dark text — accent is light in dark mode */
+  --color-success-bg: rgb(25, 48, 38); /* muted green-950 */
+
+  --color-warning: rgb(252, 205, 86); /* softer amber-400 */
+  --color-warning-hover: rgb(250, 204, 21); /* amber-400 */
+  --color-warning-content: rgb(28, 29, 33); /* dark text for contrast on yellow */
+  --color-warning-bg: rgb(66, 39, 15); /* muted amber-950 */
+
+  --color-danger: rgb(251, 146, 146); /* softer red-400 */
+  --color-danger-hover: rgb(248, 113, 113); /* red-400 */
+  --color-danger-content: rgb(48, 14, 14); /* dark text — accent is light in dark mode */
+  --color-danger-bg: rgb(69, 26, 26); /* muted red-950 */
+
+  --color-info: rgb(125, 182, 251); /* same as primary */
+  --color-info-hover: rgb(99, 153, 246);
+  --color-info-content: rgb(16, 26, 46); /* dark text — accent is light in dark mode */
+  --color-info-bg: rgb(30, 41, 72);
+
+  /* Semantic strong text — legible colored text on the matching -bg tint */
+  --color-success-strong: var(--color-green-300);
+  --color-warning-strong: var(--color-amber-300);
+  --color-danger-strong: var(--color-red-300);
+  --color-info-strong: var(--color-blue-300);
+
+  /* ===== Semantic / Share Border Colors (dimmer shade of each hue) ===== */
+  --color-success-border: rgb(45, 90, 70);
+  --color-warning-border: rgb(105, 80, 30);
+  --color-danger-border: rgb(105, 50, 50);
+  --color-info-border: rgb(50, 80, 120);
+  --color-share-public-border: var(--color-blue-800);
+  --color-share-shared-border: var(--color-teal-800);
+  --color-share-private-border: var(--color-green-800);
+
+  /* ===== Focus States ===== */
+  --color-focus: rgb(125, 182, 251); /* soft blue */
+  --color-focus-ring: rgba(125, 182, 251, 0.5); /* soft blue with transparency */
+
+  /* ===== Overlay ===== */
+  --color-overlay: rgba(0, 0, 0, 0.5);
+
+  /* ===== Shadows (dark elevation — occlusion, not a glow) ===== */
+  --color-shadow-sm: rgba(0, 0, 0, 0.30);
+  --color-shadow-md: rgba(0, 0, 0, 0.40);
+  --color-shadow-lg: rgba(0, 0, 0, 0.50);
+  --color-shadow-xl: rgba(0, 0, 0, 0.60);
+
+  /* ===== Accent Colors ===== */
+  --color-accent-sky: rgb(125, 211, 252);
+  --color-accent-sky-bg: rgb(12, 74, 110);
+  --color-accent-sky-hover: rgb(56, 189, 248);
+
+  --color-accent-emerald: rgb(110, 231, 183);
+  --color-accent-emerald-bg: rgb(6, 78, 59);
+  --color-accent-emerald-hover: rgb(52, 211, 153);
+
+  --color-accent-amber: rgb(253, 224, 71);
+  --color-accent-amber-bg: rgb(120, 53, 15);
+  --color-accent-amber-hover: rgb(251, 191, 36);
+
+  --color-accent-violet: rgb(196, 181, 253);
+  --color-accent-violet-bg: rgb(76, 29, 149);
+  --color-accent-violet-hover: rgb(167, 139, 250);
+
+  --color-accent-rose: rgb(253, 164, 175);
+  --color-accent-rose-bg: rgb(136, 19, 55);
+  --color-accent-rose-hover: rgb(251, 113, 133);
+
+  /* ===== Share Status Colors ===== */
+  --color-share-public: var(--color-blue-400);
+  --color-share-public-bg: var(--color-blue-950);
+  --color-share-shared: var(--color-teal-400);
+  --color-share-shared-bg: var(--color-teal-950);
+  --color-share-private: var(--color-green-400);
+  --color-share-private-bg: var(--color-green-950);
+}

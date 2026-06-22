@@ -285,15 +285,17 @@ docs/
 - **A `link:` consumer's dev server sees shell *and* `themes` edits live — only its
   git-dep/production build lags.** A dev project on `link:../my-react-shell` (the demos,
   evaluering) reads the shell checkout directly: a `src`→`dist` rebuild (the `rs:watch`
-  sidecar) shows on reload, and a **`themes`** edit propagates too — the bare
-  `@import 'themes/…'` lives in the *shell's* CSS, so it resolves through the **shell's**
-  `node_modules/themes`; symlink that at the local checkout
-  (`ln -sf ~/Developer/themes node_modules/themes`, the distribution-model stopgap) and
-  one edit reaches **every** link consumer's dev server at once. So "your dev projects
-  won't see the change" is **false** on the link loop — that only holds for a consumer's
-  **production / git-dep install** (pinned tag; needs push + tag + dep bump). Corollary:
-  a *breaking* shell/`themes` change (a renamed token) hits link consumers' dev
-  immediately, so migrate them in the same change.
+  sidecar) shows on reload, and a **`themes`** edit propagates too — `themes` palette CSS
+  is **vendored** into the shell's `src/themes/*.css` (consumers depend on only
+  `my-react-shell`, never a transitive `themes` git-dep), and the same `rs:watch` sidecar
+  (`scripts/dev-watch.mjs`) **mirrors the `../themes` checkout → `src/themes/` on save**,
+  so one themes edit HMRs into **every** link consumer at once — no tag, no install. So
+  "your dev projects won't see the change" is **false** on the link loop — that only holds
+  for a consumer's **production / git-dep install** (pinned tag; needs the release chain:
+  themes → shell → consumer). Corollary: a *breaking* shell/`themes` change (a renamed
+  token) hits link consumers' dev immediately, so migrate them in the same change. Full
+  mechanics + the release chain: `docs/guides/distribution-model.md` +
+  `docs/guides/release-runbook.md`.
 
 ## Dev servers (agent rules)
 

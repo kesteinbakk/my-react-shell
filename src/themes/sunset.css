@@ -1,0 +1,249 @@
+/* Sunset — warm oranges and fuchsia. Light and dark modes. */
+
+/* Sunset Light Mode */
+.theme-sunset-light {
+  /* ===== Surface Colors — the depth ladder (light) =====
+     Raised lifts via brighter white + shadow; the card is a hair off-white so the
+     white `raised` plane separates. Sunken levels go darker (recessed). */
+  --color-surface-primary: #fffefc;                     /* card — faint warm off-white */
+  --color-surface-raised: #ffffff;                      /* popovers/dialogs — lifts above the card */
+  --color-surface-sunken: var(--color-orange-50);       /* recessed well */
+  --color-surface-sunken-deep: var(--color-orange-100); /* deeper recess */
+  --color-surface-neutral: var(--color-gray-400); /* mid-gray for color indicators */
+
+  /* ===== Background Colors ===== */
+  --color-background-primary: var(--color-orange-50);
+  --color-background-secondary: var(--color-amber-100);
+
+  /* ===== Border Colors ===== */
+  --color-border-primary: var(--color-amber-200);
+  --color-border-secondary: var(--color-amber-300);
+  --color-border-hover: var(--color-amber-400);
+
+  /* ===== Text Hierarchy ===== */
+  --color-text-primary: var(--color-zinc-900);
+  --color-text-secondary: var(--color-zinc-700);
+  --color-text-tertiary: var(--color-zinc-600);
+  --color-text-muted: rgb(100, 100, 108); /* darkened from zinc-500 to clear WCAG 4.5:1 on tinted surfaces */
+  --color-text-heading: var(--color-fuchsia-700);
+
+  /* ===== Interactive States ===== */
+  --color-hover: var(--color-orange-100);
+  --color-active: var(--color-amber-200);
+  --color-selected: var(--color-fuchsia-100);
+
+  /* ===== Brand Colors ===== */
+  --color-primary: var(--color-fuchsia-700);
+  --color-primary-hover: var(--color-fuchsia-800);
+  --color-primary-active: var(--color-fuchsia-900);
+  --color-primary-content: #ffffff;
+  --color-primary-bg: var(--color-fuchsia-50);
+
+  --color-secondary: var(--color-stone-600); /* neutral low-emphasis button — label / solid fill */
+  --color-secondary-hover: var(--color-stone-700);
+  --color-secondary-content: #ffffff; /* label on the solid fill */
+  --color-secondary-bg: var(--color-stone-100); /* soft surface for the bordered secondary button */
+
+  /* ===== Semantic Colors ===== */
+  --color-success: var(--color-green-700);
+  --color-success-hover: var(--color-green-800);
+  --color-success-content: #ffffff;
+  --color-success-bg: var(--color-green-50);
+
+  --color-warning: var(--color-amber-500);
+  --color-warning-hover: var(--color-amber-600);
+  --color-warning-content: var(--color-amber-950);
+  --color-warning-bg: var(--color-amber-50);
+
+  --color-danger: var(--color-red-600);
+  --color-danger-hover: var(--color-red-700);
+  --color-danger-content: #ffffff;
+  --color-danger-bg: var(--color-red-50);
+
+  --color-info: var(--color-blue-600);
+  --color-info-hover: var(--color-blue-700);
+  --color-info-content: #ffffff;
+  --color-info-bg: var(--color-blue-50);
+
+  /* Semantic strong text — legible colored text on the matching -bg tint */
+  --color-success-strong: var(--color-green-800);
+  --color-warning-strong: var(--color-amber-800);
+  --color-danger-strong: var(--color-red-800);
+  --color-info-strong: var(--color-blue-800);
+
+  /* ===== Semantic / Share Border Colors (softer shade of each hue) ===== */
+  --color-success-border: var(--color-green-300);
+  --color-warning-border: var(--color-amber-300);
+  --color-danger-border: var(--color-red-300);
+  --color-info-border: var(--color-blue-300);
+  --color-share-public-border: var(--color-blue-300);
+  --color-share-shared-border: var(--color-teal-300);
+  --color-share-private-border: var(--color-green-300);
+
+  /* ===== Focus States ===== */
+  --color-focus: var(--color-fuchsia-500);
+  --color-focus-ring: rgba(217, 70, 239, 0.3);
+
+  /* ===== Overlay ===== */
+  --color-overlay: rgba(0, 0, 0, 0.5);
+
+  /* ===== Shadows ===== */
+  --color-shadow-sm: rgba(0, 0, 0, 0.05);
+  --color-shadow-md: rgba(0, 0, 0, 0.1);
+  --color-shadow-lg: rgba(0, 0, 0, 0.15);
+  --color-shadow-xl: rgba(0, 0, 0, 0.25);
+
+  /* ===== Accent Colors ===== */
+  --color-accent-sky: var(--color-sky-500);
+  --color-accent-sky-bg: var(--color-sky-100);
+  --color-accent-sky-hover: var(--color-sky-600);
+
+  --color-accent-emerald: var(--color-emerald-500);
+  --color-accent-emerald-bg: var(--color-emerald-100);
+  --color-accent-emerald-hover: var(--color-emerald-600);
+
+  --color-accent-amber: var(--color-amber-500);
+  --color-accent-amber-bg: var(--color-amber-100);
+  --color-accent-amber-hover: var(--color-amber-600);
+
+  --color-accent-violet: var(--color-violet-500);
+  --color-accent-violet-bg: var(--color-violet-100);
+  --color-accent-violet-hover: var(--color-violet-600);
+
+  --color-accent-rose: var(--color-rose-500);
+  --color-accent-rose-bg: var(--color-rose-100);
+  --color-accent-rose-hover: var(--color-rose-600);
+
+  /* ===== Share Status Colors ===== */
+  --color-share-public: var(--color-blue-500);
+  --color-share-public-bg: var(--color-blue-50);
+  --color-share-shared: var(--color-teal-500);
+  --color-share-shared-bg: var(--color-teal-50);
+  --color-share-private: var(--color-green-700);
+  --color-share-private-bg: var(--color-green-50);
+}
+
+/* Sunset Dark Mode */
+.theme-sunset-dark {
+  /* ===== Surface Colors — the depth ladder (dark) =====
+     Mode-consistent: `raised` is LIGHTER than the card, `sunken` / `sunken-deep`
+     are DARKER (recessed). */
+  --color-surface-primary: rgb(40, 25, 20);     /* card — dark warm brown */
+  --color-surface-raised: rgb(54, 34, 27);      /* popovers/dropdowns — lifted above the card */
+  --color-surface-sunken: rgb(33, 20, 15);      /* recessed well — darker than the card */
+  --color-surface-sunken-deep: rgb(27, 16, 11); /* deeper recess — near the page floor */
+  --color-surface-neutral: rgb(107, 114, 128); /* gray-500 - mid-gray for color indicators */
+
+  /* ===== Background Colors ===== */
+  --color-background-primary: rgb(25, 15, 10); /* Very dark warm brown */
+  --color-background-secondary: rgb(35, 20, 15);
+
+  /* ===== Border Colors ===== */
+  --color-border-primary: rgb(70, 45, 35);
+  --color-border-secondary: rgb(85, 55, 45);
+  --color-border-hover: rgb(100, 65, 50);
+
+  /* ===== Text Hierarchy =====
+     One stop brighter than a naive invert, so muted body text clears even the
+     lightest dark surface. */
+  --color-text-primary: var(--color-stone-100);
+  --color-text-secondary: var(--color-stone-200);
+  --color-text-tertiary: var(--color-stone-300);
+  --color-text-muted: var(--color-stone-400);
+  --color-text-heading: #de89eb; /* fuchsia-400 desaturated ~20pp */
+
+  /* ===== Interactive States ===== */
+  --color-hover: rgb(50, 30, 25);
+  --color-active: rgb(60, 40, 30);
+  --color-selected: rgb(64, 22, 58); /* Dark fuchsia selection */
+
+  /* ===== Brand Colors ===== */
+  --color-primary: #de89eb;         /* fuchsia-400 desaturated ~20pp */
+  --color-primary-hover: #eab5f2;   /* fuchsia-300 desaturated ~20pp */
+  --color-primary-active: #ca5adb;  /* fuchsia-500 desaturated ~20pp */
+  --color-primary-content: var(--color-fuchsia-950);
+  --color-primary-bg: rgb(50, 12, 48); /* Very dark fuchsia */
+
+  --color-secondary: rgb(205, 188, 176); /* neutral warm-gray — label / solid fill */
+  --color-secondary-hover: rgb(224, 210, 200);
+  --color-secondary-content: rgb(28, 20, 14); /* dark label on the solid fill */
+  --color-secondary-bg: rgb(58, 46, 38); /* soft surface for the bordered secondary button */
+
+  /* ===== Semantic Colors ===== */
+  --color-success: #4ebb93;         /* emerald-400 desaturated ~20pp */
+  --color-success-hover: #7fd7b4;   /* emerald-300 desaturated ~20pp */
+  --color-success-content: var(--color-emerald-950);
+  --color-success-bg: rgb(20, 40, 25);
+
+  --color-warning: #e4b43a;         /* amber-400 desaturated ~20pp */
+  --color-warning-hover: #eac35e;   /* amber-300 desaturated ~20pp */
+  --color-warning-content: var(--color-amber-950);
+  --color-warning-bg: rgb(40, 30, 10);
+
+  --color-danger: var(--color-red-600);
+  --color-danger-hover: var(--color-red-500);
+  --color-danger-content: #ffffff;
+  --color-danger-bg: rgb(40, 15, 15);
+
+  --color-info: #4fb4e4;            /* sky-400 desaturated ~20pp */
+  --color-info-hover: #8bcfee;      /* sky-300 desaturated ~20pp */
+  --color-info-content: var(--color-sky-950);
+  --color-info-bg: rgb(15, 25, 40);
+
+  /* Semantic strong text — legible colored text on the matching -bg tint */
+  --color-success-strong: #7fd7b4;  /* emerald-300 desaturated ~20pp */
+  --color-warning-strong: #eac35e;  /* amber-300 desaturated ~20pp */
+  --color-danger-strong: var(--color-red-300);
+  --color-info-strong: #8bcfee;     /* sky-300 desaturated ~20pp */
+
+  /* ===== Semantic / Share Border Colors (dimmer shade of each hue) ===== */
+  --color-success-border: var(--color-emerald-800);
+  --color-warning-border: var(--color-amber-800);
+  --color-danger-border: var(--color-red-800);
+  --color-info-border: var(--color-sky-800);
+  --color-share-public-border: var(--color-blue-800);
+  --color-share-shared-border: var(--color-teal-800);
+  --color-share-private-border: var(--color-green-800);
+
+  /* ===== Focus States ===== */
+  --color-focus: #de89eb;                        /* fuchsia-400 desaturated ~20pp */
+  --color-focus-ring: rgba(222, 137, 235, 0.3);
+
+  /* ===== Overlay ===== */
+  --color-overlay: rgba(0, 0, 0, 0.5);
+
+  /* ===== Shadows (dark elevation — occlusion, not a glow) ===== */
+  --color-shadow-sm: rgba(0, 0, 0, 0.30);
+  --color-shadow-md: rgba(0, 0, 0, 0.40);
+  --color-shadow-lg: rgba(0, 0, 0, 0.50);
+  --color-shadow-xl: rgba(0, 0, 0, 0.60);
+
+  /* ===== Accent Colors (foreground desaturated ~20pp for dark mode comfort) ===== */
+  --color-accent-sky: #4fb4e4;                  /* sky-400 desaturated */
+  --color-accent-sky-bg: rgb(15, 25, 40);
+  --color-accent-sky-hover: #8bcfee;            /* sky-300 desaturated */
+
+  --color-accent-emerald: #4ebb93;              /* emerald-400 desaturated */
+  --color-accent-emerald-bg: rgb(20, 40, 25);
+  --color-accent-emerald-hover: #7fd7b4;        /* emerald-300 desaturated */
+
+  --color-accent-amber: #e4b43a;                /* amber-400 desaturated */
+  --color-accent-amber-bg: rgb(40, 30, 10);
+  --color-accent-amber-hover: #eac35e;          /* amber-300 desaturated */
+
+  --color-accent-violet: #ac96ee;               /* violet-400 desaturated */
+  --color-accent-violet-bg: rgb(40, 20, 50);
+  --color-accent-violet-hover: #cbbef4;         /* violet-300 desaturated */
+
+  --color-accent-rose: #ec7e8f;                 /* rose-400 desaturated */
+  --color-accent-rose-bg: rgb(45, 20, 30);
+  --color-accent-rose-hover: #f3b0ba;           /* rose-300 desaturated */
+
+  /* ===== Share Status Colors ===== */
+  --color-share-public: var(--color-blue-400);
+  --color-share-public-bg: var(--color-blue-950);
+  --color-share-shared: var(--color-teal-400);
+  --color-share-shared-bg: var(--color-teal-950);
+  --color-share-private: var(--color-green-400);
+  --color-share-private-bg: var(--color-green-950);
+}

@@ -111,6 +111,18 @@ both repos and were starting to diverge. A color is now edited once in `themes`,
 and a tag bump propagates it everywhere. The Solid `foundation` otherwise stays
 independent and the source of truth for its own Solid modules.
 
+**`themes` is consumed by my-react-shell via build-time vendoring, not as a
+transitive runtime dep.** The palettes are copied into the shell's shipped
+`src/themes/*.css` at release time (`pnpm sync:themes`) and imported relatively, so
+a **consumer depends on only `my-react-shell`** — no second Bitbucket repo for CI to
+authenticate to, no second tag to bump in lockstep, and no way for the shell and
+themes to drift into an incompatible pair (the failure that rendered surfaces
+transparent in a real install while dev looked fine). `themes` is a `devDependency`
+of the shell whose pin records which tag the release vendors; foundation keeps
+consuming `themes` its own way. Mechanics + the release chain:
+[distribution-model.md](guides/distribution-model.md) and
+[release-runbook.md](guides/release-runbook.md).
+
 **What this module does not own — the shadcn bridge.** shadcn/ui primitives consume
 their own cssVar names (`--background`, `--muted-foreground`, …), not the `--color-*`
 contract. Mapping the two is **documented consumer wiring** — the canonical mapping

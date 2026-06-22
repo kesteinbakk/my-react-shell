@@ -1,0 +1,293 @@
+/* Dynamic — high contrast with vibrant accents. Light and dark modes.
+   Extends the accent set with indigo/purple/pink/teal/orange. */
+
+/* Dynamic Light Mode */
+.theme-dynamic-light {
+  /* ===== Surface Colors — the depth ladder (light) =====
+     Raised lifts via brighter white + shadow; the card is a hair off-white so the
+     white `raised` plane separates. Sunken levels go darker (recessed). */
+  --color-surface-primary: #fdfdfe;                   /* card — faint off-white */
+  --color-surface-raised: #ffffff;                    /* popovers/dialogs — lifts above the card */
+  --color-surface-sunken: var(--color-zinc-50);       /* recessed well */
+  --color-surface-sunken-deep: var(--color-zinc-100); /* deeper recess */
+  --color-surface-neutral: var(--color-gray-400); /* mid-gray for color indicators */
+
+  /* ===== Background Colors ===== */
+  --color-background-primary: var(--color-zinc-50);
+  --color-background-secondary: var(--color-zinc-100);
+
+  /* ===== Border Colors ===== */
+  --color-border-primary: var(--color-zinc-200);
+  --color-border-secondary: var(--color-zinc-300);
+  --color-border-hover: var(--color-zinc-400);
+
+  /* ===== Text Hierarchy ===== */
+  --color-text-primary: var(--color-zinc-900);
+  --color-text-secondary: var(--color-zinc-700);
+  --color-text-tertiary: var(--color-zinc-600); /* darkened — this is the high-contrast palette */
+  --color-text-muted: rgb(100, 100, 108); /* darkened from zinc-500 to clear WCAG 4.5:1 on tinted surfaces */
+  --color-text-heading: var(--color-blue-700);
+
+  /* ===== Interactive States ===== */
+  --color-hover: var(--color-zinc-100);
+  --color-active: var(--color-zinc-200);
+  --color-selected: var(--color-blue-50);
+
+  /* ===== Brand Colors ===== */
+  --color-primary: var(--color-blue-800); /* deep blue — white label clears AAA (8.7:1) for this high-contrast palette */
+  --color-primary-hover: var(--color-blue-900);
+  --color-primary-active: var(--color-blue-950);
+  --color-primary-content: #ffffff;
+  --color-primary-bg: var(--color-blue-50);
+
+  --color-secondary: var(--color-zinc-600); /* neutral low-emphasis button — label / solid fill */
+  --color-secondary-hover: var(--color-zinc-700);
+  --color-secondary-content: #ffffff; /* label on the solid fill */
+  --color-secondary-bg: var(--color-zinc-100); /* soft surface for the bordered secondary button */
+
+  /* ===== Semantic Colors ===== */
+  --color-success: var(--color-green-700);
+  --color-success-hover: var(--color-green-800);
+  --color-success-content: #ffffff;
+  --color-success-bg: var(--color-green-100);
+
+  --color-warning: var(--color-amber-500);
+  --color-warning-hover: var(--color-amber-600);
+  --color-warning-content: var(--color-amber-950); /* dark text — white on amber is illegible */
+  --color-warning-bg: var(--color-amber-100);
+
+  --color-danger: var(--color-red-600);
+  --color-danger-hover: var(--color-red-700);
+  --color-danger-content: #ffffff;
+  --color-danger-bg: var(--color-red-100);
+
+  --color-info: var(--color-blue-600);
+  --color-info-hover: var(--color-blue-700);
+  --color-info-content: #ffffff;
+  --color-info-bg: var(--color-blue-100);
+
+  /* Semantic strong text — legible colored text on the matching -bg tint */
+  --color-success-strong: var(--color-green-800);
+  --color-warning-strong: var(--color-amber-800);
+  --color-danger-strong: var(--color-red-800);
+  --color-info-strong: var(--color-blue-800);
+
+  /* ===== Semantic / Share Border Colors (softer shade of each hue) ===== */
+  --color-success-border: var(--color-green-300);
+  --color-warning-border: var(--color-amber-300);
+  --color-danger-border: var(--color-red-300);
+  --color-info-border: var(--color-blue-300);
+  --color-share-public-border: var(--color-blue-300);
+  --color-share-shared-border: var(--color-teal-300);
+  --color-share-private-border: var(--color-green-300);
+
+  /* ===== Focus States ===== */
+  --color-focus: var(--color-blue-500);
+  --color-focus-ring: rgba(59, 130, 246, 0.5);
+
+  /* ===== Overlay ===== */
+  --color-overlay: rgba(0, 0, 0, 0.5);
+
+  /* ===== Shadows ===== */
+  --color-shadow-sm: rgba(0, 0, 0, 0.08);
+  --color-shadow-md: rgba(0, 0, 0, 0.15);
+  --color-shadow-lg: rgba(0, 0, 0, 0.25);
+  --color-shadow-xl: rgba(0, 0, 0, 0.35);
+
+  /* ===== Accent Colors (full spectrum) ===== */
+  --color-accent-sky: var(--color-sky-500);
+  --color-accent-sky-bg: var(--color-sky-100);
+  --color-accent-sky-hover: var(--color-sky-600);
+
+  --color-accent-emerald: var(--color-emerald-500);
+  --color-accent-emerald-bg: var(--color-emerald-100);
+  --color-accent-emerald-hover: var(--color-emerald-600);
+
+  --color-accent-amber: var(--color-amber-500);
+  --color-accent-amber-bg: var(--color-amber-100);
+  --color-accent-amber-hover: var(--color-amber-600);
+
+  --color-accent-violet: var(--color-violet-500);
+  --color-accent-violet-bg: var(--color-violet-100);
+  --color-accent-violet-hover: var(--color-violet-600);
+
+  --color-accent-rose: var(--color-rose-500);
+  --color-accent-rose-bg: var(--color-rose-100);
+  --color-accent-rose-hover: var(--color-rose-600);
+
+  /* Extended accents */
+  --color-accent-indigo: var(--color-indigo-500);
+  --color-accent-indigo-bg: var(--color-indigo-100);
+  --color-accent-indigo-hover: var(--color-indigo-600);
+
+  --color-accent-purple: var(--color-purple-500);
+  --color-accent-purple-bg: var(--color-purple-100);
+  --color-accent-purple-hover: var(--color-purple-600);
+
+  --color-accent-pink: var(--color-pink-500);
+  --color-accent-pink-bg: var(--color-pink-100);
+  --color-accent-pink-hover: var(--color-pink-600);
+
+  --color-accent-teal: var(--color-teal-500);
+  --color-accent-teal-bg: var(--color-teal-100);
+  --color-accent-teal-hover: var(--color-teal-600);
+
+  --color-accent-orange: var(--color-orange-500);
+  --color-accent-orange-bg: var(--color-orange-100);
+  --color-accent-orange-hover: var(--color-orange-600);
+
+  /* ===== Share Status Colors ===== */
+  --color-share-public: var(--color-blue-500);
+  --color-share-public-bg: var(--color-blue-50);
+  --color-share-shared: var(--color-teal-500);
+  --color-share-shared-bg: var(--color-teal-50);
+  --color-share-private: var(--color-green-700);
+  --color-share-private-bg: var(--color-green-50);
+}
+
+/* Dynamic Dark Mode — high contrast */
+.theme-dynamic-dark {
+  /* ===== Surface Colors — the depth ladder (dark) =====
+     Mode-consistent: `raised` is LIGHTER than the card, `sunken` / `sunken-deep`
+     are DARKER (recessed). Lifted off pure black (the page sits at rgb(9,9,11),
+     not #000) so there's headroom to recess a well and no OLED smear/halation. */
+  --color-surface-primary: rgb(19, 19, 22);     /* card — near black, off pure #000 */
+  --color-surface-raised: rgb(32, 32, 37);      /* popovers/dropdowns — lifted above the card */
+  --color-surface-sunken: rgb(16, 16, 19);      /* recessed well — darker than the card */
+  --color-surface-sunken-deep: rgb(13, 13, 16); /* deeper recess — near the page floor */
+  --color-surface-neutral: rgb(107, 114, 128); /* gray-500 - mid-gray for color indicators */
+
+  /* ===== Background Colors =====
+     Off pure black: a near-black page keeps the high-contrast feel without OLED
+     smear/halation, and leaves room for a well to recess below the card. */
+  --color-background-primary: rgb(9, 9, 11);    /* near-black page */
+  --color-background-secondary: rgb(14, 14, 17); /* a touch above the page */
+
+  /* ===== Border Colors ===== */
+  --color-border-primary: rgb(64, 64, 71); /* clearly visible borders */
+  --color-border-secondary: rgb(82, 82, 91); /* bright borders */
+  --color-border-hover: rgb(115, 115, 128); /* very clear hover */
+
+  /* ===== Text Hierarchy ===== */
+  --color-text-primary: rgb(255, 255, 255); /* pure white for maximum readability */
+  --color-text-secondary: rgb(229, 229, 231); /* bright gray */
+  --color-text-tertiary: rgb(178, 178, 184); /* still clearly readable */
+  --color-text-muted: rgb(148, 148, 156); /* muted but clears AA as body text */
+  --color-text-heading: var(--color-blue-400); /* bright blue for headings */
+
+  /* ===== Interactive States ===== */
+  --color-hover: rgb(48, 48, 54); /* very clear hover state */
+  --color-active: rgb(64, 64, 71); /* distinct active state */
+  --color-selected: rgb(37, 99, 235); /* bright blue selection */
+
+  /* ===== Brand Colors ===== */
+  --color-primary: rgb(96, 165, 250); /* blue-400 — light accent: reads as link on dark AND as a button bg with dark label (matches the other dark palettes) */
+  --color-primary-hover: rgb(147, 197, 253); /* blue-300 */
+  --color-primary-active: rgb(59, 130, 246); /* blue-500 */
+  --color-primary-content: rgb(0, 0, 0); /* pure black on the light accent — pushes the button to 8.3:1 (AAA) for this high-contrast palette */
+  --color-primary-bg: rgb(23, 37, 84); /* deep blue-950 — accent text on it stays legible */
+
+  --color-secondary: var(--color-zinc-300); /* neutral low-emphasis button — label / solid fill */
+  --color-secondary-hover: var(--color-zinc-200);
+  --color-secondary-content: var(--color-zinc-950); /* dark label on the solid fill */
+  --color-secondary-bg: var(--color-zinc-700); /* soft surface for the bordered secondary button */
+
+  /* ===== Semantic Colors ===== */
+  --color-success: rgb(34, 197, 94); /* bright green-500 */
+  --color-success-hover: rgb(22, 163, 74); /* green-600 */
+  --color-success-content: rgb(5, 30, 16); /* dark text — white on bright green is illegible */
+  --color-success-bg: rgb(5, 46, 22); /* deep green-950 — accent text on it stays legible */
+
+  --color-warning: rgb(245, 158, 11); /* bright amber-500 */
+  --color-warning-hover: rgb(217, 119, 6); /* amber-600 */
+  --color-warning-content: rgb(40, 28, 5); /* dark text — white on amber is illegible */
+  --color-warning-bg: rgb(69, 26, 3); /* deep amber-950 */
+
+  --color-danger: rgb(220, 38, 38); /* red-600 — deep enough that the white label clears AA */
+  --color-danger-hover: rgb(239, 68, 68); /* red-500 (brightens on hover) */
+  --color-danger-content: rgb(255, 255, 255);
+  --color-danger-bg: rgb(69, 10, 10); /* deep red-950 — accent text on it stays legible */
+
+  --color-info: rgb(96, 165, 250); /* same as primary (blue-400 light accent) */
+  --color-info-hover: rgb(147, 197, 253);
+  --color-info-content: rgb(12, 20, 38); /* dark text on the light accent */
+  --color-info-bg: rgb(23, 37, 84); /* deep blue-950 */
+
+  /* Semantic strong text — legible colored text on the matching -bg tint */
+  --color-success-strong: var(--color-green-300);
+  --color-warning-strong: var(--color-amber-300);
+  --color-danger-strong: var(--color-red-300);
+  --color-info-strong: var(--color-blue-300);
+
+  /* ===== Semantic / Share Border Colors (dimmer shade of each hue) ===== */
+  --color-success-border: rgb(30, 120, 65);
+  --color-warning-border: rgb(165, 90, 20);
+  --color-danger-border: rgb(170, 45, 45);
+  --color-info-border: rgb(40, 85, 200);
+  --color-share-public-border: var(--color-blue-800);
+  --color-share-shared-border: var(--color-teal-800);
+  --color-share-private-border: var(--color-green-800);
+
+  /* ===== Focus States ===== */
+  --color-focus: rgb(59, 130, 246); /* bright blue focus */
+  --color-focus-ring: rgb(59, 130, 246); /* bright blue focus ring */
+
+  /* ===== Overlay ===== */
+  --color-overlay: rgba(0, 0, 0, 0.5);
+
+  /* ===== Shadows (dark elevation — occlusion, not a glow) ===== */
+  --color-shadow-sm: rgba(0, 0, 0, 0.30);
+  --color-shadow-md: rgba(0, 0, 0, 0.40);
+  --color-shadow-lg: rgba(0, 0, 0, 0.50);
+  --color-shadow-xl: rgba(0, 0, 0, 0.60);
+
+  /* ===== Accent Colors (vibrant for high contrast) ===== */
+  --color-accent-sky: rgb(125, 211, 252);
+  --color-accent-sky-bg: rgb(12, 74, 110);
+  --color-accent-sky-hover: rgb(56, 189, 248);
+
+  --color-accent-emerald: rgb(110, 231, 183);
+  --color-accent-emerald-bg: rgb(6, 78, 59);
+  --color-accent-emerald-hover: rgb(52, 211, 153);
+
+  --color-accent-amber: rgb(253, 224, 71);
+  --color-accent-amber-bg: rgb(120, 53, 15);
+  --color-accent-amber-hover: rgb(251, 191, 36);
+
+  --color-accent-violet: rgb(196, 181, 253);
+  --color-accent-violet-bg: rgb(76, 29, 149);
+  --color-accent-violet-hover: rgb(167, 139, 250);
+
+  --color-accent-rose: rgb(253, 164, 175);
+  --color-accent-rose-bg: rgb(136, 19, 55);
+  --color-accent-rose-hover: rgb(251, 113, 133);
+
+  /* Extended accents */
+  --color-accent-indigo: rgb(165, 180, 252);
+  --color-accent-indigo-bg: rgb(49, 46, 129);
+  --color-accent-indigo-hover: rgb(129, 140, 248);
+
+  --color-accent-purple: rgb(196, 181, 253);
+  --color-accent-purple-bg: rgb(88, 28, 135);
+  --color-accent-purple-hover: rgb(167, 139, 250);
+
+  --color-accent-pink: rgb(251, 182, 206);
+  --color-accent-pink-bg: rgb(131, 24, 67);
+  --color-accent-pink-hover: rgb(244, 114, 182);
+
+  --color-accent-teal: rgb(94, 234, 212);
+  --color-accent-teal-bg: rgb(19, 78, 74);
+  --color-accent-teal-hover: rgb(45, 212, 191);
+
+  --color-accent-orange: rgb(253, 186, 116);
+  --color-accent-orange-bg: rgb(124, 45, 18);
+  --color-accent-orange-hover: rgb(251, 146, 60);
+
+  /* ===== Share Status Colors ===== */
+  --color-share-public: var(--color-blue-400);
+  --color-share-public-bg: var(--color-blue-950);
+  --color-share-shared: var(--color-teal-400);
+  --color-share-shared-bg: var(--color-teal-950);
+  --color-share-private: var(--color-green-400);
+  --color-share-private-bg: var(--color-green-950);
+}

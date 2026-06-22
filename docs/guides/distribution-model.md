@@ -28,21 +28,33 @@ Per-module exports and contracts live in the other `docs/guides/` files.
   deployment, and its own Vercel project. Distribution adds a dependency edge —
   it never couples deploys or backends.
 
-### Transitive `themes` dependency
-- The `--color-*` token contract + palettes live in the shared **`themes`** package
-  (strategy D6+D13), which my-react-shell depends on. A consumer receives `themes`
-  **transitively** — do **not** add it to the consumer's own `package.json`, and no
-  import changes (`my-react-shell/styles.css` pulls it in).
-- **CI needs access to the `themes` repo too.** It is a second tag-pinned Bitbucket
-  git-dep edge, so the same Vercel/CI token (or SSH/deploy key) must also reach
-  `git@bitbucket.org:kesteinbakk/themes.git`, not only my-react-shell.
-- `themes` is **pure CSS** — it is *not* a `resolve.dedupe` concern (no JS, no React
-  singleton). The dedupe step below stays React/Radix/router-only.
-- **`link:` loop:** the bare `@import 'themes/…'` lives in the *shell's* CSS, so it
-  resolves through the **shell's** `node_modules/themes`, not the consumer's. The
-  linked shell checkout must therefore have `themes` installed — i.e. `themes`
-  published + the shell `pnpm install`ed. Until `themes` is published, a symlink at
-  the shell's `node_modules/themes` is the stopgap; the consumer itself needs nothing.
+### Vendored `themes` (a consumer depends on ONLY my-react-shell)
+- The `--color-*` token contract + palettes are **authored** in the shared **`themes`**
+  package (strategy D6+D13) but are **vendored into the shell's shipped CSS** at release
+  time — copied into committed `src/themes/*.css` by `pnpm sync:themes`, and imported
+  **relatively** from `src/index.css` (`@import './themes/ocean.css'`). So a consumer
+  receives the palettes **inside** `my-react-shell`; `themes` is **not** a transitive
+  dependency. A consumer adds nothing and authenticates to nothing extra.
+- **Why vendored, not transitive.** A transitive `themes` git-dep made CI authenticate
+  to a *second* Bitbucket repo, forced *two* tags to be bumped in lockstep, and let the
+  shell and themes drift into an **incompatible pair** (shell consuming D15 surface
+  tokens while pinning a pre-D15 `themes` → every surface renders transparent in a real
+  install, masked by the dev symlink). Vendoring makes shell+themes **one versioned unit**
+  at the shell's tag, so that drift is structurally impossible. It adds **no** propagation
+  latency — consumers only ever got themes changes via a shell tag bump anyway (the shell
+  pins themes).
+- `themes` is now a **`devDependency`** of the shell (the pin records *which* themes the
+  release vendors). The vendor pipeline reads the **sibling `../themes` checkout**, never
+  `node_modules/themes` — the latter is re-materialized to the pinned tag by every `pnpm
+  install`, so sourcing it would silently revert the vendored CSS to an older themes.
+- `themes` is **pure CSS** — not a `resolve.dedupe` concern. The dedupe step below stays
+  React/Radix/router-only.
+- **`link:` loop:** the relative `@import './themes/…'` resolves into the shell's own
+  `src/themes/`, kept live by the `rs:watch` sidecar (`scripts/dev-watch.mjs`), which
+  mirrors `../themes` → `src/themes/` on every save. So a themes edit HMRs into link
+  consumers with **no tag and no install** — see [release-runbook.md](release-runbook.md)
+  → *Development*. The release re-vendors from the pinned tag; a pre-commit guard keeps
+  `src/themes/` in lockstep between times.
 
 ### Versioning / release
 - Tag-pinned (`vX.Y.Z`). To ship an update: push, then tag. Consumers bump the
@@ -165,7 +177,7 @@ compile differently:
   the shipped module entry points.
   - **CSS ships uncompiled, straight from `src/` — never `dist/`.** The flagship CSS
     export `./styles.css` → `src/index.css` is a **Tailwind v4 source entry**
-    (`@import 'tailwindcss'` + the `themes/*` palettes), expanded by the *consumer's*
+    (`@import 'tailwindcss'` + the vendored `./themes/*` palettes), expanded by the *consumer's*
     build against *their* content scan — it has no precompiled form, so it **must** ship
     as source. The finished kit/app-shell stylesheets (`./components/styles.css` →
     `src/components/components.css`, `./app-shell/styles.css` → `src/app-shell/app-shell.css`)

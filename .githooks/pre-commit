@@ -92,4 +92,29 @@ if [ -n "$lib_src" ]; then
   git add dist
 fi
 
+# ---------------------------------------------------------------------------
+# (3) themes freshness guard
+#
+# The shared `themes` palette CSS is VENDORED into committed src/themes/*.css so
+# consumers depend on only my-react-shell (never the transitive themes git-dep —
+# see docs/guides/distribution-model.md). When a commit stages the themes wiring
+# (src/index.css), the vendored files, or the themes pin (package.json), re-vendor
+# from the sibling ../themes checkout and stage src/themes so the committed copies
+# stay in lockstep. `pnpm release` re-vendors authoritatively from the pinned tag;
+# this guard just prevents casual drift. Bypass: git commit --no-verify.
+# ---------------------------------------------------------------------------
+themes_touch=$(git diff --cached --name-only --diff-filter=ACMR \
+  | grep -E '^src/index\.css$|^src/themes/|^package\.json$')
+
+if [ -n "$themes_touch" ]; then
+  if ! command -v node >/dev/null 2>&1; then
+    echo "pre-commit: node not found — skipping themes freshness vendor." >&2
+  elif out=$(node scripts/sync-themes.mjs 2>&1); then
+    git add src/themes
+  else
+    # Fall open (the sibling ../themes checkout may be absent) — release re-vendors authoritatively.
+    echo "pre-commit: themes vendor skipped — $out" >&2
+  fi
+fi
+
 exit 0
