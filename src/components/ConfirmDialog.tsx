@@ -71,6 +71,7 @@ export function ConfirmDialog({
               )}
               onClick={onConfirm}
               disabled={loading}
+              aria-busy={loading || undefined}
             >
               {confirmLabel}
             </button>

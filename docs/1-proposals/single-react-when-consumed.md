@@ -50,21 +50,17 @@ consumer's React.
 - Is there a shell-side build option (e.g. externalizing React in the dist, which it
   likely already does) plus a consumption note that fully closes this?
 
-## Resolution (2026-06-23)
+## Resolution (2026-06-24)
 
-- **`docs/guides/distribution-model.md` → Local dev-loop → Vitest** — added the
-  authoritative recipe: `server.deps.inline: [/my-react-shell/]` +
-  `resolve.dedupe: ['react', 'react-dom', 'react/jsx-runtime']`, plus the
-  prerequisite that `@radix-ui/*` packages must be in the consumer's `node_modules`
-  (either via pnpm peer resolution or explicit devDeps) for Vite's SSR runner to
-  route Radix imports to the consumer's React.
-- Corrected the false claim in that guide that said "build/test do not catch this" —
-  in fact Vitest does catch it and fails with identical errors.
-- **`CLAUDE.md`** — extended the `link:` dedupe note to mention the Vitest case and
-  point at the guide's new Vitest section.
-- Consumer action needed (evaluering T063 follow-up): add the five Radix devDeps to
-  evaluering's `package.json` and add `server.deps.inline: [/my-react-shell/]` to its
-  `vitest.config.ts` frontend project.
+Root cause confirmed: Vitest 4.x inlines CJS packages via Vite's `createRequire(import.meta.url)` wrapper. This bypasses Vite's resolver entirely (no `resolveId`, no `resolve.alias`, no `resolve.dedupe`) for `require()` calls inside those files. When `react-remove-scroll/dist/es5/UI.js` is loaded transitively via `createRequire('./UI')` from `index.js`, it calls `require("react")` through Node's native resolution — which resolves to the shell's pnpm copy. No amount of aliases or dedupe can intercept this.
+
+The fix is two-part, documented in full in `docs/guides/distribution-model.md` → Local dev-loop → Vitest:
+
+- **`Module._resolveFilename` patch in `vitest.setup.ts`** (the key fix): intercepts Node's native CJS resolution in the Vitest worker thread, redirecting `react`/`react-dom` resolved under the shell's `node_modules` to the consumer's copies. This catches the `createRequire` calls that bypass Vite's resolver.
+- **`server.deps.inline` + `fixShellReactRequires()` transform plugin in `vitest.config.ts`** (belt-and-suspenders): inlines the shell and its Radix chain through Vite's transform pipeline; the transform plugin patches CJS `require("react")` calls in files that DO reach the transform hook (ESM entry-point wrappers).
+- **`resolve.dedupe` + Radix devDeps prerequisite** — still required for the ESM path to resolve Radix imports through the consumer's node_modules.
+
+Applied to `offansk-ev` (`evaluering`). Reduced test failures from 94 (React-dup crashes) to 0 React-dup failures.
 
 ## References
 

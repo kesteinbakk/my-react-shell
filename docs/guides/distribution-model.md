@@ -69,6 +69,27 @@ The release loop is for *releases*. To iterate locally, point the consumer at th
 local checkout — this is a **dev-only** redirect:
 - In the consumer, set the dependency to a local link:
   `"my-react-shell": "link:../my-react-shell"` (or `pnpm link --dir ../my-react-shell`), then `pnpm install`.
+- **Allow Vite to serve fonts from the shell's `node_modules` (`server.fs.allow`).**
+  The optional font CSS exports (`my-react-shell/fonts/geist.css`,
+  `my-react-shell/fonts/inter.css`) import from `@fontsource-variable/*` packages
+  installed in the shell's own `node_modules`. On the `link:` loop, Vite resolves
+  the `.woff2` url references to paths inside the shell's `node_modules` — outside
+  the consumer's project root — and blocks them with **403 Forbidden** because they
+  are outside the default `server.fs.allow` allowlist. Fix by whitelisting the shell
+  directory:
+  ```ts
+  // vite.config.ts in the consumer
+  server: {
+    fs: { allow: ['.', '../my-react-shell'] },
+  },
+  ```
+  `'.'` must be included alongside `'../my-react-shell'`: setting `fs.allow` explicitly
+  replaces Vite's auto-detected roots (which normally include the project root), so
+  omitting it blocks the consumer's own `index.html` with the same 403.
+  This only affects the `link:` dev-loop. The tag-pinned git-dep install is
+  unaffected: Vite resolves `.woff2` files from the consumer's own `node_modules`
+  (the fontsource package is hoisted there on install) and serves them within the
+  project root.
 - **Keep `dist/` fresh while iterating.** A `link:` consumer reads the shell's
   committed `dist/`, never its `src/` — so a `src/` edit is invisible until `dist/`
   rebuilds. `dev start` handles this automatically: my-react-shell carries `watch = true`
@@ -125,42 +146,122 @@ local checkout — this is a **dev-only** redirect:
   > `Cannot read properties of null (reading 'useContext')` errors — see the
   > Vitest section below.
 
-- **Vitest (`link:` loop only).** The Vite dev server applies `resolve.dedupe`
-  at the pre-bundler stage and collapses React across the symlink. Vitest does
-  not: by default it externalises all `node_modules` packages, loading them via
-  Node's resolution and bypassing Vite entirely — so `resolve.dedupe` has no
-  effect on them. The shell's Radix transitive deps (`@radix-ui/*`,
-  `react-remove-scroll`, …) resolve `react` from the shell's own
-  `node_modules/react`, not the consumer's. The hook dispatcher splits and
-  the test suite fails with the same errors as a dev-server boot without dedupe.
+- **Vitest (`link:` loop only).** The Vite dev server collapses React via
+  `resolve.dedupe` at the pre-bundler stage. Vitest 4.x does not: it externalises
+  all `node_modules` packages by default, loading them via Node's native resolution
+  and bypassing Vite's resolver entirely. The shell's Radix transitive chain
+  (`@radix-ui/*` → `react-remove-scroll` → its CJS files) resolves `react` from
+  the shell's own `node_modules/react`, not the consumer's — the hook dispatcher
+  splits and tests fail with `Invalid hook call` / `Cannot read properties of null`.
 
-  Fix: force the shell through Vite's module runner in the consumer's Vitest
-  config so that `resolve.dedupe` can act on its imports:
+  `resolve.dedupe` and `resolve.alias` alone do not fix this. When Vitest inlines
+  a CJS package, Vite wraps it with `createRequire(import.meta.url)` — subsequent
+  `require()` calls inside that file bypass Vite's resolver entirely (no
+  `resolveId`, no aliases, no dedupe). The fix needs two parts:
+
+  **Part 1 — `vitest.config.ts`** (inline the shell and its Radix chain through
+  Vite's transform pipeline for the ESM parts, plus a transform plugin that
+  patches CJS `require("react")` calls Vite's transform hook can reach):
 
   ```ts
-  // vitest.config.ts  (or the frontend project object inside defineWorkspace)
+  import { fileURLToPath, URL } from 'node:url'
+  import react from '@vitejs/plugin-react'
+  import type { Plugin } from 'vite'
+
+  // Patches CJS require("react") calls in shell files that DO reach the
+  // transform hook (index.js entries). Belt-and-suspenders alongside the
+  // Module._resolveFilename patch in vitest.setup.ts.
+  function fixShellReactRequires(): Plugin {
+    const dir = fileURLToPath(new URL('.', import.meta.url))
+    const map: [RegExp, string][] = [
+      [/require\(["']react\/jsx-runtime["']\)/g,    `require(${JSON.stringify(dir + 'node_modules/react/jsx-runtime.js')})`],
+      [/require\(["']react\/jsx-dev-runtime["']\)/g, `require(${JSON.stringify(dir + 'node_modules/react/jsx-dev-runtime.js')})`],
+      [/require\(["']react-dom\/client["']\)/g,     `require(${JSON.stringify(dir + 'node_modules/react-dom/client.js')})`],
+      [/require\(["']react-dom\/server["']\)/g,     `require(${JSON.stringify(dir + 'node_modules/react-dom/server.js')})`],
+      [/require\(["']react-dom["']\)/g,             `require(${JSON.stringify(dir + 'node_modules/react-dom/index.js')})`],
+      [/require\(["']react["']\)/g,                 `require(${JSON.stringify(dir + 'node_modules/react/index.js')})`],
+    ]
+    return {
+      name: 'fix-shell-react-requires',
+      enforce: 'pre',
+      transform(code, id) {
+        if (!id.includes('/my-react-shell/')) return null
+        let out = code
+        for (const [re, replacement] of map) out = out.replace(re, replacement)
+        if (out === code) return null
+        return { code: out, map: null }
+      },
+    }
+  }
+
+  // vitest.config.ts frontend project config:
   {
+    plugins: [react(), fixShellReactRequires()],
     resolve: {
+      alias: [
+        { find: '@', replacement: fileURLToPath(new URL('./src', import.meta.url)) },
+      ],
       dedupe: ['react', 'react-dom', 'react/jsx-runtime'],
     },
     test: {
       server: {
         deps: {
-          // Without this, the shell is a Node-loaded external; resolve.dedupe
-          // never applies to its Radix transitive deps' `react` imports.
-          inline: [/my-react-shell/],
+          inline: [
+            /my-react-shell/,
+            /@radix-ui\//,
+            /react-remove-scroll/,
+            /use-callback-ref/,
+            /@floating-ui\/react-dom/,
+          ],
         },
       },
     },
   }
   ```
 
-  **Prerequisite — Radix must be in the consumer's `node_modules`.** Vite's
-  SSR runner resolves the shell's bare-specifier `@radix-ui/*` imports from the
-  consumer's root; if they are not there, it falls back to the shell's realpath,
-  where Radix finds the shell's own React and the dedup fails. Consumers who
-  removed shadcn (the usual source of these transitive deps) must add the five
-  packages the components module always exercises:
+  **Part 2 — `vitest.setup.ts`** (the critical fix — intercepts Node's native CJS
+  resolution for `require()` calls that bypass Vite entirely via `createRequire`):
+
+  ```ts
+  import { createRequire } from 'node:module'
+  import Module from 'node:module'
+
+  // Vite's CJS inlining uses createRequire(import.meta.url), which bypasses
+  // Vite's resolver. require("react") inside transitively-loaded CJS files
+  // (e.g. react-remove-scroll/dist/es5/UI.js) resolves from the shell's pnpm
+  // store — a different instance than the consumer's. Redirect any react/react-dom
+  // resolved under the shell's node_modules to the consumer's copies.
+  const consumerRequire = createRequire(import.meta.url)
+  const consumerPaths: Record<string, string> = {
+    react: consumerRequire.resolve('react'),
+    'react-dom': consumerRequire.resolve('react-dom'),
+    'react/jsx-runtime': consumerRequire.resolve('react/jsx-runtime'),
+    'react/jsx-dev-runtime': consumerRequire.resolve('react/jsx-dev-runtime'),
+  }
+  const shellMarker = '/my-react-shell/node_modules/'
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const origResolve = (Module as any)._resolveFilename.bind(Module)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  ;(Module as any)._resolveFilename = function (
+    request: string,
+    parent: NodeJS.Module | null,
+    isMain: boolean,
+    options?: Record<string, unknown>,
+  ) {
+    const resolved: string = origResolve(request, parent, isMain, options)
+    if (resolved.includes(shellMarker) && request in consumerPaths) {
+      return consumerPaths[request]
+    }
+    return resolved
+  }
+  ```
+
+  **Prerequisite — Radix must be in the consumer's `node_modules`.** When Vite
+  processes the shell's `@radix-ui/*` ESM imports, it resolves them from the
+  consumer's root. If they are absent, Vite falls back to the shell's realpath
+  where Radix finds the shell's React and the dedup fails. Consumers who
+  removed shadcn must add the packages the components module exercises:
 
   ```bash
   pnpm add -D \
@@ -173,7 +274,7 @@ local checkout — this is a **dev-only** redirect:
 
   A consumer that imports only `my-react-shell` (theme), `my-react-shell/i18n`,
   or `my-react-shell/icons` — and renders no Radix-backed components in tests —
-  needs neither the explicit Radix devDeps nor the `server.deps.inline` override.
+  needs neither the explicit Radix devDeps nor this override.
 
 - **Strip the link before committing.** A committed `link:`/`file:` specifier
   breaks every other clone and all Vercel/CI installs (the path won't exist).
