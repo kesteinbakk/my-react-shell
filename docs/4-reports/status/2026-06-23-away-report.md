@@ -1,6 +1,13 @@
 # Away report — 2026-06-23 — T018 complete-component-surface
 
-Autonomous run (`/independent-work`). Branch `claude/zen-shannon-7abaec` (9 commits).
+Autonomous run (`/independent-work`). Branch `claude/zen-shannon-7abaec`.
+
+> **Final status (end of session):** T018 fully landed on `main` (reconciled with the
+> concurrent T019 CountPill work + a docs commit; adopted main's renamed `-on-bg`/`-on`
+> token vocabulary). Both consumers migrated green and committed: **demo** (tone API +
+> full showcase of the 15 new primitives) and **evaluering** (tone API). The large
+> **evaluering drop-shadcn** consolidation is spun off as its own task (run locally). The
+> "BLOCKED" analysis below was the mid-session state before the user cleared `main`.
 
 ## Completed — the shell library is done
 
@@ -94,6 +101,9 @@ reaching the consumers**, and that integration is not safe to do blind autonomou
 
 ## Recommended next step
 
-Reconcile T018 + T019 onto `main` (coordinate the Badge/Alert/index/css/api-ref overlap),
-release a shell tag, then run the migration plan above (demo first — small; evaluering's
-drop-shadcn as its own task).
+T018 is landed and both consumers are green. The remaining steps are the user's call:
+1. **Release a shell tag** (`pnpm release <bump> --push`) so consumers' *production* builds
+   (not just the link-loop dev) get the new surface.
+2. **evaluering drop-shadcn** — spun off as its own task; run locally in evaluering.
+3. **`react-framework` skill** — once a tag ships, update it to point new projects at
+   `my-react-shell/components` instead of `shadcn add`.

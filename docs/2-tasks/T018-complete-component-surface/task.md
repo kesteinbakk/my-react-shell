@@ -17,12 +17,18 @@ on Radix + the theme tokens so a new project starts fast from one front door.
   `Separator`, `Skeleton`, `Dialog`, `Popover`, `DropdownMenu`. Dependency-approved +
   built: `Checkbox`, `Switch`, `RadioGroup`, `Tooltip`, `Tabs` (5 new optional `@radix-ui`
   peers). The complete primitive surface now ships.
-- **W5 (demo), W6 (evaluering) — blocked on landing T018 on main.** Both consumers
-  `link:` the primary tree (old shell), so migrating their source to the new API would go
-  red until T018 is on main — and that merge is conflict-heavy with concurrent T019
-  (CountPill touches Alert/Badge/index/css/api-ref). Migration plan + scope (demo: 13
-  `variant`→`tone`; evaluering: 2 + drop shadcn across 68 files) in the away-report.
-- **react-framework skill — deferred** until the surface is tagged.
+- **Landed on main.** Reconciled with concurrent T019 (CountPill) + a docs commit;
+  adopted main's renamed token vocabulary (`-strong`→`-on-bg`, `-content`→`-on`);
+  fast-forwarded `main`. Lib typecheck clean; the 5 new peers installed.
+- **W5 (demo) — done.** Migrated to the tone API (16 edits) and showcased all 15 new
+  primitives across the kit pages (icons registered in `shell-config`; the 5 Radix peers
+  added to the demo). Demo typecheck green; committed.
+- **W6 (evaluering) — migrated green.** tone API fixed (3 edits); typechecks against the
+  new shell; committed. The full **drop-shadcn** consolidation (~80 files; the shadcn
+  `Button` `variant`-decomposition drives ~90 call sites) is spun off as its own task,
+  run locally in evaluering.
+- **react-framework skill — deferred** until a shell tag ships the new exports to new
+  projects.
 
 Full run notes: `docs/4-reports/status/2026-06-23-away-report.md`.
 
