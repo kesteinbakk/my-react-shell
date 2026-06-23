@@ -1,23 +1,21 @@
 # my-react-shell
 
-A **modular React foundation** for React + Convex apps: a menu of optional,
-self-contained, versioned **drop-in modules** an app imports à la carte — **theme**
-(semantic-token contract + palettes + light/dark/system), **providers** (Convex
-client + the single `AppProviders` wrapper), an **auth seam** (a TypeScript contract
-plus a Convex Auth default and a bring-your-own path), **i18n** (the `t()` seam —
-central catalog, `{{param}}` interpolation, opt-in compile-time typed keys, dev
-missing-key overlay), and an
-opinionated **component kit** (`my-react-shell/components` — Alert, dialogs, structured
-cards, form fields, … on shadcn/Radix + the theme tokens). It is **not** a framework or
-a fixed app template, and ships only the *opinionated* composites — consumers use
-shadcn/ui directly for the un-opinionated primitives. It is consumed like a standard npm
+A **support and starting base for React + Convex apps** — the React counterpart to what
+the SolidJS `foundation` is for Solid. Opinionated, batteries-included, and **modular**:
+an app imports only the pieces it wants — **theme** (semantic-token contract + palettes +
+light/dark/system), **providers** (Convex client + the single `AppProviders` wrapper), an
+**auth seam** (a TypeScript contract plus a Convex Auth default and a bring-your-own
+path), **i18n** (the `t()` seam — central catalog, `{{param}}` interpolation, opt-in
+compile-time typed keys, dev missing-key overlay), and the **complete component surface**
+(`my-react-shell/components` — primitives *and* composites: Button, Input, Alert, dialogs,
+structured cards, form fields, … built on Radix + the theme tokens). It ships the whole
+component surface so a consumer needs **no shadcn**. It is consumed like a standard npm
 package, as a **tag-pinned GitHub git-dependency**.
 
 **The fast path for "what's exported and how do I use it":**
 [`docs/specifications/api-reference.md`](docs/specifications/api-reference.md) — every
 export, per import path, with signatures and minimal usage. See
-[`docs/concept.md`](docs/concept.md) for what this is and its boundary, and
-[`docs/strategy.md`](docs/strategy.md) for the standing decisions. The distribution
+[`docs/concept.md`](docs/concept.md) for what this is and its boundary. The distribution
 model is documented in [`docs/guides/distribution-model.md`](docs/guides/distribution-model.md).
 
 ## Install

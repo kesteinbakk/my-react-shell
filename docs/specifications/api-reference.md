@@ -14,10 +14,11 @@ The complete public surface, organised by import path. This is the **fast index*
 every export, what it is, and the minimum to use it. For the *why* and the deeper
 contract of any module, follow the **Guide** link in its section.
 
-> **Mental model.** my-react-shell is a *menu of self-contained modules*, not a
-> framework. The barrel `my-react-shell` is the **Convex-free theme core**; anything
-> heavier lives behind a sub-path so a theme-only app installs nothing it doesn't use.
-> Import only the modules you want. See [concept.md](../concept.md).
+> **Mental model.** my-react-shell is a *support and starting base for React projects* —
+> the React counterpart to the SolidJS `foundation` — shipped as self-contained modules.
+> The barrel `my-react-shell` is the **Convex-free theme core**; anything heavier lives
+> behind a sub-path so a theme-only app installs nothing it doesn't use. Import only the
+> modules you want. See [concept.md](../concept.md).
 
 ## Import-path map
 
@@ -27,7 +28,7 @@ contract of any module, follow the **Guide** link in its section.
 | `my-react-shell/providers` | **providers** (Convex client + `AppProviders`) | `convex` | — |
 | `my-react-shell/auth/convex` | **auth** Convex Auth default | `convex`, `@convex-dev/auth`, `@auth/core` | — |
 | `my-react-shell/i18n` | **i18n** (`t()` seam) | — (zero-dep) | — |
-| `my-react-shell/components` | **component kit** (opinionated composites) | `class-variance-authority`, `clsx`, `tailwind-merge`, some `@radix-ui/*`, `react-colorful` (only for `ColorPicker`) | `my-react-shell/components/styles.css` |
+| `my-react-shell/components` | **component kit** (UI components on Radix + the theme tokens) | `class-variance-authority`, `clsx`, `tailwind-merge`, some `@radix-ui/*`, `react-colorful` (only for `ColorPicker`) | `my-react-shell/components/styles.css` |
 | `my-react-shell/icons` | **icons↔emojis seam** | — (pure React) | — |
 | `my-react-shell/app-shell` | **app-shell** (chrome, page header, tabs) | `@tanstack/react-router`, `@radix-ui/react-dialog`, `@radix-ui/react-dropdown-menu`, `@radix-ui/react-popover` | `my-react-shell/app-shell/styles.css` |
 
@@ -235,12 +236,11 @@ export const { useTranslation, useT, translateNow } = createTypedI18n<Key>()
 
 ---
 
-## `my-react-shell/components` — opinionated component kit
+## `my-react-shell/components` — component kit
 
-Composites that bake a design/layout/behavior decision on shadcn/Radix + the theme
-tokens. **Un-opinionated primitives (Button/Input/Checkbox/plain Dialog/Tooltip/Card/…)
-are NOT shipped — use shadcn directly for those.** This section is the **canonical
-reference** for the kit — there is no separate `docs/guides/` file for it.
+Components built on Radix + the theme tokens (rendered with `mrs-`-prefixed plain CSS),
+so a consumer needs **no shadcn**. This section is the **canonical reference** for the
+kit — there is no separate `docs/guides/` file for it.
 
 ```ts
 import { Alert, cn /* … */ } from 'my-react-shell/components'
@@ -769,11 +769,6 @@ export const shellConfig = defineShellConfig({
 | `my-react-shell/styles.css` | **Raw Tailwind v4 source** — the `--color-*` token contract + the 5 palettes. **Not precompiled.** | Your build **must run Tailwind v4** (PostCSS or `@tailwindcss/vite`) and have **`tw-animate-css`** installed. Don't `@import 'tailwindcss'` again — this file does. |
 | `my-react-shell/components/styles.css` | Plain prebuilt CSS (`mrs-`-prefixed classes on the theme tokens). | Import once. No Tailwind config needed. Requires the theme tokens (above) to be present for theming. |
 | `my-react-shell/app-shell/styles.css` | Plain prebuilt CSS for the shell chrome. | Import once when you use the app-shell. |
-
-> **shadcn bridge:** shadcn primitives read their own cssVars (`--background`, …), not
-> the `--color-*` contract. Map them once in your `index.css` — the canonical,
-> copy-paste mapping is in [theme.md → *Using these tokens with shadcn/ui*](../guides/theme.md).
-> It is deliberately **not shipped** (per-app latitude).
 
 ---
 

@@ -30,16 +30,18 @@ Per-module exports and contracts live in the other `docs/guides/` files.
 
 ### Vendored `themes` (a consumer depends on ONLY my-react-shell)
 - The `--color-*` token contract + palettes are **authored** in the shared **`themes`**
-  package (strategy D6+D13) but are **vendored into the shell's shipped CSS** at release
+  package (one framework-neutral source of truth, shared with the SolidJS `foundation`)
+  but are **vendored into the shell's shipped CSS** at release
   time — copied into committed `src/themes/*.css` by `pnpm sync:themes`, and imported
   **relatively** from `src/index.css` (`@import './themes/ocean.css'`). So a consumer
   receives the palettes **inside** `my-react-shell`; `themes` is **not** a transitive
   dependency. A consumer adds nothing and authenticates to nothing extra.
 - **Why vendored, not transitive.** A transitive `themes` git-dep made CI authenticate
   to a *second* Bitbucket repo, forced *two* tags to be bumped in lockstep, and let the
-  shell and themes drift into an **incompatible pair** (shell consuming D15 surface
-  tokens while pinning a pre-D15 `themes` → every surface renders transparent in a real
-  install, masked by the dev symlink). Vendoring makes shell+themes **one versioned unit**
+  shell and themes drift into an **incompatible pair** (shell consuming newer surface
+  tokens while pinning an older `themes` that lacks them → every surface renders
+  transparent in a real install, masked by the dev symlink). Vendoring makes shell+themes
+  **one versioned unit**
   at the shell's tag, so that drift is structurally impossible. It adds **no** propagation
   latency — consumers only ever got themes changes via a shell tag bump anyway (the shell
   pins themes).
@@ -205,8 +207,8 @@ compile differently:
 
 ## This repo: status
 
-`my-react-shell` is the reference implementation of the shared model (strategy
-**D5**: git-dep, committed `dist/`, full `exports` / `peerDependencies`), and
+`my-react-shell` is the reference implementation of the shared model (git-dep,
+committed `dist/`, full `exports` / `peerDependencies`), and
 distribution is in place: it ships a **committed, precompiled `dist/`** (built by
 `build:lib`, no source maps), the dev-harness builds separately to `dist-harness/`,
 the `files` allowlist is narrowed to `dist/` plus the authored CSS (`src/**/*.css`,
@@ -243,8 +245,8 @@ prune, so after deleting or renaming a src module, do a one-time clean rebuild:
 ## Consumer adoption (applies when an app adopts either package)
 
 These are **dependency changes** and need explicit approval before they land:
-- Satisfy peer floors **only for the modules used** — all of Convex is optional now
-  (D9): `convex ≥1.41` for `my-react-shell/providers`; `@convex-dev/auth ≥0.0.94` +
+- Satisfy peer floors **only for the modules used** — all of Convex is optional:
+  `convex ≥1.41` for `my-react-shell/providers`; `@convex-dev/auth ≥0.0.94` +
   `@auth/core ≥0.41.1` for the Convex Auth default at `my-react-shell/auth/convex`. A
   theme-only consumer (the barrel) needs none of them. No router peer — the consumer
   brings its own router.

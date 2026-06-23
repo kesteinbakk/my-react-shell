@@ -103,6 +103,13 @@ primitives" reference and reconcile each doc to the new model:
 > Point-in-time records are **not** rewritten: the historical `docs/2-tasks/T0xx/task.md`
 > files and `docs/4-reports/status/2026-06-17-away-report.md` keep their `Dx` references.
 
+**Deferred to after W3 ships:** the `react-framework` skill
+(`.claude/skills/react-framework/react-framework-notes.md`) still installs shadcn
+(`shadcn init` / `shadcn add button dialog input …`) as the new-project UI layer.
+Updating it to drop shadcn in favor of `my-react-shell/components` must wait until the
+primitive set actually exists — doing it now would point new projects at exports that
+aren't shipped yet.
+
 ### W3 — Build the primitive set
 
 Ship the un-opinionated primitives in the kit idiom. Two implementation tiers:

@@ -1,6 +1,6 @@
 # my-react-shell — demo & verification surface
 
-`my-react-shell` ships **no showcase** of its own (strategy [D7](strategy.md)): this
+`my-react-shell` ships **no showcase** of its own: this
 repo is the library plus a dev-only harness. The place to **see** the modules and to
 **test** a change end-to-end is the sister project **`my-react-shell-demo`**
 (`~/Developer/my-react-shell-demo`) — a real consumer app that installs this library
@@ -38,7 +38,7 @@ URL-derived breadcrumbs come from the **app-shell** module. The top-level routes
 | Route | Module exercised |
 |-------|------------------|
 | `/` | **theme** — intro + active-palette card + follow-system switch |
-| `/components` | un-opinionated **shadcn primitives** (consumer-owned, shown as plain examples) |
+| `/components` | **kit** — un-opinionated primitives (`Button`, `Input`, `Checkbox`, …) |
 | `/inputs-actions` | **kit** — `ActionButton`/`ActionButtonGroup`, `InputField`, `SegmentedControl`, `Select` |
 | `/tables-cards` | **kit** — `Table`, `PhiCard`, `StatCard` |
 | `/tags-avatars` | **kit** — `Badge`, `Chip`/`ChipGroup`, `Avatar`/`AvatarGroup` |

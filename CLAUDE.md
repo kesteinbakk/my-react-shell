@@ -1,21 +1,24 @@
 # CLAUDE.md — my-react-shell
 
-You are the **my-react-shell-master** — you build and maintain a **modular React
-foundation**: a menu of optional, versioned **drop-in modules** (theme, providers,
-auth seam, i18n, …) that new React + Convex apps under `~/Developer/` import à la
-carte. It is consumed like a standard npm package, from a GitHub git-dependency.
-Changes to a module ripple to every app that imports it, on version bump.
+You are the **my-react-shell-master** — you build and maintain a **support and starting
+base for React + Convex apps** under `~/Developer/`: the React counterpart to what the
+SolidJS `foundation` is for Solid. It ships an opinionated, batteries-included,
+**complete** surface — theme, providers, an auth seam, i18n, icons, an app shell, and the
+full component surface — as **modular** pieces an app imports à la carte. It is consumed
+like a standard npm package, from a GitHub git-dependency. Changes ripple to every app
+that imports it, on version bump.
 
 Project guidance for agents. Short by design; depth lives in `docs/`.
 
 ## What this is
 
-**my-react-shell** is a **modular foundation library**, not a framework or a fixed
-app template. It ships a set of **self-contained modules** an app picks from:
+**my-react-shell** is the **opinionated, complete base** a new React app starts from —
+the React counterpart to the SolidJS `foundation`. It ships a set of **self-contained
+modules** an app picks from:
 
 - **theme** — light/dark/system + palette selection + consumer palettes, a
   batteries-included drop-in. The `--color-*` token contract + palettes live in the
-  shared, framework-neutral `themes` package (D13), shared with the SolidJS
+  shared, framework-neutral `themes` package, shared with the SolidJS
   `foundation`; this module is the React provider + registry on top.
 - **providers** — Convex client provider + the single `AppProviders` wrapper.
 - **auth** — a pluggable auth **seam** (a TS contract) + the Convex Auth default
@@ -36,27 +39,28 @@ another module's runtime), and ships a **contract + a guide** so an app can wire
 swap it, or bring its own. New modules are added when a capability is reused
 (rule of two), and every app gets them on the next version bump.
 
-It ships an **opinionated** component kit at `my-react-shell/components` — the composites
-that need a design/layout decision (Alert, dialogs, structured cards, form fields, …) —
-but **not** the un-opinionated shadcn primitives (Button/Input/Checkbox/…), which
-consumers use shadcn directly for. The app-shell ships as an *optional* module, never mandated.
+It ships the **complete component surface** at `my-react-shell/components` — the
+un-opinionated primitives (Button/Input/Checkbox/…) **and** the opinionated composites
+(Alert, dialogs, structured cards, form fields, …) — all built directly on Radix + the
+theme tokens, so a consumer needs **no shadcn**. The app-shell ships as an *optional*
+module, never mandated.
 
 - What this is + boundary: [docs/concept.md](docs/concept.md)
 - **Public API (every export + usage):** [docs/specifications/api-reference.md](docs/specifications/api-reference.md) — the single source of truth; it **ships inside the package** (`package.json` → `files`), so consumer agents read the version-matched copy at `node_modules/my-react-shell/…` via the `my-react-shell` skill
-- Standing decisions + rationale: [docs/strategy.md](docs/strategy.md)
 - **Demo & verification surface (where agents test changes + reproduce reported bugs):** [docs/demo.md](docs/demo.md)
 - Framework decision / from-scratch consumer guide: the `react-framework` skill ([.claude/skills/react-framework/react-framework-notes.md](.claude/skills/react-framework/react-framework-notes.md))
-- Build plan: **T001** in `docs/2-tasks/` (index: `docs/2-tasks/_index/`)
+- Task & decision history: the per-month index in `docs/2-tasks/_index/` and the individual `docs/2-tasks/TXXX-*/task.md` writeups
 
-> **Status: in progress.** The theme, providers, auth seam, i18n, icons, app-shell,
-> and component-kit modules have landed — documented in the single API reference
+> **Status: in progress.** The theme, providers, auth seam, i18n, icons, app-shell, and
+> component modules have landed — documented in the single API reference
 > ([docs/specifications/api-reference.md](docs/specifications/api-reference.md)), with a
 > deeper guide in `docs/guides/` per module where there's more to say than the reference
 > (the `components` module has none — the reference is its canonical doc), plus the
 > module-authoring contract — distributed as a standard node module (a committed,
-> precompiled `dist/`). The theme tokens
-> are now **shared** with the SolidJS `zingularis/foundation` via the `themes`
-> package (D13); foundation otherwise stays the source of truth for its Solid modules.
+> precompiled `dist/`). The component module is being widened to the **complete surface**
+> — the un-opinionated primitives alongside the composites, built on Radix with no shadcn.
+> The theme tokens are **shared** with the SolidJS `zingularis/foundation` via the `themes`
+> package; foundation otherwise stays the source of truth for its Solid modules.
 
 ## Demos & visual showcasing
 
@@ -124,8 +128,8 @@ demo is unfinished. Whenever you add a kit component or change one's props / var
 - **A changed component** — a new prop, variant, or behavior worth seeing — updates
   its existing section so the demo renders the new surface.
 
-(Un-opinionated shadcn primitives are *not* kit components: they're shown on the
-demo's Components page, not the kit pages.)
+(The un-opinionated primitives are kit components too — they belong on the kit pages
+like every other component, rendered from `my-react-shell/components`.)
 
 ## Porting from the SolidJS foundation
 
@@ -162,10 +166,11 @@ foundation source and match it; don't reconstruct from memory or the happy path.
   and recommended to consumers; not a module my-react-shell ships, and **not a peer
   dependency** (it's a dev-only harness dep — no shipped module imports a router, so
   consumers bring their own).
-- **UI:** consumers use shadcn/ui + Tailwind v4 directly for the un-opinionated
-  primitives; my-react-shell does **not** host a registry. It **does** ship an
-  opinionated component kit (`my-react-shell/components`) for the composites that need a
-  design decision, plus the **theme token contract** every component renders against.
+- **UI:** my-react-shell ships the **complete component surface**
+  (`my-react-shell/components` — primitives + composites) built on Radix + the theme
+  tokens, so a consumer needs **no shadcn** and no copy-in registry. Consumers use
+  Tailwind v4 for their own app markup. The **theme token contract** is what every
+  component renders against.
 - **Backend:** Convex (`eu-west-1`, GDPR). **No trailing slash** in
   `VITE_CONVEX_URL`. The Convex client context (`AppProviders`,
   `ConvexClientProvider`, `createConvexClient`) ships in the `providers` module at
@@ -180,7 +185,7 @@ foundation source and match it; don't reconstruct from memory or the happy path.
   Convex dev then crash-loops). Use `pnpm add` / `pnpm <script>` / `pnpm dlx`.
 - **Distribution:** a **GitHub git-dependency**, tag-pinned, consumed like an
   npm package (`import { … } from 'my-react-shell'`). Ships a **committed, precompiled
-  `dist/`** — zero-config install, no build runs, no registry, no sync. See [docs/strategy.md](docs/strategy.md) D5.
+  `dist/`** — zero-config install, no build runs, no registry, no sync. See [docs/guides/distribution-model.md](docs/guides/distribution-model.md).
 - **Hosting (consumers):** Vercel (static). **Git remote:**
   `git@github.com:kesteinbakk/my-react-shell.git` (Bitbucket kept as the `bitbucket`
   mirror remote). The shared `themes` package is still on Bitbucket — but vendored,
@@ -236,8 +241,7 @@ docs/
 ├── 4-reports/        # reviews/ research/ status/
 ├── specifications/   # present-tense specs of what EXISTS (+ README index)
 ├── guides/           # one guide per module + the module-authoring contract
-├── concept.md        # what this is
-└── strategy.md       # decision log
+└── concept.md        # what this is
 ```
 
 - **In-repo task/bug index** under `docs/{2-tasks,3-bugs}/_index/` — new rows on
@@ -344,8 +348,8 @@ import 'my-react-shell/components/styles.css'
 ```
 
 It wraps its own TanStack Router in `AppProviders`, picks an auth provider (the
-Convex Auth default or its own), and builds its UI with shadcn primitives plus the
-opinionated `my-react-shell/components` kit. The
+Convex Auth default or its own), and builds its UI from the
+`my-react-shell/components` surface (primitives + composites — no shadcn). The
 stack-level scaffolding sequence is the `react-framework` skill's guide
 ([.claude/skills/react-framework/react-framework-notes.md](.claude/skills/react-framework/react-framework-notes.md));
 my-react-shell's `docs/guides/` are the authority for each module's exact exports
