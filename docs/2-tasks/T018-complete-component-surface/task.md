@@ -1,11 +1,26 @@
 # T018 — complete-component-surface
 
-**Filed 2026-06-23 · Status: planning**
+**Filed 2026-06-23 · Status: in-progress**
 
 Re-found my-react-shell as a **complete, opinionated support and starting base for
 React projects** — the React counterpart to what the SolidJS `foundation` is for
 Solid — and **drop shadcn entirely**, shipping the whole component surface ourselves
 on Radix + the theme tokens so a new project starts fast from one front door.
+
+## Progress (2026-06-23)
+
+- **W1 — done.** strategy.md deleted; concept.md rewritten; this task filed.
+- **W2 — done.** All live docs swept; zero dangling strategy.md/Dx/shadcn-direction refs.
+- **W4 — done.** Canonical `Tone` + `TONE_COLOR`; Alert/ConfirmDialog/ActionButton
+  `variant`→`tone`; Badge gained `primary`; StatCard/PhiCard on the shared `Tone`.
+- **W3 — partly done.** Shipped (no new deps): `Button`, `Input`, `Textarea`, `Label`,
+  `Card`(+subparts), `Separator`, `Skeleton`, `Dialog`, `Popover`, `DropdownMenu`.
+  **Blocked (need a dependency grant):** `Checkbox`, `Switch`, `RadioGroup`, `Tooltip`,
+  `Tabs` (each a new `@radix-ui/*` peer).
+- **W5 (demo), W6 (evaluering), react-framework skill — not started** (separate repos /
+  deferred until the surface is tagged).
+
+Full run notes: `docs/4-reports/status/2026-06-23-away-report.md`.
 
 ---
 
