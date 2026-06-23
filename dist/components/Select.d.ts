@@ -4,6 +4,7 @@ export interface SelectOption {
     label: ReactNode;
     disabled?: boolean;
 }
+export type SelectSize = 'sm' | 'md' | 'lg';
 export interface SelectProps {
     options: SelectOption[];
     /** Selected value (controlled). */
@@ -13,6 +14,8 @@ export interface SelectProps {
     disabled?: boolean;
     /** Accessible label for the trigger. */
     'aria-label'?: string;
+    /** Trigger height / padding — matches the `Input` size scale. Defaults to `'md'`. */
+    size?: SelectSize;
     className?: string;
 }
 /**
@@ -20,4 +23,4 @@ export interface SelectProps {
  * handling), styled on the theme tokens. Pass an `options` list; controlled via
  * `value` / `onValueChange`.
  */
-export declare function Select({ options, value, onValueChange, placeholder, disabled, className, ...rest }: SelectProps): import("react").JSX.Element;
+export declare function Select({ options, value, onValueChange, placeholder, disabled, size, className, ...rest }: SelectProps): import("react").JSX.Element;

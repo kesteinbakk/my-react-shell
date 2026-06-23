@@ -53,7 +53,7 @@ export type { InputFieldProps } from './InputField';
 export { SegmentedControl } from './SegmentedControl';
 export type { SegmentedControlProps, SegmentedOption } from './SegmentedControl';
 export { Select } from './Select';
-export type { SelectProps, SelectOption } from './Select';
+export type { SelectProps, SelectOption, SelectSize } from './Select';
 export { Checkbox } from './Checkbox';
 export type { CheckboxProps } from './Checkbox';
 export { Switch } from './Switch';

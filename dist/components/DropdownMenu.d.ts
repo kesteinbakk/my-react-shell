@@ -84,8 +84,22 @@ export type DropdownMenuItem = DropdownMenuActionItem | {
     label: ReactNode;
 } | DropdownMenuCheckboxItem | DropdownMenuRadioGroupItem | DropdownMenuSubmenuItem;
 export interface DropdownMenuProps {
-    /** The clickable anchor — wrapped in the Radix trigger (`asChild`). */
-    trigger: ReactNode;
+    /**
+     * The clickable anchor — wrapped in the Radix trigger (`asChild`). Provide either
+     * `trigger` or `iconTrigger`; when `iconTrigger` is given the kit renders its own
+     * square ghost icon button.
+     */
+    trigger?: ReactNode;
+    /**
+     * Icon element for an icon-only trigger. The kit renders a square ghost button
+     * around it — consistent with the rest of the kit's icon controls. Provide either
+     * `iconTrigger` or `trigger`.
+     */
+    iconTrigger?: ReactNode;
+    /** Accessible label for the icon-only trigger. Defaults to `'Open menu'`. */
+    iconTriggerLabel?: string;
+    /** Fires when the menu opens or closes. Receives `true` on open, `false` on close. */
+    onOpenChange?: (open: boolean) => void;
     /** The menu rows, in order. */
     items: DropdownMenuItem[];
     /** Alignment along the trigger edge. Defaults to `center`. */
@@ -124,4 +138,4 @@ export interface DropdownMenuProps {
  * />
  * ```
  */
-export declare function DropdownMenu({ trigger, items, align, side, sideOffset, className, }: DropdownMenuProps): import("react").JSX.Element;
+export declare function DropdownMenu({ trigger, iconTrigger, iconTriggerLabel, onOpenChange, items, align, side, sideOffset, className, }: DropdownMenuProps): import("react").JSX.Element;

@@ -937,6 +937,10 @@
   border: 1px solid var(--color-border-primary);
   border-radius: 0.5rem;
 }
+.mrs-table-wrap--frameless {
+  border: none;
+  border-radius: 0;
+}
 .mrs-table {
   width: 100%;
   border-collapse: collapse;
@@ -1047,6 +1051,22 @@
 .mrs-table__expanded-cell {
   padding: 0.875rem;
   background: var(--color-surface-sunken);
+}
+/* Custom disclosure: the expand cell sheds its fixed width so the consumer's
+   control (a labelled button etc.) sizes naturally. */
+.mrs-table__expand-cell--custom {
+  width: auto;
+  white-space: nowrap;
+}
+/* Per-cell expansion: a column cell that toggles an inline detail region. */
+.mrs-table__cell--expandable {
+  cursor: pointer;
+}
+.mrs-table__cell--expandable:hover {
+  background: var(--color-hover);
+}
+.mrs-table__cell--expandable-open {
+  background: var(--color-selected);
 }
 
 /* ── UserPreferences ─────────────────────────────────────────────────────── */
@@ -1326,6 +1346,20 @@
 .mrs-select__trigger[data-disabled] {
   opacity: 0.6;
   cursor: not-allowed;
+}
+/* Size variants — mirror the `Input` scale. The base rule's height/padding are
+   the `md` defaults; these override for `sm` and `lg`. */
+.mrs-select__trigger--sm {
+  height: 2rem;
+  padding: 0 0.625rem;
+  font-size: 0.8125rem;
+  min-width: 8rem;
+}
+.mrs-select__trigger--lg {
+  height: 2.5rem;
+  padding: 0 0.875rem;
+  font-size: 1rem;
+  min-width: 12rem;
 }
 .mrs-select__chevron {
   display: inline-flex;
@@ -2686,6 +2720,32 @@
   padding-left: 0.5rem;
   flex-shrink: 0;
   color: var(--color-text-tertiary);
+}
+/* Icon-only trigger: a square ghost button wrapping the consumer's icon glyph. */
+.mrs-menu__icon-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  margin: 0;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 0.5rem;
+  background: transparent;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: background 120ms ease, color 120ms ease;
+}
+.mrs-menu__icon-trigger:hover,
+.mrs-menu__icon-trigger[data-state='open'] {
+  background: var(--color-hover);
+  color: var(--color-text-primary);
+}
+.mrs-menu__icon-trigger:focus-visible {
+  outline: none;
+  border-color: var(--color-focus);
+  box-shadow: 0 0 0 3px var(--color-focus-ring);
 }
 
 /* ── Checkbox (Radix Checkbox) ───────────────────────────────────────────────

@@ -8,6 +8,8 @@ export interface SelectOption {
   disabled?: boolean
 }
 
+export type SelectSize = 'sm' | 'md' | 'lg'
+
 export interface SelectProps {
   options: SelectOption[]
   /** Selected value (controlled). */
@@ -17,6 +19,8 @@ export interface SelectProps {
   disabled?: boolean
   /** Accessible label for the trigger. */
   'aria-label'?: string
+  /** Trigger height / padding — matches the `Input` size scale. Defaults to `'md'`. */
+  size?: SelectSize
   className?: string
 }
 
@@ -61,13 +65,14 @@ export function Select({
   onValueChange,
   placeholder = 'Select…',
   disabled,
+  size = 'md',
   className,
   ...rest
 }: SelectProps) {
   return (
     <RadixSelect.Root value={value} onValueChange={onValueChange} disabled={disabled}>
       <RadixSelect.Trigger
-        className={cn('mrs-select__trigger', className)}
+        className={cn('mrs-select__trigger', `mrs-select__trigger--${size}`, className)}
         aria-label={rest['aria-label']}
       >
         <RadixSelect.Value placeholder={placeholder} />

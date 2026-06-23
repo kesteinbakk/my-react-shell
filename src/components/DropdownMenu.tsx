@@ -94,8 +94,22 @@ export type DropdownMenuItem =
   | DropdownMenuSubmenuItem
 
 export interface DropdownMenuProps {
-  /** The clickable anchor — wrapped in the Radix trigger (`asChild`). */
-  trigger: ReactNode
+  /**
+   * The clickable anchor — wrapped in the Radix trigger (`asChild`). Provide either
+   * `trigger` or `iconTrigger`; when `iconTrigger` is given the kit renders its own
+   * square ghost icon button.
+   */
+  trigger?: ReactNode
+  /**
+   * Icon element for an icon-only trigger. The kit renders a square ghost button
+   * around it — consistent with the rest of the kit's icon controls. Provide either
+   * `iconTrigger` or `trigger`.
+   */
+  iconTrigger?: ReactNode
+  /** Accessible label for the icon-only trigger. Defaults to `'Open menu'`. */
+  iconTriggerLabel?: string
+  /** Fires when the menu opens or closes. Receives `true` on open, `false` on close. */
+  onOpenChange?: (open: boolean) => void
   /** The menu rows, in order. */
   items: DropdownMenuItem[]
   /** Alignment along the trigger edge. Defaults to `center`. */
@@ -237,6 +251,9 @@ function renderItem(item: DropdownMenuItem, key: string) {
  */
 export function DropdownMenu({
   trigger,
+  iconTrigger,
+  iconTriggerLabel = 'Open menu',
+  onOpenChange,
   items,
   align = 'center',
   side = 'bottom',
@@ -244,8 +261,16 @@ export function DropdownMenu({
   className,
 }: DropdownMenuProps) {
   return (
-    <RadixMenu.Root>
-      <RadixMenu.Trigger asChild>{trigger}</RadixMenu.Trigger>
+    <RadixMenu.Root onOpenChange={onOpenChange}>
+      {iconTrigger != null ? (
+        <RadixMenu.Trigger asChild>
+          <button type="button" className="mrs-menu__icon-trigger" aria-label={iconTriggerLabel}>
+            {iconTrigger}
+          </button>
+        </RadixMenu.Trigger>
+      ) : (
+        <RadixMenu.Trigger asChild>{trigger}</RadixMenu.Trigger>
+      )}
       <RadixMenu.Portal>
         <RadixMenu.Content
           className={cn('mrs-menu', className)}
