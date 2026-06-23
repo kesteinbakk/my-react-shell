@@ -3,10 +3,9 @@ import { cva } from 'class-variance-authority';
 import { cn } from './cn';
 const actionButtonVariants = cva('mrs-action-btn', {
     variants: {
-        variant: {
+        tone: {
             neutral: 'mrs-action-btn--neutral',
             primary: 'mrs-action-btn--primary',
-            secondary: 'mrs-action-btn--secondary',
             success: 'mrs-action-btn--success',
             warning: 'mrs-action-btn--warning',
             danger: 'mrs-action-btn--danger',
@@ -25,7 +24,7 @@ const actionButtonVariants = cva('mrs-action-btn', {
         },
         coloredLabel: { true: 'mrs-action-btn--colored-label' },
     },
-    defaultVariants: { variant: 'neutral', size: 'sm', layout: 'vertical' },
+    defaultVariants: { tone: 'neutral', size: 'sm', layout: 'vertical' },
 });
 /** Pixel glyph size per button size — keeps the emoji and the preset SVG in step. */
 const ICON_PX = {
@@ -66,20 +65,20 @@ const PRESET_ICONS = {
  * default label for each common action. Override any of them per call.
  */
 export const actionPresets = {
-    add: { variant: 'success', emoji: '➕', label: 'Add' },
-    edit: { variant: 'info', emoji: '✏️', label: 'Edit' },
-    delete: { variant: 'danger', emoji: '🗑️', label: 'Delete' },
-    copy: { variant: 'neutral', emoji: '📋', label: 'Copy' },
-    share: { variant: 'info', emoji: '🔗', label: 'Share' },
-    download: { variant: 'neutral', emoji: '⬇️', label: 'Download' },
-    upload: { variant: 'neutral', emoji: '⬆️', label: 'Upload' },
-    save: { variant: 'primary', emoji: '💾', label: 'Save' },
-    search: { variant: 'neutral', emoji: '🔍', label: 'Search' },
-    refresh: { variant: 'neutral', emoji: '🔄', label: 'Refresh' },
-    settings: { variant: 'neutral', emoji: '⚙️', label: 'Settings' },
-    star: { variant: 'warning', emoji: '⭐', label: 'Favorite' },
-    close: { variant: 'neutral', emoji: '✖️', label: 'Close' },
-    more: { variant: 'neutral', emoji: '⋯', label: 'More' },
+    add: { tone: 'success', emoji: '➕', label: 'Add' },
+    edit: { tone: 'info', emoji: '✏️', label: 'Edit' },
+    delete: { tone: 'danger', emoji: '🗑️', label: 'Delete' },
+    copy: { tone: 'neutral', emoji: '📋', label: 'Copy' },
+    share: { tone: 'info', emoji: '🔗', label: 'Share' },
+    download: { tone: 'neutral', emoji: '⬇️', label: 'Download' },
+    upload: { tone: 'neutral', emoji: '⬆️', label: 'Upload' },
+    save: { tone: 'primary', emoji: '💾', label: 'Save' },
+    search: { tone: 'neutral', emoji: '🔍', label: 'Search' },
+    refresh: { tone: 'neutral', emoji: '🔄', label: 'Refresh' },
+    settings: { tone: 'neutral', emoji: '⚙️', label: 'Settings' },
+    star: { tone: 'warning', emoji: '⭐', label: 'Favorite' },
+    close: { tone: 'neutral', emoji: '✖️', label: 'Close' },
+    more: { tone: 'neutral', emoji: '⋯', label: 'More' },
 };
 /* ── Component ────────────────────────────────────────────────────────────── */
 /**
@@ -95,7 +94,7 @@ export const actionPresets = {
  *
  * Or bring a **custom** glyph for anything else:
  * ```tsx
- * <ActionButton icon={<Download />} label="Export" variant="info" onClick={onExport} />
+ * <ActionButton icon={<Download />} label="Export" tone="info" onClick={onExport} />
  * ```
  *
  * It never imports the i18n or icons modules: pass translated text via `label`,
@@ -106,9 +105,9 @@ export function ActionButton(props) {
     const isStar = props.action === 'star';
     const active = props.action != null ? props.active : undefined;
     const preset = props.action != null ? actionPresets[props.action] : undefined;
-    // Variant: explicit > preset > neutral. Star is special: amber when active,
+    // Tone: explicit > preset > neutral. Star is special: amber when active,
     // neutral otherwise (with an amber hover, via the star-hover modifier).
-    const variant = props.variant ?? (isStar ? (active ? 'warning' : 'neutral') : preset?.variant ?? 'neutral');
+    const tone = props.tone ?? (isStar ? (active ? 'warning' : 'neutral') : preset?.tone ?? 'neutral');
     const px = ICON_PX[size];
     const resolvedEmoji = props.emoji ?? preset?.emoji;
     // Glyph: emoji mode wins when an emoji is available; else a custom icon; else
@@ -131,7 +130,7 @@ export function ActionButton(props) {
     }
     const visibleLabel = label ?? (showLabel ? preset?.label : undefined);
     const ariaLabel = props['aria-label'] ?? (visibleLabel != null ? undefined : hint ?? preset?.label);
-    return (_jsxs("button", { type: type, onClick: onClick, disabled: disabled, title: hint, "aria-label": ariaLabel, "aria-pressed": isStar ? !!active : undefined, className: cn(actionButtonVariants({ variant, size, layout, coloredLabel: coloredLabel || undefined }), isStar && !active && 'mrs-action-btn--star-hover', className), children: [glyph != null && (_jsx("span", { className: "mrs-action-btn__glyph", "aria-hidden": "true", children: glyph })), visibleLabel != null && _jsx("span", { className: "mrs-action-btn__label", children: visibleLabel })] }));
+    return (_jsxs("button", { type: type, onClick: onClick, disabled: disabled, title: hint, "aria-label": ariaLabel, "aria-pressed": isStar ? !!active : undefined, className: cn(actionButtonVariants({ tone, size, layout, coloredLabel: coloredLabel || undefined }), isStar && !active && 'mrs-action-btn--star-hover', className), children: [glyph != null && (_jsx("span", { className: "mrs-action-btn__glyph", "aria-hidden": "true", children: glyph })), visibleLabel != null && _jsx("span", { className: "mrs-action-btn__label", children: visibleLabel })] }));
 }
 /** A flex container for a set of `ActionButton`s — a toolbar row (or column). */
 export function ActionButtonGroup({ children, vertical = false, className }) {

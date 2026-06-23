@@ -4,21 +4,21 @@ import { cn } from './cn'
 
 const alertVariants = cva('mrs-alert', {
   variants: {
-    variant: {
+    tone: {
       info: 'mrs-alert--info',
       success: 'mrs-alert--success',
       warning: 'mrs-alert--warning',
       danger: 'mrs-alert--danger',
     },
   },
-  defaultVariants: { variant: 'info' },
+  defaultVariants: { tone: 'info' },
 })
 
-export type AlertVariant = NonNullable<VariantProps<typeof alertVariants>['variant']>
+export type AlertTone = NonNullable<VariantProps<typeof alertVariants>['tone']>
 
 export interface AlertProps {
-  /** Visual + semantic tone. Defaults to `info`. */
-  variant?: AlertVariant
+  /** Semantic tone. Defaults to `info`. */
+  tone?: AlertTone
   /** Optional bold lead line above the body. */
   title?: ReactNode
   /** The alert body / description. */
@@ -46,7 +46,7 @@ const iconProps = {
   strokeLinejoin: 'round',
 } as const
 
-const DEFAULT_ICONS: Record<AlertVariant, ReactNode> = {
+const DEFAULT_ICONS: Record<AlertTone, ReactNode> = {
   info: (
     <svg {...iconProps}>
       <circle cx="12" cy="12" r="10" />
@@ -83,7 +83,7 @@ const DEFAULT_ICONS: Record<AlertVariant, ReactNode> = {
  * with a per-tone leading icon and an optional dismiss control.
  */
 export function Alert({
-  variant = 'info',
+  tone = 'info',
   title,
   children,
   icon,
@@ -92,9 +92,9 @@ export function Alert({
   role = 'alert',
   className,
 }: AlertProps) {
-  const leading = icon === false ? null : (icon ?? DEFAULT_ICONS[variant])
+  const leading = icon === false ? null : (icon ?? DEFAULT_ICONS[tone])
   return (
-    <div role={role} className={cn(alertVariants({ variant }), className)}>
+    <div role={role} className={cn(alertVariants({ tone }), className)}>
       {leading != null && (
         <span className="mrs-alert__icon" aria-hidden="true">
           {leading}

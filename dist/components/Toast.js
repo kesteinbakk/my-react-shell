@@ -42,5 +42,5 @@ export function ToastProvider({ children, duration = 5000 }) {
         dismiss,
     }), [show, dismiss]);
     return (_jsxs(ToastContext.Provider, { value: api, children: [children, typeof document !== 'undefined' &&
-                createPortal(_jsx("div", { className: "mrs-toast-viewport", children: toasts.map((t) => (_jsx("div", { className: "mrs-toast", children: _jsx(Alert, { variant: t.tone, title: t.title, role: "status", onDismiss: () => dismiss(t.id), children: t.message }) }, t.id))) }), document.body)] }));
+                createPortal(_jsx("div", { className: "mrs-toast-viewport", children: toasts.map((t) => (_jsx("div", { className: "mrs-toast", children: _jsx(Alert, { tone: t.tone, title: t.title, role: "status", onDismiss: () => dismiss(t.id), children: t.message }) }, t.id))) }), document.body)] }));
 }

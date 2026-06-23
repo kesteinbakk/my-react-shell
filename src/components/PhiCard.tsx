@@ -2,7 +2,8 @@ import type { CSSProperties, ReactNode } from 'react'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 import { cn } from './cn'
 import { resolveAccentColor } from './accent'
-import type { AccentPlacement, AccentTone } from './accent'
+import type { AccentPlacement } from './accent'
+import type { Tone } from './tone'
 
 // Declared locally (browser-only lib, no @types/node). `process.env.NODE_ENV` is
 // replaced by the consumer's bundler, so the dev guards below are stripped in prod.
@@ -139,7 +140,7 @@ export interface PhiCardProps {
    * accent when unset. One of `primary`·`info`·`success`·`warning`·`danger`·`neutral`.
    * `color` overrides it.
    */
-  tone?: AccentTone
+  tone?: Tone
   /** Raw CSS color for the accent stripe; overrides `tone`. E.g. `'#7c3aed'`. */
   color?: string
   /** Where the accent reads: a `'top'` stripe (default) or a `'left'` bar. */

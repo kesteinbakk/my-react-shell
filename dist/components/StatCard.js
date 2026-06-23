@@ -1,6 +1,7 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import { cn } from './cn';
-import { ACCENT_TONE_COLOR, resolveAccentColor } from './accent';
+import { resolveAccentColor } from './accent';
+import { TONE_COLOR } from './tone';
 const SIZE_WIDTH_PX = {
     sm: 180,
     md: 240,
@@ -100,7 +101,7 @@ export function StatCard({ title, subtitle, badge, tone = 'neutral', color, acce
     // defaults to 'neutral', so the non-follow branch is always defined.
     const accentColor = followGauge
         ? completenessFill(gaugeFraction)
-        : resolveAccentColor(tone, color) ?? ACCENT_TONE_COLOR.neutral;
+        : resolveAccentColor(tone, color) ?? TONE_COLOR.neutral;
     // When to drop the accent stripe entirely:
     //  • mode on but no gauge → the top stripe has nothing to follow (no stripe);
     //  • gauge + a left accent → the gauge owns the left edge (suppress the stripe).

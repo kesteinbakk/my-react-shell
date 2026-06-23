@@ -1,5 +1,7 @@
+export type { Tone } from './tone';
+export { TONE_COLOR } from './tone';
 export { Alert } from './Alert';
-export type { AlertProps, AlertVariant } from './Alert';
+export type { AlertProps, AlertTone } from './Alert';
 export { Spinner, PageSpinner, SectionSpinner } from './Spinner';
 export type { SpinnerProps, SpinnerBlockProps, SpinnerSize } from './Spinner';
 export { EmptyState } from './EmptyState';
@@ -11,7 +13,7 @@ export type { ConfirmDialogProps } from './ConfirmDialog';
 export { ToastProvider, useToast } from './Toast';
 export type { ToastApi, ToastOptions, ToastProviderProps, ToastTone } from './Toast';
 export { ActionButton, ActionButtonGroup, actionPresets } from './ActionButton';
-export type { ActionButtonProps, ActionButtonPresetProps, ActionButtonIconProps, ActionButtonGroupProps, ActionButtonVariant, ActionButtonSize, ActionButtonLayout, ActionType, ActionPreset, } from './ActionButton';
+export type { ActionButtonProps, ActionButtonPresetProps, ActionButtonIconProps, ActionButtonGroupProps, ActionButtonTone, ActionButtonSize, ActionButtonLayout, ActionType, ActionPreset, } from './ActionButton';
 export { Badge } from './Badge';
 export type { BadgeProps, BadgeTone } from './Badge';
 export { Chip, ChipGroup } from './Chip';

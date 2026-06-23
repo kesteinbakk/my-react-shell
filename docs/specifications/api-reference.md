@@ -249,14 +249,14 @@ import 'my-react-shell/components/styles.css' // REQUIRED (plain prebuilt CSS; a
 
 | Export(s) | Kind | Summary |
 |---|---|---|
-| `Alert` | component | Inline alert/callout. `variant`: `info`·`success`·`warning`·`danger`; `title`, `icon`, `onDismiss`, `role`. |
+| `Alert` | component | Inline alert/callout. `tone`: `info`·`success`·`warning`·`danger`; `title`, `icon`, `onDismiss`, `role`. |
 | `InfoBox` | component | Neutral, tone-free contextual note (icon + title + body). Use `Alert` when the message carries a semantic tone. |
 | `EmptyState` | component | Centered zero-state: optional icon, required `title`, `description`, action slot. |
 | `Spinner`, `PageSpinner`, `SectionSpinner` | component | Rotating indicator on the current text color; block variants center it for page/section loading. |
-| `ConfirmDialog` | component | Controlled confirm dialog on Radix Dialog (overlay, focus trap, Esc/backdrop close). `variant="danger"` for destructive; renders its own confirm/cancel buttons. |
+| `ConfirmDialog` | component | Controlled confirm dialog on Radix Dialog (overlay, focus trap, Esc/backdrop close). `tone="danger"` for destructive; renders its own confirm/cancel buttons. |
 | `ToastProvider`, `useToast` | component + hook | Mount provider once; fire toasts via `useToast()` (`.success`/`.error`/…). Each renders as an `Alert`; auto-dismiss (5s; `duration:0` sticky). |
-| `ActionButton`, `ActionButtonGroup`, `actionPresets` | component + const | Icon/emoji + label action button with presets (table below). `actionPresets` is the `{ variant, emoji, label }` map. |
-| `Badge` | component | Status/category badge; tones `neutral`·`success`·`warning`·`danger`·`info`; optional status `dot`. |
+| `ActionButton`, `ActionButtonGroup`, `actionPresets` | component + const | Icon/emoji + label action button with presets (table below). `actionPresets` is the `{ tone, emoji, label }` map. |
+| `Badge` | component | Status/category badge; tones `primary`·`neutral`·`success`·`warning`·`danger`·`info` (`primary` is a solid pill); optional status `dot`. |
 | `Chip`, `ChipGroup` | component | Tag: plain / toggleable (`selected`+`onClick`) / removable (`onRemove`). `ChipGroup` wraps. |
 | `Avatar`, `AvatarGroup` | component | Image + initials fallback (also on image error); group stacks with `+N` overflow. |
 | `Table` | component | Column-config data table: per-column sort, zebra, sticky header, empty state. |
@@ -271,22 +271,29 @@ import 'my-react-shell/components/styles.css' // REQUIRED (plain prebuilt CSS; a
 | `Accordion` | component | Grouped disclosures on Radix Accordion: roving arrow-key focus, single (one-open) or `multiple` open. Data-driven via `items`; controlled `value`/`onValueChange` or `defaultValue`; `variant` (`default`·`bordered`·`separated`), `size`. Uses the `@radix-ui/react-accordion` optional peer. See [below](#accordion). |
 | `cn(...)` | function | `clsx` + `tailwind-merge` class combiner. |
 
-Every component has a matching `…Props` type export (e.g. `AlertProps`, `AlertVariant`,
+Every component has a matching `…Props` type export (e.g. `AlertProps`, `AlertTone`,
 `TableProps`, `TableColumn`, `ToastApi`, `ToastOptions`, `ToastTone`, `SelectProps`,
 `SelectOption`, `SegmentedOption`, `BadgeTone`, `AvatarSize`, `ActionType`,
-`ActionPreset`, `ActionButtonVariant`/`Size`/`Layout`, `PhiCardProps`, `PhiCardAction`,
+`ActionPreset`, `ActionButtonTone`/`Size`/`Layout`, `PhiCardProps`, `PhiCardAction`,
 `PhiCardSize`, `PhiCardFooter`, `PhiCardFooterLine`, `PhiCardFooterLineType`,
 `StatCardProps`, `StatCardBadge`, `StatItem`, `StatCardTone`,
 `StatCardFooter`, `StatCardFooterLine`, `StatCardFooterLineType`, `ColorPickerProps`,
 `ColorFormat`, `CollapsibleProps`, `CollapsibleVariant`, `CollapsibleSize`,
 `AccordionProps`, `AccordionItem`, `AccordionVariant`, `AccordionSize`, etc.).
 
+**Semantic colour is one shared vocabulary.** The kit exports a canonical **`Tone`**
+type (`primary`·`neutral`·`info`·`success`·`warning`·`danger`) and its **`TONE_COLOR`**
+`--color-*` map. Every `tone` prop uses `Tone` or a documented narrowing of it (`Alert`
+and `Toast` drop `primary`/`neutral` — a neutral note is `InfoBox`; `ConfirmDialog` is
+`neutral`/`danger`). **`variant`** is reserved for *structural* style only
+(`Collapsible`, `Accordion`).
+
 ```tsx
-<Alert variant="warning" title="Heads up" onDismiss={() => {}}>Session expires soon.</Alert>
+<Alert tone="warning" title="Heads up" onDismiss={() => {}}>Session expires soon.</Alert>
 
 // ConfirmDialog — controlled:
 <ConfirmDialog open={open} onOpenChange={setOpen} title="Delete this item?"
-  description="This cannot be undone." variant="danger" confirmLabel="Delete"
+  description="This cannot be undone." tone="danger" confirmLabel="Delete"
   onConfirm={() => { setOpen(false) }} />
 
 // Toast — provider once, then imperative:
@@ -300,7 +307,7 @@ const columns: TableColumn<Row>[] = [{ key: 'name', header: 'Name', render: r =>
   options={[{ value: 'a', label: 'Apple' }, { value: 'b', label: 'Banana', disabled: true }]} />
 ```
 
-**`Alert` props:** `variant` (`'info'`), `title`, `children`, `icon` (per-variant; `false`
+**`Alert` props:** `tone` (`'info'`), `title`, `children`, `icon` (per-tone; `false`
 drops it), `onDismiss` (renders a dismiss button), `dismissLabel` (`'Dismiss'`),
 `role` (`'alert'` \| `'status'`), `className`.
 
@@ -320,7 +327,7 @@ preset, pass a custom `icon` node (a lucide icon or an `<Icon>` from `my-react-s
 | `label` | — | Visible label; overrides the preset label. |
 | `showLabel` | `false` | Show the preset's default label without retyping it (ignored when `label` is set). |
 | `showEmoji` | `false` | Render the emoji instead of the SVG — wire to `useIconMode().isEmoji`. |
-| `variant` | preset / `neutral` | `neutral`·`primary`·`secondary`·`success`·`warning`·`danger`·`info`. |
+| `tone` | preset / `neutral` | `primary`·`neutral`·`info`·`success`·`warning`·`danger`. |
 | `size` | `sm` | `xs`·`sm`·`md`·`lg`·`xl` — drives padding, glyph, and label size. |
 | `layout` | `vertical` | `vertical` (glyph over label) or `inline` (glyph left of label). |
 | `active` | — | For `action="star"`: filled + `aria-pressed` when true. |
@@ -340,7 +347,7 @@ preset, pass a custom `icon` node (a lucide icon or an `<Icon>` from `my-react-s
   <ActionButton action="add" showLabel onClick={onAdd} />
   <ActionButton action="delete" showEmoji={useIconMode().isEmoji} onClick={onDelete} />
   <ActionButton action="star" active={isFavorite} onClick={toggleFavorite} />
-  <ActionButton icon={<Upload size={20} />} label="Import" variant="info" onClick={onImport} />
+  <ActionButton icon={<Upload size={20} />} label="Import" tone="info" onClick={onImport} />
 </ActionButtonGroup>
 ```
 

@@ -361,6 +361,13 @@
   border-color: var(--color-info-border);
   color: var(--color-info-strong);
 }
+/* primary is the one tone without a -bg/-border/-strong tint set, so it reads as a
+   solid brand pill (the designed --color-primary / --color-primary-content pairing). */
+.mrs-badge--primary {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--color-primary-content);
+}
 
 /* ── Chip ────────────────────────────────────────────────────────────────── */
 .mrs-chip-group {
@@ -957,12 +964,6 @@
 }
 .mrs-action-btn--primary:hover:not(:disabled) {
   background: var(--color-primary-bg);
-}
-.mrs-action-btn--secondary {
-  color: var(--color-secondary);
-}
-.mrs-action-btn--secondary:hover:not(:disabled) {
-  background: var(--color-secondary-bg);
 }
 .mrs-action-btn--success {
   color: var(--color-success);

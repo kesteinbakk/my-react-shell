@@ -1,12 +1,12 @@
 import type { ReactNode } from 'react';
 import { type VariantProps } from 'class-variance-authority';
 declare const alertVariants: (props?: ({
-    variant?: "success" | "warning" | "danger" | "info" | null | undefined;
+    tone?: "info" | "success" | "warning" | "danger" | null | undefined;
 } & import("class-variance-authority/types").ClassProp) | undefined) => string;
-export type AlertVariant = NonNullable<VariantProps<typeof alertVariants>['variant']>;
+export type AlertTone = NonNullable<VariantProps<typeof alertVariants>['tone']>;
 export interface AlertProps {
-    /** Visual + semantic tone. Defaults to `info`. */
-    variant?: AlertVariant;
+    /** Semantic tone. Defaults to `info`. */
+    tone?: AlertTone;
     /** Optional bold lead line above the body. */
     title?: ReactNode;
     /** The alert body / description. */
@@ -28,5 +28,5 @@ export interface AlertProps {
  * (`--color-<tone>-border`), and AA-legible on-tint text (`--color-<tone>-strong`),
  * with a per-tone leading icon and an optional dismiss control.
  */
-export declare function Alert({ variant, title, children, icon, onDismiss, dismissLabel, role, className, }: AlertProps): import("react").JSX.Element;
+export declare function Alert({ tone, title, children, icon, onDismiss, dismissLabel, role, className, }: AlertProps): import("react").JSX.Element;
 export {};

@@ -1,7 +1,9 @@
 import type { CSSProperties, ReactNode } from 'react'
 import { cn } from './cn'
-import { ACCENT_TONE_COLOR, resolveAccentColor } from './accent'
-import type { AccentPlacement, AccentTone } from './accent'
+import { resolveAccentColor } from './accent'
+import type { AccentPlacement } from './accent'
+import { TONE_COLOR } from './tone'
+import type { Tone } from './tone'
 import type { PhiCardFooter, PhiCardFooterLine, PhiCardFooterLineType, PhiCardSize } from './PhiCard'
 
 // Re-export the footer types (same shape as PhiCard) so consumers import from one place.
@@ -26,8 +28,8 @@ const SIZE_FONT_REM: Record<PhiCardSize, number> = {
 // The golden ratio — height = width / PHI (same constant as PhiCard).
 const PHI = 1.6180339887
 
-/** Semantic accent hue — shared with `PhiCard` (adds `primary` to the original set). */
-export type StatCardTone = AccentTone
+/** Semantic accent hue — the kit's canonical {@link Tone}, shared with `PhiCard`. */
+export type StatCardTone = Tone
 
 // ── Badge ─────────────────────────────────────────────────────────────────────
 
@@ -314,7 +316,7 @@ export function StatCard({
   // defaults to 'neutral', so the non-follow branch is always defined.
   const accentColor = followGauge
     ? completenessFill(gaugeFraction)
-    : resolveAccentColor(tone, color) ?? ACCENT_TONE_COLOR.neutral
+    : resolveAccentColor(tone, color) ?? TONE_COLOR.neutral
 
   // When to drop the accent stripe entirely:
   //  • mode on but no gauge → the top stripe has nothing to follow (no stripe);

@@ -1,10 +1,12 @@
 import type { ReactNode } from 'react'
-import { cva, type VariantProps } from 'class-variance-authority'
+import { cva } from 'class-variance-authority'
 import { cn } from './cn'
+import type { Tone } from './tone'
 
 const badgeVariants = cva('mrs-badge', {
   variants: {
     tone: {
+      primary: 'mrs-badge--primary',
       neutral: 'mrs-badge--neutral',
       success: 'mrs-badge--success',
       warning: 'mrs-badge--warning',
@@ -15,7 +17,7 @@ const badgeVariants = cva('mrs-badge', {
   defaultVariants: { tone: 'neutral' },
 })
 
-export type BadgeTone = NonNullable<VariantProps<typeof badgeVariants>['tone']>
+export type BadgeTone = Tone
 
 export interface BadgeProps {
   /** Semantic tone. Defaults to `neutral`. */

@@ -4,6 +4,7 @@ import { cn } from './cn';
 const badgeVariants = cva('mrs-badge', {
     variants: {
         tone: {
+            primary: 'mrs-badge--primary',
             neutral: 'mrs-badge--neutral',
             success: 'mrs-badge--success',
             warning: 'mrs-badge--warning',

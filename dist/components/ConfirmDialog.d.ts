@@ -15,7 +15,7 @@ export interface ConfirmDialogProps {
     /** Cancel button label. Defaults to `"Cancel"`. */
     cancelLabel?: string;
     /** `danger` makes the confirm button destructive. */
-    variant?: 'default' | 'danger';
+    tone?: 'neutral' | 'danger';
     /** Called when the confirm button is pressed. */
     onConfirm: () => void;
     /** Disables both buttons while an async confirm is in flight. */
@@ -25,6 +25,6 @@ export interface ConfirmDialogProps {
 /**
  * Pre-built confirmation dialog on Radix Dialog (overlay, focus trap, Esc/backdrop
  * close, portal). Styled with the theme tokens; renders its own confirm/cancel
- * buttons (the kit doesn't ship a general Button — that stays consumer-owned).
+ * buttons.
  */
-export declare function ConfirmDialog({ open, onOpenChange, title, description, children, confirmLabel, cancelLabel, variant, onConfirm, loading, className, }: ConfirmDialogProps): import("react").JSX.Element;
+export declare function ConfirmDialog({ open, onOpenChange, title, description, children, confirmLabel, cancelLabel, tone, onConfirm, loading, className, }: ConfirmDialogProps): import("react").JSX.Element;

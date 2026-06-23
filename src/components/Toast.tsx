@@ -8,9 +8,9 @@ import {
 } from 'react'
 import type { ReactNode } from 'react'
 import { createPortal } from 'react-dom'
-import { Alert, type AlertVariant } from './Alert'
+import { Alert, type AlertTone } from './Alert'
 
-export type ToastTone = AlertVariant
+export type ToastTone = AlertTone
 
 export interface ToastOptions {
   /** Semantic tone. Defaults to `info`. */
@@ -105,7 +105,7 @@ export function ToastProvider({ children, duration = 5000 }: ToastProviderProps)
             {toasts.map((t) => (
               <div className="mrs-toast" key={t.id}>
                 <Alert
-                  variant={t.tone}
+                  tone={t.tone}
                   title={t.title}
                   role="status"
                   onDismiss={() => dismiss(t.id)}

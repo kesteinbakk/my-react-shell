@@ -1,9 +1,10 @@
 import type { ReactNode } from 'react';
-import type { AccentPlacement, AccentTone } from './accent';
+import type { AccentPlacement } from './accent';
+import type { Tone } from './tone';
 import type { PhiCardFooter, PhiCardFooterLine, PhiCardFooterLineType, PhiCardSize } from './PhiCard';
 export type { PhiCardFooter as StatCardFooter, PhiCardFooterLine as StatCardFooterLine, PhiCardFooterLineType as StatCardFooterLineType };
-/** Semantic accent hue — shared with `PhiCard` (adds `primary` to the original set). */
-export type StatCardTone = AccentTone;
+/** Semantic accent hue — the kit's canonical {@link Tone}, shared with `PhiCard`. */
+export type StatCardTone = Tone;
 export interface StatCardBadge {
     /** Primary value shown in the badge circle. */
     value: number | string;

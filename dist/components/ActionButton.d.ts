@@ -1,11 +1,12 @@
 import type { ReactNode } from 'react';
-export type ActionButtonVariant = 'neutral' | 'primary' | 'secondary' | 'success' | 'warning' | 'danger' | 'info';
+import type { Tone } from './tone';
+export type ActionButtonTone = Tone;
 export type ActionButtonSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 export type ActionButtonLayout = 'vertical' | 'inline';
 export type ActionType = 'add' | 'edit' | 'delete' | 'copy' | 'share' | 'download' | 'upload' | 'save' | 'search' | 'refresh' | 'settings' | 'star' | 'close' | 'more';
 export interface ActionPreset {
-    /** Default semantic colour for the action. */
-    variant: ActionButtonVariant;
+    /** Default semantic tone for the action. */
+    tone: ActionButtonTone;
     /** Default emoji, shown in emoji mode (`showEmoji`) or as a fallback glyph. */
     emoji: string;
     /** Default English label — the accessible name, and the visible text when `showLabel`. */
@@ -27,8 +28,8 @@ interface ActionButtonBaseProps {
     showEmoji?: boolean;
     /** Native tooltip shown on hover (the `title` attribute). */
     hint?: string;
-    /** Colour variant. Defaults to the preset's variant, or `neutral` for a custom icon. */
-    variant?: ActionButtonVariant;
+    /** Semantic tone. Defaults to the preset's tone, or `neutral` for a custom icon. */
+    tone?: ActionButtonTone;
     /** Size — drives padding, glyph size, and label size. Defaults to `sm`. */
     size?: ActionButtonSize;
     /**
@@ -80,7 +81,7 @@ export type ActionButtonProps = ActionButtonPresetProps | ActionButtonIconProps;
  *
  * Or bring a **custom** glyph for anything else:
  * ```tsx
- * <ActionButton icon={<Download />} label="Export" variant="info" onClick={onExport} />
+ * <ActionButton icon={<Download />} label="Export" tone="info" onClick={onExport} />
  * ```
  *
  * It never imports the i18n or icons modules: pass translated text via `label`,

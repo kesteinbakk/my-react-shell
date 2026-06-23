@@ -1,18 +1,21 @@
-// my-react-shell/components — the opinionated component kit (sub-path
-// `my-react-shell/components`).
+// my-react-shell/components — the component kit (sub-path `my-react-shell/components`).
 //
-// React composites that bake design / layout / behavior decisions on top of
-// shadcn/Radix primitives and render against the semantic theme tokens (light +
-// dark, every palette). Un-opinionated shadcn primitives (Button/Input/Checkbox/…)
-// are NOT shipped — consumers use shadcn directly for those; the kit only ships the
-// pieces that need an opinion. Ship the stylesheet too:
+// The complete component surface: un-opinionated primitives and opinionated
+// composites, all built directly on Radix + `class-variance-authority` and rendered
+// against the semantic theme tokens (light + dark, every palette) with `mrs-`-prefixed
+// CSS — so a consumer needs no shadcn. The kit's convention: `tone` carries semantic
+// colour (the shared `Tone` type), `variant` carries structural style. Ship the
+// stylesheet too:
 //   import 'my-react-shell/components/styles.css'
 // `class-variance-authority`, `clsx`, and `tailwind-merge` are optional peers behind
 // this sub-path, so the package barrel stays the theme core. The kit's canonical
 // doc is docs/specifications/api-reference.md (it ships no separate guide).
 
+export type { Tone } from './tone'
+export { TONE_COLOR } from './tone'
+
 export { Alert } from './Alert'
-export type { AlertProps, AlertVariant } from './Alert'
+export type { AlertProps, AlertTone } from './Alert'
 
 export { Spinner, PageSpinner, SectionSpinner } from './Spinner'
 export type { SpinnerProps, SpinnerBlockProps, SpinnerSize } from './Spinner'
@@ -35,7 +38,7 @@ export type {
   ActionButtonPresetProps,
   ActionButtonIconProps,
   ActionButtonGroupProps,
-  ActionButtonVariant,
+  ActionButtonTone,
   ActionButtonSize,
   ActionButtonLayout,
   ActionType,

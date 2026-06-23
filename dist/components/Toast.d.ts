@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
-import { type AlertVariant } from './Alert';
-export type ToastTone = AlertVariant;
+import { type AlertTone } from './Alert';
+export type ToastTone = AlertTone;
 export interface ToastOptions {
     /** Semantic tone. Defaults to `info`. */
     tone?: ToastTone;

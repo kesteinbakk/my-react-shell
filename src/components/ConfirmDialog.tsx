@@ -18,7 +18,7 @@ export interface ConfirmDialogProps {
   /** Cancel button label. Defaults to `"Cancel"`. */
   cancelLabel?: string
   /** `danger` makes the confirm button destructive. */
-  variant?: 'default' | 'danger'
+  tone?: 'neutral' | 'danger'
   /** Called when the confirm button is pressed. */
   onConfirm: () => void
   /** Disables both buttons while an async confirm is in flight. */
@@ -29,7 +29,7 @@ export interface ConfirmDialogProps {
 /**
  * Pre-built confirmation dialog on Radix Dialog (overlay, focus trap, Esc/backdrop
  * close, portal). Styled with the theme tokens; renders its own confirm/cancel
- * buttons (the kit doesn't ship a general Button — that stays consumer-owned).
+ * buttons.
  */
 export function ConfirmDialog({
   open,
@@ -39,7 +39,7 @@ export function ConfirmDialog({
   children,
   confirmLabel = 'Confirm',
   cancelLabel = 'Cancel',
-  variant = 'default',
+  tone = 'neutral',
   onConfirm,
   loading = false,
   className,
@@ -67,7 +67,7 @@ export function ConfirmDialog({
               type="button"
               className={cn(
                 'mrs-dialog__btn',
-                variant === 'danger' ? 'mrs-dialog__btn--danger' : 'mrs-dialog__btn--primary',
+                tone === 'danger' ? 'mrs-dialog__btn--danger' : 'mrs-dialog__btn--primary',
               )}
               onClick={onConfirm}
               disabled={loading}

@@ -1,27 +1,20 @@
 import type { CSSProperties, ReactNode } from 'react'
 import { cva } from 'class-variance-authority'
 import { cn } from './cn'
+import type { Tone } from './tone'
 
-/* ── Variant / size / layout ──────────────────────────────────────────────── */
+/* ── Tone / size / layout ────────────────────────────────────────────────── */
 
-export type ActionButtonVariant =
-  | 'neutral'
-  | 'primary'
-  | 'secondary'
-  | 'success'
-  | 'warning'
-  | 'danger'
-  | 'info'
+export type ActionButtonTone = Tone
 
 export type ActionButtonSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl'
 export type ActionButtonLayout = 'vertical' | 'inline'
 
 const actionButtonVariants = cva('mrs-action-btn', {
   variants: {
-    variant: {
+    tone: {
       neutral: 'mrs-action-btn--neutral',
       primary: 'mrs-action-btn--primary',
-      secondary: 'mrs-action-btn--secondary',
       success: 'mrs-action-btn--success',
       warning: 'mrs-action-btn--warning',
       danger: 'mrs-action-btn--danger',
@@ -40,7 +33,7 @@ const actionButtonVariants = cva('mrs-action-btn', {
     },
     coloredLabel: { true: 'mrs-action-btn--colored-label' },
   },
-  defaultVariants: { variant: 'neutral', size: 'sm', layout: 'vertical' },
+  defaultVariants: { tone: 'neutral', size: 'sm', layout: 'vertical' },
 })
 
 /** Pixel glyph size per button size — keeps the emoji and the preset SVG in step. */
@@ -184,8 +177,8 @@ export type ActionType =
   | 'more'
 
 export interface ActionPreset {
-  /** Default semantic colour for the action. */
-  variant: ActionButtonVariant
+  /** Default semantic tone for the action. */
+  tone: ActionButtonTone
   /** Default emoji, shown in emoji mode (`showEmoji`) or as a fallback glyph. */
   emoji: string
   /** Default English label — the accessible name, and the visible text when `showLabel`. */
@@ -197,20 +190,20 @@ export interface ActionPreset {
  * default label for each common action. Override any of them per call.
  */
 export const actionPresets: Record<ActionType, ActionPreset> = {
-  add: { variant: 'success', emoji: '➕', label: 'Add' },
-  edit: { variant: 'info', emoji: '✏️', label: 'Edit' },
-  delete: { variant: 'danger', emoji: '🗑️', label: 'Delete' },
-  copy: { variant: 'neutral', emoji: '📋', label: 'Copy' },
-  share: { variant: 'info', emoji: '🔗', label: 'Share' },
-  download: { variant: 'neutral', emoji: '⬇️', label: 'Download' },
-  upload: { variant: 'neutral', emoji: '⬆️', label: 'Upload' },
-  save: { variant: 'primary', emoji: '💾', label: 'Save' },
-  search: { variant: 'neutral', emoji: '🔍', label: 'Search' },
-  refresh: { variant: 'neutral', emoji: '🔄', label: 'Refresh' },
-  settings: { variant: 'neutral', emoji: '⚙️', label: 'Settings' },
-  star: { variant: 'warning', emoji: '⭐', label: 'Favorite' },
-  close: { variant: 'neutral', emoji: '✖️', label: 'Close' },
-  more: { variant: 'neutral', emoji: '⋯', label: 'More' },
+  add: { tone: 'success', emoji: '➕', label: 'Add' },
+  edit: { tone: 'info', emoji: '✏️', label: 'Edit' },
+  delete: { tone: 'danger', emoji: '🗑️', label: 'Delete' },
+  copy: { tone: 'neutral', emoji: '📋', label: 'Copy' },
+  share: { tone: 'info', emoji: '🔗', label: 'Share' },
+  download: { tone: 'neutral', emoji: '⬇️', label: 'Download' },
+  upload: { tone: 'neutral', emoji: '⬆️', label: 'Upload' },
+  save: { tone: 'primary', emoji: '💾', label: 'Save' },
+  search: { tone: 'neutral', emoji: '🔍', label: 'Search' },
+  refresh: { tone: 'neutral', emoji: '🔄', label: 'Refresh' },
+  settings: { tone: 'neutral', emoji: '⚙️', label: 'Settings' },
+  star: { tone: 'warning', emoji: '⭐', label: 'Favorite' },
+  close: { tone: 'neutral', emoji: '✖️', label: 'Close' },
+  more: { tone: 'neutral', emoji: '⋯', label: 'More' },
 }
 
 /* ── Props ────────────────────────────────────────────────────────────────── */
@@ -226,8 +219,8 @@ interface ActionButtonBaseProps {
   showEmoji?: boolean
   /** Native tooltip shown on hover (the `title` attribute). */
   hint?: string
-  /** Colour variant. Defaults to the preset's variant, or `neutral` for a custom icon. */
-  variant?: ActionButtonVariant
+  /** Semantic tone. Defaults to the preset's tone, or `neutral` for a custom icon. */
+  tone?: ActionButtonTone
   /** Size — drives padding, glyph size, and label size. Defaults to `sm`. */
   size?: ActionButtonSize
   /**
@@ -285,7 +278,7 @@ export type ActionButtonProps = ActionButtonPresetProps | ActionButtonIconProps
  *
  * Or bring a **custom** glyph for anything else:
  * ```tsx
- * <ActionButton icon={<Download />} label="Export" variant="info" onClick={onExport} />
+ * <ActionButton icon={<Download />} label="Export" tone="info" onClick={onExport} />
  * ```
  *
  * It never imports the i18n or icons modules: pass translated text via `label`,
@@ -310,10 +303,10 @@ export function ActionButton(props: ActionButtonProps) {
   const active = props.action != null ? props.active : undefined
   const preset = props.action != null ? actionPresets[props.action] : undefined
 
-  // Variant: explicit > preset > neutral. Star is special: amber when active,
+  // Tone: explicit > preset > neutral. Star is special: amber when active,
   // neutral otherwise (with an amber hover, via the star-hover modifier).
-  const variant: ActionButtonVariant =
-    props.variant ?? (isStar ? (active ? 'warning' : 'neutral') : preset?.variant ?? 'neutral')
+  const tone: ActionButtonTone =
+    props.tone ?? (isStar ? (active ? 'warning' : 'neutral') : preset?.tone ?? 'neutral')
 
   const px = ICON_PX[size]
   const resolvedEmoji = props.emoji ?? preset?.emoji
@@ -354,7 +347,7 @@ export function ActionButton(props: ActionButtonProps) {
       aria-label={ariaLabel}
       aria-pressed={isStar ? !!active : undefined}
       className={cn(
-        actionButtonVariants({ variant, size, layout, coloredLabel: coloredLabel || undefined }),
+        actionButtonVariants({ tone, size, layout, coloredLabel: coloredLabel || undefined }),
         isStar && !active && 'mrs-action-btn--star-hover',
         className,
       )}

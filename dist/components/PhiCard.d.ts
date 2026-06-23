@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
-import type { AccentPlacement, AccentTone } from './accent';
+import type { AccentPlacement } from './accent';
+import type { Tone } from './tone';
 /**
  * φ — the golden ratio. Exported so a consumer can size a layout against the exact
  * constant the card uses (a card's rendered height is `width / PHI`).
@@ -86,7 +87,7 @@ export interface PhiCardProps {
      * accent when unset. One of `primary`·`info`·`success`·`warning`·`danger`·`neutral`.
      * `color` overrides it.
      */
-    tone?: AccentTone;
+    tone?: Tone;
     /** Raw CSS color for the accent stripe; overrides `tone`. E.g. `'#7c3aed'`. */
     color?: string;
     /** Where the accent reads: a `'top'` stripe (default) or a `'left'` bar. */
