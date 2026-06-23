@@ -117,19 +117,25 @@ Ship the un-opinionated primitives in the kit idiom. Two implementation tiers:
 Each ships its `…Props` type, a `components.css` block, an `index.ts` export, an
 api-reference row, and a demo section.
 
-### W4 — Convention unification (`tone`)
+### W4 — Convention unification (`tone` / `variant`)
 
-Rule: **`tone`** carries semantic color (`neutral` · `info` · `success` · `warning` ·
-`danger`); **`variant`** carries structural/emphasis style only.
+**Locked convention:** **`tone`** = semantic color; **`variant`** = structural
+style/emphasis. The `tone` vocabulary is `neutral · info · success · warning · danger`
+for status displays, plus `primary` (and `secondary`) for interactive controls that need
+a brand color.
 
-- `Alert` (`variant: info/success/warning/danger`) → **`tone`**. Pure semantic; clean
-  rename. **Breaking.**
-- `ConfirmDialog` (`variant="danger"`) → **`tone="danger"`**. **Breaking.**
-- `ActionButton` — **needs a design decision (see open questions).** Its current
-  `variant` (`neutral/primary/secondary/success/warning/danger/info`) *mixes* emphasis
-  (`primary`/`secondary`/`neutral`) with semantic color — not a clean rename.
+- `Alert` (`variant: info/success/warning/danger`) → **`tone`**. Pure semantic; clean rename.
+- `ConfirmDialog` (`variant: default/danger`) → **`tone`**. Clean rename.
+- `ActionButton` (`variant: neutral/primary/secondary/success/warning/danger/info`) →
+  **`tone`**, same values. **Source-confirmed pure-color axis** — its doc-comments read
+  *"Colour variant"* / *"Default semantic colour"* and it has **no** emphasis axis
+  (structure is the separate `layout` prop). Clean rename, not the entangled case earlier
+  feared. `ActionButtonVariant` → `ActionButtonTone`; `ActionPreset.variant` →
+  `ActionPreset.tone`; CSS classes (`mrs-action-btn--*`) unchanged.
 - Already correct (keep): `Badge`, `StatCard`, `Toast` use `tone`. `Collapsible` /
   `Accordion` use `variant` for structural style — correct, leave.
+
+Breaking renames are fine — see Decisions (the one consumer refactors off shadcn anyway).
 
 ### W5 — Demo (`my-react-shell-demo`)
 
@@ -149,20 +155,21 @@ Rule: **`tone`** carries semantic color (`neutral` · `info` · `success` · `wa
 
 ---
 
-## Open decisions (need a call before/while building)
+## Decisions (locked 2026-06-23)
 
-1. **Rollout breadth** — complete primitive set in one pass, or seed the always-needed
-   ones (`Button`, `Input`, `Textarea`, `Label`, `Checkbox`, `Switch`, `Tooltip`,
-   `Card`) and let rule-of-two pull the rest? *(User leaning: go full now.)*
-2. **`Button` API** — mirror shadcn's API (`variant: default/destructive/outline/
-   secondary/ghost/link` + `size`) for near-mechanical consumer migration, **or** impose
-   our `tone`/`variant` convention and rewrite call sites? Trade-off: migration cost vs
-   convention purity.
-3. **`ActionButton`** — keep `variant` as a pure *emphasis* axis and drop the semantic
-   values, **or** split into `variant` (emphasis) + `tone` (semantic)? It's the one
-   component where the two axes are genuinely entangled.
-4. **`tone` rename is breaking** — confirm we migrate evaluering in lockstep (link-loop
-   dev sees the break immediately; the git-dep/prod build lags until a tag bump).
+1. **Rollout breadth → complete set in one pass.** Ship the whole primitive surface now.
+2. **`Button` API → our convention, never shadcn's.** Mirroring shadcn's `variant`
+   grab-bag would re-import the exact problem this task removes. The API is two
+   orthogonal axes + size:
+   - `variant` (structural fill/emphasis): `solid · soft · outline · ghost · link` — default `solid`
+   - `tone` (semantic color): `primary · neutral · info · success · warning · danger` — default `primary`
+   - `size`: `sm · md · lg` — default `md`
+
+   So: primary `<Button>Save</Button>` · secondary `<Button variant="outline">Cancel</Button>`
+   · destructive `<Button tone="danger">Delete</Button>` · quiet `<Button variant="ghost">`.
+3. **`ActionButton` → clean `variant`→`tone` rename** (pure-color axis; see W4).
+4. **Breaking renames accepted — no compat shims.** Migration cost is not a factor: the
+   single consumer (a small project) drops shadcn and refactors regardless. Clean break.
 
 ---
 
