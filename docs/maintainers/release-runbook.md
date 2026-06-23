@@ -16,7 +16,7 @@ A consumer depends on **only `my-react-shell`**. The shared `themes` palette CSS
 transitive `themes` git-dep for a consumer to resolve or authenticate to. The
 shell↔themes pair is contract-coupled, so the shell release **owns** the themes
 release: `pnpm release` in the shell auto-cascades into themes. See
-[distribution-model.md](distribution-model.md).
+[distribution-model.md](../guides/distribution-model.md).
 
 ## The chain
 
