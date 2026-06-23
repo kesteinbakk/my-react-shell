@@ -22,6 +22,13 @@
   --mrs-elevation-popover: 0 4px 12px var(--color-shadow-md), 0 18px 44px var(--color-shadow-lg);
 }
 
+/* All .mrs-* component rules live in @layer components so that a consumer's
+   Tailwind utilities (which Tailwind v4 places in @layer utilities) always
+   win at equal specificity — making className="w-16" etc. reliably override
+   any shell default. The :root elevation vars above stay unlayered so they
+   are available before the layer is parsed. */
+@layer components {
+
 /* ── Alert ───────────────────────────────────────────────────────────────── */
 .mrs-alert {
   display: flex;
@@ -3664,3 +3671,5 @@
   background: var(--color-surface-raised);
   box-shadow: var(--mrs-elevation-popover);
 }
+
+} /* end @layer components */
