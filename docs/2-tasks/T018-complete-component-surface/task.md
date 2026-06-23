@@ -117,25 +117,49 @@ Ship the un-opinionated primitives in the kit idiom. Two implementation tiers:
 Each ships its `…Props` type, a `components.css` block, an `index.ts` export, an
 api-reference row, and a demo section.
 
-### W4 — Convention unification (`tone` / `variant`)
+### W4 — `tone` / `variant` consistency cleanup (whole kit)
 
-**Locked convention:** **`tone`** = semantic color; **`variant`** = structural
-style/emphasis. The `tone` vocabulary is `neutral · info · success · warning · danger`
-for status displays, plus `primary` (and `secondary`) for interactive controls that need
-a brand color.
+**Convention (locked):** `tone` = semantic color; `variant` = structural style/emphasis.
 
-- `Alert` (`variant: info/success/warning/danger`) → **`tone`**. Pure semantic; clean rename.
-- `ConfirmDialog` (`variant: default/danger`) → **`tone`**. Clean rename.
-- `ActionButton` (`variant: neutral/primary/secondary/success/warning/danger/info`) →
-  **`tone`**, same values. **Source-confirmed pure-color axis** — its doc-comments read
-  *"Colour variant"* / *"Default semantic colour"* and it has **no** emphasis axis
-  (structure is the separate `layout` prop). Clean rename, not the entangled case earlier
-  feared. `ActionButtonVariant` → `ActionButtonTone`; `ActionPreset.variant` →
-  `ActionPreset.tone`; CSS classes (`mrs-action-btn--*`) unchanged.
-- Already correct (keep): `Badge`, `StatCard`, `Toast` use `tone`. `Collapsible` /
-  `Accordion` use `variant` for structural style — correct, leave.
+**Canonical `Tone`.** Introduce one shared semantic-color type for the whole kit,
+promoted from today's `accent.ts` `AccentTone` (which already maps each value → a
+`--color-*` token):
 
-Breaking renames are fine — see Decisions (the one consumer refactors off shadcn anyway).
+```ts
+type Tone = 'primary' | 'neutral' | 'info' | 'success' | 'warning' | 'danger'
+```
+
+Components use the canonical `Tone` or a documented narrowing of it; the `--color-*`
+mapping stays in one place. The new `Button` and the existing `ActionButton` use the
+full `Tone`.
+
+**Full audit (verified 2026-06-23 from source):**
+
+| Component | Today | Action |
+|---|---|---|
+| `Badge` | `tone` — neutral/info/success/warning/danger | ✓ name correct → adopt canonical `Tone` (gains `primary`) |
+| `StatCard` | `tone: AccentTone` | ✓ → `Tone` (AccentTone promoted to the shared type) |
+| `PhiCard` | `tone: AccentTone` | ✓ → `Tone` |
+| `Toast` | `tone: ToastTone = AlertVariant` | ✓ name correct; type follows Alert → `AlertTone` |
+| `Alert` | **`variant`** — info/success/warning/danger | **rename → `tone`**; keeps its no-`neutral` set by design (InfoBox is the neutral sibling) |
+| `ConfirmDialog` | **`variant: default/danger`** | **rename → `tone: 'neutral' \| 'danger'`** |
+| `ActionButton` | **`variant`** — …/secondary/… (pure color) | **rename → `tone`**; drop the unused `secondary` to land on canonical `Tone`; `ActionPreset.variant` → `ActionPreset.tone` |
+| `Collapsible` | `variant` — default/bordered/ghost/filled | ✓ structural — leave |
+| `Accordion` | `variant` — default/bordered/separated | ✓ structural — leave |
+
+**Follow-through, easy to miss:**
+- `Toast` renders an `<Alert>` internally — its internal `variant=` → `tone=`.
+- Rename every `…Variant` type that's actually a *color* to `…Tone` (`AlertVariant` →
+  `AlertTone`, `ActionButtonVariant` → `ActionButtonTone`, `ToastTone` re-points to
+  `AlertTone`); the genuinely structural ones keep `…Variant` (`AccordionVariant`,
+  `CollapsibleVariant`). CSS class names (`mrs-*--success` etc.) are unaffected.
+
+**Two judgment calls (decided, reversible):** Badge gains `primary` (harmless superset,
+buys consistency); ActionButton drops `secondary` (no preset uses it; not in canonical
+`Tone`).
+
+All breaking — no compat shims (see Decisions). Each rename updates the component, its
+type exports, the api-reference rows, and the demo kit pages, then rebuilds `dist/`.
 
 ### W5 — Demo (`my-react-shell-demo`)
 
