@@ -43,7 +43,7 @@ export { Skeleton } from './Skeleton'
 export type { SkeletonProps } from './Skeleton'
 
 export { Dialog } from './Dialog'
-export type { DialogProps } from './Dialog'
+export type { DialogProps, DialogSize } from './Dialog'
 
 export { Popover } from './Popover'
 export type { PopoverProps, PopoverAlign, PopoverSide } from './Popover'

@@ -2,6 +2,9 @@ import type { ReactNode } from 'react'
 import * as RadixDialog from '@radix-ui/react-dialog'
 import { cn } from './cn'
 
+/** Outer width of the dialog card. `full` fills the viewport (minus a small inset). */
+export type DialogSize = 'sm' | 'md' | 'lg' | 'xl' | 'full'
+
 export interface DialogProps {
   /** Controlled open state. */
   open: boolean
@@ -9,16 +12,32 @@ export interface DialogProps {
   onOpenChange: (open: boolean) => void
   /** Dialog heading — required (also the accessible name). */
   title: ReactNode
+  /** Optional control rendered on the title row, next to the heading (standard mode). */
+  titleActions?: ReactNode
   /** Supporting line under the title. */
   description?: ReactNode
   /** Dialog body. */
   children?: ReactNode
   /** Optional content for the bottom actions row (e.g. buttons). */
   footer?: ReactNode
+  /** Outer width. Defaults to `md`. */
+  size?: DialogSize
+  /**
+   * Full-bleed content mode: the dialog drops its own padding/spacing and the consumer
+   * owns the entire inner layout (e.g. a sticky header band + a scrolling body, an
+   * edge-to-edge viewer). `title` is still required and kept as the accessible name
+   * (visually hidden); render your own visible header inside `children`. The `footer`
+   * slot is ignored in this mode.
+   */
+  bleed?: boolean
   /** Render the top-right ✕ close button. Defaults to `true`. */
   showClose?: boolean
   /** Accessible label for the ✕ close button. Defaults to `"Close"`. */
   closeLabel?: string
+  /** Close when the backdrop is clicked. Defaults to `true`; set `false` to guard unsaved edits. */
+  closeOnBackdrop?: boolean
+  /** Close when Esc is pressed. Defaults to `true`. */
+  closeOnEsc?: boolean
   className?: string
 }
 
@@ -26,6 +45,11 @@ export interface DialogProps {
  * General-purpose controlled dialog on Radix Dialog (overlay, focus trap, Esc/backdrop
  * close, portal). Unlike `ConfirmDialog`, it renders no buttons of its own — pass your
  * own body in `children` and any actions in `footer`. Styled with the theme tokens.
+ *
+ * The content caps at the viewport height and the body scrolls within it. For dialogs
+ * that aren't the standard padded card — a full-bleed viewer, a custom sticky header —
+ * use `bleed` and own the inner layout. `size` sets the width; `titleActions` puts a
+ * control on the heading row; `closeOnBackdrop`/`closeOnEsc` control what dismisses it.
  *
  * ```tsx
  * <Dialog
@@ -37,29 +61,74 @@ export interface DialogProps {
  * >
  *   <Input value={name} onChange={(e) => setName(e.target.value)} />
  * </Dialog>
+ *
+ * // Full-bleed viewer that won't discard on backdrop click:
+ * <Dialog open={open} onOpenChange={setOpen} title="Document" size="xl" bleed closeOnBackdrop={false}>
+ *   <header className="…sticky header…">…</header>
+ *   <div className="…scrolling body…">…</div>
+ * </Dialog>
  * ```
  */
 export function Dialog({
   open,
   onOpenChange,
   title,
+  titleActions,
   description,
   children,
   footer,
+  size = 'md',
+  bleed = false,
   showClose = true,
   closeLabel = 'Close',
+  closeOnBackdrop = true,
+  closeOnEsc = true,
   className,
 }: DialogProps) {
   return (
     <RadixDialog.Root open={open} onOpenChange={onOpenChange}>
       <RadixDialog.Portal>
         <RadixDialog.Overlay className="mrs-dialog__overlay" />
-        <RadixDialog.Content className={cn('mrs-dialog', className)}>
-          <RadixDialog.Title className="mrs-dialog__title">{title}</RadixDialog.Title>
-          {description != null && (
-            <RadixDialog.Description className="mrs-dialog__desc">
-              {description}
-            </RadixDialog.Description>
+        <RadixDialog.Content
+          className={cn(
+            'mrs-dialog',
+            `mrs-dialog--${size}`,
+            bleed && 'mrs-dialog--bleed',
+            className,
+          )}
+          onPointerDownOutside={closeOnBackdrop ? undefined : (e) => e.preventDefault()}
+          onInteractOutside={closeOnBackdrop ? undefined : (e) => e.preventDefault()}
+          onEscapeKeyDown={closeOnEsc ? undefined : (e) => e.preventDefault()}
+        >
+          {bleed ? (
+            <>
+              {/* Accessible name only — the visible header lives in children. */}
+              <RadixDialog.Title className="mrs-dialog__title mrs-sr-only">
+                {title}
+              </RadixDialog.Title>
+              {description != null && (
+                <RadixDialog.Description className="mrs-sr-only">
+                  {description}
+                </RadixDialog.Description>
+              )}
+              {children}
+            </>
+          ) : (
+            <>
+              <div className="mrs-dialog__header">
+                <RadixDialog.Title className="mrs-dialog__title">{title}</RadixDialog.Title>
+                {titleActions != null && (
+                  <div className="mrs-dialog__title-actions">{titleActions}</div>
+                )}
+              </div>
+              {description != null && (
+                <RadixDialog.Description className="mrs-dialog__desc">
+                  {description}
+                </RadixDialog.Description>
+              )}
+              {children != null && <div className="mrs-dialog__body">{children}</div>}
+              {footer != null && <div className="mrs-dialog__actions">{footer}</div>}
+            </>
           )}
           {showClose && (
             <RadixDialog.Close className="mrs-dialog__close" aria-label={closeLabel}>
@@ -79,8 +148,6 @@ export function Dialog({
               </svg>
             </RadixDialog.Close>
           )}
-          {children != null && <div className="mrs-dialog__body">{children}</div>}
-          {footer != null && <div className="mrs-dialog__actions">{footer}</div>}
         </RadixDialog.Content>
       </RadixDialog.Portal>
     </RadixDialog.Root>
