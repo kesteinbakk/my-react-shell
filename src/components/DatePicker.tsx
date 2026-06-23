@@ -28,6 +28,8 @@ export interface DatePickerProps {
   disabled?: boolean
   /** Accessible label for the trigger button. */
   'aria-label'?: string
+  /** Stretch to fill the available container width. Defaults to `false`. */
+  fullWidth?: boolean
   className?: string
 }
 
@@ -69,6 +71,7 @@ export function DatePicker({
   startMonth,
   endMonth,
   disabled,
+  fullWidth = false,
   className,
   ...rest
 }: DatePickerProps) {
@@ -91,7 +94,7 @@ export function DatePicker({
           disabled={disabled}
           aria-label={rest['aria-label']}
           data-empty={selected ? undefined : ''}
-          className={cn('mrs-datepicker__trigger', className)}
+          className={cn('mrs-datepicker__trigger', fullWidth && 'mrs-datepicker__trigger--full', className)}
         >
           <CalendarGlyph />
           <span className="mrs-datepicker__label">

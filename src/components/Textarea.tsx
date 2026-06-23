@@ -5,6 +5,8 @@ import { useDebounce } from './useDebounce'
 export interface TextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
   /** Error state — sets `aria-invalid` and the error styling. */
   invalid?: boolean
+  /** Stretch to fill the available container width. Defaults to `false`. */
+  fullWidth?: boolean
   /** Fires `debounceMs` after the user stops typing, with the current value. */
   onDebouncedChange?: (value: string) => void
   /** Debounce delay in ms for `onDebouncedChange` (default: 500). */
@@ -25,6 +27,7 @@ export interface TextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElemen
  */
 export function Textarea({
   invalid = false,
+  fullWidth = false,
   className,
   onDebouncedChange,
   debounceMs = 500,
@@ -43,7 +46,7 @@ export function Textarea({
 
   return (
     <textarea
-      className={cn('mrs-textarea', invalid && 'mrs-textarea--invalid', className)}
+      className={cn('mrs-textarea', invalid && 'mrs-textarea--invalid', fullWidth && 'mrs-textarea--full', className)}
       aria-invalid={invalid || undefined}
       onChange={handleChange}
       {...rest}

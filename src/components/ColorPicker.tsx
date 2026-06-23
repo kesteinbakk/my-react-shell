@@ -40,6 +40,8 @@ export interface ColorPickerProps {
   disabled?: boolean
   /** Accessible label for the trigger (falls back to a string `label`). */
   'aria-label'?: string
+  /** Stretch to fill the available container width. Defaults to `false`. */
+  fullWidth?: boolean
   className?: string
 }
 
@@ -106,6 +108,7 @@ export function ColorPicker({
   align = 'start',
   placeholder = 'Pick a color',
   disabled,
+  fullWidth = false,
   className,
   ...rest
 }: ColorPickerProps) {
@@ -119,7 +122,7 @@ export function ColorPicker({
   const current = value && value !== '' ? value : DEFAULT_SEED[format]
 
   return (
-    <div className={cn('mrs-color-picker', className)}>
+    <div className={cn('mrs-color-picker', fullWidth && 'mrs-color-picker--full', className)}>
       {label != null && <span className="mrs-color-picker__label">{label}</span>}
       {description != null && <p className="mrs-color-picker__desc">{description}</p>}
 

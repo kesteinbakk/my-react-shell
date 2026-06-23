@@ -13,6 +13,8 @@ export interface SegmentedControlProps<T extends string> {
   value: T
   onChange: (value: T) => void
   size?: 'sm' | 'md'
+  /** Stretch to fill the available container width. Defaults to `false`. */
+  fullWidth?: boolean
   /** Accessible label for the group. */
   'aria-label'?: string
   className?: string
@@ -27,6 +29,7 @@ export function SegmentedControl<T extends string>({
   value,
   onChange,
   size = 'md',
+  fullWidth = false,
   className,
   ...rest
 }: SegmentedControlProps<T>) {
@@ -34,7 +37,7 @@ export function SegmentedControl<T extends string>({
     <div
       role="radiogroup"
       aria-label={rest['aria-label']}
-      className={cn('mrs-segmented', `mrs-segmented--${size}`, className)}
+      className={cn('mrs-segmented', `mrs-segmented--${size}`, fullWidth && 'mrs-segmented--full', className)}
     >
       {options.map((opt) => {
         const active = opt.value === value

@@ -14,7 +14,7 @@ import { useDebounce } from './useDebounce';
  * <Textarea onDebouncedChange={(v) => save(v)} debounceMs={800} />
  * ```
  */
-export function Textarea({ invalid = false, className, onDebouncedChange, debounceMs = 500, onChange, ...rest }) {
+export function Textarea({ invalid = false, fullWidth = false, className, onDebouncedChange, debounceMs = 500, onChange, ...rest }) {
     const scheduleDebounced = useDebounce(onDebouncedChange, debounceMs);
     const handleChange = onChange || onDebouncedChange
         ? (e) => {
@@ -22,5 +22,5 @@ export function Textarea({ invalid = false, className, onDebouncedChange, deboun
             scheduleDebounced(e.target.value);
         }
         : undefined;
-    return (_jsx("textarea", { className: cn('mrs-textarea', invalid && 'mrs-textarea--invalid', className), "aria-invalid": invalid || undefined, onChange: handleChange, ...rest }));
+    return (_jsx("textarea", { className: cn('mrs-textarea', invalid && 'mrs-textarea--invalid', fullWidth && 'mrs-textarea--full', className), "aria-invalid": invalid || undefined, onChange: handleChange, ...rest }));
 }

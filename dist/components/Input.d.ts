@@ -8,6 +8,8 @@ export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
      * (not `size`) so it never clashes with the native `<input size>` attribute.
      */
     inputSize?: InputSize;
+    /** Stretch to fill the available container width. Defaults to `false`. */
+    fullWidth?: boolean;
     /** Fires `debounceMs` after the user stops typing, with the current value. */
     onDebouncedChange?: (value: string) => void;
     /** Debounce delay in ms for `onDebouncedChange` (default: 500). */
@@ -26,4 +28,4 @@ export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
  * <Input onDebouncedChange={(v) => search(v)} debounceMs={300} />
  * ```
  */
-export declare function Input({ invalid, inputSize, className, onDebouncedChange, debounceMs, onChange, ...rest }: InputProps): import("react").JSX.Element;
+export declare function Input({ invalid, inputSize, fullWidth, className, onDebouncedChange, debounceMs, onChange, ...rest }: InputProps): import("react").JSX.Element;

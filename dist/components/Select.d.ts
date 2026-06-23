@@ -16,6 +16,8 @@ export interface SelectProps {
     'aria-label'?: string;
     /** Trigger height / padding — matches the `Input` size scale. Defaults to `'md'`. */
     size?: SelectSize;
+    /** Stretch to fill the available container width. Defaults to `false`. */
+    fullWidth?: boolean;
     className?: string;
 }
 /**
@@ -23,4 +25,4 @@ export interface SelectProps {
  * handling), styled on the theme tokens. Pass an `options` list; controlled via
  * `value` / `onValueChange`.
  */
-export declare function Select({ options, value, onValueChange, placeholder, disabled, size, className, ...rest }: SelectProps): import("react").JSX.Element;
+export declare function Select({ options, value, onValueChange, placeholder, disabled, size, fullWidth, className, ...rest }: SelectProps): import("react").JSX.Element;

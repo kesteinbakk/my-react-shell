@@ -13,6 +13,7 @@ const inputVariants = cva('mrs-input', {
       lg: 'mrs-input--lg',
     },
     invalid: { true: 'mrs-input--invalid' },
+    fullWidth: { true: 'mrs-input--full' },
   },
   defaultVariants: { inputSize: 'md' },
 })
@@ -25,6 +26,8 @@ export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
    * (not `size`) so it never clashes with the native `<input size>` attribute.
    */
   inputSize?: InputSize
+  /** Stretch to fill the available container width. Defaults to `false`. */
+  fullWidth?: boolean
   /** Fires `debounceMs` after the user stops typing, with the current value. */
   onDebouncedChange?: (value: string) => void
   /** Debounce delay in ms for `onDebouncedChange` (default: 500). */
@@ -47,6 +50,7 @@ export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
 export function Input({
   invalid = false,
   inputSize = 'md',
+  fullWidth = false,
   className,
   onDebouncedChange,
   debounceMs = 500,
@@ -65,7 +69,7 @@ export function Input({
 
   return (
     <input
-      className={cn(inputVariants({ inputSize, invalid: invalid || undefined }), className)}
+      className={cn(inputVariants({ inputSize, invalid: invalid || undefined, fullWidth: fullWidth || undefined }), className)}
       aria-invalid={invalid || undefined}
       onChange={handleChange}
       {...rest}

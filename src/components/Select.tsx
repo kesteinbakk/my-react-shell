@@ -21,6 +21,8 @@ export interface SelectProps {
   'aria-label'?: string
   /** Trigger height / padding — matches the `Input` size scale. Defaults to `'md'`. */
   size?: SelectSize
+  /** Stretch to fill the available container width. Defaults to `false`. */
+  fullWidth?: boolean
   className?: string
 }
 
@@ -66,13 +68,14 @@ export function Select({
   placeholder = 'Select…',
   disabled,
   size = 'md',
+  fullWidth = false,
   className,
   ...rest
 }: SelectProps) {
   return (
     <RadixSelect.Root value={value} onValueChange={onValueChange} disabled={disabled}>
       <RadixSelect.Trigger
-        className={cn('mrs-select__trigger', `mrs-select__trigger--${size}`, className)}
+        className={cn('mrs-select__trigger', `mrs-select__trigger--${size}`, fullWidth && 'mrs-select__trigger--full', className)}
         aria-label={rest['aria-label']}
       >
         <RadixSelect.Value placeholder={placeholder} />

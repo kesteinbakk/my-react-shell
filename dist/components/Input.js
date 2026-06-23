@@ -11,6 +11,7 @@ const inputVariants = cva('mrs-input', {
             lg: 'mrs-input--lg',
         },
         invalid: { true: 'mrs-input--invalid' },
+        fullWidth: { true: 'mrs-input--full' },
     },
     defaultVariants: { inputSize: 'md' },
 });
@@ -27,7 +28,7 @@ const inputVariants = cva('mrs-input', {
  * <Input onDebouncedChange={(v) => search(v)} debounceMs={300} />
  * ```
  */
-export function Input({ invalid = false, inputSize = 'md', className, onDebouncedChange, debounceMs = 500, onChange, ...rest }) {
+export function Input({ invalid = false, inputSize = 'md', fullWidth = false, className, onDebouncedChange, debounceMs = 500, onChange, ...rest }) {
     const scheduleDebounced = useDebounce(onDebouncedChange, debounceMs);
     const handleChange = onChange || onDebouncedChange
         ? (e) => {
@@ -35,5 +36,5 @@ export function Input({ invalid = false, inputSize = 'md', className, onDebounce
             scheduleDebounced(e.target.value);
         }
         : undefined;
-    return (_jsx("input", { className: cn(inputVariants({ inputSize, invalid: invalid || undefined }), className), "aria-invalid": invalid || undefined, onChange: handleChange, ...rest }));
+    return (_jsx("input", { className: cn(inputVariants({ inputSize, invalid: invalid || undefined, fullWidth: fullWidth || undefined }), className), "aria-invalid": invalid || undefined, onChange: handleChange, ...rest }));
 }

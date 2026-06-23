@@ -22,6 +22,8 @@ export interface DatePickerProps {
     disabled?: boolean;
     /** Accessible label for the trigger button. */
     'aria-label'?: string;
+    /** Stretch to fill the available container width. Defaults to `false`. */
+    fullWidth?: boolean;
     className?: string;
 }
 /**
@@ -35,4 +37,4 @@ export interface DatePickerProps {
  * <DatePicker value={date} onChange={setDate} disabledDays={{ before: new Date() }} />
  * ```
  */
-export declare function DatePicker({ value, defaultValue, onChange, placeholder, displayFormat, disabledDays, startMonth, endMonth, disabled, className, ...rest }: DatePickerProps): import("react").JSX.Element;
+export declare function DatePicker({ value, defaultValue, onChange, placeholder, displayFormat, disabledDays, startMonth, endMonth, disabled, fullWidth, className, ...rest }: DatePickerProps): import("react").JSX.Element;

@@ -2,6 +2,8 @@ import { type TextareaHTMLAttributes } from 'react';
 export interface TextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
     /** Error state — sets `aria-invalid` and the error styling. */
     invalid?: boolean;
+    /** Stretch to fill the available container width. Defaults to `false`. */
+    fullWidth?: boolean;
     /** Fires `debounceMs` after the user stops typing, with the current value. */
     onDebouncedChange?: (value: string) => void;
     /** Debounce delay in ms for `onDebouncedChange` (default: 500). */
@@ -19,4 +21,4 @@ export interface TextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElemen
  * <Textarea onDebouncedChange={(v) => save(v)} debounceMs={800} />
  * ```
  */
-export declare function Textarea({ invalid, className, onDebouncedChange, debounceMs, onChange, ...rest }: TextareaProps): import("react").JSX.Element;
+export declare function Textarea({ invalid, fullWidth, className, onDebouncedChange, debounceMs, onChange, ...rest }: TextareaProps): import("react").JSX.Element;

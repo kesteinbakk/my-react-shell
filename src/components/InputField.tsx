@@ -11,6 +11,8 @@ export interface InputFieldProps extends Omit<InputHTMLAttributes<HTMLInputEleme
   error?: ReactNode
   /** Class for the wrapping field; `className` styles the input itself. */
   containerClassName?: string
+  /** Stretch to fill the available container width. Defaults to `false`. */
+  fullWidth?: boolean
   /** Fires `debounceMs` after the user stops typing, with the current value. */
   onDebouncedChange?: (value: string) => void
   /** Debounce delay in ms for `onDebouncedChange` (default: 500). */
@@ -27,6 +29,7 @@ export function InputField({
   description,
   error,
   containerClassName,
+  fullWidth = false,
   className,
   onDebouncedChange,
   debounceMs = 500,
@@ -49,7 +52,7 @@ export function InputField({
       : undefined
 
   return (
-    <div className={cn('mrs-field', containerClassName)}>
+    <div className={cn('mrs-field', fullWidth && 'mrs-field--full', containerClassName)}>
       {label != null && (
         <label htmlFor={id} className="mrs-field__label">
           {label}

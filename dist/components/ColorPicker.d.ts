@@ -29,6 +29,8 @@ export interface ColorPickerProps {
     disabled?: boolean;
     /** Accessible label for the trigger (falls back to a string `label`). */
     'aria-label'?: string;
+    /** Stretch to fill the available container width. Defaults to `false`. */
+    fullWidth?: boolean;
     className?: string;
 }
 /**
@@ -42,4 +44,4 @@ export interface ColorPickerProps {
  * Controlled via `value` / `onChange`; persists nothing. `value` is always a
  * directly-usable CSS color string — drop it into a `style`/`background`.
  */
-export declare function ColorPicker({ value, onChange, colors, format, label, description, align, placeholder, disabled, className, ...rest }: ColorPickerProps): import("react").JSX.Element;
+export declare function ColorPicker({ value, onChange, colors, format, label, description, align, placeholder, disabled, fullWidth, className, ...rest }: ColorPickerProps): import("react").JSX.Element;

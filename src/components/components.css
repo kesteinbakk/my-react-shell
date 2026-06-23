@@ -610,7 +610,6 @@
 
 /* ── Input (native <input>) ──────────────────────────────────────────────── */
 .mrs-input {
-  width: 100%;
   border: 1px solid var(--color-border-primary);
   border-radius: 0.5rem;
   background: var(--color-surface-primary);
@@ -653,10 +652,12 @@
   padding: 0 0.875rem;
   font-size: 1rem;
 }
+.mrs-input--full {
+  width: 100%;
+}
 
 /* ── Textarea (native <textarea>) ────────────────────────────────────────── */
 .mrs-textarea {
-  width: 100%;
   min-height: 4.5rem;
   padding: 0.5rem 0.75rem;
   border: 1px solid var(--color-border-primary);
@@ -689,6 +690,9 @@
 }
 .mrs-textarea--invalid:focus {
   box-shadow: 0 0 0 3px var(--color-danger-bg);
+}
+.mrs-textarea--full {
+  width: 100%;
 }
 
 /* ── Label (native <label>) ──────────────────────────────────────────────── */
@@ -1235,6 +1239,9 @@
   flex-direction: column;
   gap: 0.375rem;
 }
+.mrs-field--full {
+  width: 100%;
+}
 .mrs-field__label {
   font-size: 0.875rem;
   font-weight: 500;
@@ -1323,6 +1330,9 @@
   opacity: 0.5;
   cursor: not-allowed;
 }
+.mrs-segmented--full {
+  width: 100%;
+}
 
 /* ── Select (Radix Select) ───────────────────────────────────────────────── */
 .mrs-select__trigger {
@@ -1373,6 +1383,9 @@
   padding: 0 0.875rem;
   font-size: 1rem;
   min-width: 12rem;
+}
+.mrs-select__trigger--full {
+  width: 100%;
 }
 .mrs-select__chevron {
   display: inline-flex;
@@ -2232,6 +2245,12 @@
 .mrs-color-picker__trigger:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+.mrs-color-picker--full {
+  width: 100%;
+}
+.mrs-color-picker--full .mrs-color-picker__trigger {
+  width: 100%;
 }
 
 /* The swatch preview chip — a 1px inner ring keeps light/pale colours legible on
@@ -3649,6 +3668,9 @@
 .mrs-datepicker__trigger:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+.mrs-datepicker__trigger--full {
+  width: 100%;
 }
 .mrs-datepicker__trigger[data-empty] .mrs-datepicker__label {
   color: var(--color-text-tertiary);

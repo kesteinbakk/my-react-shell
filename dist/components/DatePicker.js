@@ -16,7 +16,7 @@ const CalendarGlyph = () => (_jsxs("svg", { width: 16, height: 16, viewBox: "0 0
  * <DatePicker value={date} onChange={setDate} disabledDays={{ before: new Date() }} />
  * ```
  */
-export function DatePicker({ value, defaultValue, onChange, placeholder = 'Pick a date', displayFormat = 'PP', disabledDays, startMonth, endMonth, disabled, className, ...rest }) {
+export function DatePicker({ value, defaultValue, onChange, placeholder = 'Pick a date', displayFormat = 'PP', disabledDays, startMonth, endMonth, disabled, fullWidth = false, className, ...rest }) {
     const [open, setOpen] = useState(false);
     // Support uncontrolled use: hold an internal selection only when `value` is absent.
     const [internal, setInternal] = useState(defaultValue);
@@ -28,5 +28,5 @@ export function DatePicker({ value, defaultValue, onChange, placeholder = 'Pick 
         if (date)
             setOpen(false);
     };
-    return (_jsxs(RadixPopover.Root, { open: open, onOpenChange: setOpen, children: [_jsx(RadixPopover.Trigger, { asChild: true, children: _jsxs("button", { type: "button", disabled: disabled, "aria-label": rest['aria-label'], "data-empty": selected ? undefined : '', className: cn('mrs-datepicker__trigger', className), children: [_jsx(CalendarGlyph, {}), _jsx("span", { className: "mrs-datepicker__label", children: selected ? formatDate(selected, displayFormat) : placeholder })] }) }), _jsx(RadixPopover.Portal, { children: _jsx(RadixPopover.Content, { className: "mrs-datepicker__popover", align: "start", sideOffset: 8, children: _jsx(Calendar, { mode: "single", selected: selected, onSelect: handleSelect, defaultMonth: selected, disabled: disabledDays, startMonth: startMonth, endMonth: endMonth, autoFocus: true }) }) })] }));
+    return (_jsxs(RadixPopover.Root, { open: open, onOpenChange: setOpen, children: [_jsx(RadixPopover.Trigger, { asChild: true, children: _jsxs("button", { type: "button", disabled: disabled, "aria-label": rest['aria-label'], "data-empty": selected ? undefined : '', className: cn('mrs-datepicker__trigger', fullWidth && 'mrs-datepicker__trigger--full', className), children: [_jsx(CalendarGlyph, {}), _jsx("span", { className: "mrs-datepicker__label", children: selected ? formatDate(selected, displayFormat) : placeholder })] }) }), _jsx(RadixPopover.Portal, { children: _jsx(RadixPopover.Content, { className: "mrs-datepicker__popover", align: "start", sideOffset: 8, children: _jsx(Calendar, { mode: "single", selected: selected, onSelect: handleSelect, defaultMonth: selected, disabled: disabledDays, startMonth: startMonth, endMonth: endMonth, autoFocus: true }) }) })] }));
 }
