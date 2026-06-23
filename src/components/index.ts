@@ -124,6 +124,21 @@ export type { SegmentedControlProps, SegmentedOption } from './SegmentedControl'
 export { Select } from './Select'
 export type { SelectProps, SelectOption } from './Select'
 
+export { Checkbox } from './Checkbox'
+export type { CheckboxProps } from './Checkbox'
+
+export { Switch } from './Switch'
+export type { SwitchProps } from './Switch'
+
+export { RadioGroup } from './RadioGroup'
+export type { RadioGroupProps, RadioOption } from './RadioGroup'
+
+export { Tabs } from './Tabs'
+export type { TabsProps, TabItem } from './Tabs'
+
+export { Tooltip } from './Tooltip'
+export type { TooltipProps } from './Tooltip'
+
 export { ColorPicker } from './ColorPicker'
 export type { ColorPickerProps, ColorFormat } from './ColorPicker'
 

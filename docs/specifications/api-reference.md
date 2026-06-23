@@ -275,10 +275,15 @@ import 'my-react-shell/components/styles.css' // REQUIRED (plain prebuilt CSS; a
 | `InputField` | component | Full field: label + input + helper + error, a11y-wired (`htmlFor`/`aria-invalid`/`aria-describedby`). Spreads native input props; pass `error` to switch on error styling. |
 | `SegmentedControl` | component | Single-select `radiogroup` on a track; controlled via `value`/`onChange`; generic over value type. |
 | `Select` | component | Opinionated select on Radix Select (keyboard nav, typeahead, portal); `options` list; controlled via `value`/`onValueChange`. |
+| `Checkbox` | component | Un-opinionated checkbox on Radix Checkbox; tri-state (`checked` · unchecked · `'indeterminate'`); hand-rolled check/dash glyph; checked box fills `--color-primary`. Controlled (`checked`/`onCheckedChange`) or uncontrolled (`defaultChecked`); form-aware (`name`/`value`/`required`). Uses the `@radix-ui/react-checkbox` optional peer. |
+| `Switch` | component | Un-opinionated toggle on Radix Switch; track + sliding thumb (checked track `--color-primary`). Controlled (`checked`/`onCheckedChange`) or uncontrolled (`defaultChecked`); form-aware (`name`/`value`). Uses the `@radix-ui/react-switch` optional peer. |
+| `RadioGroup` | component | Single-select set on Radix RadioGroup with roving arrow-key focus; data-driven via `options`; selected dot fills `--color-primary`; `orientation` (`vertical`·`horizontal`). Controlled (`value`/`onValueChange`) or uncontrolled (`defaultValue`); form-aware (`name`). Uses the `@radix-ui/react-radio-group` optional peer. |
 | `ColorPicker` | component | General popover color picker. **Free** by default — a full hue/saturation range (via the `react-colorful` optional peer); `onChange` emits in `format` (`hex`·`rgb`·`hsl`). Pass a `colors` set to **constrain** it to a swatch grid. Controlled; `value` is a directly-usable CSS color string. See [below](#colorpicker). |
 | `UserPreferences` | component | Controlled theme/display settings panel (palette + light/dark/system + optional icons↔emojis). Persists nothing — emits `onChange`. Auth-free (`accountActions` slot). |
 | `Collapsible` | component | Single disclosure on Radix Collapsible: one trigger toggles one region. Controlled (`expanded`) / uncontrolled (`defaultExpanded`); static `trigger` or `renderTrigger(expanded)`; rotating chevron; `variant` (`default`·`bordered`·`ghost`·`filled`), `size`, `inlineChevron`, `animationDuration`. Uses the `@radix-ui/react-collapsible` optional peer. See [below](#collapsible). |
 | `Accordion` | component | Grouped disclosures on Radix Accordion: roving arrow-key focus, single (one-open) or `multiple` open. Data-driven via `items`; controlled `value`/`onValueChange` or `defaultValue`; `variant` (`default`·`bordered`·`separated`), `size`. Uses the `@radix-ui/react-accordion` optional peer. See [below](#accordion). |
+| `Tabs` | component | General content tabs on Radix Tabs (roving arrow-key focus, `aria` wiring): a trigger list over swappable panels, active trigger marked with a `--color-primary` indicator. Data-driven via `tabs`; controlled (`value`/`onValueChange`) or uncontrolled (`defaultValue`, defaults to first); `orientation` (`horizontal`·`vertical`). Distinct from the app-shell page tabs. Uses the `@radix-ui/react-tabs` optional peer. |
+| `Tooltip` | component | Ergonomic single-component tooltip on Radix Tooltip — `content` + `children` (the trigger); mounts its own `Provider` internally, portals the bubble. `side`/`align`/`sideOffset`/`delayDuration`; optional controlled `open`/`onOpenChange`. Uses the `@radix-ui/react-tooltip` optional peer. |
 | `cn(...)` | function | `clsx` + `tailwind-merge` class combiner. |
 
 Every component has a matching `…Props` type export (e.g. `ButtonProps`, `ButtonVariant`,
@@ -294,7 +299,9 @@ Every component has a matching `…Props` type export (e.g. `ButtonProps`, `Butt
 `StatCardProps`, `StatCardBadge`, `StatItem`, `StatCardTone`,
 `StatCardFooter`, `StatCardFooterLine`, `StatCardFooterLineType`, `ColorPickerProps`,
 `ColorFormat`, `CollapsibleProps`, `CollapsibleVariant`, `CollapsibleSize`,
-`AccordionProps`, `AccordionItem`, `AccordionVariant`, `AccordionSize`, etc.).
+`AccordionProps`, `AccordionItem`, `AccordionVariant`, `AccordionSize`,
+`CheckboxProps`, `SwitchProps`, `RadioGroupProps`, `RadioOption`,
+`TabsProps`, `TabItem`, `TooltipProps`, etc.).
 
 **Semantic colour is one shared vocabulary.** The kit exports a canonical **`Tone`**
 type (`primary`·`neutral`·`info`·`success`·`warning`·`danger`) and its **`TONE_COLOR`**
