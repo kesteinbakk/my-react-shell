@@ -1,5 +1,6 @@
-import { useId, type InputHTMLAttributes, type ReactNode } from 'react'
+import { useId, type ChangeEvent, type InputHTMLAttributes, type ReactNode } from 'react'
 import { cn } from './cn'
+import { useDebounce } from './useDebounce'
 
 export interface InputFieldProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'id'> {
   /** Field label, associated to the input. */
@@ -10,6 +11,10 @@ export interface InputFieldProps extends Omit<InputHTMLAttributes<HTMLInputEleme
   error?: ReactNode
   /** Class for the wrapping field; `className` styles the input itself. */
   containerClassName?: string
+  /** Fires `debounceMs` after the user stops typing, with the current value. */
+  onDebouncedChange?: (value: string) => void
+  /** Debounce delay in ms for `onDebouncedChange` (default: 500). */
+  debounceMs?: number
 }
 
 /**
@@ -23,6 +28,9 @@ export function InputField({
   error,
   containerClassName,
   className,
+  onDebouncedChange,
+  debounceMs = 500,
+  onChange,
   ...inputProps
 }: InputFieldProps) {
   const id = useId()
@@ -30,6 +38,16 @@ export function InputField({
   const errId = `${id}-err`
   const showError = error != null
   const showDesc = description != null && !showError
+  const scheduleDebounced = useDebounce(onDebouncedChange, debounceMs)
+
+  const handleChange =
+    onChange || onDebouncedChange
+      ? (e: ChangeEvent<HTMLInputElement>) => {
+          onChange?.(e)
+          scheduleDebounced(e.target.value)
+        }
+      : undefined
+
   return (
     <div className={cn('mrs-field', containerClassName)}>
       {label != null && (
@@ -42,6 +60,7 @@ export function InputField({
         className={cn('mrs-field__input', showError && 'mrs-field__input--error', className)}
         aria-invalid={showError || undefined}
         aria-describedby={showError ? errId : showDesc ? descId : undefined}
+        onChange={handleChange}
         {...inputProps}
       />
       {showDesc && (

@@ -1,6 +1,7 @@
-import type { InputHTMLAttributes } from 'react'
+import { type ChangeEvent, type InputHTMLAttributes } from 'react'
 import { cva } from 'class-variance-authority'
 import { cn } from './cn'
+import { useDebounce } from './useDebounce'
 
 export type InputSize = 'sm' | 'md' | 'lg'
 
@@ -24,24 +25,49 @@ export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
    * (not `size`) so it never clashes with the native `<input size>` attribute.
    */
   inputSize?: InputSize
+  /** Fires `debounceMs` after the user stops typing, with the current value. */
+  onDebouncedChange?: (value: string) => void
+  /** Debounce delay in ms for `onDebouncedChange` (default: 500). */
+  debounceMs?: number
 }
 
 /**
  * Un-opinionated native `<input>` wrapper. All native input props (`type`, `value`,
  * `onChange`, `placeholder`, `disabled`, `aria-*`, …) pass straight through; the only
- * additions are `invalid` (error styling + `aria-invalid`) and `inputSize`.
+ * additions are `invalid` (error styling + `aria-invalid`), `inputSize`, and
+ * `onDebouncedChange` / `debounceMs` for stop-typing callbacks.
  *
  * ```tsx
  * <Input placeholder="Email" />
  * <Input type="password" inputSize="lg" />
  * <Input invalid value={v} onChange={(e) => setV(e.target.value)} />
+ * <Input onDebouncedChange={(v) => search(v)} debounceMs={300} />
  * ```
  */
-export function Input({ invalid = false, inputSize = 'md', className, ...rest }: InputProps) {
+export function Input({
+  invalid = false,
+  inputSize = 'md',
+  className,
+  onDebouncedChange,
+  debounceMs = 500,
+  onChange,
+  ...rest
+}: InputProps) {
+  const scheduleDebounced = useDebounce(onDebouncedChange, debounceMs)
+
+  const handleChange =
+    onChange || onDebouncedChange
+      ? (e: ChangeEvent<HTMLInputElement>) => {
+          onChange?.(e)
+          scheduleDebounced(e.target.value)
+        }
+      : undefined
+
   return (
     <input
       className={cn(inputVariants({ inputSize, invalid: invalid || undefined }), className)}
       aria-invalid={invalid || undefined}
+      onChange={handleChange}
       {...rest}
     />
   )

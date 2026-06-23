@@ -12,6 +12,7 @@
 // doc is docs/specifications/api-reference.md (it ships no separate guide).
 export { TONE_COLOR } from './tone';
 export { Button } from './Button';
+export { useDebounce } from './useDebounce';
 export { Input } from './Input';
 export { Textarea } from './Textarea';
 export { Label } from './Label';
@@ -47,4 +48,11 @@ export { ColorPicker } from './ColorPicker';
 export { UserPreferences } from './UserPreferences';
 export { Collapsible } from './Collapsible';
 export { Accordion } from './Accordion';
+export { Slider } from './Slider';
+export { Progress } from './Progress';
+export { Toggle } from './Toggle';
+export { ToggleGroup } from './ToggleGroup';
+export { Sheet } from './Sheet';
+export { Calendar } from './Calendar';
+export { DatePicker } from './DatePicker';
 export { cn } from './cn';
