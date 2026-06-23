@@ -256,7 +256,8 @@ import 'my-react-shell/components/styles.css' // REQUIRED (plain prebuilt CSS; a
 | `ConfirmDialog` | component | Controlled confirm dialog on Radix Dialog (overlay, focus trap, Esc/backdrop close). `variant="danger"` for destructive; renders its own confirm/cancel buttons. |
 | `ToastProvider`, `useToast` | component + hook | Mount provider once; fire toasts via `useToast()` (`.success`/`.error`/…). Each renders as an `Alert`; auto-dismiss (5s; `duration:0` sticky). |
 | `ActionButton`, `ActionButtonGroup`, `actionPresets` | component + const | Icon/emoji + label action button with presets (table below). `actionPresets` is the `{ variant, emoji, label }` map. |
-| `Badge` | component | Status/category badge; tones `neutral`·`success`·`warning`·`danger`·`info`; optional status `dot`. |
+| `Badge` | component | Status/category badge; tones `neutral`·`success`·`warning`·`danger`·`info`; optional status `dot`. Forwards standard `<span>` attributes (`title`, `aria-*`, `data-*`, `id`, events) to the root. |
+| `CountPill` | component | Small solid-fill numeric count pill (unread counts, tab counts, a bell overlay). `count`; tones `primary`·`secondary`·`success`·`warning`·`danger`·`info`; clamps at `max` (default `99` → `99+`), `tabular-nums`. Caller gates visibility and positions any overlay via `className`. Forwards standard `<span>` attributes. |
 | `Chip`, `ChipGroup` | component | Tag: plain / toggleable (`selected`+`onClick`) / removable (`onRemove`). `ChipGroup` wraps. |
 | `Avatar`, `AvatarGroup` | component | Image + initials fallback (also on image error); group stacks with `+N` overflow. |
 | `Table` | component | Column-config data table: per-column sort, zebra, sticky header, empty state. |
@@ -273,7 +274,7 @@ import 'my-react-shell/components/styles.css' // REQUIRED (plain prebuilt CSS; a
 
 Every component has a matching `…Props` type export (e.g. `AlertProps`, `AlertVariant`,
 `TableProps`, `TableColumn`, `ToastApi`, `ToastOptions`, `ToastTone`, `SelectProps`,
-`SelectOption`, `SegmentedOption`, `BadgeTone`, `AvatarSize`, `ActionType`,
+`SelectOption`, `SegmentedOption`, `BadgeTone`, `CountPillTone`, `AvatarSize`, `ActionType`,
 `ActionPreset`, `ActionButtonVariant`/`Size`/`Layout`, `PhiCardProps`, `PhiCardAction`,
 `PhiCardSize`, `PhiCardFooter`, `PhiCardFooterLine`, `PhiCardFooterLineType`,
 `StatCardProps`, `StatCardBadge`, `StatItem`, `StatCardTone`,
@@ -298,6 +299,15 @@ const columns: TableColumn<Row>[] = [{ key: 'name', header: 'Name', render: r =>
 
 <Select value={value} onValueChange={setValue} placeholder="Pick one…"
   options={[{ value: 'a', label: 'Apple' }, { value: 'b', label: 'Banana', disabled: true }]} />
+
+// Badge with a native tooltip (no wrapper span):
+<Badge tone="neutral" title="Below the award cutoff">Below cutoff</Badge>
+
+// CountPill — caller gates visibility + positions the overlay:
+<span className="relative inline-flex">
+  <BellIcon />
+  {unread > 0 ? <CountPill tone="danger" count={unread} className="absolute -top-1 -right-1" /> : null}
+</span>
 ```
 
 **`Alert` props:** `variant` (`'info'`), `title`, `children`, `icon` (per-variant; `false`

@@ -45,6 +45,9 @@ export type {
 export { Badge } from './Badge'
 export type { BadgeProps, BadgeTone } from './Badge'
 
+export { CountPill } from './CountPill'
+export type { CountPillProps, CountPillTone } from './CountPill'
+
 export { Chip, ChipGroup } from './Chip'
 export type { ChipProps, ChipGroupProps } from './Chip'
 
