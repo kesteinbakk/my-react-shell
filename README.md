@@ -16,9 +16,11 @@ package, as a **tag-pinned GitHub git-dependency**.
 **The fast path for "what's exported and how do I use it":**
 [`docs/specifications/api-reference.md`](docs/specifications/api-reference.md) — every
 export, per import path, with signatures and minimal usage. See
-[`docs/concept.md`](docs/concept.md) for what this is and its boundary, and
-[`docs/strategy.md`](docs/strategy.md) for the standing decisions. The distribution
-model is documented in [`docs/guides/distribution-model.md`](docs/guides/distribution-model.md).
+[`docs/concept.md`](https://github.com/kesteinbakk/my-react-shell/blob/main/docs/concept.md)
+for what this is and its boundary, and
+[`docs/strategy.md`](https://github.com/kesteinbakk/my-react-shell/blob/main/docs/strategy.md)
+for the standing decisions. The distribution model is documented in
+[`docs/guides/distribution-model.md`](docs/guides/distribution-model.md).
 
 ## Install
 
@@ -88,30 +90,44 @@ with:
 Without a Tailwind v4 pipeline and `tw-animate-css` present, importing
 `my-react-shell/styles.css` will fail to resolve or process. (The theme module's full
 CSS / token contract — palettes, the `.theme-<name>-{light,dark}` classes, and how to
-define your own palette — is documented in the theme guide once it lands in Phase G.)
+define your own palette — is documented in
+[`docs/guides/theme.md`](docs/guides/theme.md).)
 
 ## Peer requirements
 
 From `package.json` `peerDependencies`:
 
-| Peer | Range | Notes |
-|------|-------|-------|
-| `react` | `^19.0.0` | required |
-| `react-dom` | `^19.0.0` | required |
-| `convex` | `^1.41.0` | **optional** — only for `my-react-shell/providers` and `my-react-shell/auth/convex` |
-| `@convex-dev/auth` | `^0.0.94` | **optional** — only for the `my-react-shell/auth/convex` sub-path |
-| `@auth/core` | `^0.41.1` | **optional** — only for the `my-react-shell/auth/convex` sub-path |
+| Peer | Range | Needed for |
+|------|-------|------------|
+| `react` | `^19.0.0` | **required** (every module) |
+| `react-dom` | `^19.0.0` | **required** (every module) |
+| `convex` | `^1.41.0` | `my-react-shell/providers`, `my-react-shell/auth/convex` |
+| `@convex-dev/auth` | `^0.0.94` | `my-react-shell/auth/convex` (Convex Auth default) |
+| `@auth/core` | `^0.41.1` | `my-react-shell/auth/convex` (Convex Auth default) |
+| `@tanstack/react-router` | `^1.170.0` | `my-react-shell/app-shell` |
+| `@radix-ui/react-dialog` | `^1.1.17` | `my-react-shell/app-shell`, `my-react-shell/components` |
+| `@radix-ui/react-dropdown-menu` | `^2.1.18` | `my-react-shell/app-shell`, `my-react-shell/components` |
+| `@radix-ui/react-popover` | `^1.1.17` | `my-react-shell/components` |
+| `@radix-ui/react-select` | `^2.3.1` | `my-react-shell/components` |
+| `@radix-ui/react-accordion` | `^1.2.14` | `my-react-shell/components` |
+| `@radix-ui/react-collapsible` | `^1.1.14` | `my-react-shell/components` |
+| `class-variance-authority` | `^0.7.1` | `my-react-shell/components` |
+| `clsx` | `^2.1.1` | `my-react-shell/components` |
+| `tailwind-merge` | `^3.6.0` | `my-react-shell/components` |
+| `react-colorful` | `^5.7.0` | `my-react-shell/components` (only `ColorPicker`) |
 
-`convex`, `@convex-dev/auth`, and `@auth/core` are declared `optional` in
-`peerDependenciesMeta`: a **theme-only** consumer (importing just the barrel) needs
-none of them. Install `convex` when you use `my-react-shell/providers`; add
-`@convex-dev/auth` + `@auth/core` when you use the Convex Auth default.
+Only `react` / `react-dom` are required. **Everything else is declared `optional` in
+`peerDependenciesMeta`** — a **theme-only** consumer (importing just the barrel) needs
+none of them. Add a peer only when you import the module that needs it (right-hand
+column); your package manager's warnings about the unused ones are safe to ignore.
 
-> **No router peer.** my-react-shell ships no code that imports a router, so
-> `@tanstack/react-router` is **not** a peer dependency — a consumer picks (or
-> omits) a router on its own. TanStack Router is still the *recommended* router for
-> a consumer app (see the `react-framework` guide), but that's the consumer's own
-> dependency, not one this package imposes.
+> **Router is an optional peer — and only for `app-shell`.** The barrel, providers,
+> auth, i18n, components, and icons import no router, so a theme-only or kit-only
+> consumer brings none. `@tanstack/react-router` is declared as an **optional** peer for
+> the one module that imports it — `my-react-shell/app-shell` — so install it only when
+> you use the app-shell. TanStack Router is also the *recommended* router for a consumer
+> app overall (see the `react-framework` guide), but everywhere except app-shell that is
+> the consumer's own choice, not one this package imposes.
 
 ## Local dev-loop
 

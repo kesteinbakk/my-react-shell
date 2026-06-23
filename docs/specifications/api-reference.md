@@ -17,7 +17,7 @@ contract of any module, follow the **Guide** link in its section.
 > **Mental model.** my-react-shell is a *menu of self-contained modules*, not a
 > framework. The barrel `my-react-shell` is the **Convex-free theme core**; anything
 > heavier lives behind a sub-path so a theme-only app installs nothing it doesn't use.
-> Import only the modules you want. See [concept.md](../concept.md).
+> Import only the modules you want. See [concept.md](https://github.com/kesteinbakk/my-react-shell/blob/main/docs/concept.md).
 
 ## Import-path map
 
@@ -27,9 +27,9 @@ contract of any module, follow the **Guide** link in its section.
 | `my-react-shell/providers` | **providers** (Convex client + `AppProviders`) | `convex` | — |
 | `my-react-shell/auth/convex` | **auth** Convex Auth default | `convex`, `@convex-dev/auth`, `@auth/core` | — |
 | `my-react-shell/i18n` | **i18n** (`t()` seam) | — (zero-dep) | — |
-| `my-react-shell/components` | **component kit** (opinionated composites) | `class-variance-authority`, `clsx`, `tailwind-merge`, some `@radix-ui/*`, `react-colorful` (only for `ColorPicker`) | `my-react-shell/components/styles.css` |
+| `my-react-shell/components` | **component kit** (opinionated composites) | `class-variance-authority`, `clsx`, `tailwind-merge`, `@radix-ui/react-{dialog,dropdown-menu,popover,select,accordion,collapsible}`, `react-colorful` (only for `ColorPicker`) | `my-react-shell/components/styles.css` |
 | `my-react-shell/icons` | **icons↔emojis seam** | — (pure React) | — |
-| `my-react-shell/app-shell` | **app-shell** (chrome, page header, tabs) | `@tanstack/react-router`, `@radix-ui/react-dialog`, `@radix-ui/react-dropdown-menu`, `@radix-ui/react-popover` | `my-react-shell/app-shell/styles.css` |
+| `my-react-shell/app-shell` | **app-shell** (chrome, page header, tabs) | `@tanstack/react-router`, `@radix-ui/react-dialog`, `@radix-ui/react-dropdown-menu` | `my-react-shell/app-shell/styles.css` |
 
 **Required peers (always):** `react ^19`, `react-dom ^19`. Everything else is an
 **optional** peer, installed only for the sub-path that uses it (see
@@ -729,6 +729,13 @@ import 'my-react-shell/app-shell/styles.css'
 `PageSection`, `PageSectionsMode`, `PageSectionsProps`, `DynamicPageInput`,
 `DynamicPagesConfig`, `ShellContextValue`).
 
+**Config value sets** (full reference in the [guide](../guides/app-shell.md#optional-config-root-fields)):
+`pageContainer.defaultMaxWidth` ∈ `sm·md·lg·xl·2xl·full` (default `2xl`) · `tabs.variant`
+∈ `underline·pill` (default `underline`) · `shellPageHeader.documentTitle` ∈
+`composed·leaf·app` (default `composed` → `Leaf · AppName`; `leaf` → leaf only; `app` →
+app name only). `usePageHeader({ documentTitle })` takes the same three modes **or** a
+custom `() => string` resolver. `pages` may be **empty** for a nav-less card-dashboard app.
+
 ```tsx
 export const shellConfig = defineShellConfig({
   appName: 'Acme',
@@ -825,8 +832,9 @@ inside your router, at the root route's layout — not here.
 - **`VITE_CONVEX_URL`: checked, never defaulted; no trailing slash** (close code 1006).
 - **`styles.css` is not zero-config** — needs the consumer's Tailwind v4 pipeline +
   `tw-animate-css`. The compiled JS *is* zero-config; the stylesheet is raw source.
-- **No router peer.** Nothing in the barrel imports a router; `@tanstack/react-router`
-  is a peer **only** for `app-shell`. A consumer picks its own router.
+- **Router peer is app-shell-only.** Nothing in the barrel imports a router;
+  `@tanstack/react-router` is an **optional** peer for `app-shell` alone. Everywhere
+  else a consumer picks its own router.
 - **404s are the consumer's** — no shipped module owns the router, so neither catch
   lives here. Wire `defaultNotFoundComponent` (or a route's `notFoundComponent`) on
   your router for the *in-app* not-found, rendering the kit's `EmptyState`; add the
@@ -849,6 +857,6 @@ inside your router, at the root route's layout — not here.
   [providers](../guides/providers.md) · [auth](../guides/auth.md) · [i18n](../guides/i18n.md) ·
   [icons](../guides/icons.md) · [app-shell](../guides/app-shell.md). The **components** module
   has no separate guide — this reference is its canonical doc.
-- [concept.md](../concept.md) — what this is and its boundary
+- [concept.md](https://github.com/kesteinbakk/my-react-shell/blob/main/docs/concept.md) — what this is and its boundary
 - [distribution-model.md](../guides/distribution-model.md) — install, tags, the local dev-loop
 - New React project from scratch: the `react-framework` skill

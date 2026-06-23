@@ -213,13 +213,16 @@ the `files` allowlist is narrowed to `dist/` plus the authored CSS (`src/**/*.cs
 globbed so it self-maintains — see the CSS note above), and two pre-commit guards
 (above) are wired — the committed-`link:` guard and the `dist/` freshness guard.
 
-### No router peer
+### Router peer — optional, app-shell only
 
-No shipped module imports a router — it was harness-only (`main.tsx` / `routes/` /
-`routeTree.gen.ts`, all excluded from the library emit) — so `@tanstack/react-router`
-is a `devDependency` here, not a peer. Consumers bring their own router (TanStack
-Router stays the recommendation — see the `react-framework` guide — but as the
-consumer's own dependency, not one this package imposes).
+Only `my-react-shell/app-shell` imports a router (`@tanstack/react-router`, externalized
+in its compiled `dist/`); every other shipped module — the barrel, providers, auth,
+i18n, components, icons — is router-free. So `@tanstack/react-router` is declared an
+**optional** peer (also a `devDependency` here, for the dev-harness and the app-shell
+build), installed by a consumer only when it imports the app-shell, never by a
+theme-only or kit-only app. TanStack Router stays the overall recommendation for a
+consumer app (see the `react-framework` guide); everywhere except app-shell that is the
+consumer's own dependency, not one this package imposes.
 
 ### Zero-config installs — committed `dist/`
 
@@ -246,8 +249,8 @@ These are **dependency changes** and need explicit approval before they land:
 - Satisfy peer floors **only for the modules used** — all of Convex is optional now
   (D9): `convex ≥1.41` for `my-react-shell/providers`; `@convex-dev/auth ≥0.0.94` +
   `@auth/core ≥0.41.1` for the Convex Auth default at `my-react-shell/auth/convex`. A
-  theme-only consumer (the barrel) needs none of them. No router peer — the consumer
-  brings its own router.
+  theme-only consumer (the barrel) needs none of them. The router
+  (`@tanstack/react-router`) is an optional peer too — only for `my-react-shell/app-shell`.
 - One package manager only — **pnpm**. Settle any repo that still has an `npm`
   `package-lock.json` onto `pnpm` before adopting.
 - No Vercel/CI token — `my-react-shell` is public, so the `git+https` specifier clones

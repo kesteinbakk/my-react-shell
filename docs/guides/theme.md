@@ -247,7 +247,7 @@ declarations always override. No resolution cycle.
 **Latitude — these lines are a consumer choice, not a fixed mapping:**
 
 - **`--secondary`** — the contract's secondary is a *neutral, low-emphasis* pairing
-  renderable two ways (see `themes/contract.css`): a **soft chip**
+  renderable two ways (see the shipped `src/themes/contract.css`): a **soft chip**
   (`--secondary: var(--color-secondary-bg)` + `--secondary-foreground:
   var(--color-secondary)`, shown above) or a **solid fill**
   (`--secondary: var(--color-secondary)` + `--secondary-foreground:
@@ -262,10 +262,10 @@ declarations always override. No resolution cycle.
 ## Consumer-defined palettes
 
 To add your own palette, ship a `.theme-<name>-light` / `.theme-<name>-dark` class
-pair that fills the same token contract as the built-ins (see `themes/contract.css`
-for the contract and the palette files in the `themes` package — e.g.
-`themes/ocean.css` — for examples), import that CSS, then list the palette in the
-provider:
+pair that fills the same token contract as the built-ins (the contract and every
+built-in palette ship inside the package under `src/themes/` — see
+`src/themes/contract.css` for the contract and e.g. `src/themes/ocean.css` for a
+worked palette), import that CSS, then list the palette in the provider:
 
 ```tsx
 const themes: ThemeInfo[] = [
