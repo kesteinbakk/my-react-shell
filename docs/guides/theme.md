@@ -193,13 +193,13 @@ to ship. Copy the canonical mapping below and adjust the latitude lines.
   --muted: var(--color-surface-sunken);
   --muted-foreground: var(--color-text-muted);
   --primary: var(--color-primary);
-  --primary-foreground: var(--color-primary-content);
+  --primary-foreground: var(--color-primary-on);
   --secondary: var(--color-secondary-bg);          /* soft-chip rendering — see Latitude */
   --secondary-foreground: var(--color-secondary);
   --accent: var(--color-surface-sunken-deep);      /* shadcn's hover/active surface */
   --accent-foreground: var(--color-text-primary);
   --destructive: var(--color-danger);
-  --destructive-foreground: var(--color-danger-content);
+  --destructive-foreground: var(--color-danger-on);
   --border: var(--color-border-primary);
   --input: var(--color-border-primary);
   --ring: var(--color-focus);
@@ -251,7 +251,7 @@ declarations always override. No resolution cycle.
   (`--secondary: var(--color-secondary-bg)` + `--secondary-foreground:
   var(--color-secondary)`, shown above) or a **solid fill**
   (`--secondary: var(--color-secondary)` + `--secondary-foreground:
-  var(--color-secondary-content)`).
+  var(--color-secondary-on)`).
 - **`--popover` / `--accent` / `--input`** — map to whichever surface/border reads
   best (`surface-primary` vs `surface-raised`; `hover` vs `surface-sunken-deep`;
   `border-primary` vs `border-hover`).

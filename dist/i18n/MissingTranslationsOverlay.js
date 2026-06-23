@@ -25,7 +25,7 @@ const panelStyle = {
     borderRadius: 10,
     background: 'var(--color-surface-raised)',
     color: 'var(--color-text-primary)',
-    border: '2px solid var(--color-warning)',
+    border: '2px solid var(--color-warning-border)',
     boxShadow: 'var(--color-shadow-lg)',
     font: '12px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace',
 };
@@ -38,7 +38,7 @@ const headerStyle = {
     padding: '9px 12px',
     background: 'var(--color-warning-bg)',
     borderBottom: '1px solid var(--color-warning-border)',
-    color: 'var(--color-warning-content)',
+    color: 'var(--color-warning-on-bg)',
     fontWeight: 700,
 };
 const titleStyle = { display: 'flex', alignItems: 'center', gap: 8 };
@@ -50,7 +50,7 @@ const buttonStyle = {
     borderRadius: 6,
     border: '1px solid var(--color-warning-border)',
     background: 'var(--color-surface-raised)',
-    color: 'var(--color-warning-content)',
+    color: 'var(--color-warning-on-bg)',
     font: 'inherit',
     fontWeight: 600,
 };

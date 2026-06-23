@@ -55,48 +55,61 @@
   --color-primary: initial;
   --color-primary-hover: initial;
   --color-primary-active: initial;
-  --color-primary-content: initial;
+  --color-primary-on: initial;
   --color-primary-bg: initial;
 
   /* Secondary is a NEUTRAL low-emphasis pairing for the primary — a muted chip,
      not a second brand color, so it never competes with the colored primary.
      Render it either as a soft surface (`--color-secondary-bg`) + border with
      `--color-secondary` as the label, or as a solid fill (`--color-secondary` bg
-     + `--color-secondary-content` label). Both stay legible in light and dark. */
+     + `--color-secondary-on` label). Both stay legible in light and dark. */
   --color-secondary: initial;
   --color-secondary-hover: initial;
-  --color-secondary-content: initial;
+  --color-secondary-on: initial;
   --color-secondary-bg: initial;
 
-  /* ===== Semantic Colors ===== */
+  /* ===== Semantic Colors =====
+     Each role ships TWO render modes. Pick one; never mix tokens across modes.
+
+     Solid fill  (filled button, solid badge):
+       background --color-{role}        label --color-{role}-on
+       `-on` is AA on the solid accent in both light and dark.
+
+     Soft tint   (alert, status chip, subtle highlight):
+       background --color-{role}-bg     label --color-{role}-on-bg
+       border     --color-{role}-border
+       `-on-bg` is AA on the tinted surface in both light and dark.
+
+     WRONG: --color-{role}-bg background + --color-{role}-on label
+            (dark text on dark bg in dark mode — fails AA and looks broken). */
   --color-success: initial;
   --color-success-hover: initial;
-  --color-success-content: initial;
-  --color-success-bg: initial;
+  --color-success-on: initial;   /* label ON the solid accent */
+  --color-success-bg: initial;   /* soft tinted surface */
 
   --color-warning: initial;
   --color-warning-hover: initial;
-  --color-warning-content: initial;
-  --color-warning-bg: initial;
+  --color-warning-on: initial;   /* label ON the solid accent */
+  --color-warning-bg: initial;   /* soft tinted surface */
 
   --color-danger: initial;
   --color-danger-hover: initial;
-  --color-danger-content: initial;
-  --color-danger-bg: initial;
+  --color-danger-on: initial;    /* label ON the solid accent */
+  --color-danger-bg: initial;    /* soft tinted surface */
 
   --color-info: initial;
   --color-info-hover: initial;
-  --color-info-content: initial;
-  --color-info-bg: initial;
+  --color-info-on: initial;      /* label ON the solid accent */
+  --color-info-bg: initial;      /* soft tinted surface */
 
-  /* ===== Semantic Strong Text ===== */
-  /* A readable colored text shade for use ON the matching `-bg` tint (soft
-     alerts / status pills): the saturated base token fails AA on its own tint,
-     so `-strong` is the legible-on-tint text color. Every palette fills these. */
-  --color-success-strong: initial;
-  --color-warning-strong: initial;
-  --color-danger-strong: initial;
-  --color-info-strong: initial;
+  /* ===== Semantic On-Tint Text =====
+     AA-legible label for use ON the matching `-bg` soft surface. The solid accent
+     (`--color-{role}`) fails AA on its own tint, so use `-on-bg` here instead.
+     Every palette fills these. */
+  --color-success-on-bg: initial;
+  --color-warning-on-bg: initial;
+  --color-danger-on-bg: initial;
+  --color-info-on-bg: initial;
 
   /* ===== Semantic / Share Border Colors ===== */
   /* A softer (light) / dimmer (dark) shade of each hue, for bordered alerts and

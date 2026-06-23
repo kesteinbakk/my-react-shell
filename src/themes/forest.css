@@ -36,40 +36,40 @@
   --color-primary: var(--color-emerald-700);
   --color-primary-hover: var(--color-emerald-800);
   --color-primary-active: var(--color-emerald-900);
-  --color-primary-content: #ffffff;
+  --color-primary-on: #ffffff;
   --color-primary-bg: var(--color-emerald-50);
 
   --color-secondary: var(--color-stone-600); /* neutral low-emphasis button — label / solid fill */
   --color-secondary-hover: var(--color-stone-700);
-  --color-secondary-content: #ffffff; /* label on the solid fill */
+  --color-secondary-on: #ffffff; /* label on the solid fill */
   --color-secondary-bg: var(--color-stone-100); /* soft surface for the bordered secondary button */
 
   /* ===== Semantic Colors ===== */
   --color-success: var(--color-green-700);
   --color-success-hover: var(--color-green-800);
-  --color-success-content: #ffffff;
+  --color-success-on: #ffffff;
   --color-success-bg: var(--color-green-50);
 
   --color-warning: var(--color-amber-500);
   --color-warning-hover: var(--color-amber-600);
-  --color-warning-content: var(--color-amber-950);
+  --color-warning-on: var(--color-amber-950);
   --color-warning-bg: var(--color-amber-50);
 
   --color-danger: var(--color-red-600);
   --color-danger-hover: var(--color-red-700);
-  --color-danger-content: #ffffff;
+  --color-danger-on: #ffffff;
   --color-danger-bg: var(--color-red-50);
 
   --color-info: var(--color-blue-600);
   --color-info-hover: var(--color-blue-700);
-  --color-info-content: #ffffff;
+  --color-info-on: #ffffff;
   --color-info-bg: var(--color-blue-50);
 
   /* Semantic strong text — legible colored text on the matching -bg tint */
-  --color-success-strong: var(--color-green-800);
-  --color-warning-strong: var(--color-amber-800);
-  --color-danger-strong: var(--color-red-800);
-  --color-info-strong: var(--color-blue-800);
+  --color-success-on-bg: var(--color-green-800);
+  --color-warning-on-bg: var(--color-amber-800);
+  --color-danger-on-bg: var(--color-red-800);
+  --color-info-on-bg: var(--color-blue-800);
 
   /* ===== Semantic / Share Border Colors (softer shade of each hue) ===== */
   --color-success-border: var(--color-green-300);
@@ -165,40 +165,40 @@
   --color-primary: #4ebb93;         /* emerald-400 desaturated ~20pp */
   --color-primary-hover: #7fd7b4;   /* emerald-300 desaturated ~20pp */
   --color-primary-active: #24a57a;  /* emerald-500 desaturated ~20pp */
-  --color-primary-content: var(--color-gray-900);
+  --color-primary-on: var(--color-gray-900);
   --color-primary-bg: rgb(10, 30, 20); /* Very dark green */
 
   --color-secondary: rgb(168, 189, 176); /* neutral green-gray — label / solid fill */
   --color-secondary-hover: rgb(194, 210, 199);
-  --color-secondary-content: rgb(18, 26, 22); /* dark label on the solid fill */
+  --color-secondary-on: rgb(18, 26, 22); /* dark label on the solid fill */
   --color-secondary-bg: rgb(38, 52, 44); /* soft surface for the bordered secondary button */
 
   /* ===== Semantic Colors ===== */
   --color-success: #4ebb93;         /* emerald-400 desaturated ~20pp */
   --color-success-hover: #7fd7b4;   /* emerald-300 desaturated ~20pp */
-  --color-success-content: var(--color-gray-900);
+  --color-success-on: var(--color-gray-900);
   --color-success-bg: rgb(10, 30, 20);
 
   --color-warning: #e4b43a;         /* amber-400 desaturated ~20pp */
   --color-warning-hover: #eac35e;   /* amber-300 desaturated ~20pp */
-  --color-warning-content: var(--color-gray-900);
+  --color-warning-on: var(--color-gray-900);
   --color-warning-bg: rgb(30, 25, 10);
 
   --color-danger: var(--color-red-600);
   --color-danger-hover: var(--color-red-500);
-  --color-danger-content: #ffffff;
+  --color-danger-on: #ffffff;
   --color-danger-bg: rgb(30, 10, 10);
 
   --color-info: #4fb4e4;            /* sky-400 desaturated ~20pp */
   --color-info-hover: #8bcfee;      /* sky-300 desaturated ~20pp */
-  --color-info-content: var(--color-gray-900);
+  --color-info-on: var(--color-gray-900);
   --color-info-bg: rgb(10, 20, 30);
 
   /* Semantic strong text — legible colored text on the matching -bg tint */
-  --color-success-strong: #7fd7b4;  /* emerald-300 desaturated ~20pp */
-  --color-warning-strong: #eac35e;  /* amber-300 desaturated ~20pp */
-  --color-danger-strong: var(--color-red-300);
-  --color-info-strong: #8bcfee;     /* sky-300 desaturated ~20pp */
+  --color-success-on-bg: #7fd7b4;  /* emerald-300 desaturated ~20pp */
+  --color-warning-on-bg: #eac35e;  /* amber-300 desaturated ~20pp */
+  --color-danger-on-bg: var(--color-red-300);
+  --color-info-on-bg: #8bcfee;     /* sky-300 desaturated ~20pp */
 
   /* ===== Semantic / Share Border Colors (dimmer shade of each hue) ===== */
   --color-success-border: var(--color-emerald-800);

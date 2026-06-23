@@ -31,7 +31,7 @@ const DEFAULT_ICONS = {
 /**
  * Inline alert / callout box. An opinionated composite on the semantic theme
  * tokens: a tinted surface (`--color-<tone>-bg`), a matching border
- * (`--color-<tone>-border`), and AA-legible on-tint text (`--color-<tone>-strong`),
+ * (`--color-<tone>-border`), and AA-legible on-tint text (`--color-<tone>-on-bg`),
  * with a per-tone leading icon and an optional dismiss control.
  */
 export function Alert({ variant = 'info', title, children, icon, onDismiss, dismissLabel = 'Dismiss', role = 'alert', className, }) {

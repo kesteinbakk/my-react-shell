@@ -82,30 +82,30 @@
 }
 
 /* Variants — tinted surface + matching border + AA-legible on-tint text/icon.
-   `--color-<tone>-strong` is the legible-on-tint shade; title and body share it,
+   `--color-<tone>-on-bg` is the legible-on-tint shade; title and body share it,
    the title differing by weight. */
 .mrs-alert--info {
   background: var(--color-info-bg);
   border-color: var(--color-info-border);
-  color: var(--color-info-strong);
+  color: var(--color-info-on-bg);
 }
 
 .mrs-alert--success {
   background: var(--color-success-bg);
   border-color: var(--color-success-border);
-  color: var(--color-success-strong);
+  color: var(--color-success-on-bg);
 }
 
 .mrs-alert--warning {
   background: var(--color-warning-bg);
   border-color: var(--color-warning-border);
-  color: var(--color-warning-strong);
+  color: var(--color-warning-on-bg);
 }
 
 .mrs-alert--danger {
   background: var(--color-danger-bg);
   border-color: var(--color-danger-border);
-  color: var(--color-danger-strong);
+  color: var(--color-danger-on-bg);
 }
 
 /* ── Spinner ─────────────────────────────────────────────────────────────── */
@@ -286,14 +286,14 @@
 }
 .mrs-dialog__btn--primary {
   background: var(--color-primary);
-  color: var(--color-primary-content);
+  color: var(--color-primary-on);
 }
 .mrs-dialog__btn--primary:hover:not(:disabled) {
   background: var(--color-primary-hover);
 }
 .mrs-dialog__btn--danger {
   background: var(--color-danger);
-  color: var(--color-danger-content);
+  color: var(--color-danger-on);
 }
 .mrs-dialog__btn--danger:hover:not(:disabled) {
   background: var(--color-danger-hover);
@@ -344,22 +344,22 @@
 .mrs-badge--success {
   background: var(--color-success-bg);
   border-color: var(--color-success-border);
-  color: var(--color-success-strong);
+  color: var(--color-success-on-bg);
 }
 .mrs-badge--warning {
   background: var(--color-warning-bg);
   border-color: var(--color-warning-border);
-  color: var(--color-warning-strong);
+  color: var(--color-warning-on-bg);
 }
 .mrs-badge--danger {
   background: var(--color-danger-bg);
   border-color: var(--color-danger-border);
-  color: var(--color-danger-strong);
+  color: var(--color-danger-on-bg);
 }
 .mrs-badge--info {
   background: var(--color-info-bg);
   border-color: var(--color-info-border);
-  color: var(--color-info-strong);
+  color: var(--color-info-on-bg);
 }
 
 /* ── Chip ────────────────────────────────────────────────────────────────── */
@@ -735,7 +735,7 @@
 }
 .mrs-field__error {
   font-size: 0.8125rem;
-  color: var(--color-danger-strong);
+  color: var(--color-danger-on-bg);
 }
 
 /* ── SegmentedControl ────────────────────────────────────────────────────── */
@@ -1555,7 +1555,7 @@
 .mrs-stat-card__cta {
   display: inline-block;
   background: var(--color-primary);
-  color: var(--color-primary-content);
+  color: var(--color-primary-on);
   border: none;
   border-radius: 2em;
   padding: 0.55em 1.1em;
