@@ -240,7 +240,8 @@ docs/
 ├── 3-bugs/           # BXXX-slug/bug.md    (index: _index/<YYYY-MM>.md)
 ├── 4-reports/        # reviews/ research/ status/
 ├── specifications/   # present-tense specs of what EXISTS (+ README index)
-├── guides/           # one guide per module + the module-authoring contract
+├── guides/           # one consumer guide per module (ships in the package)
+├── maintainers/      # agent/contributor docs, NOT shipped: release-runbook, module-authoring
 └── concept.md        # what this is
 ```
 
@@ -301,14 +302,14 @@ docs/
   themes → shell → consumer). Corollary: a *breaking* shell/`themes` change (a renamed
   token) hits link consumers' dev immediately, so migrate them in the same change. Full
   mechanics + the release chain: `docs/guides/distribution-model.md` +
-  `docs/guides/release-runbook.md`.
+  `docs/maintainers/release-runbook.md`.
 
 ## Releases (agent-handled — never hand steps to the user)
 
 **Releasing is an agent responsibility, every time.** Agents run the release
 commands; never give the user a list of release steps, and never call the release
 guide "your runbook" — it is the **agent rulebook**:
-[docs/guides/release-runbook.md](docs/guides/release-runbook.md) (authoritative,
+[docs/maintainers/release-runbook.md](docs/maintainers/release-runbook.md) (authoritative,
 self-contained for agents with no context). The user requires 100% dev↔prod visual
 parity and an unfailable, fully-scripted release.
 

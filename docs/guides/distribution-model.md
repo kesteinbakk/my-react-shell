@@ -54,7 +54,7 @@ Per-module exports and contracts live in the other `docs/guides/` files.
 - **`link:` loop:** the relative `@import './themes/…'` resolves into the shell's own
   `src/themes/`, kept live by the `rs:watch` sidecar (`scripts/dev-watch.mjs`), which
   mirrors `../themes` → `src/themes/` on every save. So a themes edit HMRs into link
-  consumers with **no tag and no install** — see [release-runbook.md](release-runbook.md)
+  consumers with **no tag and no install** — see [release-runbook.md](../maintainers/release-runbook.md)
   → *Development*. The release re-vendors from the pinned tag; a pre-commit guard keeps
   `src/themes/` in lockstep between times.
 
