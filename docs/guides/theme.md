@@ -151,10 +151,10 @@ returns:
 ## Consumer-defined palettes
 
 To add your own palette, ship a `.theme-<name>-light` / `.theme-<name>-dark` class
-pair that fills the same token contract as the built-ins (see `themes/contract.css`
-for the contract and the palette files in the `themes` package — e.g.
-`themes/ocean.css` — for examples), import that CSS, then list the palette in the
-provider:
+pair that fills the same token contract as the built-ins (the contract and every
+built-in palette ship inside the package under `src/themes/` — see
+`src/themes/contract.css` for the contract and e.g. `src/themes/ocean.css` for a
+worked palette), import that CSS, then list the palette in the provider:
 
 ```tsx
 const themes: ThemeInfo[] = [

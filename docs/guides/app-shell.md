@@ -83,13 +83,38 @@ throws a `ShellConfigError` at import time. Start your first page at a real feat
 route (e.g. `/dashboard`, `/data`).
 
 `label` is a thunk so you can wire `t()` and have it re-evaluate on locale change.
-`renderIcon` is **required**. Optional config-root fields: `appNameRender`, `pageContainer.defaultMaxWidth`
-(default `'2xl'`), `tabs.variant` (`'underline'` | `'pill'`), `shellPageHeader.border`
-(default `true`) / `.documentTitle` / `.breadcrumbCollapse` (breadcrumb middle-collapse
-— see below), and `labels` (translated aria-label thunks — `home`, `breadcrumb`,
-`openMenu`, `mainNavigation`, `more`; English fallbacks apply).
+`renderIcon` is **required**.
 
-Optional per-`PageEntry` fields: `subPages` (nested entries — each becomes a breadcrumb level and a title-dropdown item), `groupBreak: true` (draws a divider above the entry in the sidebar — ignored on the first visible page), and `tabBar: true` (opts the top-level entry into the mobile bottom tab bar — only when `AppShell mobileNav='tabBar'`).
+#### Optional config-root fields
+
+| Field | Values | Default | Effect |
+|---|---|---|---|
+| `appNameRender` | `() => ReactNode` | the `appName` text | Custom wordmark/brand node for the header brand area, in place of the plain app-name text. |
+| `pageContainer.defaultMaxWidth` | `sm` · `md` · `lg` · `xl` · `2xl` · `full` | `2xl` | Max width of the centered page-content container (`full` = edge-to-edge). |
+| `tabs.variant` | `underline` · `pill` | `underline` | Visual style of `PageTabs` and the `PageSections` tab strip. |
+| `shellPageHeader.border` | `boolean` | `true` | Whether the header band draws a bottom border. |
+| `shellPageHeader.documentTitle` | `composed` · `leaf` · `app` | `composed` | Project-wide browser-tab title mode — see [Document title](#document-title-browser-tab). |
+| `shellPageHeader.breadcrumbCollapse` | `{ leading?, trailing? }` · `false` | `{ leading: 1, trailing: 2 }` | Breadcrumb middle-collapse — see [Overflow](#overflow-the-trail-never-breaks). |
+| `labels` | aria-label thunks: `home`, `breadcrumb`, `openMenu`, `mainNavigation`, `more` | English fallbacks | Translated accessible names for the chrome. |
+
+#### Optional per-`PageEntry` fields
+
+| Field | Type | Effect |
+|---|---|---|
+| `subPages` | `PageEntry[]` | Nested entries — each becomes a breadcrumb level and a title-dropdown sibling. Recursive (nests arbitrarily deep). |
+| `groupBreak` | `true` | Draws a sidebar divider above this entry (ignored on the first visible page). |
+| `tabBar` | `true` | Opts a top-level entry into the mobile bottom tab bar (only when `AppShell mobileNav='tabBar'`). |
+| `hideCrumb` | `() => boolean` | Reactive predicate — omit this level from the rendered trail while keeping it in the chain. See [Hiding an access-gated crumb](#hiding-an-access-gated-crumb). |
+
+#### A nav-less, card-dashboard app
+
+`pages` may be **empty**. A dashboard-style app whose home is a grid of cards — and
+which navigates via those cards plus breadcrumbs rather than a fixed sidebar — passes
+`pages: []`: the sidebar/banner then renders no nav entries, while the automatic
+breadcrumb band, `usePageHeader`, and `useDynamicPages` all keep working. Combined with
+the reserved `'/'` route (home is always the brand link + house icon), this is the
+supported "no sidebar nav" shape. Register feature routes under real paths as they
+appear.
 
 ## Mount the shell
 
@@ -195,6 +220,26 @@ useDynamicPages({
   parent: '/sites',
   items: sites.map((s) => ({ id: s.id, label: s.name, route: `/sites/${s.id}` })),
 })
+```
+
+### Document title (browser tab)
+
+The shell owns `document.title` and keeps it in sync with the active route — a single
+owner, so pages never set it themselves. The composition mode is set project-wide via
+`shellPageHeader.documentTitle` and overridden per route via
+`usePageHeader({ documentTitle })`:
+
+| Mode | `document.title` |
+|---|---|
+| `composed` (default) | leaf label `·` app name — e.g. `Items · Acme`. On the home route (no leaf) it falls back to just the app name. |
+| `leaf` | the leaf label only — e.g. `Items`. |
+| `app` | the app name only — e.g. `Acme`. |
+
+For a fully bespoke title (e.g. a dynamic record name), pass a **resolver** instead of a
+mode — `usePageHeader` accepts `documentTitle: () => string`:
+
+```tsx
+usePageHeader({ documentTitle: () => invoice.name }) // tab shows "Invoice #42"
 ```
 
 ### Hiding an access-gated crumb
