@@ -79,17 +79,23 @@
     "@radix-ui/react-dialog": "^1.1.17",
     "@radix-ui/react-dropdown-menu": "^2.1.18",
     "@radix-ui/react-popover": "^1.1.17",
+    "@radix-ui/react-progress": "^1.1.10",
     "@radix-ui/react-radio-group": "^1.4.1",
     "@radix-ui/react-select": "^2.3.1",
+    "@radix-ui/react-slider": "^1.4.1",
     "@radix-ui/react-switch": "^1.3.1",
     "@radix-ui/react-tabs": "^1.1.15",
+    "@radix-ui/react-toggle": "^1.1.12",
+    "@radix-ui/react-toggle-group": "^1.1.13",
     "@radix-ui/react-tooltip": "^1.2.10",
     "@tanstack/react-router": "^1.170.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "convex": "^1.41.0",
+    "date-fns": "^4.4.0",
     "react": "^19.0.0",
     "react-colorful": "^5.7.0",
+    "react-day-picker": "^10.0.1",
     "react-dom": "^19.0.0",
     "tailwind-merge": "^3.6.0"
   },
@@ -118,7 +124,13 @@
     "@radix-ui/react-popover": {
       "optional": true
     },
+    "@radix-ui/react-progress": {
+      "optional": true
+    },
     "@radix-ui/react-select": {
+      "optional": true
+    },
+    "@radix-ui/react-slider": {
       "optional": true
     },
     "@radix-ui/react-checkbox": {
@@ -133,6 +145,12 @@
     "@radix-ui/react-tabs": {
       "optional": true
     },
+    "@radix-ui/react-toggle": {
+      "optional": true
+    },
+    "@radix-ui/react-toggle-group": {
+      "optional": true
+    },
     "@radix-ui/react-tooltip": {
       "optional": true
     },
@@ -145,7 +163,13 @@
     "clsx": {
       "optional": true
     },
+    "date-fns": {
+      "optional": true
+    },
     "react-colorful": {
+      "optional": true
+    },
+    "react-day-picker": {
       "optional": true
     },
     "tailwind-merge": {
@@ -161,10 +185,14 @@
     "@radix-ui/react-dialog": "^1.1.17",
     "@radix-ui/react-dropdown-menu": "^2.1.18",
     "@radix-ui/react-popover": "^1.1.17",
+    "@radix-ui/react-progress": "^1.1.10",
     "@radix-ui/react-radio-group": "^1.4.1",
     "@radix-ui/react-select": "^2.3.1",
+    "@radix-ui/react-slider": "^1.4.1",
     "@radix-ui/react-switch": "^1.3.1",
     "@radix-ui/react-tabs": "^1.1.15",
+    "@radix-ui/react-toggle": "^1.1.12",
+    "@radix-ui/react-toggle-group": "^1.1.13",
     "@radix-ui/react-tooltip": "^1.2.10",
     "@tailwindcss/vite": "^4.3.1",
     "@tanstack/react-router": "^1.170.15",
@@ -177,8 +205,10 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "convex": "^1.41.0",
+    "date-fns": "^4.4.0",
     "react": "^19.2.7",
     "react-colorful": "^5.7.0",
+    "react-day-picker": "^10.0.1",
     "react-dom": "^19.2.7",
     "tailwind-merge": "^3.6.0",
     "tailwindcss": "^4.3.1",

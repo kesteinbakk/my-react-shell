@@ -3040,3 +3040,618 @@
     transition: none;
   }
 }
+
+/* ── Slider (Radix Slider) ───────────────────────────────────────────────────
+   A track with a filled range and one thumb per value. The fill + thumb ring
+   paint with the tone token (--mrs-slider-tone, default --color-primary). */
+.mrs-slider {
+  position: relative;
+  display: flex;
+  align-items: center;
+  user-select: none;
+  touch-action: none;
+  width: 100%;
+}
+.mrs-slider[data-orientation='vertical'] {
+  flex-direction: column;
+  width: auto;
+  height: 12rem;
+}
+.mrs-slider__track {
+  position: relative;
+  flex-grow: 1;
+  border-radius: 9999px;
+  background: var(--color-surface-sunken-deep);
+}
+.mrs-slider[data-orientation='horizontal'] .mrs-slider__track {
+  height: 0.375rem;
+}
+.mrs-slider[data-orientation='vertical'] .mrs-slider__track {
+  width: 0.375rem;
+  height: 100%;
+}
+.mrs-slider__range {
+  position: absolute;
+  border-radius: 9999px;
+  background: var(--mrs-slider-tone, var(--color-primary));
+}
+.mrs-slider[data-orientation='horizontal'] .mrs-slider__range {
+  height: 100%;
+}
+.mrs-slider[data-orientation='vertical'] .mrs-slider__range {
+  width: 100%;
+}
+.mrs-slider__thumb {
+  display: block;
+  width: 1.125rem;
+  height: 1.125rem;
+  border: 2px solid var(--mrs-slider-tone, var(--color-primary));
+  border-radius: 9999px;
+  background: var(--color-surface-primary);
+  box-shadow: 0 1px 2px var(--color-shadow-sm);
+  transition: box-shadow 120ms ease;
+  cursor: grab;
+}
+.mrs-slider__thumb:hover {
+  box-shadow: 0 0 0 4px var(--color-focus-ring);
+}
+.mrs-slider__thumb:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 4px var(--color-focus-ring);
+}
+.mrs-slider[data-disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.mrs-slider[data-disabled] .mrs-slider__thumb {
+  cursor: not-allowed;
+}
+
+/* ── Progress (Radix Progress) ───────────────────────────────────────────────
+   A track with a fill that paints with the tone token (--mrs-progress-tone). A
+   determinate fill translates by completion; indeterminate loops an animation. */
+.mrs-progress {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  border-radius: 9999px;
+  background: var(--color-surface-sunken-deep);
+}
+.mrs-progress--sm {
+  height: 0.375rem;
+}
+.mrs-progress--md {
+  height: 0.5rem;
+}
+.mrs-progress--lg {
+  height: 0.75rem;
+}
+.mrs-progress__indicator {
+  width: 100%;
+  height: 100%;
+  border-radius: 9999px;
+  background: var(--mrs-progress-tone, var(--color-primary));
+  transition: transform 320ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+.mrs-progress--indeterminate .mrs-progress__indicator {
+  width: 40%;
+  animation: mrs-progress-loop 1.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+@keyframes mrs-progress-loop {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(350%);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mrs-progress__indicator {
+    transition: none;
+  }
+  .mrs-progress--indeterminate .mrs-progress__indicator {
+    animation: none;
+    width: 100%;
+  }
+}
+
+/* ── Toggle / ToggleGroup (Radix Toggle, ToggleGroup) ────────────────────────
+   A two-state button; pressed fills with --color-primary-bg / -primary text.
+   `ghost` is borderless until pressed; `outline` keeps a box. */
+.mrs-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+  flex-shrink: 0;
+  border: 1px solid transparent;
+  border-radius: 0.5rem;
+  background: transparent;
+  color: var(--color-text-secondary);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 120ms ease, color 120ms ease, border-color 120ms ease;
+}
+.mrs-toggle--sm {
+  min-width: 2rem;
+  height: 2rem;
+  padding: 0 0.5rem;
+}
+.mrs-toggle--md {
+  min-width: 2.25rem;
+  height: 2.25rem;
+  padding: 0 0.625rem;
+}
+.mrs-toggle--lg {
+  min-width: 2.5rem;
+  height: 2.5rem;
+  padding: 0 0.875rem;
+  font-size: 1rem;
+}
+.mrs-toggle--outline {
+  border-color: var(--color-border-primary);
+}
+.mrs-toggle:hover:not([data-disabled]):not(:disabled) {
+  background: var(--color-hover);
+  color: var(--color-text-primary);
+}
+.mrs-toggle:focus-visible {
+  outline: none;
+  border-color: var(--color-focus);
+  box-shadow: 0 0 0 3px var(--color-focus-ring);
+}
+.mrs-toggle[data-state='on'] {
+  background: var(--color-primary-bg);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+.mrs-toggle[data-state='on']:hover:not([data-disabled]):not(:disabled) {
+  background: var(--color-primary-bg);
+  color: var(--color-primary);
+}
+.mrs-toggle[data-disabled],
+.mrs-toggle:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.mrs-toggle-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+/* ── Sheet (Radix Dialog) ────────────────────────────────────────────────────
+   An overlay panel that slides in from any edge. Reuses the dialog overlay idiom;
+   the panel pins to its side, sized by width (left/right) or height (top/bottom). */
+.mrs-sheet__overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: var(--color-overlay);
+}
+.mrs-sheet__overlay[data-state='open'] {
+  animation: mrs-fade-in 200ms ease;
+}
+.mrs-sheet__overlay[data-state='closed'] {
+  animation: mrs-fade-out 200ms ease;
+}
+.mrs-sheet {
+  position: fixed;
+  z-index: 51;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-surface-raised);
+  color: var(--color-text-primary);
+  box-shadow: var(--mrs-elevation-popover);
+}
+.mrs-sheet:focus {
+  outline: none;
+}
+.mrs-sheet--left {
+  inset-block: 0;
+  left: 0;
+  height: 100%;
+  border-right: 1px solid var(--color-border-primary);
+}
+.mrs-sheet--right {
+  inset-block: 0;
+  right: 0;
+  height: 100%;
+  border-left: 1px solid var(--color-border-primary);
+}
+.mrs-sheet--top {
+  inset-inline: 0;
+  top: 0;
+  width: 100%;
+  border-bottom: 1px solid var(--color-border-primary);
+}
+.mrs-sheet--bottom {
+  inset-inline: 0;
+  bottom: 0;
+  width: 100%;
+  border-top: 1px solid var(--color-border-primary);
+}
+/* Sizes — width for horizontal sheets, height for vertical. `full` fills the axis. */
+.mrs-sheet--left.mrs-sheet--sm,
+.mrs-sheet--right.mrs-sheet--sm {
+  width: min(16rem, 100vw);
+}
+.mrs-sheet--left.mrs-sheet--md,
+.mrs-sheet--right.mrs-sheet--md {
+  width: min(20rem, 100vw);
+}
+.mrs-sheet--left.mrs-sheet--lg,
+.mrs-sheet--right.mrs-sheet--lg {
+  width: min(24rem, 100vw);
+}
+.mrs-sheet--left.mrs-sheet--xl,
+.mrs-sheet--right.mrs-sheet--xl {
+  width: min(28rem, 100vw);
+}
+.mrs-sheet--left.mrs-sheet--full,
+.mrs-sheet--right.mrs-sheet--full {
+  width: 100vw;
+}
+.mrs-sheet--top.mrs-sheet--sm,
+.mrs-sheet--bottom.mrs-sheet--sm {
+  height: min(12rem, 100dvh);
+}
+.mrs-sheet--top.mrs-sheet--md,
+.mrs-sheet--bottom.mrs-sheet--md {
+  height: min(16rem, 100dvh);
+}
+.mrs-sheet--top.mrs-sheet--lg,
+.mrs-sheet--bottom.mrs-sheet--lg {
+  height: min(20rem, 100dvh);
+}
+.mrs-sheet--top.mrs-sheet--xl,
+.mrs-sheet--bottom.mrs-sheet--xl {
+  height: min(24rem, 100dvh);
+}
+.mrs-sheet--top.mrs-sheet--full,
+.mrs-sheet--bottom.mrs-sheet--full {
+  height: 100dvh;
+}
+/* Slide animations, keyed to the entry edge. */
+.mrs-sheet--left[data-state='open'] {
+  animation: mrs-sheet-in-left 240ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+.mrs-sheet--left[data-state='closed'] {
+  animation: mrs-sheet-out-left 200ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+.mrs-sheet--right[data-state='open'] {
+  animation: mrs-sheet-in-right 240ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+.mrs-sheet--right[data-state='closed'] {
+  animation: mrs-sheet-out-right 200ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+.mrs-sheet--top[data-state='open'] {
+  animation: mrs-sheet-in-top 240ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+.mrs-sheet--top[data-state='closed'] {
+  animation: mrs-sheet-out-top 200ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+.mrs-sheet--bottom[data-state='open'] {
+  animation: mrs-sheet-in-bottom 240ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+.mrs-sheet--bottom[data-state='closed'] {
+  animation: mrs-sheet-out-bottom 200ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+@keyframes mrs-sheet-in-left {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}
+@keyframes mrs-sheet-out-left {
+  from { transform: translateX(0); }
+  to { transform: translateX(-100%); }
+}
+@keyframes mrs-sheet-in-right {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+@keyframes mrs-sheet-out-right {
+  from { transform: translateX(0); }
+  to { transform: translateX(100%); }
+}
+@keyframes mrs-sheet-in-top {
+  from { transform: translateY(-100%); }
+  to { transform: translateY(0); }
+}
+@keyframes mrs-sheet-out-top {
+  from { transform: translateY(0); }
+  to { transform: translateY(-100%); }
+}
+@keyframes mrs-sheet-in-bottom {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+@keyframes mrs-sheet-out-bottom {
+  from { transform: translateY(0); }
+  to { transform: translateY(100%); }
+}
+@keyframes mrs-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes mrs-fade-out {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mrs-sheet,
+  .mrs-sheet__overlay {
+    animation: none !important;
+  }
+}
+.mrs-sheet__header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-shrink: 0;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--color-border-primary);
+}
+.mrs-sheet__title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+.mrs-sheet__desc {
+  flex-shrink: 0;
+  padding: 0.75rem 1.25rem 0;
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+}
+.mrs-sheet__body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 1.25rem;
+}
+.mrs-sheet__close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  border: none;
+  border-radius: 0.5rem;
+  background: transparent;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: background 120ms ease, color 120ms ease;
+}
+.mrs-sheet__close:hover {
+  background: var(--color-hover);
+  color: var(--color-text-primary);
+}
+.mrs-sheet__close:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--color-focus-ring);
+}
+
+/* ── Calendar (react-day-picker) ─────────────────────────────────────────────
+   react-day-picker's UI parts mapped to mrs- classes (see Calendar.tsx), themed
+   against the tokens. --mrs-cell sizes the day cells. */
+.mrs-calendar {
+  --mrs-cell: 2.25rem;
+  display: inline-block;
+  padding: 0.75rem;
+  color: var(--color-text-primary);
+  font-size: 0.875rem;
+}
+.mrs-calendar__months {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+.mrs-calendar__month {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.mrs-calendar__caption {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 2rem;
+}
+.mrs-calendar__caption-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+.mrs-calendar__nav {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  pointer-events: none;
+}
+.mrs-calendar__nav-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  border: 1px solid var(--color-border-primary);
+  border-radius: 0.5rem;
+  background: var(--color-surface-primary);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  pointer-events: auto;
+  transition: background 120ms ease, color 120ms ease;
+}
+.mrs-calendar__nav-btn:hover {
+  background: var(--color-hover);
+  color: var(--color-text-primary);
+}
+.mrs-calendar__nav-btn:focus-visible {
+  outline: none;
+  border-color: var(--color-focus);
+  box-shadow: 0 0 0 3px var(--color-focus-ring);
+}
+.mrs-calendar__nav-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.mrs-calendar__grid {
+  border-collapse: collapse;
+}
+.mrs-calendar__weekdays {
+  display: flex;
+}
+.mrs-calendar__weekday {
+  width: var(--mrs-cell);
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--color-text-tertiary);
+  text-transform: capitalize;
+}
+.mrs-calendar__week {
+  display: flex;
+  margin-top: 2px;
+}
+.mrs-calendar__day {
+  width: var(--mrs-cell);
+  height: var(--mrs-cell);
+  text-align: center;
+  padding: 0;
+}
+.mrs-calendar__day-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--mrs-cell);
+  height: var(--mrs-cell);
+  border: none;
+  border-radius: 0.5rem;
+  background: transparent;
+  color: var(--color-text-primary);
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: background 120ms ease, color 120ms ease;
+}
+.mrs-calendar__day-btn:hover {
+  background: var(--color-hover);
+}
+.mrs-calendar__day-btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--color-focus-ring);
+}
+.mrs-calendar__day--today .mrs-calendar__day-btn {
+  font-weight: 700;
+  color: var(--color-primary);
+}
+.mrs-calendar__day--outside .mrs-calendar__day-btn {
+  color: var(--color-text-tertiary);
+  opacity: 0.6;
+}
+.mrs-calendar__day--disabled .mrs-calendar__day-btn {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+.mrs-calendar__day--hidden {
+  visibility: hidden;
+}
+.mrs-calendar__day--selected .mrs-calendar__day-btn {
+  background: var(--color-primary);
+  color: var(--color-primary-on);
+}
+.mrs-calendar__day--selected .mrs-calendar__day-btn:hover {
+  background: var(--color-primary);
+}
+/* Range: rounded ends, flat middle, a tinted band behind the run. */
+.mrs-calendar__day--range-middle .mrs-calendar__day-btn {
+  background: var(--color-primary-bg);
+  color: var(--color-primary);
+  border-radius: 0;
+}
+.mrs-calendar__day--range-start .mrs-calendar__day-btn {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+.mrs-calendar__day--range-end .mrs-calendar__day-btn {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+.mrs-calendar__dropdowns {
+  display: inline-flex;
+  gap: 0.5rem;
+}
+.mrs-calendar__dropdown-root {
+  position: relative;
+}
+.mrs-calendar__dropdown {
+  appearance: none;
+  padding: 0.25rem 0.5rem;
+  border: 1px solid var(--color-border-primary);
+  border-radius: 0.5rem;
+  background: var(--color-surface-primary);
+  color: var(--color-text-primary);
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+.mrs-calendar__week-number {
+  width: var(--mrs-cell);
+  font-size: 0.75rem;
+  color: var(--color-text-tertiary);
+}
+
+/* ── DatePicker (Radix Popover + Calendar) ──────────────────────────────────
+   A trigger button showing the picked date that opens a Calendar in a popover. */
+.mrs-datepicker__trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 12rem;
+  height: 2.25rem;
+  padding: 0 0.75rem;
+  border: 1px solid var(--color-border-primary);
+  border-radius: 0.5rem;
+  background: var(--color-surface-primary);
+  color: var(--color-text-primary);
+  font-size: 0.875rem;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 120ms ease, box-shadow 120ms ease;
+}
+.mrs-datepicker__trigger > svg {
+  flex-shrink: 0;
+  color: var(--color-text-tertiary);
+}
+.mrs-datepicker__trigger:hover:not(:disabled) {
+  border-color: var(--color-border-hover);
+}
+.mrs-datepicker__trigger:focus-visible,
+.mrs-datepicker__trigger[data-state='open'] {
+  outline: none;
+  border-color: var(--color-focus);
+  box-shadow: 0 0 0 3px var(--color-focus-ring);
+}
+.mrs-datepicker__trigger:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.mrs-datepicker__trigger[data-empty] .mrs-datepicker__label {
+  color: var(--color-text-tertiary);
+}
+.mrs-datepicker__label {
+  flex: 1;
+  min-width: 0;
+}
+.mrs-datepicker__popover {
+  z-index: 60;
+  border: 1px solid var(--color-border-primary);
+  border-radius: 0.75rem;
+  background: var(--color-surface-raised);
+  box-shadow: var(--mrs-elevation-popover);
+}
