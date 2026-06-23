@@ -489,6 +489,11 @@
   display: inline-flex;
   align-items: center;
 }
+.mrs-btn__label {
+  display: inline-flex;
+  align-items: center;
+  gap: inherit;
+}
 .mrs-btn--full {
   width: 100%;
 }
@@ -597,6 +602,10 @@
 }
 .mrs-btn--link:hover:not(:disabled) {
   text-decoration: underline;
+}
+/* HeaderMenuButton — trailing chevron opacity */
+.mrs-hmb__chevron {
+  opacity: 0.6;
 }
 
 /* ── Input (native <input>) ──────────────────────────────────────────────── */

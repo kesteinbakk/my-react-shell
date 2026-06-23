@@ -12,6 +12,7 @@
 // doc is docs/specifications/api-reference.md (it ships no separate guide).
 export { TONE_COLOR } from './tone';
 export { Button } from './Button';
+export { HeaderMenuButton } from './HeaderMenuButton';
 export { useDebounce } from './useDebounce';
 export { Input } from './Input';
 export { Textarea } from './Textarea';

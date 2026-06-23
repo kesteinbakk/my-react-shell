@@ -2,6 +2,8 @@ export type { Tone } from './tone';
 export { TONE_COLOR } from './tone';
 export { Button } from './Button';
 export type { ButtonProps, ButtonVariant, ButtonSize } from './Button';
+export { HeaderMenuButton } from './HeaderMenuButton';
+export type { HeaderMenuButtonProps } from './HeaderMenuButton';
 export { useDebounce } from './useDebounce';
 export { Input } from './Input';
 export type { InputProps, InputSize } from './Input';

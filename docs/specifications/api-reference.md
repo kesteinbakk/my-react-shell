@@ -249,7 +249,8 @@ import 'my-react-shell/components/styles.css' // REQUIRED (plain prebuilt CSS; a
 
 | Export(s) | Kind | Summary |
 |---|---|---|
-| `Button` | component | The kit's button. `variant` (solid·soft·outline·ghost·link) × `tone` × `size` (sm·md·lg); native `<button>` props pass through. |
+| `Button` | component | The kit's button. `variant` (solid·soft·outline·ghost·link) × `tone` × `size` (sm·md·lg); native `<button>` props pass through. `leadingIcon`/`trailingIcon` slots for icon+text layouts. |
+| `HeaderMenuButton` | component | Ghost neutral small button for the header action zone — a `<DropdownMenu trigger>` with visible label text and an automatic trailing chevron. `leadingIcon` slot for a view/mode icon before the label. All native `<button>` attributes (`aria-label`, `title`, `disabled`, …) pass through. |
 | `Input` | component | Un-opinionated native `<input>`. `invalid` (sets `aria-invalid` + error styling), `inputSize` (sm·md·lg; named so it never clashes with native `size`), `onDebouncedChange(value)` (fires `debounceMs` after the user stops typing; default 500 ms); native input props pass through. |
 | `Textarea` | component | Un-opinionated native `<textarea>`. `invalid` (sets `aria-invalid` + error styling), `onDebouncedChange(value)` (fires `debounceMs` after the user stops typing; default 500 ms); native textarea props pass through. |
 | `Label` | component | Un-opinionated native `<label>`. `required` appends a subtle decorative (`aria-hidden`) marker; native label props pass through. |
@@ -296,7 +297,7 @@ import 'my-react-shell/components/styles.css' // REQUIRED (plain prebuilt CSS; a
 | `cn(...)` | function | `clsx` + `tailwind-merge` class combiner. |
 
 Every component has a matching `…Props` type export (e.g. `ButtonProps`, `ButtonVariant`,
-`ButtonSize`, `InputProps`, `InputSize`, `TextareaProps`, `LabelProps`, `CardProps`
+`ButtonSize`, `HeaderMenuButtonProps`, `InputProps`, `InputSize`, `TextareaProps`, `LabelProps`, `CardProps`
 (+ `CardHeaderProps`/`CardTitleProps`/`CardDescriptionProps`/`CardContentProps`/`CardFooterProps`),
 `SeparatorProps`, `SeparatorOrientation`, `SkeletonProps`, `DialogProps`, `DialogSize`,
 `PopoverProps`, `PopoverAlign`, `PopoverSide`, `DropdownMenuProps`, `DropdownMenuItem`,
