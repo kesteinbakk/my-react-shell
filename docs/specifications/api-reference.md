@@ -257,6 +257,8 @@ import 'my-react-shell/components/styles.css' // REQUIRED (plain prebuilt CSS; a
 | `Separator` | component | Un-opinionated divider. `role="separator"` with `orientation` (`horizontal`·`vertical`) + `aria-orientation`; native `<div>` props pass through. |
 | `Skeleton` | component | Un-opinionated pulsing loading placeholder (decorative, `aria-hidden`). Size it with `style`/`className`; native `<div>` props pass through. |
 | `Dialog` | component | General controlled dialog on Radix Dialog (overlay, focus trap, Esc/backdrop close, portal). `title`/`description`, `children` body, `footer` actions, `showClose` ✕; renders no buttons of its own (use `ConfirmDialog` for confirm/cancel). |
+| `Popover` | component | Simple, opinionated floating panel on Radix Popover (focus management, outside-click / Esc close, portal). `trigger` anchor + `children` panel; controlled (`open`/`onOpenChange`) or uncontrolled (`defaultOpen`); `side`/`align`/`sideOffset` placement. Uses the `@radix-ui/react-popover` optional peer. |
+| `DropdownMenu` | component | Data-driven menu on Radix DropdownMenu (keyboard nav, outside-click / Esc close, portal). `trigger` anchor + `items` (discriminated union of `item`·`separator`·`label`; items carry `icon`/`disabled`/`danger`); `side`/`align`/`sideOffset` placement. Uses the `@radix-ui/react-dropdown-menu` optional peer. |
 | `Alert` | component | Inline alert/callout. `tone`: `info`·`success`·`warning`·`danger`; `title`, `icon`, `onDismiss`, `role`. |
 | `InfoBox` | component | Neutral, tone-free contextual note (icon + title + body). Use `Alert` when the message carries a semantic tone. |
 | `EmptyState` | component | Centered zero-state: optional icon, required `title`, `description`, action slot. |
@@ -282,7 +284,9 @@ import 'my-react-shell/components/styles.css' // REQUIRED (plain prebuilt CSS; a
 Every component has a matching `…Props` type export (e.g. `ButtonProps`, `ButtonVariant`,
 `ButtonSize`, `InputProps`, `InputSize`, `TextareaProps`, `LabelProps`, `CardProps`
 (+ `CardHeaderProps`/`CardTitleProps`/`CardDescriptionProps`/`CardContentProps`/`CardFooterProps`),
-`SeparatorProps`, `SeparatorOrientation`, `SkeletonProps`, `DialogProps`, `AlertProps`, `AlertTone`,
+`SeparatorProps`, `SeparatorOrientation`, `SkeletonProps`, `DialogProps`,
+`PopoverProps`, `PopoverAlign`, `PopoverSide`, `DropdownMenuProps`, `DropdownMenuItem`,
+`AlertProps`, `AlertTone`,
 `TableProps`, `TableColumn`, `ToastApi`, `ToastOptions`, `ToastTone`, `SelectProps`,
 `SelectOption`, `SegmentedOption`, `BadgeTone`, `AvatarSize`, `ActionType`,
 `ActionPreset`, `ActionButtonTone`/`Size`/`Layout`, `PhiCardProps`, `PhiCardAction`,

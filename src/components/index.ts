@@ -45,6 +45,12 @@ export type { SkeletonProps } from './Skeleton'
 export { Dialog } from './Dialog'
 export type { DialogProps } from './Dialog'
 
+export { Popover } from './Popover'
+export type { PopoverProps, PopoverAlign, PopoverSide } from './Popover'
+
+export { DropdownMenu } from './DropdownMenu'
+export type { DropdownMenuProps, DropdownMenuItem } from './DropdownMenu'
+
 export { Alert } from './Alert'
 export type { AlertProps, AlertTone } from './Alert'
 

@@ -19,6 +19,8 @@ export { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter }
 export { Separator } from './Separator';
 export { Skeleton } from './Skeleton';
 export { Dialog } from './Dialog';
+export { Popover } from './Popover';
+export { DropdownMenu } from './DropdownMenu';
 export { Alert } from './Alert';
 export { Spinner, PageSpinner, SectionSpinner } from './Spinner';
 export { EmptyState } from './EmptyState';
