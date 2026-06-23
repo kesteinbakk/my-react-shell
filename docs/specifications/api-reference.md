@@ -249,6 +249,14 @@ import 'my-react-shell/components/styles.css' // REQUIRED (plain prebuilt CSS; a
 
 | Export(s) | Kind | Summary |
 |---|---|---|
+| `Button` | component | The kit's button. `variant` (solid·soft·outline·ghost·link) × `tone` × `size` (sm·md·lg); native `<button>` props pass through. |
+| `Input` | component | Un-opinionated native `<input>`. `invalid` (sets `aria-invalid` + error styling), `inputSize` (sm·md·lg; named so it never clashes with native `size`); native input props pass through. |
+| `Textarea` | component | Un-opinionated native `<textarea>`. `invalid` (sets `aria-invalid` + error styling); native textarea props pass through. |
+| `Label` | component | Un-opinionated native `<label>`. `required` appends a subtle decorative (`aria-hidden`) marker; native label props pass through. |
+| `Card`, `CardHeader`, `CardTitle`, `CardDescription`, `CardContent`, `CardFooter` | component | Un-opinionated surface container + parts (`CardTitle` → `<h3>`, `CardDescription` → `<p>`); each spreads native `<div>` props. `--color-surface-primary` panel, bordered, rounded, card elevation. |
+| `Separator` | component | Un-opinionated divider. `role="separator"` with `orientation` (`horizontal`·`vertical`) + `aria-orientation`; native `<div>` props pass through. |
+| `Skeleton` | component | Un-opinionated pulsing loading placeholder (decorative, `aria-hidden`). Size it with `style`/`className`; native `<div>` props pass through. |
+| `Dialog` | component | General controlled dialog on Radix Dialog (overlay, focus trap, Esc/backdrop close, portal). `title`/`description`, `children` body, `footer` actions, `showClose` ✕; renders no buttons of its own (use `ConfirmDialog` for confirm/cancel). |
 | `Alert` | component | Inline alert/callout. `tone`: `info`·`success`·`warning`·`danger`; `title`, `icon`, `onDismiss`, `role`. |
 | `InfoBox` | component | Neutral, tone-free contextual note (icon + title + body). Use `Alert` when the message carries a semantic tone. |
 | `EmptyState` | component | Centered zero-state: optional icon, required `title`, `description`, action slot. |
@@ -271,7 +279,10 @@ import 'my-react-shell/components/styles.css' // REQUIRED (plain prebuilt CSS; a
 | `Accordion` | component | Grouped disclosures on Radix Accordion: roving arrow-key focus, single (one-open) or `multiple` open. Data-driven via `items`; controlled `value`/`onValueChange` or `defaultValue`; `variant` (`default`·`bordered`·`separated`), `size`. Uses the `@radix-ui/react-accordion` optional peer. See [below](#accordion). |
 | `cn(...)` | function | `clsx` + `tailwind-merge` class combiner. |
 
-Every component has a matching `…Props` type export (e.g. `AlertProps`, `AlertTone`,
+Every component has a matching `…Props` type export (e.g. `ButtonProps`, `ButtonVariant`,
+`ButtonSize`, `InputProps`, `InputSize`, `TextareaProps`, `LabelProps`, `CardProps`
+(+ `CardHeaderProps`/`CardTitleProps`/`CardDescriptionProps`/`CardContentProps`/`CardFooterProps`),
+`SeparatorProps`, `SeparatorOrientation`, `SkeletonProps`, `DialogProps`, `AlertProps`, `AlertTone`,
 `TableProps`, `TableColumn`, `ToastApi`, `ToastOptions`, `ToastTone`, `SelectProps`,
 `SelectOption`, `SegmentedOption`, `BadgeTone`, `AvatarSize`, `ActionType`,
 `ActionPreset`, `ActionButtonTone`/`Size`/`Layout`, `PhiCardProps`, `PhiCardAction`,

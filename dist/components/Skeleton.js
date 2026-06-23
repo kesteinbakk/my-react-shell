@@ -1,0 +1,17 @@
+import { jsx as _jsx } from "react/jsx-runtime";
+import { cn } from './cn';
+/**
+ * Un-opinionated loading placeholder: a pulsing block that animates between the two
+ * sunken surface tokens. Set its size with `style` / `className` (the block has no
+ * intrinsic dimensions). Decorative — keep `aria-hidden` and convey loading state to
+ * assistive tech elsewhere (e.g. a `Spinner` with a label or `aria-busy` on the
+ * region).
+ *
+ * ```tsx
+ * <Skeleton style={{ width: '12rem', height: '1rem' }} />
+ * <Skeleton style={{ width: 48, height: 48, borderRadius: '50%' }} />
+ * ```
+ */
+export function Skeleton({ className, ...rest }) {
+    return _jsx("div", { "aria-hidden": "true", className: cn('mrs-skeleton', className), ...rest });
+}

@@ -369,6 +369,360 @@
   color: var(--color-primary-content);
 }
 
+/* ── Button ──────────────────────────────────────────────────────────────── */
+.mrs-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border: 1px solid transparent;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  line-height: 1.2;
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease,
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    opacity 0.15s ease;
+}
+.mrs-btn:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+.mrs-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.mrs-btn__icon {
+  display: inline-flex;
+  align-items: center;
+}
+.mrs-btn--full {
+  width: 100%;
+}
+
+/* Sizes */
+.mrs-btn--sm {
+  padding: 0.25rem 0.625rem;
+  font-size: 0.8125rem;
+}
+.mrs-btn--md {
+  padding: 0.4375rem 0.875rem;
+  font-size: 0.875rem;
+}
+.mrs-btn--lg {
+  padding: 0.625rem 1.125rem;
+  font-size: 1rem;
+}
+
+/* Tone palettes — each tone sets the vars the variants below consume. `solid-*` is
+   the filled treatment; `tint`/`tint-fg`/`accent` drive soft/outline/ghost/link. */
+.mrs-btn--primary {
+  --btn-solid-bg: var(--color-primary);
+  --btn-solid-fg: var(--color-primary-content);
+  --btn-solid-hover: var(--color-primary-hover);
+  --btn-accent: var(--color-primary);
+  --btn-tint: var(--color-primary-bg);
+  --btn-tint-fg: var(--color-primary);
+}
+.mrs-btn--info {
+  --btn-solid-bg: var(--color-info);
+  --btn-solid-fg: var(--color-info-content);
+  --btn-solid-hover: var(--color-info-hover);
+  --btn-accent: var(--color-info);
+  --btn-tint: var(--color-info-bg);
+  --btn-tint-fg: var(--color-info-strong);
+}
+.mrs-btn--success {
+  --btn-solid-bg: var(--color-success);
+  --btn-solid-fg: var(--color-success-content);
+  --btn-solid-hover: var(--color-success-hover);
+  --btn-accent: var(--color-success);
+  --btn-tint: var(--color-success-bg);
+  --btn-tint-fg: var(--color-success-strong);
+}
+.mrs-btn--warning {
+  --btn-solid-bg: var(--color-warning);
+  --btn-solid-fg: var(--color-warning-content);
+  --btn-solid-hover: var(--color-warning-hover);
+  --btn-accent: var(--color-warning);
+  --btn-tint: var(--color-warning-bg);
+  --btn-tint-fg: var(--color-warning-strong);
+}
+.mrs-btn--danger {
+  --btn-solid-bg: var(--color-danger);
+  --btn-solid-fg: var(--color-danger-content);
+  --btn-solid-hover: var(--color-danger-hover);
+  --btn-accent: var(--color-danger);
+  --btn-tint: var(--color-danger-bg);
+  --btn-tint-fg: var(--color-danger-strong);
+}
+.mrs-btn--neutral {
+  --btn-solid-bg: var(--color-text-secondary);
+  --btn-solid-fg: var(--color-surface-primary);
+  --btn-solid-hover: var(--color-text-primary);
+  --btn-accent: var(--color-border-primary);
+  --btn-tint: var(--color-surface-sunken-deep);
+  --btn-tint-fg: var(--color-text-primary);
+}
+
+/* Variants — consume the tone vars above. */
+.mrs-btn--solid {
+  background: var(--btn-solid-bg);
+  color: var(--btn-solid-fg);
+}
+.mrs-btn--solid:hover:not(:disabled) {
+  background: var(--btn-solid-hover);
+}
+.mrs-btn--soft {
+  background: var(--btn-tint);
+  color: var(--btn-tint-fg);
+}
+.mrs-btn--soft:hover:not(:disabled) {
+  box-shadow: inset 0 0 0 1px var(--btn-accent);
+}
+.mrs-btn--outline {
+  background: transparent;
+  border-color: var(--btn-accent);
+  color: var(--btn-tint-fg);
+}
+.mrs-btn--outline:hover:not(:disabled) {
+  background: var(--btn-tint);
+}
+.mrs-btn--ghost {
+  background: transparent;
+  color: var(--btn-tint-fg);
+}
+.mrs-btn--ghost:hover:not(:disabled) {
+  background: var(--btn-tint);
+}
+.mrs-btn--link {
+  background: transparent;
+  color: var(--btn-tint-fg);
+  padding-left: 0;
+  padding-right: 0;
+  border-color: transparent;
+}
+.mrs-btn--link:hover:not(:disabled) {
+  text-decoration: underline;
+}
+
+/* ── Input (native <input>) ──────────────────────────────────────────────── */
+.mrs-input {
+  width: 100%;
+  border: 1px solid var(--color-border-primary);
+  border-radius: 0.5rem;
+  background: var(--color-surface-primary);
+  color: var(--color-text-primary);
+  transition: border-color 120ms ease, box-shadow 120ms ease;
+}
+.mrs-input::placeholder {
+  color: var(--color-text-muted);
+}
+.mrs-input:hover {
+  border-color: var(--color-border-hover);
+}
+.mrs-input:focus {
+  outline: none;
+  border-color: var(--color-focus);
+  box-shadow: 0 0 0 3px var(--color-focus-ring);
+}
+.mrs-input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.mrs-input--invalid {
+  border-color: var(--color-danger);
+}
+.mrs-input--invalid:focus {
+  box-shadow: 0 0 0 3px var(--color-danger-bg);
+}
+.mrs-input--sm {
+  height: 2rem;
+  padding: 0 0.625rem;
+  font-size: 0.8125rem;
+}
+.mrs-input--md {
+  height: 2.25rem;
+  padding: 0 0.75rem;
+  font-size: 0.875rem;
+}
+.mrs-input--lg {
+  height: 2.5rem;
+  padding: 0 0.875rem;
+  font-size: 1rem;
+}
+
+/* ── Textarea (native <textarea>) ────────────────────────────────────────── */
+.mrs-textarea {
+  width: 100%;
+  min-height: 4.5rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--color-border-primary);
+  border-radius: 0.5rem;
+  background: var(--color-surface-primary);
+  color: var(--color-text-primary);
+  font-size: 0.875rem;
+  font-family: inherit;
+  line-height: 1.5;
+  resize: vertical;
+  transition: border-color 120ms ease, box-shadow 120ms ease;
+}
+.mrs-textarea::placeholder {
+  color: var(--color-text-muted);
+}
+.mrs-textarea:hover {
+  border-color: var(--color-border-hover);
+}
+.mrs-textarea:focus {
+  outline: none;
+  border-color: var(--color-focus);
+  box-shadow: 0 0 0 3px var(--color-focus-ring);
+}
+.mrs-textarea:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.mrs-textarea--invalid {
+  border-color: var(--color-danger);
+}
+.mrs-textarea--invalid:focus {
+  box-shadow: 0 0 0 3px var(--color-danger-bg);
+}
+
+/* ── Label (native <label>) ──────────────────────────────────────────────── */
+.mrs-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.1875rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+.mrs-label__required {
+  color: var(--color-danger);
+}
+
+/* ── Card ────────────────────────────────────────────────────────────────── */
+.mrs-card {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--color-border-primary);
+  border-radius: 0.5rem;
+  background: var(--color-surface-primary);
+  color: var(--color-text-primary);
+  box-shadow: var(--mrs-elevation-card);
+}
+.mrs-card__header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 1rem 1.25rem;
+}
+.mrs-card__title {
+  margin: 0;
+  font-size: 1.0625rem;
+  font-weight: 500;
+  line-height: 1.3;
+  color: var(--color-text-heading);
+}
+.mrs-card__desc {
+  margin: 0;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--color-text-secondary);
+}
+.mrs-card__content {
+  padding: 0 1.25rem 1.25rem;
+}
+/* When content follows a header, the header already supplies the top padding. */
+.mrs-card__header + .mrs-card__content {
+  padding-top: 0;
+}
+/* Content on its own (no header) needs its own top padding. */
+.mrs-card > .mrs-card__content:first-child {
+  padding-top: 1.25rem;
+}
+.mrs-card__footer {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem 1.25rem;
+  border-top: 1px solid var(--color-border-primary);
+}
+
+/* ── Separator ───────────────────────────────────────────────────────────── */
+.mrs-separator {
+  flex-shrink: 0;
+  width: 100%;
+  height: 1px;
+  background: var(--color-border-primary);
+  border: none;
+}
+.mrs-separator--vertical {
+  width: 1px;
+  height: 100%;
+  align-self: stretch;
+}
+
+/* ── Skeleton ────────────────────────────────────────────────────────────── */
+@keyframes mrs-skeleton-pulse {
+  0%,
+  100% {
+    background: var(--color-surface-sunken);
+    opacity: 1;
+  }
+  50% {
+    background: var(--color-surface-sunken-deep);
+    opacity: 0.6;
+  }
+}
+.mrs-skeleton {
+  display: block;
+  border-radius: 0.375rem;
+  background: var(--color-surface-sunken);
+  animation: mrs-skeleton-pulse 1.5s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .mrs-skeleton {
+    animation: none;
+  }
+}
+
+/* ── Dialog (general controlled dialog — reuses the .mrs-dialog* classes) ──── */
+.mrs-dialog__body {
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+.mrs-dialog__close {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.25rem;
+  border: none;
+  border-radius: 0.375rem;
+  background: transparent;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 120ms ease, background-color 120ms ease;
+}
+.mrs-dialog__close:hover {
+  opacity: 1;
+  background: var(--color-hover);
+}
+.mrs-dialog__close:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 1px;
+}
+
 /* ── Chip ────────────────────────────────────────────────────────────────── */
 .mrs-chip-group {
   display: flex;

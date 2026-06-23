@@ -11,6 +11,14 @@
 // this sub-path, so the package barrel stays the theme core. The kit's canonical
 // doc is docs/specifications/api-reference.md (it ships no separate guide).
 export { TONE_COLOR } from './tone';
+export { Button } from './Button';
+export { Input } from './Input';
+export { Textarea } from './Textarea';
+export { Label } from './Label';
+export { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from './Card';
+export { Separator } from './Separator';
+export { Skeleton } from './Skeleton';
+export { Dialog } from './Dialog';
 export { Alert } from './Alert';
 export { Spinner, PageSpinner, SectionSpinner } from './Spinner';
 export { EmptyState } from './EmptyState';
