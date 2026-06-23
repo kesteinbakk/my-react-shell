@@ -13,12 +13,16 @@ on Radix + the theme tokens so a new project starts fast from one front door.
 - **W2 — done.** All live docs swept; zero dangling strategy.md/Dx/shadcn-direction refs.
 - **W4 — done.** Canonical `Tone` + `TONE_COLOR`; Alert/ConfirmDialog/ActionButton
   `variant`→`tone`; Badge gained `primary`; StatCard/PhiCard on the shared `Tone`.
-- **W3 — partly done.** Shipped (no new deps): `Button`, `Input`, `Textarea`, `Label`,
-  `Card`(+subparts), `Separator`, `Skeleton`, `Dialog`, `Popover`, `DropdownMenu`.
-  **Blocked (need a dependency grant):** `Checkbox`, `Switch`, `RadioGroup`, `Tooltip`,
-  `Tabs` (each a new `@radix-ui/*` peer).
-- **W5 (demo), W6 (evaluering), react-framework skill — not started** (separate repos /
-  deferred until the surface is tagged).
+- **W3 — done.** No-new-dep: `Button`, `Input`, `Textarea`, `Label`, `Card`(+subparts),
+  `Separator`, `Skeleton`, `Dialog`, `Popover`, `DropdownMenu`. Dependency-approved +
+  built: `Checkbox`, `Switch`, `RadioGroup`, `Tooltip`, `Tabs` (5 new optional `@radix-ui`
+  peers). The complete primitive surface now ships.
+- **W5 (demo), W6 (evaluering) — blocked on landing T018 on main.** Both consumers
+  `link:` the primary tree (old shell), so migrating their source to the new API would go
+  red until T018 is on main — and that merge is conflict-heavy with concurrent T019
+  (CountPill touches Alert/Badge/index/css/api-ref). Migration plan + scope (demo: 13
+  `variant`→`tone`; evaluering: 2 + drop shadcn across 68 files) in the away-report.
+- **react-framework skill — deferred** until the surface is tagged.
 
 Full run notes: `docs/4-reports/status/2026-06-23-away-report.md`.
 
