@@ -220,6 +220,10 @@
   gap: 0;
   margin-left: auto;
 }
+.mrs-app-header__actions > span {
+  display: flex;
+  align-items: center;
+}
 
 /* ── Mobile brand strip + hamburger (no page header) ─────────────────────── */
 .mrs-shell__mobile-brand {
