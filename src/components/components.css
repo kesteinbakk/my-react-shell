@@ -936,6 +936,62 @@
   text-align: center;
   color: var(--color-text-muted);
 }
+/* Whole-row click affordance. */
+.mrs-table__row--clickable {
+  cursor: pointer;
+}
+.mrs-table__row--clickable:hover td {
+  background: var(--color-hover);
+}
+/* Per-row semantic emphasis. `selected` wins the hover stripe so the state stays
+   visible while pointing at it. */
+.mrs-table__row--muted td {
+  color: var(--color-text-muted);
+  background: var(--color-surface-sunken);
+}
+.mrs-table__row--selected td {
+  background: var(--color-selected);
+}
+.mrs-table__row--selected.mrs-table__row--clickable:hover td {
+  background: var(--color-selected);
+}
+/* Expandable rows: a narrow leading disclosure column + the full-width detail row. */
+.mrs-table__expand-cell {
+  width: 2.5rem;
+  text-align: center;
+  white-space: nowrap;
+}
+.mrs-table__expand-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: 0.375rem;
+  background: transparent;
+  color: var(--color-text-tertiary);
+  cursor: pointer;
+}
+.mrs-table__expand-toggle:hover {
+  background: var(--color-hover);
+  color: var(--color-text-primary);
+}
+.mrs-table__expand-chevron {
+  display: inline-block;
+  font-size: 1rem;
+  line-height: 1;
+  transition: transform 0.15s ease;
+}
+.mrs-table__expand-chevron--open {
+  transform: rotate(90deg);
+}
+.mrs-table__expanded-cell {
+  padding: 0.875rem;
+  background: var(--color-surface-sunken);
+}
 
 /* ── UserPreferences ─────────────────────────────────────────────────────── */
 .mrs-prefs-trigger {
@@ -2544,6 +2600,35 @@
 .mrs-menu__label {
   padding: 0.375rem 0.625rem;
   font-size: 0.75rem;
+  color: var(--color-text-tertiary);
+}
+.mrs-menu__label-text {
+  flex: 1;
+  min-width: 0;
+}
+/* Checkbox / radio rows: a fixed leading slot holds the selection indicator so
+   labels stay aligned whether or not the row is currently selected. */
+.mrs-menu__indicator {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 1rem;
+}
+.mrs-menu__indicator-glyph {
+  font-size: 0.75rem;
+  line-height: 1;
+  color: var(--color-primary);
+}
+/* Submenu trigger: a plain item row with a trailing chevron; the open submenu
+   keeps its trigger highlighted. */
+.mrs-menu__sub-trigger[data-state='open'] {
+  background: var(--color-hover);
+}
+.mrs-menu__sub-chevron {
+  margin-left: auto;
+  padding-left: 0.5rem;
+  flex-shrink: 0;
   color: var(--color-text-tertiary);
 }
 

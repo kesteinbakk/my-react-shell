@@ -49,7 +49,15 @@ export { Popover } from './Popover'
 export type { PopoverProps, PopoverAlign, PopoverSide } from './Popover'
 
 export { DropdownMenu } from './DropdownMenu'
-export type { DropdownMenuProps, DropdownMenuItem } from './DropdownMenu'
+export type {
+  DropdownMenuProps,
+  DropdownMenuItem,
+  DropdownMenuActionItem,
+  DropdownMenuCheckboxItem,
+  DropdownMenuRadioGroupItem,
+  DropdownMenuRadioOption,
+  DropdownMenuSubmenuItem,
+} from './DropdownMenu'
 
 export { Alert } from './Alert'
 export type { AlertProps, AlertTone } from './Alert'
@@ -95,7 +103,7 @@ export { Avatar, AvatarGroup } from './Avatar'
 export type { AvatarProps, AvatarGroupProps, AvatarSize } from './Avatar'
 
 export { Table } from './Table'
-export type { TableProps, TableColumn } from './Table'
+export type { TableProps, TableColumn, TableRowVariant } from './Table'
 
 export { PhiCard, PHI } from './PhiCard'
 export type {
