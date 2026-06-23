@@ -118,9 +118,63 @@ local checkout — this is a **dev-only** redirect:
   each bare specifier to the consumer's single copy through normal node resolution;
   the duplication is a symlink-only artifact.
 
-  > **Build/test do not catch this.** `vite build` and vitest resolve React
-  > differently than the dev pre-bundler, so a green build/test run does **not**
-  > exercise the failing path. Only a live dev-server boot does.
+  > **`vite build` does not catch this** — a production build never executes hook
+  > code, so a green build is no signal either way. **Vitest does.** Tests that
+  > render Radix-backed shell components (Dialog, Select, DropdownMenu, Popover,
+  > Tooltip, …) fail with identical `Invalid hook call` /
+  > `Cannot read properties of null (reading 'useContext')` errors — see the
+  > Vitest section below.
+
+- **Vitest (`link:` loop only).** The Vite dev server applies `resolve.dedupe`
+  at the pre-bundler stage and collapses React across the symlink. Vitest does
+  not: by default it externalises all `node_modules` packages, loading them via
+  Node's resolution and bypassing Vite entirely — so `resolve.dedupe` has no
+  effect on them. The shell's Radix transitive deps (`@radix-ui/*`,
+  `react-remove-scroll`, …) resolve `react` from the shell's own
+  `node_modules/react`, not the consumer's. The hook dispatcher splits and
+  the test suite fails with the same errors as a dev-server boot without dedupe.
+
+  Fix: force the shell through Vite's module runner in the consumer's Vitest
+  config so that `resolve.dedupe` can act on its imports:
+
+  ```ts
+  // vitest.config.ts  (or the frontend project object inside defineWorkspace)
+  {
+    resolve: {
+      dedupe: ['react', 'react-dom', 'react/jsx-runtime'],
+    },
+    test: {
+      server: {
+        deps: {
+          // Without this, the shell is a Node-loaded external; resolve.dedupe
+          // never applies to its Radix transitive deps' `react` imports.
+          inline: [/my-react-shell/],
+        },
+      },
+    },
+  }
+  ```
+
+  **Prerequisite — Radix must be in the consumer's `node_modules`.** Vite's
+  SSR runner resolves the shell's bare-specifier `@radix-ui/*` imports from the
+  consumer's root; if they are not there, it falls back to the shell's realpath,
+  where Radix finds the shell's own React and the dedup fails. Consumers who
+  removed shadcn (the usual source of these transitive deps) must add the five
+  packages the components module always exercises:
+
+  ```bash
+  pnpm add -D \
+    @radix-ui/react-dialog \
+    @radix-ui/react-dropdown-menu \
+    @radix-ui/react-popover \
+    @radix-ui/react-select \
+    @radix-ui/react-tooltip
+  ```
+
+  A consumer that imports only `my-react-shell` (theme), `my-react-shell/i18n`,
+  or `my-react-shell/icons` — and renders no Radix-backed components in tests —
+  needs neither the explicit Radix devDeps nor the `server.deps.inline` override.
+
 - **Strip the link before committing.** A committed `link:`/`file:` specifier
   breaks every other clone and all Vercel/CI installs (the path won't exist).
   This is enforced by a **pre-commit guard** (`.githooks/pre-commit`, enabled via

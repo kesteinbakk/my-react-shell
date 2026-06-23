@@ -1,6 +1,6 @@
 # Proposal: Consuming the shell must never introduce a second React
 
-**Date**: 2026-06-23 | **Status**: draft
+**Date**: 2026-06-23 | **Status**: implemented
 
 ## What
 
@@ -49,6 +49,22 @@ consumer's React.
   Radix deps), or both?
 - Is there a shell-side build option (e.g. externalizing React in the dist, which it
   likely already does) plus a consumption note that fully closes this?
+
+## Resolution (2026-06-23)
+
+- **`docs/guides/distribution-model.md` → Local dev-loop → Vitest** — added the
+  authoritative recipe: `server.deps.inline: [/my-react-shell/]` +
+  `resolve.dedupe: ['react', 'react-dom', 'react/jsx-runtime']`, plus the
+  prerequisite that `@radix-ui/*` packages must be in the consumer's `node_modules`
+  (either via pnpm peer resolution or explicit devDeps) for Vite's SSR runner to
+  route Radix imports to the consumer's React.
+- Corrected the false claim in that guide that said "build/test do not catch this" —
+  in fact Vitest does catch it and fails with identical errors.
+- **`CLAUDE.md`** — extended the `link:` dedupe note to mention the Vitest case and
+  point at the guide's new Vitest section.
+- Consumer action needed (evaluering T063 follow-up): add the five Radix devDeps to
+  evaluering's `package.json` and add `server.deps.inline: [/my-react-shell/]` to its
+  `vitest.config.ts` frontend project.
 
 ## References
 

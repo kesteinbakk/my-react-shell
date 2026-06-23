@@ -286,9 +286,12 @@ docs/
   Either way **commit — never leave your work uncommitted for the user.**
 - A consumer on the **`link:` dev-loop must dedupe React** in its own Vite config
   (`resolve.dedupe`), or the symlinked shell's own React copy collides with the
-  app's and first paint crashes with `Invalid hook call`. `link:`-only — the
-  git-dep path is unaffected. See `docs/guides/distribution-model.md` → Local
-  dev-loop for the exact package list and why.
+  app's and first paint crashes with `Invalid hook call`. The same split hits
+  **Vitest**: Vitest externalises `node_modules` by default (bypassing
+  `resolve.dedupe`), so tests that render Radix-backed components also fail with
+  identical errors. The Vitest fix (`server.deps.inline: [/my-react-shell/]` +
+  the Radix devDep prerequisite) is in `docs/guides/distribution-model.md` →
+  Local dev-loop → Vitest. `link:`-only — the git-dep path is unaffected.
 - **A `link:` consumer's dev server sees shell *and* `themes` edits live — only its
   git-dep/production build lags.** A dev project on `link:../my-react-shell` (the demos,
   evaluering) reads the shell checkout directly: a `src`→`dist` rebuild (the `rs:watch`
