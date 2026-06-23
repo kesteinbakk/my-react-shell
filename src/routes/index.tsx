@@ -41,7 +41,7 @@ function ThemeSmokeTest() {
                 className="rounded-md px-3 py-1.5 text-sm font-medium transition-colors"
                 style={{
                   backgroundColor: active ? 'var(--color-primary)' : 'var(--color-surface-sunken-deep)',
-                  color: active ? 'var(--color-primary-content)' : 'var(--color-text-primary)',
+                  color: active ? 'var(--color-primary-on)' : 'var(--color-text-primary)',
                   border: '1px solid var(--color-border-primary)',
                 }}
               >
@@ -72,7 +72,7 @@ function ThemeSmokeTest() {
           className="rounded-md px-3 py-1.5 text-sm font-medium"
           style={{
             backgroundColor: isSystemMode ? 'var(--color-primary)' : 'var(--color-surface-sunken-deep)',
-            color: isSystemMode ? 'var(--color-primary-content)' : 'var(--color-text-primary)',
+            color: isSystemMode ? 'var(--color-primary-on)' : 'var(--color-text-primary)',
             border: '1px solid var(--color-border-primary)',
           }}
         >

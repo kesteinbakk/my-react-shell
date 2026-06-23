@@ -29,6 +29,7 @@ export { ConfirmDialog } from './ConfirmDialog';
 export { ToastProvider, useToast } from './Toast';
 export { ActionButton, ActionButtonGroup, actionPresets } from './ActionButton';
 export { Badge } from './Badge';
+export { CountPill } from './CountPill';
 export { Chip, ChipGroup } from './Chip';
 export { Avatar, AvatarGroup } from './Avatar';
 export { Table } from './Table';

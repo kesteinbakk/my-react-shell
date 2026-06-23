@@ -75,7 +75,7 @@ button[class*="inline-flex"] {
 /* Selection. */
 ::selection {
   background-color: var(--color-primary);
-  color: var(--color-primary-content);
+  color: var(--color-primary-on);
 }
 
 /* Scrollbar. */

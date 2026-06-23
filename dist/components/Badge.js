@@ -14,7 +14,13 @@ const badgeVariants = cva('mrs-badge', {
     },
     defaultVariants: { tone: 'neutral' },
 });
-/** Compact status / category badge on the semantic tint + `-strong` tokens. */
-export function Badge({ tone = 'neutral', dot = false, children, className }) {
-    return (_jsxs("span", { className: cn(badgeVariants({ tone }), className), children: [dot && _jsx("span", { className: "mrs-badge__dot", "aria-hidden": "true" }), children] }));
+/**
+ * Compact status / category badge on the semantic tint + `-on-bg` tokens.
+ *
+ * Forwards any standard `<span>` attribute (`title`, `aria-*`, `data-*`, `id`,
+ * event handlers, …) to the root, so a native tooltip or test id needs no
+ * wrapper element.
+ */
+export function Badge({ tone = 'neutral', dot = false, children, className, ...rest }) {
+    return (_jsxs("span", { className: cn(badgeVariants({ tone }), className), ...rest, children: [dot && _jsx("span", { className: "mrs-badge__dot", "aria-hidden": "true" }), children] }));
 }

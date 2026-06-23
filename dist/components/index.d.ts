@@ -36,6 +36,8 @@ export { ActionButton, ActionButtonGroup, actionPresets } from './ActionButton';
 export type { ActionButtonProps, ActionButtonPresetProps, ActionButtonIconProps, ActionButtonGroupProps, ActionButtonTone, ActionButtonSize, ActionButtonLayout, ActionType, ActionPreset, } from './ActionButton';
 export { Badge } from './Badge';
 export type { BadgeProps, BadgeTone } from './Badge';
+export { CountPill } from './CountPill';
+export type { CountPillProps, CountPillTone } from './CountPill';
 export { Chip, ChipGroup } from './Chip';
 export type { ChipProps, ChipGroupProps } from './Chip';
 export { Avatar, AvatarGroup } from './Avatar';
