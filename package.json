@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "description": "Modular React foundation — optional, versioned drop-in modules (theme, providers, auth seam, i18n) for Vite + Convex SPAs. Consumed as a GitHub git-dependency.",
+  "author": "Karl Erik Steinbakk <post@kesteinbakk.no>",
   "license": "ISC",
   "engines": {
     "node": "24.x"
