@@ -280,7 +280,7 @@ import 'my-react-shell/components/styles.css' // REQUIRED (plain prebuilt CSS; a
 | `Checkbox` | component | Un-opinionated checkbox on Radix Checkbox; tri-state (`checked` · unchecked · `'indeterminate'`); hand-rolled check/dash glyph; checked box fills `--color-primary`. Controlled (`checked`/`onCheckedChange`) or uncontrolled (`defaultChecked`); form-aware (`name`/`value`/`required`). Uses the `@radix-ui/react-checkbox` optional peer. |
 | `Switch` | component | Un-opinionated toggle on Radix Switch; track + sliding thumb (checked track `--color-primary`). Controlled (`checked`/`onCheckedChange`) or uncontrolled (`defaultChecked`); form-aware (`name`/`value`). Uses the `@radix-ui/react-switch` optional peer. |
 | `RadioGroup` | component | Single-select set on Radix RadioGroup with roving arrow-key focus; data-driven via `options`; selected dot fills `--color-primary`; `orientation` (`vertical`·`horizontal`). Controlled (`value`/`onValueChange`) or uncontrolled (`defaultValue`); form-aware (`name`). Uses the `@radix-ui/react-radio-group` optional peer. |
-| `ColorPicker` | component | General popover color picker. **Free** by default — a full hue/saturation range (via the `react-colorful` optional peer); `onChange` emits in `format` (`hex`·`rgb`·`hsl`). Pass a `colors` set to **constrain** it to a swatch grid. Controlled; `value` is a directly-usable CSS color string. See [below](#colorpicker). |
+| `ColorPicker` | component | General popover color picker. **Free** by default — a full hue/saturation range (via the `react-colorful` optional peer); `onChange` emits in `format` (`hex`·`rgb`·`hsl`). Pass a `colors` set to **constrain** it to a swatch grid. Controlled; `value` is a directly-usable CSS color string. `placeholder` is **required** — pass a translated string. See [below](#colorpicker). |
 | `UserPreferences` | component | Controlled theme/display settings panel (palette + light/dark/system + optional icons↔emojis). Persists nothing — emits `onChange`. Auth-free (`accountActions` slot). |
 | `Collapsible` | component | Single disclosure on Radix Collapsible: one trigger toggles one region. Controlled (`expanded`) / uncontrolled (`defaultExpanded`); static `trigger` or `renderTrigger(expanded)`; rotating chevron; `variant` (`default`·`bordered`·`ghost`·`filled`), `size`, `inlineChevron`, `animationDuration`. Uses the `@radix-ui/react-collapsible` optional peer. See [below](#collapsible). |
 | `Accordion` | component | Grouped disclosures on Radix Accordion: roving arrow-key focus, single (one-open) or `multiple` open. Data-driven via `items`; controlled `value`/`onValueChange` or `defaultValue`; `variant` (`default`·`bordered`·`separated`), `size`. Uses the `@radix-ui/react-accordion` optional peer. See [below](#accordion). |
@@ -425,20 +425,20 @@ the same `format`.
 | `format` | `'hex'` | Free-mode output: `'hex'` (`#rrggbb`) · `'rgb'` (`rgb(…)`) · `'hsl'` (`hsl(…)`). Ignored when `colors` is set. |
 | `label` / `description` | — | Field label + helper text above the trigger. |
 | `align` | `'start'` | Popover alignment (`start`·`center`·`end`). |
-| `placeholder` | `'Pick a color'` | Trigger text when nothing is selected. |
+| `placeholder` | — | Trigger text when nothing is selected. **Required** — pass a translated string via your i18n seam. |
 | `disabled` / `aria-label` / `className` | — | Usual control props; `aria-label` falls back to a string `label`. |
 
 ```tsx
 // Free pick — hex (default):
 const [color, setColor] = useState('#3b82f6')
-<ColorPicker label="Any color" value={color} onChange={setColor} />
+<ColorPicker label="Any color" placeholder={t('color.pick')} value={color} onChange={setColor} />
 
 // Free pick — rgb / hsl output:
-<ColorPicker format="rgb" value={rgb} onChange={setRgb} /> // → "rgb(59, 130, 246)"
-<ColorPicker format="hsl" value={hsl} onChange={setHsl} /> // → "hsl(217, 91%, 60%)"
+<ColorPicker format="rgb" placeholder={t('color.pick')} value={rgb} onChange={setRgb} />
+<ColorPicker format="hsl" placeholder={t('color.pick')} value={hsl} onChange={setHsl} />
 
 // Constrained to a fixed set:
-<ColorPicker colors={['#ef4444', '#22c55e', '#3b82f6']} value={color} onChange={setColor} />
+<ColorPicker colors={['#ef4444', '#22c55e', '#3b82f6']} placeholder={t('color.pick')} value={color} onChange={setColor} />
 ```
 
 ### `Collapsible`

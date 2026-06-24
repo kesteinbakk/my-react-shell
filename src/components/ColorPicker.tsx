@@ -35,8 +35,8 @@ export interface ColorPickerProps {
   description?: ReactNode
   /** Popover alignment relative to the trigger. Default `start`. */
   align?: 'start' | 'center' | 'end'
-  /** Trigger text when nothing is selected. Default `'Pick a color'`. */
-  placeholder?: string
+  /** Trigger text when nothing is selected. Pass a translated string via your i18n seam. */
+  placeholder: string
   disabled?: boolean
   /** Accessible label for the trigger (falls back to a string `label`). */
   'aria-label'?: string
@@ -106,7 +106,7 @@ export function ColorPicker({
   label,
   description,
   align = 'start',
-  placeholder = 'Pick a color',
+  placeholder,
   disabled,
   fullWidth = false,
   className,

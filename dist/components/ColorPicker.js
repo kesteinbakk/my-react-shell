@@ -31,7 +31,7 @@ function FreePicker({ format, color, onChange, }) {
  * Controlled via `value` / `onChange`; persists nothing. `value` is always a
  * directly-usable CSS color string — drop it into a `style`/`background`.
  */
-export function ColorPicker({ value, onChange, colors, format = 'hex', label, description, align = 'start', placeholder = 'Pick a color', disabled, fullWidth = false, className, ...rest }) {
+export function ColorPicker({ value, onChange, colors, format = 'hex', label, description, align = 'start', placeholder, disabled, fullWidth = false, className, ...rest }) {
     const [open, setOpen] = useState(false);
     const constrained = colors != null && colors.length > 0;
     const ariaLabel = rest['aria-label'] ?? (typeof label === 'string' ? label : undefined);
