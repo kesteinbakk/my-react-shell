@@ -981,10 +981,10 @@
 .mrs-table__body--striped tr:nth-child(even) td {
   background: var(--color-surface-sunken);
 }
-.mrs-table__cell--right {
+.mrs-table .mrs-table__cell--right {
   text-align: right;
 }
-.mrs-table__cell--center {
+.mrs-table .mrs-table__cell--center {
   text-align: center;
 }
 .mrs-table__sort {
