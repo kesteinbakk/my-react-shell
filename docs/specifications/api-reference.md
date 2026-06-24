@@ -249,7 +249,7 @@ import 'my-react-shell/components/styles.css' // REQUIRED (plain prebuilt CSS; a
 
 | Export(s) | Kind | Summary |
 |---|---|---|
-| `Button` | component | The kit's button. `variant` (solid·soft·outline·ghost·link) × `tone` × `size` (sm·md·lg); native `<button>` props pass through. `leadingIcon`/`trailingIcon` slots for icon+text layouts. |
+| `Button` | component | The kit's button. `variant` (solid·soft·outline·ghost·link) × `tone` × `size` (sm·md·lg); native `<button>` props pass through and the `ref` is forwarded to the `<button>`, so it works as a Radix `asChild` trigger (Popover / Tooltip / Dropdown). `leadingIcon`/`trailingIcon` slots for icon+text layouts. |
 | `HeaderMenuButton` | component | Ghost neutral small button for the header action zone — a `<DropdownMenu trigger>` with visible label text and an automatic trailing chevron. `leadingIcon` slot for a view/mode icon before the label. All native `<button>` attributes (`aria-label`, `title`, `disabled`, …) pass through. |
 | `Input` | component | Un-opinionated native `<input>`. `invalid` (sets `aria-invalid` + error styling), `inputSize` (sm·md·lg; named so it never clashes with native `size`), `onDebouncedChange(value)` (fires `debounceMs` after the user stops typing; default 500 ms); native input props pass through. |
 | `Textarea` | component | Un-opinionated native `<textarea>`. `invalid` (sets `aria-invalid` + error styling), `onDebouncedChange(value)` (fires `debounceMs` after the user stops typing; default 500 ms); native textarea props pass through. |
@@ -383,6 +383,10 @@ preset, pass a custom `icon` node (a lucide icon or an `<Icon>` from `my-react-s
 | `coloredLabel` | `false` | Let the label take the variant color instead of staying neutral. |
 | `hint` | — | Native tooltip (`title` attribute). |
 | `disabled` / `type` / `onClick` / `aria-label` / `className` | — | Usual button props; `aria-label` falls back to the visible label, then `hint`, then the preset label. |
+
+All other native `<button>` attributes pass straight through to the `<button>`, and the
+`ref` is forwarded to it — so an `ActionButton` works directly as a Radix `asChild`
+trigger (e.g. a `Popover` / `Tooltip` / `DropdownMenu` anchor) with no wrapper element.
 
 > **Header band forces inline.** The `vertical` default is for standalone toolbars and
 > action grids. An `ActionButton` placed in the page-header band's `actions` slot (via

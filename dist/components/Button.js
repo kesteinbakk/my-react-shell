@@ -1,4 +1,5 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+import { forwardRef } from 'react';
 import { cva } from 'class-variance-authority';
 import { cn } from './cn';
 const buttonVariants = cva('mrs-btn', {
@@ -31,7 +32,8 @@ const buttonVariants = cva('mrs-btn', {
  * The kit's button. Two orthogonal axes — **`variant`** (structural: `solid` · `soft`
  * · `outline` · `ghost` · `link`) and **`tone`** (semantic colour) — plus **`size`**.
  * Renders a native `<button>`; all native button props (`onClick`, `disabled`,
- * `type`, `aria-*`, …) pass straight through.
+ * `type`, `aria-*`, …) pass straight through, and the `ref` is forwarded to the
+ * `<button>` — so it can be a Radix trigger (Popover / Tooltip / Dropdown `asChild`).
  *
  * ```tsx
  * <Button>Save</Button>                                  // solid primary (default)
@@ -40,6 +42,6 @@ const buttonVariants = cva('mrs-btn', {
  * <Button variant="ghost" tone="neutral">Dismiss</Button>
  * ```
  */
-export function Button({ variant = 'solid', tone = 'primary', size = 'md', fullWidth = false, leadingIcon, trailingIcon, type = 'button', className, children, ...rest }) {
-    return (_jsxs("button", { type: type, className: cn(buttonVariants({ variant, tone, size, fullWidth: fullWidth || undefined }), className), ...rest, children: [leadingIcon != null && (_jsx("span", { className: "mrs-btn__icon", "aria-hidden": "true", children: leadingIcon })), children != null && _jsx("span", { className: "mrs-btn__label", children: children }), trailingIcon != null && (_jsx("span", { className: "mrs-btn__icon", "aria-hidden": "true", children: trailingIcon }))] }));
-}
+export const Button = forwardRef(function Button({ variant = 'solid', tone = 'primary', size = 'md', fullWidth = false, leadingIcon, trailingIcon, type = 'button', className, children, ...rest }, ref) {
+    return (_jsxs("button", { ref: ref, type: type, className: cn(buttonVariants({ variant, tone, size, fullWidth: fullWidth || undefined }), className), ...rest, children: [leadingIcon != null && (_jsx("span", { className: "mrs-btn__icon", "aria-hidden": "true", children: leadingIcon })), children != null && _jsx("span", { className: "mrs-btn__label", children: children }), trailingIcon != null && (_jsx("span", { className: "mrs-btn__icon", "aria-hidden": "true", children: trailingIcon }))] }));
+});

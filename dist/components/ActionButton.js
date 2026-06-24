@@ -1,4 +1,5 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+import { forwardRef } from 'react';
 import { cva } from 'class-variance-authority';
 import { cn } from './cn';
 const actionButtonVariants = cva('mrs-action-btn', {
@@ -100,38 +101,37 @@ export const actionPresets = {
  * It never imports the i18n or icons modules: pass translated text via `label`,
  * and wire `showEmoji={useIconMode().isEmoji}` to follow the icons↔emojis seam.
  */
-export function ActionButton(props) {
-    const { onClick, label, showLabel = false, showEmoji = false, hint, size = 'sm', layout = 'vertical', coloredLabel = false, disabled = false, type = 'button', className, } = props;
-    const isStar = props.action === 'star';
-    const active = props.action != null ? props.active : undefined;
-    const preset = props.action != null ? actionPresets[props.action] : undefined;
+export const ActionButton = forwardRef(function ActionButton(props, ref) {
+    const { action, icon, emoji, active, onClick, label, showLabel = false, showEmoji = false, hint, tone: toneProp, size = 'sm', layout = 'vertical', coloredLabel = false, disabled = false, type = 'button', 'aria-label': ariaLabelProp, className, ...rest } = props;
+    const isStar = action === 'star';
+    const preset = action != null ? actionPresets[action] : undefined;
     // Tone: explicit > preset > neutral. Star is special: amber when active,
     // neutral otherwise (with an amber hover, via the star-hover modifier).
-    const tone = props.tone ?? (isStar ? (active ? 'warning' : 'neutral') : preset?.tone ?? 'neutral');
+    const tone = toneProp ?? (isStar ? (active ? 'warning' : 'neutral') : preset?.tone ?? 'neutral');
     const px = ICON_PX[size];
-    const resolvedEmoji = props.emoji ?? preset?.emoji;
+    const resolvedEmoji = emoji ?? preset?.emoji;
     // Glyph: emoji mode wins when an emoji is available; else a custom icon; else
     // the preset SVG (star honours its active fill); else the emoji as a fallback.
     let glyph = null;
     if (showEmoji && resolvedEmoji != null) {
         glyph = (_jsx("span", { className: "mrs-action-btn__emoji", style: { fontSize: px }, children: resolvedEmoji }));
     }
-    else if (props.icon != null) {
-        glyph = props.icon;
+    else if (icon != null) {
+        glyph = icon;
     }
     else if (isStar) {
         glyph = renderStar(px, !!active);
     }
-    else if (props.action != null) {
-        glyph = PRESET_ICONS[props.action](px);
+    else if (action != null) {
+        glyph = PRESET_ICONS[action](px);
     }
     else if (resolvedEmoji != null) {
         glyph = (_jsx("span", { className: "mrs-action-btn__emoji", style: { fontSize: px }, children: resolvedEmoji }));
     }
     const visibleLabel = label ?? (showLabel ? preset?.label : undefined);
-    const ariaLabel = props['aria-label'] ?? (visibleLabel != null ? undefined : hint ?? preset?.label);
-    return (_jsxs("button", { type: type, onClick: onClick, disabled: disabled, title: hint, "aria-label": ariaLabel, "aria-pressed": isStar ? !!active : undefined, className: cn(actionButtonVariants({ tone, size, layout, coloredLabel: coloredLabel || undefined }), isStar && !active && 'mrs-action-btn--star-hover', className), children: [glyph != null && (_jsx("span", { className: "mrs-action-btn__glyph", "aria-hidden": "true", children: glyph })), visibleLabel != null && _jsx("span", { className: "mrs-action-btn__label", children: visibleLabel })] }));
-}
+    const ariaLabel = ariaLabelProp ?? (visibleLabel != null ? undefined : hint ?? preset?.label);
+    return (_jsxs("button", { ref: ref, type: type, onClick: onClick, disabled: disabled, title: hint, "aria-label": ariaLabel, "aria-pressed": isStar ? !!active : undefined, className: cn(actionButtonVariants({ tone, size, layout, coloredLabel: coloredLabel || undefined }), isStar && !active && 'mrs-action-btn--star-hover', className), ...rest, children: [glyph != null && (_jsx("span", { className: "mrs-action-btn__glyph", "aria-hidden": "true", children: glyph })), visibleLabel != null && _jsx("span", { className: "mrs-action-btn__label", children: visibleLabel })] }));
+});
 /** A flex container for a set of `ActionButton`s — a toolbar row (or column). */
 export function ActionButtonGroup({ children, vertical = false, className }) {
     return (_jsx("div", { role: "group", className: cn('mrs-action-btn-group', vertical && 'mrs-action-btn-group--vertical', className), children: children }));

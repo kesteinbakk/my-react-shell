@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import type { ButtonHTMLAttributes, ReactNode } from 'react';
 import type { Tone } from './tone';
 export type ActionButtonTone = Tone;
 export type ActionButtonSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
@@ -17,7 +17,7 @@ export interface ActionPreset {
  * default label for each common action. Override any of them per call.
  */
 export declare const actionPresets: Record<ActionType, ActionPreset>;
-interface ActionButtonBaseProps {
+interface ActionButtonBaseProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'> {
     /** Click handler. */
     onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
     /** Visible label text (vertical: below the glyph; inline: after it). Overrides the preset label. */
@@ -87,7 +87,7 @@ export type ActionButtonProps = ActionButtonPresetProps | ActionButtonIconProps;
  * It never imports the i18n or icons modules: pass translated text via `label`,
  * and wire `showEmoji={useIconMode().isEmoji}` to follow the icons↔emojis seam.
  */
-export declare function ActionButton(props: ActionButtonProps): import("react").JSX.Element;
+export declare const ActionButton: import("react").ForwardRefExoticComponent<ActionButtonProps & import("react").RefAttributes<HTMLButtonElement>>;
 export interface ActionButtonGroupProps {
     children?: ReactNode;
     /** Stack the buttons vertically instead of in a row. */

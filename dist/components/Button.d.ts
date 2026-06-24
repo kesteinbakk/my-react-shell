@@ -21,7 +21,8 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
  * The kit's button. Two orthogonal axes — **`variant`** (structural: `solid` · `soft`
  * · `outline` · `ghost` · `link`) and **`tone`** (semantic colour) — plus **`size`**.
  * Renders a native `<button>`; all native button props (`onClick`, `disabled`,
- * `type`, `aria-*`, …) pass straight through.
+ * `type`, `aria-*`, …) pass straight through, and the `ref` is forwarded to the
+ * `<button>` — so it can be a Radix trigger (Popover / Tooltip / Dropdown `asChild`).
  *
  * ```tsx
  * <Button>Save</Button>                                  // solid primary (default)
@@ -30,4 +31,4 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
  * <Button variant="ghost" tone="neutral">Dismiss</Button>
  * ```
  */
-export declare function Button({ variant, tone, size, fullWidth, leadingIcon, trailingIcon, type, className, children, ...rest }: ButtonProps): import("react").JSX.Element;
+export declare const Button: import("react").ForwardRefExoticComponent<ButtonProps & import("react").RefAttributes<HTMLButtonElement>>;

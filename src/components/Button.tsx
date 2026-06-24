@@ -1,4 +1,5 @@
 import type { ButtonHTMLAttributes, ReactNode } from 'react'
+import { forwardRef } from 'react'
 import { cva } from 'class-variance-authority'
 import { cn } from './cn'
 import type { Tone } from './tone'
@@ -53,7 +54,8 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
  * The kit's button. Two orthogonal axes — **`variant`** (structural: `solid` · `soft`
  * · `outline` · `ghost` · `link`) and **`tone`** (semantic colour) — plus **`size`**.
  * Renders a native `<button>`; all native button props (`onClick`, `disabled`,
- * `type`, `aria-*`, …) pass straight through.
+ * `type`, `aria-*`, …) pass straight through, and the `ref` is forwarded to the
+ * `<button>` — so it can be a Radix trigger (Popover / Tooltip / Dropdown `asChild`).
  *
  * ```tsx
  * <Button>Save</Button>                                  // solid primary (default)
@@ -62,20 +64,24 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
  * <Button variant="ghost" tone="neutral">Dismiss</Button>
  * ```
  */
-export function Button({
-  variant = 'solid',
-  tone = 'primary',
-  size = 'md',
-  fullWidth = false,
-  leadingIcon,
-  trailingIcon,
-  type = 'button',
-  className,
-  children,
-  ...rest
-}: ButtonProps) {
+export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
+  {
+    variant = 'solid',
+    tone = 'primary',
+    size = 'md',
+    fullWidth = false,
+    leadingIcon,
+    trailingIcon,
+    type = 'button',
+    className,
+    children,
+    ...rest
+  },
+  ref,
+) {
   return (
     <button
+      ref={ref}
       type={type}
       className={cn(
         buttonVariants({ variant, tone, size, fullWidth: fullWidth || undefined }),
@@ -96,4 +102,4 @@ export function Button({
       )}
     </button>
   )
-}
+})

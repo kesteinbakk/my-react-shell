@@ -1,4 +1,5 @@
-import type { CSSProperties, ReactNode } from 'react'
+import type { ButtonHTMLAttributes, CSSProperties, ReactNode } from 'react'
+import { forwardRef } from 'react'
 import { cva } from 'class-variance-authority'
 import { cn } from './cn'
 import type { Tone } from './tone'
@@ -208,7 +209,8 @@ export const actionPresets: Record<ActionType, ActionPreset> = {
 
 /* ── Props ────────────────────────────────────────────────────────────────── */
 
-interface ActionButtonBaseProps {
+interface ActionButtonBaseProps
+  extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'> {
   /** Click handler. */
   onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void
   /** Visible label text (vertical: below the glyph; inline: after it). Overrides the preset label. */
@@ -284,83 +286,93 @@ export type ActionButtonProps = ActionButtonPresetProps | ActionButtonIconProps
  * It never imports the i18n or icons modules: pass translated text via `label`,
  * and wire `showEmoji={useIconMode().isEmoji}` to follow the icons↔emojis seam.
  */
-export function ActionButton(props: ActionButtonProps) {
-  const {
-    onClick,
-    label,
-    showLabel = false,
-    showEmoji = false,
-    hint,
-    size = 'sm',
-    layout = 'vertical',
-    coloredLabel = false,
-    disabled = false,
-    type = 'button',
-    className,
-  } = props
+export const ActionButton = forwardRef<HTMLButtonElement, ActionButtonProps>(
+  function ActionButton(props, ref) {
+    const {
+      action,
+      icon,
+      emoji,
+      active,
+      onClick,
+      label,
+      showLabel = false,
+      showEmoji = false,
+      hint,
+      tone: toneProp,
+      size = 'sm',
+      layout = 'vertical',
+      coloredLabel = false,
+      disabled = false,
+      type = 'button',
+      'aria-label': ariaLabelProp,
+      className,
+      ...rest
+    } = props
 
-  const isStar = props.action === 'star'
-  const active = props.action != null ? props.active : undefined
-  const preset = props.action != null ? actionPresets[props.action] : undefined
+    const isStar = action === 'star'
+    const preset = action != null ? actionPresets[action] : undefined
 
-  // Tone: explicit > preset > neutral. Star is special: amber when active,
-  // neutral otherwise (with an amber hover, via the star-hover modifier).
-  const tone: ActionButtonTone =
-    props.tone ?? (isStar ? (active ? 'warning' : 'neutral') : preset?.tone ?? 'neutral')
+    // Tone: explicit > preset > neutral. Star is special: amber when active,
+    // neutral otherwise (with an amber hover, via the star-hover modifier).
+    const tone: ActionButtonTone =
+      toneProp ?? (isStar ? (active ? 'warning' : 'neutral') : preset?.tone ?? 'neutral')
 
-  const px = ICON_PX[size]
-  const resolvedEmoji = props.emoji ?? preset?.emoji
+    const px = ICON_PX[size]
+    const resolvedEmoji = emoji ?? preset?.emoji
 
-  // Glyph: emoji mode wins when an emoji is available; else a custom icon; else
-  // the preset SVG (star honours its active fill); else the emoji as a fallback.
-  let glyph: ReactNode = null
-  if (showEmoji && resolvedEmoji != null) {
-    glyph = (
-      <span className="mrs-action-btn__emoji" style={{ fontSize: px } as CSSProperties}>
-        {resolvedEmoji}
-      </span>
-    )
-  } else if (props.icon != null) {
-    glyph = props.icon
-  } else if (isStar) {
-    glyph = renderStar(px, !!active)
-  } else if (props.action != null) {
-    glyph = PRESET_ICONS[props.action](px)
-  } else if (resolvedEmoji != null) {
-    glyph = (
-      <span className="mrs-action-btn__emoji" style={{ fontSize: px } as CSSProperties}>
-        {resolvedEmoji}
-      </span>
-    )
-  }
-
-  const visibleLabel = label ?? (showLabel ? preset?.label : undefined)
-  const ariaLabel =
-    props['aria-label'] ?? (visibleLabel != null ? undefined : hint ?? preset?.label)
-
-  return (
-    <button
-      type={type}
-      onClick={onClick}
-      disabled={disabled}
-      title={hint}
-      aria-label={ariaLabel}
-      aria-pressed={isStar ? !!active : undefined}
-      className={cn(
-        actionButtonVariants({ tone, size, layout, coloredLabel: coloredLabel || undefined }),
-        isStar && !active && 'mrs-action-btn--star-hover',
-        className,
-      )}
-    >
-      {glyph != null && (
-        <span className="mrs-action-btn__glyph" aria-hidden="true">
-          {glyph}
+    // Glyph: emoji mode wins when an emoji is available; else a custom icon; else
+    // the preset SVG (star honours its active fill); else the emoji as a fallback.
+    let glyph: ReactNode = null
+    if (showEmoji && resolvedEmoji != null) {
+      glyph = (
+        <span className="mrs-action-btn__emoji" style={{ fontSize: px } as CSSProperties}>
+          {resolvedEmoji}
         </span>
-      )}
-      {visibleLabel != null && <span className="mrs-action-btn__label">{visibleLabel}</span>}
-    </button>
-  )
-}
+      )
+    } else if (icon != null) {
+      glyph = icon
+    } else if (isStar) {
+      glyph = renderStar(px, !!active)
+    } else if (action != null) {
+      glyph = PRESET_ICONS[action](px)
+    } else if (resolvedEmoji != null) {
+      glyph = (
+        <span className="mrs-action-btn__emoji" style={{ fontSize: px } as CSSProperties}>
+          {resolvedEmoji}
+        </span>
+      )
+    }
+
+    const visibleLabel = label ?? (showLabel ? preset?.label : undefined)
+    const ariaLabel =
+      ariaLabelProp ?? (visibleLabel != null ? undefined : hint ?? preset?.label)
+
+    return (
+      <button
+        ref={ref}
+        type={type}
+        onClick={onClick}
+        disabled={disabled}
+        title={hint}
+        aria-label={ariaLabel}
+        aria-pressed={isStar ? !!active : undefined}
+        className={cn(
+          actionButtonVariants({ tone, size, layout, coloredLabel: coloredLabel || undefined }),
+          isStar && !active && 'mrs-action-btn--star-hover',
+          className,
+        )}
+        {...rest}
+      >
+        {glyph != null && (
+          <span className="mrs-action-btn__glyph" aria-hidden="true">
+            {glyph}
+          </span>
+        )}
+        {visibleLabel != null && <span className="mrs-action-btn__label">{visibleLabel}</span>}
+      </button>
+    )
+  },
+)
 
 /* ── Group ────────────────────────────────────────────────────────────────── */
 
