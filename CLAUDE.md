@@ -209,10 +209,11 @@ foundation source and match it; don't reconstruct from memory or the happy path.
 - **No hardcoded user-facing text in components.** Shell components cannot call
   `t()` — they have no access to a consumer's i18n instance. Therefore every
   visible or audible string a component emits (placeholder, empty-state label,
-  ARIA label, button title, …) must be a **prop with an emoji or icon-only
-  default** — never a hardcoded English (or any language) string. The consumer
-  passes a translated string via its own i18n seam. A hardcoded English default is
-  never acceptable, even temporarily.
+  ARIA label, button title, …) must be either a **prop with an emoji or icon-only
+  default**, or a **mandatory consumer prop** (no default — the consumer must
+  supply a translated string). Never a hardcoded English (or any language) string.
+  The consumer passes translated strings via its own i18n seam. A hardcoded
+  English default is never acceptable, even temporarily.
 - **Semantic tokens only** — no hardcoded colors/shadows; render in light *and* dark.
 - **No silent defaults for absent values** (root `CLAUDE.md`) — check, don't
   default; throw on required-but-absent (e.g. `VITE_CONVEX_URL`).
