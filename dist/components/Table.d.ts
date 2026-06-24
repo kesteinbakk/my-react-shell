@@ -9,6 +9,11 @@ export interface TableColumn<Row> {
     sortValue?: (row: Row) => string | number;
     align?: 'left' | 'right' | 'center';
     /**
+     * Alignment for the header cell only. When omitted the header inherits `align`,
+     * so header and content are equal by default. Set this to diverge from `align`.
+     */
+    headerAlign?: 'left' | 'right' | 'center';
+    /**
      * Per-cell expansion content. When provided, clicking cells in this column toggles
      * an expandable detail region below the row, keyed to this column. Only one cell
      * across the whole table is open at a time (radio-style). The cell shows a pointer

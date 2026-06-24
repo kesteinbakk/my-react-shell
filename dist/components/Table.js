@@ -68,7 +68,8 @@ export function Table({ columns, data, rowKey, striped = true, empty = 'No data'
     return (_jsx("div", { className: cn('mrs-table-wrap', frameless && 'mrs-table-wrap--frameless', className), children: _jsxs("table", { className: "mrs-table", children: [_jsx("thead", { children: _jsxs("tr", { children: [expandable ? _jsx("th", { className: "mrs-table__expand-cell", "aria-hidden": "true" }) : null, columns.map((col) => {
                                 const sortable = col.sortValue != null;
                                 const activeDir = sort !== null && sort.key === col.key ? sort.dir : null;
-                                return (_jsx("th", { className: cn(col.align != null && `mrs-table__cell--${col.align}`), "aria-sort": activeDir === null
+                                return (_jsx("th", { className: cn((col.headerAlign ?? col.align) != null &&
+                                        `mrs-table__cell--${col.headerAlign ?? col.align}`), "aria-sort": activeDir === null
                                         ? undefined
                                         : activeDir === 'asc'
                                             ? 'ascending'
