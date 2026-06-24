@@ -13,8 +13,8 @@
  * SolidJS `createComputed` (synchronous, SSR-correct registration) is moot — the
  * chain fills in on the same first paint cycle. Each string `label` is wrapped
  * as `() => label` to stay `PageEntry`-shaped; a missing `icon` defaults to
- * `'circle'`; an optional `hideCrumb` predicate passes through to omit the level
- * from the rendered trail (kept in the chain, so descendants stay navigable).
+ * `'circle'`; optional `hideCrumb` and `disableCrumbLink` predicates pass through
+ * unchanged — see their `PageEntry` docs for semantics.
  * Throws (via `useShellContext`) when used outside `<AppShell>`.
  */
 /** One runtime page — a plain-data shape the hook lifts into a `PageEntry`. */
@@ -30,6 +30,13 @@ export interface DynamicPageInput {
      * children of but can't open. The leaf is never hidden. See `PageEntry.hideCrumb`.
      */
     hideCrumb?: () => boolean;
+    /**
+     * Reactive predicate to render this ancestor as a plain label instead of a
+     * clickable link. The crumb still appears in the trail; it simply has no click
+     * target. Use when the parent route has no standalone page worth navigating to.
+     * No effect on the leaf. See `PageEntry.disableCrumbLink`.
+     */
+    disableCrumbLink?: () => boolean;
 }
 export interface DynamicPagesConfig {
     parent: string;
