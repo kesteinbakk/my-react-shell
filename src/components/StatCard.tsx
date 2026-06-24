@@ -31,6 +31,9 @@ const PHI = 1.6180339887
 /** Semantic accent hue — the kit's canonical {@link Tone}, shared with `PhiCard`. */
 export type StatCardTone = Tone
 
+/** Structural alert variant — overrides `tone` to the same value and forces the ⚠️ watermark. */
+export type StatCardVariant = 'warning' | 'danger'
+
 // ── Badge ─────────────────────────────────────────────────────────────────────
 
 export interface StatCardBadge {
@@ -109,8 +112,20 @@ export interface StatCardProps {
   /**
    * Data stat items displayed below the header.
    * Each item has a `value` with either a `label` OR a `max` — not both (throws in dev).
+   * Suppressed (not rendered) when `body` is set.
    */
   stats?: StatItem[]
+  /**
+   * Freeform center slot — sits between the header and `lower`/`footer`, vertically
+   * centered. When set, `stats` are not rendered.
+   */
+  body?: ReactNode
+  /**
+   * Structural variant — overrides `tone` to the same value (so the accent stripe,
+   * badge tint, and body text all reflect the variant hue) and forces `⚠️` as the
+   * watermark background emoji, ignoring the `watermark` prop.
+   */
+  variant?: StatCardVariant
   /**
    * Structured footer (same shape as PhiCard): meta lines on the left, badges on the right.
    * Throws in dev if given alongside `lower`.
@@ -121,7 +136,10 @@ export interface StatCardProps {
    * Throws in dev if given alongside `footer`.
    */
   lower?: ReactNode
-  /** Emoji or text rendered as a faint background watermark. E.g. `'🏆'`. */
+  /**
+   * Emoji or text rendered as a faint background watermark. E.g. `'🏆'`.
+   * Ignored when `variant` is set — the variant always shows `⚠️`.
+   */
   watermark?: string
   /** Size preset — same widths as `PhiCard`. Default: `'md'`. */
   size?: PhiCardSize
@@ -287,6 +305,8 @@ export function StatCard({
   sideBarCompleteness,
   topStripeFollowsGauge = false,
   stats,
+  body,
+  variant,
   footer,
   lower,
   watermark,
@@ -295,6 +315,10 @@ export function StatCard({
   hoverable,
   className,
 }: StatCardProps) {
+  // variant overrides tone to the same value; ⚠️ always used as the watermark.
+  const effectiveTone: StatCardTone = variant ?? tone
+  const effectiveWatermark = variant ? '⚠️' : watermark
+
   const width = SIZE_WIDTH_PX[size]
   const height = width / PHI
   const isHoverable = hoverable ?? !!onClick
@@ -316,7 +340,7 @@ export function StatCard({
   // defaults to 'neutral', so the non-follow branch is always defined.
   const accentColor = followGauge
     ? completenessFill(gaugeFraction)
-    : resolveAccentColor(tone, color) ?? TONE_COLOR.neutral
+    : resolveAccentColor(effectiveTone, color) ?? TONE_COLOR.neutral
 
   // When to drop the accent stripe entirely:
   //  • mode on but no gauge → the top stripe has nothing to follow (no stripe);
@@ -416,11 +440,11 @@ export function StatCard({
         !accentSuppressed && `mrs-stat-card--accent-${effectiveAccentPlacement}`,
         hasGauge && 'mrs-stat-card--gauge',
         isHoverable && 'mrs-stat-card--hoverable',
-        watermark && 'mrs-stat-card--watermark',
+        effectiveWatermark && 'mrs-stat-card--watermark',
         className,
       )}
       style={style}
-      data-watermark={watermark}
+      data-watermark={effectiveWatermark}
       onClick={onClick}
     >
       {hasGauge ? (
@@ -448,8 +472,12 @@ export function StatCard({
           {badgeNode}
         </div>
 
-        {/* Stats */}
-        {stats && stats.length > 0 ? (
+        {/* Body (freeform center) — suppresses stats when set */}
+        {body != null ? (
+          <div className={cn('mrs-stat-card__body', variant && 'mrs-stat-card__body--variant')}>
+            {body}
+          </div>
+        ) : stats && stats.length > 0 ? (
           <dl className="mrs-stat-card__stats">
             {stats.map((item, i) => {
               if (item.max != null) {

@@ -2118,6 +2118,23 @@
   color: var(--mrs-stat-accent, var(--color-text-heading));
 }
 
+/* Freeform center slot — vertically centered between the header and lower/footer.
+   `flex: 1 1 auto` mirrors __stats so lower still pins to the bottom. */
+.mrs-stat-card__body {
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-height: 0;
+}
+
+/* When a `variant` is active, body text matches the accent/tone hue. */
+.mrs-stat-card__body--variant {
+  color: var(--mrs-stat-accent);
+  font-weight: 600;
+}
+
 /* Footer area — pushed to bottom via margin-top: auto */
 .mrs-stat-card__lower {
   margin-top: auto;

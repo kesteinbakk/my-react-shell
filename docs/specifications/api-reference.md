@@ -273,7 +273,7 @@ import 'my-react-shell/components/styles.css' // REQUIRED (plain prebuilt CSS; a
 | `Avatar`, `AvatarGroup` | component | Image + initials fallback (also on image error); falls back to a person icon/emoji when no `fallback` is set (`showEmoji` follows the icons↔emojis seam); group stacks with `+N` overflow. |
 | `Table` | component | Column-config data table: per-column sort, zebra, sticky header, empty state. Whole-row click (`onRowClick`, suppressed for clicks on in-cell controls/expand cells), an expandable per-row detail region (`renderExpanded`, kit-owned disclosure toggle + open state, full-width below the row; supply `renderDisclosure(row, isOpen, toggle)` to replace the kit's chevron with a consumer-styled control), per-cell expansion (`TableColumn.cellExpand(row)` — clicking cells in that column toggles a detail region keyed to that column, radio-style; one cell open at a time), per-row emphasis (`rowVariant`: `default`·`muted`·`selected`), and `frameless` to drop the wrapper border/radius when nesting inside a `Card`. `columns` is a plain array, so a dynamic column set can be built at render time. `TableColumn.align` sets the alignment for both the header and content cells equally (default `left`); `TableColumn.headerAlign` overrides alignment for just the header, leaving content at `align`. |
 | `PhiCard`, `PHI` | component + const | Golden-ratio card (W:H = φ:1): a figure (`icon`/`image`) fills its column, a centered text body (`upper` + `content`), and a structured `footer` (meta lines + stacked badges, per-size caps) or freeform `lower`. Collapses when there's no footer. Top-right ⋮ menu via `actions` or a `corner` slot. Uses the `@radix-ui/react-dropdown-menu` optional peer. |
-| `StatCard` | component | φ-framed KPI/status card (same size system as PhiCard). Title + subtitle, an optional accent badge circle (plain number+label **or** SVG arc-ring when `badge.max` is set), a stats row, and a structured `footer` or freeform `lower`. Accent stripe (`accentPlacement` top/left) + badge tint driven by `tone` (semantic tokens) or a raw CSS `color`. Optional left-edge completion gauge (`sideBarCompleteness`, red→amber→green) that coexists with the top stripe, or drives the whole accent's color via `topStripeFollowsGauge`. Optional emoji `watermark`. Hover-lift via `onClick`/`hoverable`. |
+| `StatCard` | component | φ-framed KPI/status card (same size system as PhiCard). Title + subtitle, an optional accent badge circle (plain number+label **or** SVG arc-ring when `badge.max` is set), a stats row **or** a freeform `body` center slot (vertically centered; suppresses stats), and a structured `footer` or freeform `lower`. Accent stripe (`accentPlacement` top/left) + badge tint driven by `tone` (semantic tokens) or a raw CSS `color`. `variant` (`'warning'`·`'danger'`) overrides tone, forces ⚠️ watermark, and colors `body` text to match. Optional left-edge completion gauge (`sideBarCompleteness`, red→amber→green) that coexists with the top stripe, or drives the whole accent's color via `topStripeFollowsGauge`. Optional emoji `watermark`. Hover-lift via `onClick`/`hoverable`. |
 | `InputField` | component | Full field: label + input + helper + error, a11y-wired (`htmlFor`/`aria-invalid`/`aria-describedby`). Spreads native input props; pass `error` to switch on error styling. `inputSize` (`sm`·`md`·`lg`, default `md`) matches the `Input` height/padding scale. `onDebouncedChange(value)` (fires `debounceMs` after the user stops typing; default 500 ms). |
 | `SegmentedControl` | component | Single-select `radiogroup` on a track; controlled via `value`/`onChange`; generic over value type. |
 | `Select` | component | Opinionated select on Radix Select (keyboard nav, typeahead, portal); `options` list; controlled via `value`/`onValueChange`; `size` (`sm`·`md`·`lg`, default `md`) matches the `Input` height/padding scale. |
@@ -311,7 +311,7 @@ Every component has a matching `…Props` type export (e.g. `ButtonProps`, `Butt
 `SelectOption`, `SelectSize`, `SegmentedOption`, `BadgeTone`, `CountPillProps`, `CountPillTone`, `AvatarSize`, `ActionType`,
 `ActionPreset`, `ActionButtonTone`/`Size`/`Layout`, `PhiCardProps`, `PhiCardAction`,
 `PhiCardSize`, `PhiCardFooter`, `PhiCardFooterLine`, `PhiCardFooterLineType`,
-`StatCardProps`, `StatCardBadge`, `StatItem`, `StatCardTone`,
+`StatCardProps`, `StatCardBadge`, `StatItem`, `StatCardTone`, `StatCardVariant`,
 `StatCardFooter`, `StatCardFooterLine`, `StatCardFooterLineType`, `ColorPickerProps`,
 `ColorFormat`, `CollapsibleProps`, `CollapsibleVariant`, `CollapsibleSize`,
 `AccordionProps`, `AccordionItem`, `AccordionVariant`, `AccordionSize`,
@@ -616,10 +616,12 @@ pass translated labels. The corner never triggers a clickable card's `onClick`.
 | `accentPlacement` | `'top'` | Where the accent reads: a `'top'` stripe or a `'left'` bar. |
 | `sideBarCompleteness` | — | Left-edge completion gauge — a `0`–`1` fraction (clamped). The colored fill rises from the bottom to `value × height`, interpolating **red → amber → green** (`danger → warning → success` tokens) over a faint track. Independent of `accentPlacement`, so it coexists with a top stripe. **Checked, not defaulted:** `undefined` → no gauge; `0` → gauge with an empty fill. Combining with `accentPlacement='left'` throws in dev; in prod the gauge wins and the left accent stripe is suppressed (no overlap). |
 | `topStripeFollowsGauge` | `false` | When `true`, the **whole accent** (top stripe + badge tint + stat numbers) takes the gauge's completeness color instead of `tone`/`color`, so the card reads as one coherent color, and the stripe is forced to the top edge. Bound to `sideBarCompleteness`: the top stripe renders only when a gauge is present — `undefined` → **no top stripe** (badge + stats fall back to `tone`/`color`). Throws in dev if combined with `accentPlacement='left'`. |
-| `stats` | — | `{ value, label?, max? }[]` — data items. `label` → label above + number below. `max` → compact arc-ring. **Cannot combine `label` and `max` on the same item** (throws in dev). |
+| `stats` | — | `{ value, label?, max? }[]` — data items. `label` → label above + number below. `max` → compact arc-ring. **Cannot combine `label` and `max` on the same item** (throws in dev). Suppressed (not rendered) when `body` is set. |
+| `body` | — | Freeform center slot — vertically centered between the header and `lower`/`footer`. When set, `stats` are not rendered. Body text is accent-colored when `variant` is active. |
+| `variant` | — | `'warning'` · `'danger'` — structural alert variant. Overrides `tone` to the same value (accent stripe, badge tint, and body text all reflect the variant hue) and forces `⚠️` as the watermark background emoji, ignoring the `watermark` prop. |
 | `footer` | — | `{ lines?, badges? }` — same structured shape as `PhiCard`. Throws if given with `lower`. |
 | `lower` | — | Freeform footer node (e.g. a CTA pill via `.mrs-stat-card__cta`). Throws if given with `footer`. |
-| `watermark` | — | Emoji rendered as a faint oversized background watermark. E.g. `'🏆'`. |
+| `watermark` | — | Emoji rendered as a faint oversized background watermark. E.g. `'🏆'`. Ignored when `variant` is set. |
 | `size` | `'md'` | `sm`·`md`·`lg`·`xl` — same widths as `PhiCard`; height = width / φ. |
 | `onClick` | — | Click handler; also enables hover lift. |
 | `hoverable` | `!!onClick` | Hover lift (translateY + shadow). |
@@ -664,6 +666,23 @@ pass translated labels. The corner never triggers a clickable card's `onClick`.
   sideBarCompleteness={0.85}
   topStripeFollowsGauge          // tone/color ignored while a gauge is present
   stats={[{ value: 6, label: 'Done' }, { value: 1, label: 'Left' }]}
+/>
+
+// Freeform body slot — centered, stats suppressed:
+<StatCard size="md" tone="info" title="Status" body="All systems operational" />
+
+// Warning variant — amber accent, ⚠️ watermark, body text in amber:
+<StatCard
+  size="md" variant="warning" title="Pending review"
+  body="3 items require your attention"
+  lower={<button className="mrs-stat-card__cta" onClick={open}>Review now →</button>}
+/>
+
+// Danger variant — red accent, ⚠️ watermark, body text in red:
+<StatCard
+  size="md" variant="danger" title="Critical failure"
+  body="Sync has been interrupted. Last successful run: 2h ago."
+  lower={<button className="mrs-stat-card__cta" onClick={retry}>Retry →</button>}
 />
 ```
 
