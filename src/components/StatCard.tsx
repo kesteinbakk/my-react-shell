@@ -333,7 +333,8 @@ export function StatCard({
   // numbers) takes the gauge's completeness colour, so the card reads as one
   // coherent colour, and the stripe is forced to the top edge.
   const followGauge = topStripeFollowsGauge && hasGauge
-  const effectiveAccentPlacement = topStripeFollowsGauge ? 'top' : accentPlacement
+  // variant forces the top stripe; topStripeFollowsGauge also forces top.
+  const effectiveAccentPlacement = (topStripeFollowsGauge || variant) ? 'top' : accentPlacement
 
   // Accent paint: the gauge colour when following it, else tone/color (tone/color
   // is also the fallback when the mode is on but there's no gauge to follow). tone
@@ -345,10 +346,17 @@ export function StatCard({
   // When to drop the accent stripe entirely:
   //  • mode on but no gauge → the top stripe has nothing to follow (no stripe);
   //  • gauge + a left accent → the gauge owns the left edge (suppress the stripe).
+  // variant always shows the accent (top stripe + DOM left stripe), so it's never suppressed.
   // Dev throws on both contradictions below; these are the prod-safe fallbacks.
   const accentSuppressed =
-    (topStripeFollowsGauge && !hasGauge) ||
-    (!topStripeFollowsGauge && hasGauge && accentPlacement === 'left')
+    !variant && (
+      (topStripeFollowsGauge && !hasGauge) ||
+      (!topStripeFollowsGauge && hasGauge && accentPlacement === 'left')
+    )
+
+  // variant left stripe: shown alongside the top stripe unless the gauge already
+  // occupies the left edge (6px gauge > 4px stripe; they'd overlap).
+  const showVariantLeftStripe = !!variant && !hasGauge
 
   // Dev guards
   if (process.env.NODE_ENV !== 'production') {
@@ -439,6 +447,7 @@ export function StatCard({
         'mrs-stat-card',
         !accentSuppressed && `mrs-stat-card--accent-${effectiveAccentPlacement}`,
         hasGauge && 'mrs-stat-card--gauge',
+        variant && 'mrs-stat-card--variant',
         isHoverable && 'mrs-stat-card--hoverable',
         effectiveWatermark && 'mrs-stat-card--watermark',
         className,
@@ -447,6 +456,9 @@ export function StatCard({
       data-watermark={effectiveWatermark}
       onClick={onClick}
     >
+      {showVariantLeftStripe ? (
+        <div className="mrs-stat-card__variant-stripe" aria-hidden="true" />
+      ) : null}
       {hasGauge ? (
         <div
           className="mrs-stat-card__gauge"

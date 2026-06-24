@@ -1954,6 +1954,29 @@
   padding-left: calc(1.1em + 4px);
 }
 
+/* Variant left stripe — DOM element so it can use the same gradient as the
+   `::before` top stripe without conflicting with the `::after` watermark. */
+.mrs-stat-card__variant-stripe {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 4px;
+  z-index: 2;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    var(--mrs-stat-accent, var(--color-primary)),
+    color-mix(in srgb, var(--mrs-stat-accent, var(--color-primary)) 35%, transparent)
+  );
+}
+
+/* Nudge content off the left stripe on variant cards. The top stripe's nudge
+   already applies via .mrs-stat-card--accent-top above. */
+.mrs-stat-card--variant .mrs-stat-card__inner {
+  padding-left: calc(1.1em + 4px);
+}
+
 /* Left-edge completion gauge — a vertical track with a bottom-anchored fill whose
    height encodes a 0–1 value and whose colour interpolates danger→warning→success
    (both set inline). Independent of the accent stripe, so it coexists with the
