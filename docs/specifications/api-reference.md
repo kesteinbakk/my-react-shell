@@ -294,6 +294,7 @@ import 'my-react-shell/components/styles.css' // REQUIRED (plain prebuilt CSS; a
 | `Calendar` | component | Themed month-grid calendar on `react-day-picker`; single/multiple/range selection (`mode`/`selected`/`onSelect`), full keyboard nav + ARIA, rendered against the tokens via `mrs-` classes (no react-day-picker stylesheet needed). Forwards every react-day-picker prop (`disabled`, `startMonth`/`endMonth`, `numberOfMonths`, `captionLayout`, …). Uses the `react-day-picker` + `date-fns` optional peers. |
 | `DatePicker` | component | Single-date field — a trigger button (showing the picked date, `displayFormat` via date-fns) that opens a `Calendar` in a Radix Popover; closes on pick. `disabledDays` (a react-day-picker matcher), `startMonth`/`endMonth`. Controlled (`value`/`onChange`) or uncontrolled (`defaultValue`). Uses the `react-day-picker` + `date-fns` + `@radix-ui/react-popover` optional peers. |
 | `EmojiPicker` | component | Full emoji picker panel — search input, scrollable category tabs (with a frequently-used tab), and an 8-column emoji grid. Ships no popover or trigger; embed inline or drop into a `<Popover>`. `onSelect(emoji)` receives the emoji character string. `locale` (default `'en'`; `'nb'` also bundled, others fall back to `'en'`), `showSearch` (default `true`), `searchPlaceholder` (default `'🔍'`), `noResultsLabel` (default `'🤷'`) — both accept translated strings. Requires the `emojibase-data` optional peer. |
+| `EmojiEmpty` | component | Muted rounded-box placeholder (`+`) sized to one emoji slot. Use as the unset-value display in any trigger or display that shows a selected emoji — visually distinct from real emoji content so the empty state is never mistaken for a selection. Optional `className`. |
 | `EmojiBar`, `EMOJI_FREQUENT` | component + const | Compact strip of quick-access emoji buttons — no search, no categories. `emojis` defaults to `EMOJI_FREQUENT` (the 12-emoji frequent set). `onSelect(emoji)` called on click. Pass a custom `emojis` array for any set. No peer dependency. |
 | `useDebounce(callback, delayMs)` | hook | Returns a stable debounced wrapper for `callback`. The wrapper schedules `callback` to fire `delayMs` ms after the last call; a new call within the window resets the timer. Pending timer cancelled on unmount. |
 | `cn(...)` | function | `clsx` + `tailwind-merge` class combiner. |
@@ -722,6 +723,10 @@ embed it inline or nest it inside a `<Popover>`. Requires the `emojibase-data` o
 | `onSelect` | — | `(emoji: string) => void`. **Required.** |
 | `className` | — | Extra classes on the root element. |
 
+**`EmojiEmpty`** — a muted rounded-box placeholder (`+`) sized to one emoji slot.
+Use wherever you display a selected emoji value and need to represent the unset state
+without a language string or a character that could be mistaken for real emoji content.
+
 **`EMOJI_FREQUENT`** — the 12-emoji default set (👍 ❤️ 😂 😮 😢 😡 🎉 👏 🔥 💯 ✨ 🙏).
 Exported from `my-react-shell/components` for use as an initial value or to build a subset.
 
@@ -729,10 +734,14 @@ Exported from `my-react-shell/components` for use as an initial value or to buil
 // Inline picker — embed directly in a form or chat UI:
 <EmojiPicker onSelect={(emoji) => setReaction(emoji)} />
 
-// Behind a Popover trigger:
+// Behind a Popover trigger — EmojiEmpty as the unset placeholder:
 const [open, setOpen] = useState(false)
 <Popover open={open} onOpenChange={setOpen}
-  trigger={<Button variant="outline">{reaction || 'Pick emoji'}</Button>}>
+  trigger={
+    <Button variant="outline">
+      {reaction ? <span>{reaction}</span> : <EmojiEmpty />}
+    </Button>
+  }>
   <EmojiPicker onSelect={(emoji) => { setReaction(emoji); setOpen(false) }} />
 </Popover>
 
@@ -748,7 +757,7 @@ const [open, setOpen] = useState(false)
 ```
 
 > Install `emojibase-data` (`pnpm add emojibase-data`) before using `EmojiPicker`.
-> `EmojiBar` has no peer dependency — it only renders the strings you pass.
+> `EmojiBar` and `EmojiEmpty` have no peer dependency.
 
 ---
 

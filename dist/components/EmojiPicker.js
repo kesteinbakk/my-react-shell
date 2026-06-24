@@ -37,6 +37,21 @@ async function loadGroups(locale) {
     return groups;
 }
 // ── Constants ─────────────────────────────────────────────────────────────
+/**
+ * `<EmojiEmpty>` — a muted rounded box with a `+` centre, sized to one emoji slot.
+ * Use as the unset-value placeholder in any trigger or display that shows a selected
+ * emoji — visually distinct from real emoji content so the empty state is never
+ * mistaken for a selection.
+ *
+ * ```tsx
+ * <button onClick={openPicker}>
+ *   {value ? <span>{value}</span> : <EmojiEmpty />}
+ * </button>
+ * ```
+ */
+export function EmojiEmpty({ className }) {
+    return _jsx("span", { className: cn('mrs-emoji-empty', className), children: "+" });
+}
 /** Default frequently-used emoji set — pass to `<EmojiBar emojis={EMOJI_FREQUENT}>`. */
 export const EMOJI_FREQUENT = [
     '👍',

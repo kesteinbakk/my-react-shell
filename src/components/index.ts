@@ -199,7 +199,7 @@ export type { CalendarProps } from './Calendar'
 export { DatePicker } from './DatePicker'
 export type { DatePickerProps } from './DatePicker'
 
-export { EmojiPicker, EMOJI_FREQUENT } from './EmojiPicker'
+export { EmojiPicker, EmojiEmpty, EMOJI_FREQUENT } from './EmojiPicker'
 export type { EmojiPickerProps } from './EmojiPicker'
 
 export { EmojiBar } from './EmojiBar'
