@@ -84,7 +84,7 @@ const FREQUENT_TAB = '__frequent__';
  * </Popover>
  * ```
  */
-export function EmojiPicker({ onSelect, locale = 'en', showSearch = true, searchPlaceholder = 'Search emojis…', noResultsLabel = 'No emojis found', className, }) {
+export function EmojiPicker({ onSelect, locale = 'en', showSearch = true, searchPlaceholder = '🔍', noResultsLabel = '🤷', className, }) {
     const [data, setData] = useState([]);
     const [groups, setGroups] = useState([]);
     const [loading, setLoading] = useState(true);

@@ -206,6 +206,13 @@ foundation source and match it; don't reconstruct from memory or the happy path.
   The barrel (`my-react-shell`) is the Convex-free theme core.
 - **i18n:** every user-facing string through the `t()` seam; central-key policy;
   missing-key dev surface. Code / comments / docs in English.
+- **No hardcoded user-facing text in components.** Shell components cannot call
+  `t()` — they have no access to a consumer's i18n instance. Therefore every
+  visible or audible string a component emits (placeholder, empty-state label,
+  ARIA label, button title, …) must be a **prop with an emoji or icon-only
+  default** — never a hardcoded English (or any language) string. The consumer
+  passes a translated string via its own i18n seam. A hardcoded English default is
+  never acceptable, even temporarily.
 - **Semantic tokens only** — no hardcoded colors/shadows; render in light *and* dark.
 - **No silent defaults for absent values** (root `CLAUDE.md`) — check, don't
   default; throw on required-but-absent (e.g. `VITE_CONVEX_URL`).

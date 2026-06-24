@@ -102,9 +102,9 @@ export interface EmojiPickerProps {
   locale?: string
   /** Show the search input. Default `true`. */
   showSearch?: boolean
-  /** Placeholder text for the search field. Default `'Search emojis…'`. */
+  /** Placeholder text for the search field. Default `'🔍'`. Pass a translated string via your i18n seam. */
   searchPlaceholder?: string
-  /** Label shown when search returns no results. Default `'No emojis found'`. */
+  /** Label shown when search returns no results. Default `'🤷'`. Pass a translated string via your i18n seam. */
   noResultsLabel?: string
   /** Extra classes on the root element. */
   className?: string
@@ -135,8 +135,8 @@ export function EmojiPicker({
   onSelect,
   locale = 'en',
   showSearch = true,
-  searchPlaceholder = 'Search emojis…',
-  noResultsLabel = 'No emojis found',
+  searchPlaceholder = '🔍',
+  noResultsLabel = '🤷',
   className,
 }: EmojiPickerProps) {
   const [data, setData] = useState<CompactEmoji[]>([])
