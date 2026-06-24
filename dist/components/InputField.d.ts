@@ -1,4 +1,5 @@
 import { type InputHTMLAttributes, type ReactNode } from 'react';
+import type { InputSize } from './Input';
 export interface InputFieldProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'id'> {
     /** Field label, associated to the input. */
     label?: ReactNode;
@@ -8,6 +9,11 @@ export interface InputFieldProps extends Omit<InputHTMLAttributes<HTMLInputEleme
     error?: ReactNode;
     /** Class for the wrapping field; `className` styles the input itself. */
     containerClassName?: string;
+    /**
+     * Size — drives the input height + padding + font size. Defaults to `md`. Named `inputSize`
+     * (not `size`) so it never clashes with the native `<input size>` attribute.
+     */
+    inputSize?: InputSize;
     /** Stretch to fill the available container width. Defaults to `false`. */
     fullWidth?: boolean;
     /** Fires `debounceMs` after the user stops typing, with the current value. */
@@ -20,4 +26,4 @@ export interface InputFieldProps extends Omit<InputHTMLAttributes<HTMLInputEleme
  * (`htmlFor`, `aria-invalid`, `aria-describedby`). Spreads native input props, so
  * `type`, `value`, `onChange`, `placeholder`, etc. pass straight through.
  */
-export declare function InputField({ label, description, error, containerClassName, fullWidth, className, onDebouncedChange, debounceMs, onChange, ...inputProps }: InputFieldProps): import("react").JSX.Element;
+export declare function InputField({ label, description, error, containerClassName, inputSize, fullWidth, className, onDebouncedChange, debounceMs, onChange, ...inputProps }: InputFieldProps): import("react").JSX.Element;

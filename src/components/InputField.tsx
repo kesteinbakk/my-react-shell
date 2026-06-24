@@ -1,6 +1,7 @@
 import { useId, type ChangeEvent, type InputHTMLAttributes, type ReactNode } from 'react'
 import { cn } from './cn'
 import { useDebounce } from './useDebounce'
+import type { InputSize } from './Input'
 
 export interface InputFieldProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'id'> {
   /** Field label, associated to the input. */
@@ -11,6 +12,11 @@ export interface InputFieldProps extends Omit<InputHTMLAttributes<HTMLInputEleme
   error?: ReactNode
   /** Class for the wrapping field; `className` styles the input itself. */
   containerClassName?: string
+  /**
+   * Size — drives the input height + padding + font size. Defaults to `md`. Named `inputSize`
+   * (not `size`) so it never clashes with the native `<input size>` attribute.
+   */
+  inputSize?: InputSize
   /** Stretch to fill the available container width. Defaults to `false`. */
   fullWidth?: boolean
   /** Fires `debounceMs` after the user stops typing, with the current value. */
@@ -29,6 +35,7 @@ export function InputField({
   description,
   error,
   containerClassName,
+  inputSize = 'md',
   fullWidth = false,
   className,
   onDebouncedChange,
@@ -60,7 +67,12 @@ export function InputField({
       )}
       <input
         id={id}
-        className={cn('mrs-field__input', showError && 'mrs-field__input--error', className)}
+        className={cn(
+          'mrs-field__input',
+          inputSize !== 'md' && `mrs-field__input--${inputSize}`,
+          showError && 'mrs-field__input--error',
+          className,
+        )}
         aria-invalid={showError || undefined}
         aria-describedby={showError ? errId : showDesc ? descId : undefined}
         onChange={handleChange}

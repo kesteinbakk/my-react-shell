@@ -1272,6 +1272,16 @@
   opacity: 0.6;
   cursor: not-allowed;
 }
+.mrs-field__input--sm {
+  height: 2rem;
+  padding: 0 0.625rem;
+  font-size: 0.8125rem;
+}
+.mrs-field__input--lg {
+  height: 2.5rem;
+  padding: 0 0.875rem;
+  font-size: 1rem;
+}
 .mrs-field__input--error {
   border-color: var(--color-danger);
 }
