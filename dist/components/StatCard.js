@@ -82,7 +82,10 @@ function titleFitStep(title) {
  * The accent stripe, badge tint, and watermark are driven by `tone` (mapped to
  * semantic tokens) or overridden with a raw CSS `color` string.
  */
-export function StatCard({ title, subtitle, badge, tone = 'neutral', color, accentPlacement = 'top', sideBarCompleteness, topStripeFollowsGauge = false, stats, footer, lower, watermark, size = 'md', onClick, hoverable, className, }) {
+export function StatCard({ title, subtitle, badge, tone = 'neutral', color, accentPlacement = 'top', sideBarCompleteness, topStripeFollowsGauge = false, stats, body, variant, footer, lower, watermark, size = 'md', onClick, hoverable, className, }) {
+    // variant overrides tone to the same value; ⚠️ always used as the watermark.
+    const effectiveTone = variant ?? tone;
+    const effectiveWatermark = variant ? '⚠️' : watermark;
     const width = SIZE_WIDTH_PX[size];
     const height = width / PHI;
     const isHoverable = hoverable ?? !!onClick;
@@ -101,7 +104,7 @@ export function StatCard({ title, subtitle, badge, tone = 'neutral', color, acce
     // defaults to 'neutral', so the non-follow branch is always defined.
     const accentColor = followGauge
         ? completenessFill(gaugeFraction)
-        : resolveAccentColor(tone, color) ?? TONE_COLOR.neutral;
+        : resolveAccentColor(effectiveTone, color) ?? TONE_COLOR.neutral;
     // When to drop the accent stripe entirely:
     //  • mode on but no gauge → the top stripe has nothing to follow (no stripe);
     //  • gauge + a left accent → the gauge owns the left edge (suppress the stripe).
@@ -155,7 +158,7 @@ export function StatCard({ title, subtitle, badge, tone = 'neutral', color, acce
             badgeNode = (_jsxs("div", { className: "mrs-stat-card__badge", children: [_jsx("span", { className: "mrs-stat-card__badge-value", children: badge.value }), badge.label ? _jsx("span", { className: "mrs-stat-card__badge-label", children: badge.label }) : null] }));
         }
     }
-    return (_jsxs("div", { className: cn('mrs-stat-card', !accentSuppressed && `mrs-stat-card--accent-${effectiveAccentPlacement}`, hasGauge && 'mrs-stat-card--gauge', isHoverable && 'mrs-stat-card--hoverable', watermark && 'mrs-stat-card--watermark', className), style: style, "data-watermark": watermark, onClick: onClick, children: [hasGauge ? (_jsx("div", { className: "mrs-stat-card__gauge", role: "meter", "aria-valuemin": 0, "aria-valuemax": 100, "aria-valuenow": gaugePct, "aria-label": `${gaugePct}%`, children: _jsx("div", { className: "mrs-stat-card__gauge-fill", style: { height: `${gaugeFraction * 100}%`, background: completenessFill(gaugeFraction) } }) })) : null, _jsxs("div", { className: "mrs-stat-card__inner", children: [_jsxs("div", { className: "mrs-stat-card__header", children: [_jsxs("div", { className: "mrs-stat-card__head-text", children: [_jsx("p", { className: "mrs-stat-card__title", "data-fit": titleFitStep(title) || undefined, children: title }), subtitle ? _jsx("p", { className: "mrs-stat-card__subtitle", children: subtitle }) : null] }), badgeNode] }), stats && stats.length > 0 ? (_jsx("dl", { className: "mrs-stat-card__stats", children: stats.map((item, i) => {
+    return (_jsxs("div", { className: cn('mrs-stat-card', !accentSuppressed && `mrs-stat-card--accent-${effectiveAccentPlacement}`, hasGauge && 'mrs-stat-card--gauge', isHoverable && 'mrs-stat-card--hoverable', effectiveWatermark && 'mrs-stat-card--watermark', className), style: style, "data-watermark": effectiveWatermark, onClick: onClick, children: [hasGauge ? (_jsx("div", { className: "mrs-stat-card__gauge", role: "meter", "aria-valuemin": 0, "aria-valuemax": 100, "aria-valuenow": gaugePct, "aria-label": `${gaugePct}%`, children: _jsx("div", { className: "mrs-stat-card__gauge-fill", style: { height: `${gaugeFraction * 100}%`, background: completenessFill(gaugeFraction) } }) })) : null, _jsxs("div", { className: "mrs-stat-card__inner", children: [_jsxs("div", { className: "mrs-stat-card__header", children: [_jsxs("div", { className: "mrs-stat-card__head-text", children: [_jsx("p", { className: "mrs-stat-card__title", "data-fit": titleFitStep(title) || undefined, children: title }), subtitle ? _jsx("p", { className: "mrs-stat-card__subtitle", children: subtitle }) : null] }), badgeNode] }), stats && stats.length > 0 ? (_jsx("dl", { className: "mrs-stat-card__stats", children: stats.map((item, i) => {
                             if (item.max != null) {
                                 // Arc-ring stat
                                 return (_jsx("div", { className: "mrs-stat-card__stat mrs-stat-card__stat--arc", children: _jsx(ArcRing, { value: item.value, max: item.max }) }, i));

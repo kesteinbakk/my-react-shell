@@ -105,6 +105,7 @@ route (e.g. `/dashboard`, `/data`).
 | `groupBreak` | `true` | Draws a sidebar divider above this entry (ignored on the first visible page). |
 | `tabBar` | `true` | Opts a top-level entry into the mobile bottom tab bar (only when `AppShell mobileNav='tabBar'`). |
 | `hideCrumb` | `() => boolean` | Reactive predicate — omit this level from the rendered trail while keeping it in the chain. See [Hiding an access-gated crumb](#hiding-an-access-gated-crumb). |
+| `disableCrumbLink` | `() => boolean` | Reactive predicate — render this ancestor as a plain label instead of a clickable link. The crumb still appears; it simply has no click target. Use for structural parents that have no meaningful page of their own. No effect on the leaf. |
 
 #### A nav-less, card-dashboard app
 

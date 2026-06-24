@@ -5,6 +5,8 @@ import type { PhiCardFooter, PhiCardFooterLine, PhiCardFooterLineType, PhiCardSi
 export type { PhiCardFooter as StatCardFooter, PhiCardFooterLine as StatCardFooterLine, PhiCardFooterLineType as StatCardFooterLineType };
 /** Semantic accent hue — the kit's canonical {@link Tone}, shared with `PhiCard`. */
 export type StatCardTone = Tone;
+/** Structural alert variant — overrides `tone` to the same value and forces the ⚠️ watermark. */
+export type StatCardVariant = 'warning' | 'danger';
 export interface StatCardBadge {
     /** Primary value shown in the badge circle. */
     value: number | string;
@@ -75,8 +77,20 @@ export interface StatCardProps {
     /**
      * Data stat items displayed below the header.
      * Each item has a `value` with either a `label` OR a `max` — not both (throws in dev).
+     * Suppressed (not rendered) when `body` is set.
      */
     stats?: StatItem[];
+    /**
+     * Freeform center slot — sits between the header and `lower`/`footer`, vertically
+     * centered. When set, `stats` are not rendered.
+     */
+    body?: ReactNode;
+    /**
+     * Structural variant — overrides `tone` to the same value (so the accent stripe,
+     * badge tint, and body text all reflect the variant hue) and forces `⚠️` as the
+     * watermark background emoji, ignoring the `watermark` prop.
+     */
+    variant?: StatCardVariant;
     /**
      * Structured footer (same shape as PhiCard): meta lines on the left, badges on the right.
      * Throws in dev if given alongside `lower`.
@@ -87,7 +101,10 @@ export interface StatCardProps {
      * Throws in dev if given alongside `footer`.
      */
     lower?: ReactNode;
-    /** Emoji or text rendered as a faint background watermark. E.g. `'🏆'`. */
+    /**
+     * Emoji or text rendered as a faint background watermark. E.g. `'🏆'`.
+     * Ignored when `variant` is set — the variant always shows `⚠️`.
+     */
     watermark?: string;
     /** Size preset — same widths as `PhiCard`. Default: `'md'`. */
     size?: PhiCardSize;
@@ -106,4 +123,4 @@ export interface StatCardProps {
  * The accent stripe, badge tint, and watermark are driven by `tone` (mapped to
  * semantic tokens) or overridden with a raw CSS `color` string.
  */
-export declare function StatCard({ title, subtitle, badge, tone, color, accentPlacement, sideBarCompleteness, topStripeFollowsGauge, stats, footer, lower, watermark, size, onClick, hoverable, className, }: StatCardProps): import("react").JSX.Element;
+export declare function StatCard({ title, subtitle, badge, tone, color, accentPlacement, sideBarCompleteness, topStripeFollowsGauge, stats, body, variant, footer, lower, watermark, size, onClick, hoverable, className, }: StatCardProps): import("react").JSX.Element;

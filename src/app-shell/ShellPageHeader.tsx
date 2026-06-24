@@ -308,6 +308,10 @@ function Breadcrumbs(props: BreadcrumbsProps): ReactNode {
                   <span className="mrs-breadcrumbs__label">{label}</span>
                 </span>
               )
+            ) : level.entry.disableCrumbLink?.() ? (
+              <span className="mrs-breadcrumbs__link" title={label}>
+                <span className="mrs-breadcrumbs__label">{label}</span>
+              </span>
             ) : (
               <Link
                 to={level.entry.route}
@@ -357,6 +361,7 @@ function OverflowCrumb(props: OverflowCrumbProps): ReactNode {
             <DropdownMenu.Item
               key={level.entry.id}
               className="mrs-breadcrumbs__menu-item"
+              disabled={level.entry.disableCrumbLink?.() === true}
               onSelect={() => navigate({ to: level.entry.route })}
             >
               {shell.config.renderIcon(level.entry.icon, 16)}

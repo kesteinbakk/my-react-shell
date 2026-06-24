@@ -413,6 +413,11 @@ button.mrs-breadcrumbs__leaf {
 .mrs-breadcrumbs__menu-item[data-current='true'] {
   color: var(--color-primary);
 }
+.mrs-breadcrumbs__menu-item[data-disabled] {
+  opacity: 0.45;
+  cursor: default;
+  pointer-events: none;
+}
 .mrs-page-header__actions {
   display: flex;
   align-items: center;

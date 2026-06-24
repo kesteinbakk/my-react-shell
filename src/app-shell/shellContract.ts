@@ -54,6 +54,16 @@ export interface PageEntry {
    * page) is never hidden**, so the trail can't go empty.
    */
   hideCrumb?: () => boolean
+  /**
+   * Reactive predicate to **render this ancestor as a plain label instead of a
+   * clickable link** in the breadcrumb trail. The crumb still appears in the
+   * chain and is still visible; it simply has no click target. Use this when
+   * the ancestor route has no standalone page worth navigating to — a structural
+   * parent that only makes sense as a grouping, not a destination. Called
+   * during render. Has no effect on the leaf (which is never rendered as a
+   * link).
+   */
+  disableCrumbLink?: () => boolean
   /** Sidebar divider before this entry. Ignored on the first visible page. */
   groupBreak?: boolean
   /** Mobile bottom-bar opt-in (only when `AppShell mobileNav='tabBar'`). Top-level only. */

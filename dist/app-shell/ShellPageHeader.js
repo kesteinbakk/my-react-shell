@@ -132,7 +132,7 @@ function Breadcrumbs(props) {
                 const label = isLeaf && leafOverride !== undefined
                     ? leafOverride
                     : level.entry.label();
-                return (_jsxs("span", { className: "mrs-breadcrumbs__crumb", children: [chevron, isLeaf ? (level.siblings.length > 1 ? (_jsx(LeafDropdown, { shell: shell, label: label, siblings: level.siblings, selectedId: level.entry.id })) : (_jsx("span", { className: "mrs-breadcrumbs__leaf", title: label, children: _jsx("span", { className: "mrs-breadcrumbs__label", children: label }) }))) : (_jsx(Link, { to: level.entry.route, className: "mrs-breadcrumbs__link", title: label, children: _jsx("span", { className: "mrs-breadcrumbs__label", children: label }) }))] }, level.entry.id));
+                return (_jsxs("span", { className: "mrs-breadcrumbs__crumb", children: [chevron, isLeaf ? (level.siblings.length > 1 ? (_jsx(LeafDropdown, { shell: shell, label: label, siblings: level.siblings, selectedId: level.entry.id })) : (_jsx("span", { className: "mrs-breadcrumbs__leaf", title: label, children: _jsx("span", { className: "mrs-breadcrumbs__label", children: label }) }))) : level.entry.disableCrumbLink?.() ? (_jsx("span", { className: "mrs-breadcrumbs__link", title: label, children: _jsx("span", { className: "mrs-breadcrumbs__label", children: label }) })) : (_jsx(Link, { to: level.entry.route, className: "mrs-breadcrumbs__link", title: label, children: _jsx("span", { className: "mrs-breadcrumbs__label", children: label }) }))] }, level.entry.id));
             })] }));
 }
 /**
@@ -143,7 +143,7 @@ function OverflowCrumb(props) {
     const { shell, hidden } = props;
     const navigate = useNavigate();
     const moreLabel = shell.config.labels?.more?.() ?? 'More';
-    return (_jsxs(DropdownMenu.Root, { children: [_jsx(DropdownMenu.Trigger, { asChild: true, children: _jsx("button", { type: "button", className: "mrs-breadcrumbs__overflow", "aria-label": moreLabel, children: "\u2026" }) }), _jsx(DropdownMenu.Portal, { children: _jsx(DropdownMenu.Content, { className: "mrs-breadcrumbs__menu", children: hidden.map(level => (_jsxs(DropdownMenu.Item, { className: "mrs-breadcrumbs__menu-item", onSelect: () => navigate({ to: level.entry.route }), children: [shell.config.renderIcon(level.entry.icon, 16), level.entry.label()] }, level.entry.id))) }) })] }));
+    return (_jsxs(DropdownMenu.Root, { children: [_jsx(DropdownMenu.Trigger, { asChild: true, children: _jsx("button", { type: "button", className: "mrs-breadcrumbs__overflow", "aria-label": moreLabel, children: "\u2026" }) }), _jsx(DropdownMenu.Portal, { children: _jsx(DropdownMenu.Content, { className: "mrs-breadcrumbs__menu", children: hidden.map(level => (_jsxs(DropdownMenu.Item, { className: "mrs-breadcrumbs__menu-item", disabled: level.entry.disableCrumbLink?.() === true, onSelect: () => navigate({ to: level.entry.route }), children: [shell.config.renderIcon(level.entry.icon, 16), level.entry.label()] }, level.entry.id))) }) })] }));
 }
 function LeafDropdown(props) {
     const { shell, label, siblings, selectedId } = props;
