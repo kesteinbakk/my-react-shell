@@ -1,0 +1,39 @@
+/** Default frequently-used emoji set — pass to `<EmojiBar emojis={EMOJI_FREQUENT}>`. */
+export declare const EMOJI_FREQUENT: string[];
+export interface EmojiPickerProps {
+    /** Called when an emoji is selected; receives the emoji character string. */
+    onSelect: (emoji: string) => void;
+    /**
+     * Locale for emoji labels and search (default `'en'`). Currently `'en'` and `'nb'`
+     * are bundled; any other value falls back to `'en'`.
+     */
+    locale?: string;
+    /** Show the search input. Default `true`. */
+    showSearch?: boolean;
+    /** Placeholder text for the search field. Default `'Search emojis…'`. */
+    searchPlaceholder?: string;
+    /** Label shown when search returns no results. Default `'No emojis found'`. */
+    noResultsLabel?: string;
+    /** Extra classes on the root element. */
+    className?: string;
+}
+/**
+ * `<EmojiPicker>` — a full emoji picker panel: search, category tabs (with a
+ * frequently-used tab), and an 8-column emoji grid. Ships no popover or trigger
+ * of its own — embed it inline or drop it into a `<Popover>`.
+ *
+ * Requires the `emojibase-data` optional peer (`pnpm add emojibase-data`).
+ * Currently bundles `en` and `nb` locale data; any other `locale` value falls
+ * back to `en`.
+ *
+ * ```tsx
+ * // Inline:
+ * <EmojiPicker onSelect={setEmoji} />
+ *
+ * // Behind a popover trigger:
+ * <Popover trigger={<Button>Pick emoji</Button>}>
+ *   <EmojiPicker onSelect={(emoji) => { setEmoji(emoji); setOpen(false) }} />
+ * </Popover>
+ * ```
+ */
+export declare function EmojiPicker({ onSelect, locale, showSearch, searchPlaceholder, noResultsLabel, className, }: EmojiPickerProps): import("react").JSX.Element;

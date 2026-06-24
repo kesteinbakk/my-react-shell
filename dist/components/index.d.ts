@@ -89,4 +89,8 @@ export { Calendar } from './Calendar';
 export type { CalendarProps } from './Calendar';
 export { DatePicker } from './DatePicker';
 export type { DatePickerProps } from './DatePicker';
+export { EmojiPicker, EMOJI_FREQUENT } from './EmojiPicker';
+export type { EmojiPickerProps } from './EmojiPicker';
+export { EmojiBar } from './EmojiBar';
+export type { EmojiBarProps } from './EmojiBar';
 export { cn } from './cn';

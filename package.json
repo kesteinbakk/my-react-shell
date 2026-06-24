@@ -94,6 +94,7 @@
     "convex": "^1.41.0",
     "date-fns": "^4.4.0",
     "react": "^19.0.0",
+    "emojibase-data": "^17.0.0",
     "react-colorful": "^5.7.0",
     "react-day-picker": "^10.0.1",
     "react-dom": "^19.0.0",
@@ -166,6 +167,9 @@
     "date-fns": {
       "optional": true
     },
+    "emojibase-data": {
+      "optional": true
+    },
     "react-colorful": {
       "optional": true
     },
@@ -206,6 +210,7 @@
     "clsx": "^2.1.1",
     "convex": "^1.41.0",
     "date-fns": "^4.4.0",
+    "emojibase-data": "^17.0.0",
     "react": "^19.2.7",
     "react-colorful": "^5.7.0",
     "react-day-picker": "^10.0.1",

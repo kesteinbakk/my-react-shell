@@ -5,7 +5,7 @@ summary: >
   with signatures and minimal usage. The fast index the per-module guides aren't.
 status: current
 area: all modules
-last_updated: 2026-06-20
+last_updated: 2026-06-24
 ---
 
 # my-react-shell — API reference
@@ -28,7 +28,7 @@ contract of any module, follow the **Guide** link in its section.
 | `my-react-shell/providers` | **providers** (Convex client + `AppProviders`) | `convex` | — |
 | `my-react-shell/auth/convex` | **auth** Convex Auth default | `convex`, `@convex-dev/auth`, `@auth/core` | — |
 | `my-react-shell/i18n` | **i18n** (`t()` seam) | — (zero-dep) | — |
-| `my-react-shell/components` | **component kit** (UI components on Radix + the theme tokens) | `class-variance-authority`, `clsx`, `tailwind-merge`, `@radix-ui/react-{dialog,dropdown-menu,popover,select,accordion,collapsible,checkbox,switch,radio-group,tooltip,tabs,slider,progress,toggle,toggle-group}`, `react-colorful` (only for `ColorPicker`), `react-day-picker` + `date-fns` (only for `Calendar`/`DatePicker`) | `my-react-shell/components/styles.css` |
+| `my-react-shell/components` | **component kit** (UI components on Radix + the theme tokens) | `class-variance-authority`, `clsx`, `tailwind-merge`, `@radix-ui/react-{dialog,dropdown-menu,popover,select,accordion,collapsible,checkbox,switch,radio-group,tooltip,tabs,slider,progress,toggle,toggle-group}`, `react-colorful` (only for `ColorPicker`), `react-day-picker` + `date-fns` (only for `Calendar`/`DatePicker`), `emojibase-data` (only for `EmojiPicker`) | `my-react-shell/components/styles.css` |
 | `my-react-shell/icons` | **icons↔emojis seam** | — (pure React) | — |
 | `my-react-shell/app-shell` | **app-shell** (chrome, page header, tabs) | `@tanstack/react-router`, `@radix-ui/react-dialog`, `@radix-ui/react-dropdown-menu` | `my-react-shell/app-shell/styles.css` |
 
@@ -293,6 +293,8 @@ import 'my-react-shell/components/styles.css' // REQUIRED (plain prebuilt CSS; a
 | `Sheet` | component | Overlay panel that slides in from any edge on Radix Dialog (focus trap, Esc/outside-click close, portal). `side` (`left`·`right`·`top`·`bottom`), `size` (`sm`·`md`·`lg`·`xl`·`full` — width for left/right, height for top/bottom). Optional `trigger`; built-in header (`title`/`header`/`description` + ✕ `showClose`) or `bare` (child owns the panel). `scrim={false}` + `modal={false}` for a non-blocking float over a still-interactive page. Controlled (`open`/`onOpenChange`) or uncontrolled (`defaultOpen`). Uses the `@radix-ui/react-dialog` optional peer. |
 | `Calendar` | component | Themed month-grid calendar on `react-day-picker`; single/multiple/range selection (`mode`/`selected`/`onSelect`), full keyboard nav + ARIA, rendered against the tokens via `mrs-` classes (no react-day-picker stylesheet needed). Forwards every react-day-picker prop (`disabled`, `startMonth`/`endMonth`, `numberOfMonths`, `captionLayout`, …). Uses the `react-day-picker` + `date-fns` optional peers. |
 | `DatePicker` | component | Single-date field — a trigger button (showing the picked date, `displayFormat` via date-fns) that opens a `Calendar` in a Radix Popover; closes on pick. `disabledDays` (a react-day-picker matcher), `startMonth`/`endMonth`. Controlled (`value`/`onChange`) or uncontrolled (`defaultValue`). Uses the `react-day-picker` + `date-fns` + `@radix-ui/react-popover` optional peers. |
+| `EmojiPicker` | component | Full emoji picker panel — search input, scrollable category tabs (with a frequently-used tab), and an 8-column emoji grid. Ships no popover or trigger; embed inline or drop into a `<Popover>`. `onSelect(emoji)` receives the emoji character string. `locale` (default `'en'`; `'nb'` also bundled, others fall back to `'en'`), `showSearch` (default `true`), `searchPlaceholder`, `noResultsLabel`. Requires the `emojibase-data` optional peer. |
+| `EmojiBar`, `EMOJI_FREQUENT` | component + const | Compact strip of quick-access emoji buttons — no search, no categories. `emojis` defaults to `EMOJI_FREQUENT` (the 12-emoji frequent set). `onSelect(emoji)` called on click. Pass a custom `emojis` array for any set. No peer dependency. |
 | `useDebounce(callback, delayMs)` | hook | Returns a stable debounced wrapper for `callback`. The wrapper schedules `callback` to fire `delayMs` ms after the last call; a new call within the window resets the timer. Pending timer cancelled on unmount. |
 | `cn(...)` | function | `clsx` + `tailwind-merge` class combiner. |
 
@@ -316,7 +318,7 @@ Every component has a matching `…Props` type export (e.g. `ButtonProps`, `Butt
 `TabsProps`, `TabItem`, `TooltipProps`, `SliderProps`, `ProgressProps`, `ProgressSize`,
 `ToggleProps`, `ToggleVariant`, `ToggleSize`, `ToggleGroupProps`, `ToggleGroupOption`,
 `ToggleGroupSingleProps`, `ToggleGroupMultipleProps`, `SheetProps`, `SheetSide`,
-`SheetSize`, `CalendarProps`, `DatePickerProps`, etc.).
+`SheetSize`, `CalendarProps`, `DatePickerProps`, `EmojiPickerProps`, `EmojiBarProps`, etc.).
 
 **Semantic colour is one shared vocabulary.** The kit exports a canonical **`Tone`**
 type (`primary`·`neutral`·`info`·`success`·`warning`·`danger`) and its **`TONE_COLOR`**
@@ -697,6 +699,56 @@ A fully **controlled** theme/display panel in a Radix dialog (palette + light/da
 > props, and wire the icons↔emojis swap yourself via `useIconMode().isEmoji`. All labels
 > have English defaults. Components are themed **only through the semantic tokens** — change
 > a token in your palette and the kit follows, no component edits.
+
+### `EmojiPicker` / `EmojiBar`
+
+**`EmojiPicker`** — a full emoji picker panel. Ships no popover or trigger of its own;
+embed it inline or nest it inside a `<Popover>`. Requires the `emojibase-data` optional peer.
+
+| Prop | Default | Meaning |
+|---|---|---|
+| `onSelect` | — | `(emoji: string) => void`. **Required.** Receives the emoji character on click. Clears the search query after selection. |
+| `locale` | `'en'` | Locale for emoji labels and search. `'en'` and `'nb'` are bundled; any other value falls back to `'en'`. |
+| `showSearch` | `true` | Show the search input at the top. |
+| `searchPlaceholder` | `'Search emojis…'` | Placeholder for the search field. |
+| `noResultsLabel` | `'No emojis found'` | Shown when a search returns no matches. |
+| `className` | — | Extra classes on the root element. |
+
+**`EmojiBar`** — a compact strip of quick-access emoji buttons; no search, no categories.
+
+| Prop | Default | Meaning |
+|---|---|---|
+| `emojis` | `EMOJI_FREQUENT` | The emoji character strings to render as buttons. |
+| `onSelect` | — | `(emoji: string) => void`. **Required.** |
+| `className` | — | Extra classes on the root element. |
+
+**`EMOJI_FREQUENT`** — the 12-emoji default set (👍 ❤️ 😂 😮 😢 😡 🎉 👏 🔥 💯 ✨ 🙏).
+Exported from `my-react-shell/components` for use as an initial value or to build a subset.
+
+```tsx
+// Inline picker — embed directly in a form or chat UI:
+<EmojiPicker onSelect={(emoji) => setReaction(emoji)} />
+
+// Behind a Popover trigger:
+const [open, setOpen] = useState(false)
+<Popover open={open} onOpenChange={setOpen}
+  trigger={<Button variant="outline">{reaction || 'Pick emoji'}</Button>}>
+  <EmojiPicker onSelect={(emoji) => { setReaction(emoji); setOpen(false) }} />
+</Popover>
+
+// Norwegian locale:
+<EmojiPicker locale="nb" onSelect={onSelect} />
+
+// EmojiBar — default frequent set:
+<EmojiBar onSelect={(emoji) => appendToMessage(emoji)} />
+
+// Custom set + subset:
+<EmojiBar emojis={['🎉', '🔥', '💯', '✅']} onSelect={onSelect} />
+<EmojiBar emojis={EMOJI_FREQUENT.slice(0, 6)} onSelect={onSelect} />
+```
+
+> Install `emojibase-data` (`pnpm add emojibase-data`) before using `EmojiPicker`.
+> `EmojiBar` has no peer dependency — it only renders the strings you pass.
 
 ---
 
