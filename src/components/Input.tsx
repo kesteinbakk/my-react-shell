@@ -41,13 +41,13 @@ export interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 
 const CheckIcon = () => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 24 24"
+    viewBox="4 5 16 13"
     fill="none"
     stroke="currentColor"
     strokeWidth="3"
     strokeLinecap="round"
     strokeLinejoin="round"
-    style={{ width: '1.15em', height: '1.15em' }}
+    style={{ width: '0.8em', height: '0.65em' }}
   >
     <polyline points="20 6 9 17 4 12" />
   </svg>
@@ -56,13 +56,13 @@ const CheckIcon = () => (
 const ErrorIcon = () => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 24 24"
+    viewBox="2 2 20 20"
     fill="none"
     stroke="currentColor"
     strokeWidth="3"
     strokeLinecap="round"
     strokeLinejoin="round"
-    style={{ width: '1.15em', height: '1.15em' }}
+    style={{ width: '0.95em', height: '0.95em' }}
   >
     <circle cx="12" cy="12" r="10" />
     <line x1="12" y1="8" x2="12" y2="12" />
