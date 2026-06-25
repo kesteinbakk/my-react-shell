@@ -292,15 +292,18 @@ function Breadcrumbs(props: BreadcrumbsProps): ReactNode {
           isLeaf && leafOverride !== undefined
             ? leafOverride
             : level.entry.label()
+        const visibleSiblings = level.siblings.filter(
+          s => s.id === level.entry.id || s.hideFromSiblings?.() !== true
+        )
         return (
           <span key={level.entry.id} className="mrs-breadcrumbs__crumb">
             {chevron}
             {isLeaf ? (
-              level.siblings.length > 1 ? (
+              visibleSiblings.length > 1 ? (
                 <LeafDropdown
                   shell={shell}
                   label={label}
-                  siblings={level.siblings}
+                  siblings={visibleSiblings}
                   selectedId={level.entry.id}
                 />
               ) : (

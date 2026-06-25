@@ -55,6 +55,12 @@ export interface PageEntry {
    */
   hideCrumb?: () => boolean
   /**
+   * Reactive predicate to **omit this entry from any sibling dropdowns** in the
+   * breadcrumbs trail (e.g. to prevent layout-level or admin pages from leaking
+   * into other lists). The crumb itself is still displayed and clickable when active.
+   */
+  hideFromSiblings?: () => boolean
+  /**
    * Reactive predicate to **render this ancestor as a plain label instead of a
    * clickable link** in the breadcrumb trail. The crumb still appears in the
    * chain and is still visible; it simply has no click target. Use this when

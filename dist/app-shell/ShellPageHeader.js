@@ -132,7 +132,8 @@ function Breadcrumbs(props) {
                 const label = isLeaf && leafOverride !== undefined
                     ? leafOverride
                     : level.entry.label();
-                return (_jsxs("span", { className: "mrs-breadcrumbs__crumb", children: [chevron, isLeaf ? (level.siblings.length > 1 ? (_jsx(LeafDropdown, { shell: shell, label: label, siblings: level.siblings, selectedId: level.entry.id })) : (_jsx("span", { className: "mrs-breadcrumbs__leaf", title: label, children: _jsx("span", { className: "mrs-breadcrumbs__label", children: label }) }))) : level.entry.disableCrumbLink?.() ? (_jsx("span", { className: "mrs-breadcrumbs__link", title: label, children: _jsx("span", { className: "mrs-breadcrumbs__label", children: label }) })) : (_jsx(Link, { to: level.entry.route, className: "mrs-breadcrumbs__link", title: label, children: _jsx("span", { className: "mrs-breadcrumbs__label", children: label }) }))] }, level.entry.id));
+                const visibleSiblings = level.siblings.filter(s => s.id === level.entry.id || s.hideFromSiblings?.() !== true);
+                return (_jsxs("span", { className: "mrs-breadcrumbs__crumb", children: [chevron, isLeaf ? (visibleSiblings.length > 1 ? (_jsx(LeafDropdown, { shell: shell, label: label, siblings: visibleSiblings, selectedId: level.entry.id })) : (_jsx("span", { className: "mrs-breadcrumbs__leaf", title: label, children: _jsx("span", { className: "mrs-breadcrumbs__label", children: label }) }))) : level.entry.disableCrumbLink?.() ? (_jsx("span", { className: "mrs-breadcrumbs__link", title: label, children: _jsx("span", { className: "mrs-breadcrumbs__label", children: label }) })) : (_jsx(Link, { to: level.entry.route, className: "mrs-breadcrumbs__link", title: label, children: _jsx("span", { className: "mrs-breadcrumbs__label", children: label }) }))] }, level.entry.id));
             })] }));
 }
 /**
