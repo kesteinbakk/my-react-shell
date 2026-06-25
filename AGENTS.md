@@ -30,3 +30,13 @@
   - `app-shell` — optional chrome
 - Each module is independently importable and self-contained; heavy optional deps behind sub-paths
 - Distributed as tag-pinned GitHub git-dep with committed `dist/` — zero-config install, no registry
+
+## Input Auto-Save UX Rule
+- **No manual Save buttons/indicators**: Do not implement manual Save/Submit buttons, or layout-shifting status labels for input fields on settings/config screens. Use debounced auto-saves instead.
+- **Visual saveStatus feedback**:
+  - Bind inputs (`Input`, `Textarea`, `InputField`, `Select`) to the `saveStatus` prop: `'idle' | 'pending' | 'saving' | 'saved' | 'error'`.
+  - On save success (`'saved'`), the border transitions gradually to green (using `1000ms` fade).
+  - When the user starts typing/editing again, the status instantly clears back to `'idle'` (using `120ms` transition).
+  - **Shared Hook / Multi-Field Isolation**: If multiple inputs share a single `useDebouncedAutoSave` hook, you must NOT pass `saveStatus={state}` directly to all inputs (doing so makes them all flash green together when a single change saves). Instead, track a `lastModifiedField` state mapping to the edited field's key (set in `onChange`), and bind dynamically: `saveStatus={lastModifiedField === fieldKey ? state : 'idle'}`.
+- **Toasts rule**: When auto-save fails, trigger a permanent/persistent error toast (`toast.error`). Successful saves must NEVER display a success toast.
+- **Exceptions**: Entity creation dialogs/modals (e.g. "Invite Member", "Create Project") are transactional and retain their Submit/Create buttons.

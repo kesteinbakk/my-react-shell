@@ -1482,6 +1482,13 @@
   opacity: 0.6;
   cursor: not-allowed;
 }
+.mrs-select__trigger--saved {
+  border-color: var(--color-success) !important;
+  transition: border-color 1000ms ease !important;
+}
+.mrs-select__trigger--error {
+  border-color: var(--color-danger) !important;
+}
 /* Size variants — mirror the `Input` scale. The base rule's height/padding are
    the `md` defaults; these override for `sm` and `lg`. */
 .mrs-select__trigger--sm {

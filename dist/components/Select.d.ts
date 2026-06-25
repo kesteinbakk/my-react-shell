@@ -19,10 +19,12 @@ export interface SelectProps {
     /** Stretch to fill the available container width. Defaults to `false`. */
     fullWidth?: boolean;
     className?: string;
+    /** Visual save status. If 'saved', transitions the trigger border to success. */
+    saveStatus?: 'idle' | 'pending' | 'saving' | 'saved' | 'error';
 }
 /**
  * Opinionated select on Radix Select (keyboard nav, typeahead, portal, collision
  * handling), styled on the theme tokens. Pass an `options` list; controlled via
  * `value` / `onValueChange`.
  */
-export declare function Select({ options, value, onValueChange, placeholder, disabled, size, fullWidth, className, ...rest }: SelectProps): import("react").JSX.Element;
+export declare function Select({ options, value, onValueChange, placeholder, disabled, size, fullWidth, className, saveStatus, ...rest }: SelectProps): import("react").JSX.Element;

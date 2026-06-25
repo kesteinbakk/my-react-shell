@@ -33,7 +33,7 @@ export interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 
   /** Debounce delay in ms for `onDebouncedChange` (default: 500). */
   debounceMs?: number
   /** Visual save status. If 'saved', transitions the border to success color. */
-  saveStatus?: 'idle' | 'saving' | 'saved' | 'error'
+  saveStatus?: 'idle' | 'pending' | 'saving' | 'saved' | 'error'
   /** Custom onChange handler. Crucial for typing tracking. */
   onChange?: (e: ChangeEvent<HTMLInputElement>) => void
 }

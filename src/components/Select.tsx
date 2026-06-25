@@ -24,6 +24,8 @@ export interface SelectProps {
   /** Stretch to fill the available container width. Defaults to `false`. */
   fullWidth?: boolean
   className?: string
+  /** Visual save status. If 'saved', transitions the trigger border to success. */
+  saveStatus?: 'idle' | 'pending' | 'saving' | 'saved' | 'error'
 }
 
 const chevron = (
@@ -70,12 +72,22 @@ export function Select({
   size = 'md',
   fullWidth = false,
   className,
+  saveStatus,
   ...rest
 }: SelectProps) {
+  const isError = saveStatus === 'error'
   return (
     <RadixSelect.Root value={value} onValueChange={onValueChange} disabled={disabled}>
       <RadixSelect.Trigger
-        className={cn('mrs-select__trigger', `mrs-select__trigger--${size}`, fullWidth && 'mrs-select__trigger--full', className)}
+        className={cn(
+          'mrs-select__trigger',
+          `mrs-select__trigger--${size}`,
+          fullWidth && 'mrs-select__trigger--full',
+          saveStatus === 'saved' && 'mrs-select__trigger--saved',
+          isError && 'mrs-select__trigger--error',
+          className,
+        )}
+        aria-invalid={isError || undefined}
         aria-label={rest['aria-label']}
       >
         <RadixSelect.Value placeholder={placeholder} />
