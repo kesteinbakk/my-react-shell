@@ -124,8 +124,8 @@ importers:
         specifier: ^4.3.1
         version: 4.3.1
       themes:
-        specifier: git+ssh://git@bitbucket.org:kesteinbakk/themes.git#v0.2.1
-        version: git+ssh://git@bitbucket.org/kesteinbakk/themes.git#d3154b6a70ebe3bdbeb19c056cabb295ec3a5e07
+        specifier: git+ssh://git@bitbucket.org:kesteinbakk/themes.git#v0.2.2
+        version: git+ssh://git@bitbucket.org/kesteinbakk/themes.git#6586b3230f438cefe53eb5e852fc6f349917bf7d
       tw-animate-css:
         specifier: ^1.4.0
         version: 1.4.0
@@ -1637,9 +1637,9 @@ packages:
     resolution: {integrity: sha512-uxc/zpqFg6x7C8vOE7lh6Lbda8eEL9zmVm/PLeTPBRhh1xCgdWaQ+J1CUieGpIfm2HdtsUpRv+HshiasBMcc6A==}
     engines: {node: '>=6'}
 
-  themes@git+ssh://git@bitbucket.org/kesteinbakk/themes.git#d3154b6a70ebe3bdbeb19c056cabb295ec3a5e07:
-    resolution: {commit: d3154b6a70ebe3bdbeb19c056cabb295ec3a5e07, repo: git@bitbucket.org:kesteinbakk/themes.git, type: git}
-    version: 0.2.1
+  themes@git+ssh://git@bitbucket.org/kesteinbakk/themes.git#6586b3230f438cefe53eb5e852fc6f349917bf7d:
+    resolution: {commit: 6586b3230f438cefe53eb5e852fc6f349917bf7d, repo: git@bitbucket.org:kesteinbakk/themes.git, type: git}
+    version: 0.2.2
     engines: {node: 24.x}
 
   tinyglobby@0.2.17:
@@ -3111,7 +3111,7 @@ snapshots:
 
   tapable@2.3.3: {}
 
-  themes@git+ssh://git@bitbucket.org/kesteinbakk/themes.git#d3154b6a70ebe3bdbeb19c056cabb295ec3a5e07: {}
+  themes@git+ssh://git@bitbucket.org/kesteinbakk/themes.git#6586b3230f438cefe53eb5e852fc6f349917bf7d: {}
 
   tinyglobby@0.2.17:
     dependencies:
