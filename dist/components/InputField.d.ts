@@ -1,6 +1,6 @@
-import { type InputHTMLAttributes, type ReactNode } from 'react';
+import { type ChangeEvent, type InputHTMLAttributes, type ReactNode } from 'react';
 import type { InputSize } from './Input';
-export interface InputFieldProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'id'> {
+export interface InputFieldProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'id' | 'onChange'> {
     /** Field label, associated to the input. */
     label?: ReactNode;
     /** Helper text under the input (hidden while an error shows). */
@@ -20,10 +20,14 @@ export interface InputFieldProps extends Omit<InputHTMLAttributes<HTMLInputEleme
     onDebouncedChange?: (value: string) => void;
     /** Debounce delay in ms for `onDebouncedChange` (default: 500). */
     debounceMs?: number;
+    /** Visual save status. If 'saved', transitions the border to success color. */
+    saveStatus?: 'idle' | 'saving' | 'saved' | 'error';
+    /** Custom onChange handler. Crucial for typing tracking. */
+    onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
 }
 /**
  * A complete form field: label + input + helper/error, wired for accessibility
  * (`htmlFor`, `aria-invalid`, `aria-describedby`). Spreads native input props, so
  * `type`, `value`, `onChange`, `placeholder`, etc. pass straight through.
  */
-export declare function InputField({ label, description, error, containerClassName, inputSize, fullWidth, className, onDebouncedChange, debounceMs, onChange, ...inputProps }: InputFieldProps): import("react").JSX.Element;
+export declare function InputField({ label, description, error, containerClassName, inputSize, fullWidth, className, onDebouncedChange, debounceMs, onChange, saveStatus, ...inputProps }: InputFieldProps): import("react").JSX.Element;

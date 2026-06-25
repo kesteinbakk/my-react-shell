@@ -637,6 +637,28 @@
 .mrs-input--invalid:focus {
   box-shadow: 0 0 0 3px var(--color-danger-bg);
 }
+.mrs-input--saved,
+.mrs-textarea--saved,
+.mrs-field__input--saved {
+  border-color: var(--color-success) !important;
+  transition: border-color 1000ms ease, box-shadow 1000ms ease !important;
+}
+.mrs-input--saved:focus,
+.mrs-textarea--saved:focus,
+.mrs-field__input--saved:focus {
+  box-shadow: 0 0 0 3px var(--color-success-bg) !important;
+}
+.mrs-input--saving,
+.mrs-textarea--saving,
+.mrs-field__input--saving {
+  border-color: var(--color-info) !important;
+  transition: border-color 1000ms ease, box-shadow 1000ms ease !important;
+}
+.mrs-input--saving:focus,
+.mrs-textarea--saving:focus,
+.mrs-field__input--saving:focus {
+  box-shadow: 0 0 0 3px var(--color-info-bg) !important;
+}
 .mrs-input--sm {
   height: 2rem;
   padding: 0 0.625rem;

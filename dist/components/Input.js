@@ -1,5 +1,5 @@
 import { jsx as _jsx } from "react/jsx-runtime";
-import {} from 'react';
+import { useState, useEffect } from 'react';
 import { cva } from 'class-variance-authority';
 import { cn } from './cn';
 import { useDebounce } from './useDebounce';
@@ -28,13 +28,19 @@ const inputVariants = cva('mrs-input', {
  * <Input onDebouncedChange={(v) => search(v)} debounceMs={300} />
  * ```
  */
-export function Input({ invalid = false, inputSize = 'md', fullWidth = false, className, onDebouncedChange, debounceMs = 500, onChange, ...rest }) {
+export function Input({ invalid = false, inputSize = 'md', fullWidth = false, className, onDebouncedChange, debounceMs = 500, onChange, saveStatus, ...rest }) {
+    const [localStatus, setLocalStatus] = useState(saveStatus);
+    useEffect(() => {
+        setLocalStatus(saveStatus);
+    }, [saveStatus]);
     const scheduleDebounced = useDebounce(onDebouncedChange, debounceMs);
-    const handleChange = onChange || onDebouncedChange
-        ? (e) => {
-            onChange?.(e);
-            scheduleDebounced(e.target.value);
+    const handleChange = (e) => {
+        if (localStatus === 'saved') {
+            setLocalStatus('idle');
         }
-        : undefined;
-    return (_jsx("input", { className: cn(inputVariants({ inputSize, invalid: invalid || undefined, fullWidth: fullWidth || undefined }), className), "aria-invalid": invalid || undefined, onChange: handleChange, ...rest }));
+        onChange?.(e);
+        scheduleDebounced(e.target.value);
+    };
+    const isInvalid = invalid || localStatus === 'error';
+    return (_jsx("input", { className: cn(inputVariants({ inputSize, invalid: isInvalid || undefined, fullWidth: fullWidth || undefined }), localStatus === 'saved' && 'mrs-input--saved', localStatus === 'saving' && 'mrs-input--saving', className), "aria-invalid": isInvalid || undefined, onChange: handleChange, ...rest }));
 }

@@ -1,8 +1,8 @@
-import { type ChangeEvent, type TextareaHTMLAttributes } from 'react'
+import { type ChangeEvent, type TextareaHTMLAttributes, useState, useEffect } from 'react'
 import { cn } from './cn'
 import { useDebounce } from './useDebounce'
 
-export interface TextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
+export interface TextareaProps extends Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, 'onChange'> {
   /** Error state — sets `aria-invalid` and the error styling. */
   invalid?: boolean
   /** Stretch to fill the available container width. Defaults to `false`. */
@@ -11,6 +11,10 @@ export interface TextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElemen
   onDebouncedChange?: (value: string) => void
   /** Debounce delay in ms for `onDebouncedChange` (default: 500). */
   debounceMs?: number
+  /** Visual save status. If 'saved', transitions the border to success color. */
+  saveStatus?: 'idle' | 'saving' | 'saved' | 'error'
+  /** Custom onChange handler. Crucial for typing tracking. */
+  onChange?: (e: ChangeEvent<HTMLTextAreaElement>) => void
 }
 
 /**
@@ -32,22 +36,38 @@ export function Textarea({
   onDebouncedChange,
   debounceMs = 500,
   onChange,
+  saveStatus,
   ...rest
 }: TextareaProps) {
+  const [localStatus, setLocalStatus] = useState<typeof saveStatus>(saveStatus)
+
+  useEffect(() => {
+    setLocalStatus(saveStatus)
+  }, [saveStatus])
+
   const scheduleDebounced = useDebounce(onDebouncedChange, debounceMs)
 
-  const handleChange =
-    onChange || onDebouncedChange
-      ? (e: ChangeEvent<HTMLTextAreaElement>) => {
-          onChange?.(e)
-          scheduleDebounced(e.target.value)
-        }
-      : undefined
+  const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
+    if (localStatus === 'saved') {
+      setLocalStatus('idle')
+    }
+    onChange?.(e)
+    scheduleDebounced(e.target.value)
+  }
+
+  const isInvalid = invalid || localStatus === 'error'
 
   return (
     <textarea
-      className={cn('mrs-textarea', invalid && 'mrs-textarea--invalid', fullWidth && 'mrs-textarea--full', className)}
-      aria-invalid={invalid || undefined}
+      className={cn(
+        'mrs-textarea',
+        isInvalid && 'mrs-textarea--invalid',
+        fullWidth && 'mrs-textarea--full',
+        localStatus === 'saved' && 'mrs-textarea--saved',
+        localStatus === 'saving' && 'mrs-textarea--saving',
+        className,
+      )}
+      aria-invalid={isInvalid || undefined}
       onChange={handleChange}
       {...rest}
     />

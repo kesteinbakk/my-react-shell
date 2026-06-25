@@ -1,4 +1,4 @@
-import { type ChangeEvent, type InputHTMLAttributes } from 'react'
+import { type ChangeEvent, type InputHTMLAttributes, useState, useEffect } from 'react'
 import { cva } from 'class-variance-authority'
 import { cn } from './cn'
 import { useDebounce } from './useDebounce'
@@ -18,7 +18,7 @@ const inputVariants = cva('mrs-input', {
   defaultVariants: { inputSize: 'md' },
 })
 
-export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
+export interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange'> {
   /** Error state — sets `aria-invalid` and the error styling. */
   invalid?: boolean
   /**
@@ -32,6 +32,10 @@ export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   onDebouncedChange?: (value: string) => void
   /** Debounce delay in ms for `onDebouncedChange` (default: 500). */
   debounceMs?: number
+  /** Visual save status. If 'saved', transitions the border to success color. */
+  saveStatus?: 'idle' | 'saving' | 'saved' | 'error'
+  /** Custom onChange handler. Crucial for typing tracking. */
+  onChange?: (e: ChangeEvent<HTMLInputElement>) => void
 }
 
 /**
@@ -55,22 +59,36 @@ export function Input({
   onDebouncedChange,
   debounceMs = 500,
   onChange,
+  saveStatus,
   ...rest
 }: InputProps) {
+  const [localStatus, setLocalStatus] = useState<typeof saveStatus>(saveStatus)
+
+  useEffect(() => {
+    setLocalStatus(saveStatus)
+  }, [saveStatus])
+
   const scheduleDebounced = useDebounce(onDebouncedChange, debounceMs)
 
-  const handleChange =
-    onChange || onDebouncedChange
-      ? (e: ChangeEvent<HTMLInputElement>) => {
-          onChange?.(e)
-          scheduleDebounced(e.target.value)
-        }
-      : undefined
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (localStatus === 'saved') {
+      setLocalStatus('idle')
+    }
+    onChange?.(e)
+    scheduleDebounced(e.target.value)
+  }
+
+  const isInvalid = invalid || localStatus === 'error'
 
   return (
     <input
-      className={cn(inputVariants({ inputSize, invalid: invalid || undefined, fullWidth: fullWidth || undefined }), className)}
-      aria-invalid={invalid || undefined}
+      className={cn(
+        inputVariants({ inputSize, invalid: isInvalid || undefined, fullWidth: fullWidth || undefined }),
+        localStatus === 'saved' && 'mrs-input--saved',
+        localStatus === 'saving' && 'mrs-input--saving',
+        className,
+      )}
+      aria-invalid={isInvalid || undefined}
       onChange={handleChange}
       {...rest}
     />
