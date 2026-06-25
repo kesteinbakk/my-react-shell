@@ -639,12 +639,18 @@
 }
 .mrs-input-wrapper {
   position: relative;
-  display: inline-block;
+  display: inline-flex;
   vertical-align: middle;
+  align-items: center;
 }
 .mrs-input-wrapper--full {
-  display: block;
+  display: flex;
   width: 100%;
+}
+.mrs-input-wrapper .mrs-input,
+.mrs-input-wrapper .mrs-field__input {
+  flex: 1 1 auto;
+  min-width: 0;
 }
 .mrs-input-wrapper--full .mrs-input,
 .mrs-input-wrapper--full .mrs-field__input {
@@ -652,10 +658,22 @@
 }
 .mrs-textarea-wrapper {
   position: relative;
-  display: block;
+  display: inline-flex;
+  vertical-align: top;
+}
+.mrs-textarea-wrapper--full {
+  display: flex;
   width: 100%;
 }
-.mrs-input-icon-saved {
+.mrs-textarea-wrapper .mrs-textarea {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.mrs-textarea-wrapper--full .mrs-textarea {
+  width: 100%;
+}
+.mrs-input-icon-saved,
+.mrs-input-icon-error {
   position: absolute;
   right: 0.75rem;
   top: 50%;
@@ -663,26 +681,42 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--color-success);
   pointer-events: none;
+}
+.mrs-input-icon-saved {
+  color: var(--color-success);
   animation: mrs-input-icon-fade-in 200ms ease forwards;
 }
-.mrs-textarea-icon-saved {
+.mrs-input-icon-error {
+  color: var(--color-danger);
+  animation: mrs-input-icon-fade-in 200ms ease forwards;
+}
+.mrs-textarea-icon-saved,
+.mrs-textarea-icon-error {
   position: absolute;
   right: 0.75rem;
   top: 0.75rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--color-success);
   pointer-events: none;
+}
+.mrs-textarea-icon-saved {
+  color: var(--color-success);
+  animation: mrs-textarea-icon-fade-in 200ms ease forwards;
+}
+.mrs-textarea-icon-error {
+  color: var(--color-danger);
   animation: mrs-textarea-icon-fade-in 200ms ease forwards;
 }
 .mrs-input--saved-icon,
-.mrs-field__input--saved-icon {
+.mrs-input--error-icon,
+.mrs-field__input--saved-icon,
+.mrs-field__input--error-icon {
   padding-right: 2.25rem !important;
 }
-.mrs-textarea--saved-icon {
+.mrs-textarea--saved-icon,
+.mrs-textarea--error-icon {
   padding-right: 2.25rem !important;
 }
 @keyframes mrs-input-icon-fade-in {

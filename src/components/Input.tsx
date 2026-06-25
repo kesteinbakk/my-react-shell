@@ -53,6 +53,23 @@ const CheckIcon = () => (
   </svg>
 )
 
+const ErrorIcon = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="3"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    style={{ width: '1.15em', height: '1.15em' }}
+  >
+    <circle cx="12" cy="12" r="10" />
+    <line x1="12" y1="8" x2="12" y2="12" />
+    <line x1="12" y1="16" x2="12.01" y2="16" />
+  </svg>
+)
+
 /**
  * Un-opinionated native `<input>` wrapper. All native input props (`type`, `value`,
  * `onChange`, `placeholder`, `disabled`, `aria-*`, …) pass straight through; the only
@@ -80,7 +97,7 @@ export function Input({
   const scheduleDebounced = useDebounce(onDebouncedChange, debounceMs)
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (localStatus === 'saved') {
+    if (localStatus === 'saved' || localStatus === 'error') {
       setLocalStatus('idle')
     }
     onChange?.(e)
@@ -88,7 +105,7 @@ export function Input({
   }
 
   const handleBlur = (e: FocusEvent<HTMLInputElement>) => {
-    if (localStatus === 'saved') {
+    if (localStatus === 'saved' || localStatus === 'error') {
       setLocalStatus('idle')
     }
     onBlur?.(e)
@@ -96,31 +113,31 @@ export function Input({
 
   const isInvalid = invalid || localStatus === 'error'
 
-  const inputEl = (
-    <input
-      className={cn(
-        inputVariants({ inputSize, invalid: isInvalid || undefined, fullWidth: fullWidth || undefined }),
-        localStatus === 'saved' && 'mrs-input--saved-icon',
-        localStatus === 'saving' && 'mrs-input--saving',
-        className,
-      )}
-      aria-invalid={isInvalid || undefined}
-      onChange={handleChange}
-      onBlur={handleBlur}
-      {...rest}
-    />
-  )
-
-  if (localStatus === 'saved') {
-    return (
-      <div className={cn('mrs-input-wrapper', fullWidth && 'mrs-input-wrapper--full')}>
-        {inputEl}
+  return (
+    <div className={cn('mrs-input-wrapper', fullWidth && 'mrs-input-wrapper--full')}>
+      <input
+        className={cn(
+          inputVariants({ inputSize, invalid: isInvalid || undefined, fullWidth: fullWidth || undefined }),
+          localStatus === 'saved' && 'mrs-input--saved-icon',
+          localStatus === 'error' && 'mrs-input--error-icon',
+          localStatus === 'saving' && 'mrs-input--saving',
+          className,
+        )}
+        aria-invalid={isInvalid || undefined}
+        onChange={handleChange}
+        onBlur={handleBlur}
+        {...rest}
+      />
+      {localStatus === 'saved' && (
         <span className="mrs-input-icon-saved">
           <CheckIcon />
         </span>
-      </div>
-    )
-  }
-
-  return inputEl
+      )}
+      {localStatus === 'error' && (
+        <span className="mrs-input-icon-error">
+          <ErrorIcon />
+        </span>
+      )}
+    </div>
+  )
 }

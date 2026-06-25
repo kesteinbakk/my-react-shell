@@ -44,6 +44,23 @@ const CheckIcon = () => (
   </svg>
 )
 
+const ErrorIcon = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="3"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    style={{ width: '1.15em', height: '1.15em' }}
+  >
+    <circle cx="12" cy="12" r="10" />
+    <line x1="12" y1="8" x2="12" y2="12" />
+    <line x1="12" y1="16" x2="12.01" y2="16" />
+  </svg>
+)
+
 /**
  * Full field: label + input + helper + error, a11y-wired (`htmlFor`/`aria-invalid`/`aria-describedby`).
  * Spreads native input props; pass `error` to switch on error styling.
@@ -75,7 +92,7 @@ export function InputField({
   const scheduleDebounced = useDebounce(onDebouncedChange, debounceMs)
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (localStatus === 'saved') {
+    if (localStatus === 'saved' || localStatus === 'error') {
       setLocalStatus('idle')
     }
     onChange?.(e)
@@ -83,7 +100,7 @@ export function InputField({
   }
 
   const handleBlur = (e: FocusEvent<HTMLInputElement>) => {
-    if (localStatus === 'saved') {
+    if (localStatus === 'saved' || localStatus === 'error') {
       setLocalStatus('idle')
     }
     onBlur?.(e)
@@ -93,34 +110,36 @@ export function InputField({
   const showError = error != null
   const showDesc = description != null && !showError
 
-  const inputEl = (
-    <input
-      id={id}
-      className={cn(
-        'mrs-field__input',
-        inputSize !== 'md' && `mrs-field__input--${inputSize}`,
-        isError && 'mrs-field__input--error',
-        localStatus === 'saved' && 'mrs-field__input--saved-icon',
-        localStatus === 'saving' && 'mrs-field__input--saving',
-        className,
-      )}
-      aria-invalid={isError || undefined}
-      aria-describedby={showError ? errId : showDesc ? descId : undefined}
-      onChange={handleChange}
-      onBlur={handleBlur}
-      {...inputProps}
-    />
-  )
-
-  const wrappedInput = localStatus === 'saved' ? (
+  const wrappedInput = (
     <div className={cn('mrs-input-wrapper', fullWidth && 'mrs-input-wrapper--full')}>
-      {inputEl}
-      <span className="mrs-input-icon-saved">
-        <CheckIcon />
-      </span>
+      <input
+        id={id}
+        className={cn(
+          'mrs-field__input',
+          inputSize !== 'md' && `mrs-field__input--${inputSize}`,
+          isError && 'mrs-field__input--error',
+          localStatus === 'saved' && 'mrs-field__input--saved-icon',
+          localStatus === 'error' && 'mrs-field__input--error-icon',
+          localStatus === 'saving' && 'mrs-field__input--saving',
+          className,
+        )}
+        aria-invalid={isError || undefined}
+        aria-describedby={showError ? errId : showDesc ? descId : undefined}
+        onChange={handleChange}
+        onBlur={handleBlur}
+        {...inputProps}
+      />
+      {localStatus === 'saved' && (
+        <span className="mrs-input-icon-saved">
+          <CheckIcon />
+        </span>
+      )}
+      {localStatus === 'error' && (
+        <span className="mrs-input-icon-error">
+          <ErrorIcon />
+        </span>
+      )}
     </div>
-  ) : (
-    inputEl
   )
 
   return (

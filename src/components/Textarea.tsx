@@ -32,6 +32,23 @@ const CheckIcon = () => (
   </svg>
 )
 
+const ErrorIcon = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="3"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    style={{ width: '1.15em', height: '1.15em' }}
+  >
+    <circle cx="12" cy="12" r="10" />
+    <line x1="12" y1="8" x2="12" y2="12" />
+    <line x1="12" y1="16" x2="12.01" y2="16" />
+  </svg>
+)
+
 /**
  * Un-opinionated native `<textarea>` wrapper. All native textarea props (`value`,
  * `onChange`, `rows`, `placeholder`, `disabled`, `aria-*`, …) pass straight through;
@@ -58,7 +75,7 @@ export function Textarea({
   const scheduleDebounced = useDebounce(onDebouncedChange, debounceMs)
 
   const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
-    if (localStatus === 'saved') {
+    if (localStatus === 'saved' || localStatus === 'error') {
       setLocalStatus('idle')
     }
     onChange?.(e)
@@ -66,7 +83,7 @@ export function Textarea({
   }
 
   const handleBlur = (e: FocusEvent<HTMLTextAreaElement>) => {
-    if (localStatus === 'saved') {
+    if (localStatus === 'saved' || localStatus === 'error') {
       setLocalStatus('idle')
     }
     onBlur?.(e)
@@ -74,33 +91,33 @@ export function Textarea({
 
   const isInvalid = invalid || localStatus === 'error'
 
-  const textareaEl = (
-    <textarea
-      className={cn(
-        'mrs-textarea',
-        isInvalid && 'mrs-textarea--invalid',
-        fullWidth && 'mrs-textarea--full',
-        localStatus === 'saved' && 'mrs-textarea--saved-icon',
-        localStatus === 'saving' && 'mrs-textarea--saving',
-        className,
-      )}
-      aria-invalid={isInvalid || undefined}
-      onChange={handleChange}
-      onBlur={handleBlur}
-      {...rest}
-    />
-  )
-
-  if (localStatus === 'saved') {
-    return (
-      <div className={cn('mrs-textarea-wrapper', fullWidth && 'mrs-textarea-wrapper--full')}>
-        {textareaEl}
+  return (
+    <div className={cn('mrs-textarea-wrapper', fullWidth && 'mrs-textarea-wrapper--full')}>
+      <textarea
+        className={cn(
+          'mrs-textarea',
+          isInvalid && 'mrs-textarea--invalid',
+          fullWidth && 'mrs-textarea--full',
+          localStatus === 'saved' && 'mrs-textarea--saved-icon',
+          localStatus === 'error' && 'mrs-textarea--error-icon',
+          localStatus === 'saving' && 'mrs-textarea--saving',
+          className,
+        )}
+        aria-invalid={isInvalid || undefined}
+        onChange={handleChange}
+        onBlur={handleBlur}
+        {...rest}
+      />
+      {localStatus === 'saved' && (
         <span className="mrs-textarea-icon-saved">
           <CheckIcon />
         </span>
-      </div>
-    )
-  }
-
-  return textareaEl
+      )}
+      {localStatus === 'error' && (
+        <span className="mrs-textarea-icon-error">
+          <ErrorIcon />
+        </span>
+      )}
+    </div>
+  )
 }
