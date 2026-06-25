@@ -1,5 +1,5 @@
-import { jsx as _jsx } from "react/jsx-runtime";
-import { useState, useEffect, useRef } from 'react';
+import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+import { useState, useEffect } from 'react';
 import { cva } from 'class-variance-authority';
 import { cn } from './cn';
 import { useDebounce } from './useDebounce';
@@ -15,51 +15,36 @@ const inputVariants = cva('mrs-input', {
     },
     defaultVariants: { inputSize: 'md' },
 });
+const CheckIcon = () => (_jsx("svg", { xmlns: "http://www.w3.org/2000/svg", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "3", strokeLinecap: "round", strokeLinejoin: "round", style: { width: '1.15em', height: '1.15em' }, children: _jsx("polyline", { points: "20 6 9 17 4 12" }) }));
 /**
  * Un-opinionated native `<input>` wrapper. All native input props (`type`, `value`,
  * `onChange`, `placeholder`, `disabled`, `aria-*`, …) pass straight through; the only
  * additions are `invalid` (error styling + `aria-invalid`), `inputSize`, and
  * `onDebouncedChange` / `debounceMs` for stop-typing callbacks.
- *
- * ```tsx
- * <Input placeholder="Email" />
- * <Input type="password" inputSize="lg" />
- * <Input invalid value={v} onChange={(e) => setV(e.target.value)} />
- * <Input onDebouncedChange={(v) => search(v)} debounceMs={300} />
- * ```
  */
-export function Input({ invalid = false, inputSize = 'md', fullWidth = false, className, onDebouncedChange, debounceMs = 500, onChange, saveStatus, ...rest }) {
+export function Input({ invalid = false, inputSize = 'md', fullWidth = false, className, onDebouncedChange, debounceMs = 500, onChange, saveStatus, onBlur, ...rest }) {
     const [localStatus, setLocalStatus] = useState(saveStatus);
-    const fadeTimeoutRef = useRef(null);
-    const idleTimeoutRef = useRef(null);
-    const clearTimeouts = () => {
-        if (fadeTimeoutRef.current)
-            clearTimeout(fadeTimeoutRef.current);
-        if (idleTimeoutRef.current)
-            clearTimeout(idleTimeoutRef.current);
-    };
     useEffect(() => {
-        clearTimeouts();
         setLocalStatus(saveStatus);
-        if (saveStatus === 'saved') {
-            fadeTimeoutRef.current = setTimeout(() => {
-                setLocalStatus('saved-fading');
-                idleTimeoutRef.current = setTimeout(() => {
-                    setLocalStatus('idle');
-                }, 1000); // matches the 1000ms transition duration
-            }, 1500); // stay green for 1.5s before fading
-        }
-        return () => clearTimeouts();
     }, [saveStatus]);
     const scheduleDebounced = useDebounce(onDebouncedChange, debounceMs);
     const handleChange = (e) => {
-        if (localStatus === 'saved' || localStatus === 'saved-fading') {
-            clearTimeouts();
+        if (localStatus === 'saved') {
             setLocalStatus('idle');
         }
         onChange?.(e);
         scheduleDebounced(e.target.value);
     };
+    const handleBlur = (e) => {
+        if (localStatus === 'saved') {
+            setLocalStatus('idle');
+        }
+        onBlur?.(e);
+    };
     const isInvalid = invalid || localStatus === 'error';
-    return (_jsx("input", { className: cn(inputVariants({ inputSize, invalid: isInvalid || undefined, fullWidth: fullWidth || undefined }), localStatus === 'saved' && 'mrs-input--saved', localStatus === 'saved-fading' && 'mrs-input--saved-fading', localStatus === 'saving' && 'mrs-input--saving', className), "aria-invalid": isInvalid || undefined, onChange: handleChange, ...rest }));
+    const inputEl = (_jsx("input", { className: cn(inputVariants({ inputSize, invalid: isInvalid || undefined, fullWidth: fullWidth || undefined }), localStatus === 'saved' && 'mrs-input--saved-icon', localStatus === 'saving' && 'mrs-input--saving', className), "aria-invalid": isInvalid || undefined, onChange: handleChange, onBlur: handleBlur, ...rest }));
+    if (localStatus === 'saved') {
+        return (_jsxs("div", { className: cn('mrs-input-wrapper', fullWidth && 'mrs-input-wrapper--full'), children: [inputEl, _jsx("span", { className: "mrs-input-icon-saved", children: _jsx(CheckIcon, {}) })] }));
+    }
+    return inputEl;
 }

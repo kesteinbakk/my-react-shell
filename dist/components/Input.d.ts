@@ -24,12 +24,5 @@ export interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 
  * `onChange`, `placeholder`, `disabled`, `aria-*`, …) pass straight through; the only
  * additions are `invalid` (error styling + `aria-invalid`), `inputSize`, and
  * `onDebouncedChange` / `debounceMs` for stop-typing callbacks.
- *
- * ```tsx
- * <Input placeholder="Email" />
- * <Input type="password" inputSize="lg" />
- * <Input invalid value={v} onChange={(e) => setV(e.target.value)} />
- * <Input onDebouncedChange={(v) => search(v)} debounceMs={300} />
- * ```
  */
-export declare function Input({ invalid, inputSize, fullWidth, className, onDebouncedChange, debounceMs, onChange, saveStatus, ...rest }: InputProps): import("react").JSX.Element;
+export declare function Input({ invalid, inputSize, fullWidth, className, onDebouncedChange, debounceMs, onChange, saveStatus, onBlur, ...rest }: InputProps): import("react").JSX.Element;

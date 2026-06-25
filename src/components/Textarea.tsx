@@ -1,4 +1,4 @@
-import { type ChangeEvent, type TextareaHTMLAttributes, useState, useEffect, useRef } from 'react'
+import { type ChangeEvent, type TextareaHTMLAttributes, useState, useEffect, type FocusEvent } from 'react'
 import { cn } from './cn'
 import { useDebounce } from './useDebounce'
 
@@ -17,17 +17,26 @@ export interface TextareaProps extends Omit<TextareaHTMLAttributes<HTMLTextAreaE
   onChange?: (e: ChangeEvent<HTMLTextAreaElement>) => void
 }
 
+const CheckIcon = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="3"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    style={{ width: '1.15em', height: '1.15em' }}
+  >
+    <polyline points="20 6 9 17 4 12" />
+  </svg>
+)
+
 /**
  * Un-opinionated native `<textarea>` wrapper. All native textarea props (`value`,
  * `onChange`, `rows`, `placeholder`, `disabled`, `aria-*`, …) pass straight through;
  * the only additions are `invalid` (error styling + `aria-invalid`) and
  * `onDebouncedChange` / `debounceMs` for stop-typing callbacks.
- *
- * ```tsx
- * <Textarea rows={4} placeholder="Notes…" />
- * <Textarea invalid value={v} onChange={(e) => setV(e.target.value)} />
- * <Textarea onDebouncedChange={(v) => save(v)} debounceMs={800} />
- * ```
  */
 export function Textarea({
   invalid = false,
@@ -37,60 +46,61 @@ export function Textarea({
   debounceMs = 500,
   onChange,
   saveStatus,
+  onBlur,
   ...rest
 }: TextareaProps) {
-  const [localStatus, setLocalStatus] = useState<typeof saveStatus | 'saved-fading'>(saveStatus)
-  const fadeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const idleTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-
-  const clearTimeouts = () => {
-    if (fadeTimeoutRef.current) clearTimeout(fadeTimeoutRef.current)
-    if (idleTimeoutRef.current) clearTimeout(idleTimeoutRef.current)
-  }
+  const [localStatus, setLocalStatus] = useState<typeof saveStatus>(saveStatus)
 
   useEffect(() => {
-    clearTimeouts()
     setLocalStatus(saveStatus)
-
-    if (saveStatus === 'saved') {
-      fadeTimeoutRef.current = setTimeout(() => {
-        setLocalStatus('saved-fading')
-        idleTimeoutRef.current = setTimeout(() => {
-          setLocalStatus('idle')
-        }, 1000) // matches the 1000ms transition duration
-      }, 1500) // stay green for 1.5s before fading
-    }
-
-    return () => clearTimeouts()
   }, [saveStatus])
 
   const scheduleDebounced = useDebounce(onDebouncedChange, debounceMs)
 
   const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
-    if (localStatus === 'saved' || localStatus === 'saved-fading') {
-      clearTimeouts()
+    if (localStatus === 'saved') {
       setLocalStatus('idle')
     }
     onChange?.(e)
     scheduleDebounced(e.target.value)
   }
 
+  const handleBlur = (e: FocusEvent<HTMLTextAreaElement>) => {
+    if (localStatus === 'saved') {
+      setLocalStatus('idle')
+    }
+    onBlur?.(e)
+  }
+
   const isInvalid = invalid || localStatus === 'error'
 
-  return (
+  const textareaEl = (
     <textarea
       className={cn(
         'mrs-textarea',
         isInvalid && 'mrs-textarea--invalid',
         fullWidth && 'mrs-textarea--full',
-        localStatus === 'saved' && 'mrs-textarea--saved',
-        localStatus === 'saved-fading' && 'mrs-textarea--saved-fading',
+        localStatus === 'saved' && 'mrs-textarea--saved-icon',
         localStatus === 'saving' && 'mrs-textarea--saving',
         className,
       )}
       aria-invalid={isInvalid || undefined}
       onChange={handleChange}
+      onBlur={handleBlur}
       {...rest}
     />
   )
+
+  if (localStatus === 'saved') {
+    return (
+      <div className={cn('mrs-textarea-wrapper', fullWidth && 'mrs-textarea-wrapper--full')}>
+        {textareaEl}
+        <span className="mrs-textarea-icon-saved">
+          <CheckIcon />
+        </span>
+      </div>
+    )
+  }
+
+  return textareaEl
 }

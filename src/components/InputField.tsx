@@ -1,4 +1,4 @@
-import { useId, type ChangeEvent, type InputHTMLAttributes, type ReactNode, useState, useEffect, useRef } from 'react'
+import { useId, type ChangeEvent, type InputHTMLAttributes, type ReactNode, useState, useEffect, type FocusEvent } from 'react'
 import { cn } from './cn'
 import { useDebounce } from './useDebounce'
 import type { InputSize } from './Input'
@@ -13,8 +13,8 @@ export interface InputFieldProps extends Omit<InputHTMLAttributes<HTMLInputEleme
   /** Class for the wrapping field; `className` styles the input itself. */
   containerClassName?: string
   /**
-   * Size — drives the input height + padding + font size. Defaults to `md`. Named `inputSize`
-   * (not `size`) so it never clashes with the native `<input size>` attribute.
+   * Size — drives height + padding + font size. Defaults to `md`.
+   * Matches the `Input` height/padding scale.
    */
   inputSize?: InputSize
   /** Stretch to fill the available container width. Defaults to `false`. */
@@ -29,10 +29,24 @@ export interface InputFieldProps extends Omit<InputHTMLAttributes<HTMLInputEleme
   onChange?: (e: ChangeEvent<HTMLInputElement>) => void
 }
 
+const CheckIcon = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="3"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    style={{ width: '1.15em', height: '1.15em' }}
+  >
+    <polyline points="20 6 9 17 4 12" />
+  </svg>
+)
+
 /**
- * A complete form field: label + input + helper/error, wired for accessibility
- * (`htmlFor`, `aria-invalid`, `aria-describedby`). Spreads native input props, so
- * `type`, `value`, `onChange`, `placeholder`, etc. pass straight through.
+ * Full field: label + input + helper + error, a11y-wired (`htmlFor`/`aria-invalid`/`aria-describedby`).
+ * Spreads native input props; pass `error` to switch on error styling.
  */
 export function InputField({
   label,
@@ -46,50 +60,68 @@ export function InputField({
   debounceMs = 500,
   onChange,
   saveStatus,
+  onBlur,
   ...inputProps
 }: InputFieldProps) {
   const id = useId()
   const descId = `${id}-desc`
   const errId = `${id}-err`
-  const [localStatus, setLocalStatus] = useState<typeof saveStatus | 'saved-fading'>(saveStatus)
-  const fadeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const idleTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-
-  const clearTimeouts = () => {
-    if (fadeTimeoutRef.current) clearTimeout(fadeTimeoutRef.current)
-    if (idleTimeoutRef.current) clearTimeout(idleTimeoutRef.current)
-  }
+  const [localStatus, setLocalStatus] = useState<typeof saveStatus>(saveStatus)
 
   useEffect(() => {
-    clearTimeouts()
     setLocalStatus(saveStatus)
-
-    if (saveStatus === 'saved') {
-      fadeTimeoutRef.current = setTimeout(() => {
-        setLocalStatus('saved-fading')
-        idleTimeoutRef.current = setTimeout(() => {
-          setLocalStatus('idle')
-        }, 1000) // matches the 1000ms transition duration
-      }, 1500) // stay green for 1.5s before fading
-    }
-
-    return () => clearTimeouts()
   }, [saveStatus])
 
   const scheduleDebounced = useDebounce(onDebouncedChange, debounceMs)
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (localStatus === 'saved' || localStatus === 'saved-fading') {
-      clearTimeouts()
+    if (localStatus === 'saved') {
       setLocalStatus('idle')
     }
     onChange?.(e)
     scheduleDebounced(e.target.value)
   }
 
+  const handleBlur = (e: FocusEvent<HTMLInputElement>) => {
+    if (localStatus === 'saved') {
+      setLocalStatus('idle')
+    }
+    onBlur?.(e)
+  }
+
   const isError = error != null || localStatus === 'error'
   const showError = error != null
   const showDesc = description != null && !showError
+
+  const inputEl = (
+    <input
+      id={id}
+      className={cn(
+        'mrs-field__input',
+        inputSize !== 'md' && `mrs-field__input--${inputSize}`,
+        isError && 'mrs-field__input--error',
+        localStatus === 'saved' && 'mrs-field__input--saved-icon',
+        localStatus === 'saving' && 'mrs-field__input--saving',
+        className,
+      )}
+      aria-invalid={isError || undefined}
+      aria-describedby={showError ? errId : showDesc ? descId : undefined}
+      onChange={handleChange}
+      onBlur={handleBlur}
+      {...inputProps}
+    />
+  )
+
+  const wrappedInput = localStatus === 'saved' ? (
+    <div className={cn('mrs-input-wrapper', fullWidth && 'mrs-input-wrapper--full')}>
+      {inputEl}
+      <span className="mrs-input-icon-saved">
+        <CheckIcon />
+      </span>
+    </div>
+  ) : (
+    inputEl
+  )
 
   return (
     <div className={cn('mrs-field', fullWidth && 'mrs-field--full', containerClassName)}>
@@ -98,22 +130,7 @@ export function InputField({
           {label}
         </label>
       )}
-      <input
-        id={id}
-        className={cn(
-          'mrs-field__input',
-          inputSize !== 'md' && `mrs-field__input--${inputSize}`,
-          isError && 'mrs-field__input--error',
-          localStatus === 'saved' && 'mrs-field__input--saved',
-          localStatus === 'saved-fading' && 'mrs-field__input--saved-fading',
-          localStatus === 'saving' && 'mrs-field__input--saving',
-          className,
-        )}
-        aria-invalid={isError || undefined}
-        aria-describedby={showError ? errId : showDesc ? descId : undefined}
-        onChange={handleChange}
-        {...inputProps}
-      />
+      {wrappedInput}
       {showDesc && (
         <p id={descId} className="mrs-field__desc">
           {description}

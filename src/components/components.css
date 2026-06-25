@@ -637,27 +637,73 @@
 .mrs-input--invalid:focus {
   box-shadow: 0 0 0 3px var(--color-danger-bg);
 }
-.mrs-input--saved,
-.mrs-textarea--saved,
-.mrs-field__input--saved {
-  border-color: var(--color-success) !important;
-  transition: border-color 1000ms ease, box-shadow 1000ms ease !important;
+.mrs-input-wrapper {
+  position: relative;
+  display: inline-block;
+  vertical-align: middle;
 }
-.mrs-input--saved:focus,
-.mrs-textarea--saved:focus,
-.mrs-field__input--saved:focus {
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-success) 50%, transparent), 0 0 8px color-mix(in srgb, var(--color-success) 35%, transparent) !important;
+.mrs-input-wrapper--full {
+  display: block;
+  width: 100%;
 }
-.mrs-input--saving,
-.mrs-textarea--saving,
-.mrs-field__input--saving {
-  border-color: var(--color-info) !important;
-  transition: border-color 1000ms ease, box-shadow 1000ms ease !important;
+.mrs-input-wrapper--full .mrs-input,
+.mrs-input-wrapper--full .mrs-field__input {
+  width: 100%;
 }
-.mrs-input--saving:focus,
-.mrs-textarea--saving:focus,
-.mrs-field__input--saving:focus {
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-info) 50%, transparent), 0 0 8px color-mix(in srgb, var(--color-info) 35%, transparent) !important;
+.mrs-textarea-wrapper {
+  position: relative;
+  display: block;
+  width: 100%;
+}
+.mrs-input-icon-saved {
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-success);
+  pointer-events: none;
+  animation: mrs-input-icon-fade-in 200ms ease forwards;
+}
+.mrs-textarea-icon-saved {
+  position: absolute;
+  right: 0.75rem;
+  top: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-success);
+  pointer-events: none;
+  animation: mrs-textarea-icon-fade-in 200ms ease forwards;
+}
+.mrs-input--saved-icon,
+.mrs-field__input--saved-icon {
+  padding-right: 2.25rem !important;
+}
+.mrs-textarea--saved-icon {
+  padding-right: 2.25rem !important;
+}
+@keyframes mrs-input-icon-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-50%) scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(-50%) scale(1);
+  }
+}
+@keyframes mrs-textarea-icon-fade-in {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 .mrs-input--sm {
   height: 2rem;
