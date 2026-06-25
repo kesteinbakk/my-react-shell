@@ -646,7 +646,7 @@
 .mrs-input--saved:focus,
 .mrs-textarea--saved:focus,
 .mrs-field__input--saved:focus {
-  box-shadow: 0 0 0 3px var(--color-success-bg) !important;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-success) 50%, transparent), 0 0 8px color-mix(in srgb, var(--color-success) 35%, transparent) !important;
 }
 .mrs-input--saving,
 .mrs-textarea--saving,
@@ -657,7 +657,7 @@
 .mrs-input--saving:focus,
 .mrs-textarea--saving:focus,
 .mrs-field__input--saving:focus {
-  box-shadow: 0 0 0 3px var(--color-info-bg) !important;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-info) 50%, transparent), 0 0 8px color-mix(in srgb, var(--color-info) 35%, transparent) !important;
 }
 .mrs-input--sm {
   height: 2rem;
