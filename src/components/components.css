@@ -675,7 +675,7 @@
 .mrs-input-icon-saved,
 .mrs-input-icon-error {
   position: absolute;
-  right: 0.75rem;
+  right: 0.75em;
   top: 50%;
   transform: translateY(-50%);
   display: flex;
@@ -694,8 +694,8 @@
 .mrs-textarea-icon-saved,
 .mrs-textarea-icon-error {
   position: absolute;
-  right: 0.75rem;
-  top: 0.75rem;
+  right: 0.75em;
+  top: 0.75em;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -713,11 +713,11 @@
 .mrs-input--error-icon,
 .mrs-field__input--saved-icon,
 .mrs-field__input--error-icon {
-  padding-right: 2.5rem !important;
+  padding-right: 2.2em !important;
 }
 .mrs-textarea--saved-icon,
 .mrs-textarea--error-icon {
-  padding-right: 2.5rem !important;
+  padding-right: 2.2em !important;
 }
 @keyframes mrs-input-icon-fade-in {
   from {
