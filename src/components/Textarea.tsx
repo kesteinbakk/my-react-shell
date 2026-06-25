@@ -1,4 +1,4 @@
-import { type ChangeEvent, type TextareaHTMLAttributes, useState, useEffect } from 'react'
+import { type ChangeEvent, type TextareaHTMLAttributes, useState, useEffect, useRef } from 'react'
 import { cn } from './cn'
 import { useDebounce } from './useDebounce'
 
@@ -39,16 +39,36 @@ export function Textarea({
   saveStatus,
   ...rest
 }: TextareaProps) {
-  const [localStatus, setLocalStatus] = useState<typeof saveStatus>(saveStatus)
+  const [localStatus, setLocalStatus] = useState<typeof saveStatus | 'saved-fading'>(saveStatus)
+  const fadeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const idleTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  const clearTimeouts = () => {
+    if (fadeTimeoutRef.current) clearTimeout(fadeTimeoutRef.current)
+    if (idleTimeoutRef.current) clearTimeout(idleTimeoutRef.current)
+  }
 
   useEffect(() => {
+    clearTimeouts()
     setLocalStatus(saveStatus)
+
+    if (saveStatus === 'saved') {
+      fadeTimeoutRef.current = setTimeout(() => {
+        setLocalStatus('saved-fading')
+        idleTimeoutRef.current = setTimeout(() => {
+          setLocalStatus('idle')
+        }, 1000) // matches the 1000ms transition duration
+      }, 1500) // stay green for 1.5s before fading
+    }
+
+    return () => clearTimeouts()
   }, [saveStatus])
 
   const scheduleDebounced = useDebounce(onDebouncedChange, debounceMs)
 
   const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
-    if (localStatus === 'saved') {
+    if (localStatus === 'saved' || localStatus === 'saved-fading') {
+      clearTimeouts()
       setLocalStatus('idle')
     }
     onChange?.(e)
@@ -64,6 +84,7 @@ export function Textarea({
         isInvalid && 'mrs-textarea--invalid',
         fullWidth && 'mrs-textarea--full',
         localStatus === 'saved' && 'mrs-textarea--saved',
+        localStatus === 'saved-fading' && 'mrs-textarea--saved-fading',
         localStatus === 'saving' && 'mrs-textarea--saving',
         className,
       )}
