@@ -14,6 +14,8 @@ export interface SwitchProps {
     /** Accessible label — required when there's no associated `<label>`. */
     'aria-label'?: string;
     className?: string;
+    /** Stretch to fill the available container width. Defaults to `false`. */
+    fullWidth?: boolean;
 }
 /**
  * Un-opinionated toggle switch on Radix Switch — a track with a sliding thumb,
@@ -25,4 +27,4 @@ export interface SwitchProps {
  * <Switch checked={enabled} onCheckedChange={setEnabled} aria-label="Notifications" />
  * ```
  */
-export declare function Switch({ checked, defaultChecked, onCheckedChange, disabled, name, value, id, className, ...rest }: SwitchProps): import("react").JSX.Element;
+export declare function Switch({ checked, defaultChecked, onCheckedChange, disabled, name, value, id, className, fullWidth, ...rest }: SwitchProps): import("react").JSX.Element;

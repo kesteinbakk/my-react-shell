@@ -11,6 +11,6 @@ import { cn } from './cn';
  * <Switch checked={enabled} onCheckedChange={setEnabled} aria-label="Notifications" />
  * ```
  */
-export function Switch({ checked, defaultChecked, onCheckedChange, disabled, name, value, id, className, ...rest }) {
-    return (_jsx(RadixSwitch.Root, { checked: checked, defaultChecked: defaultChecked, onCheckedChange: onCheckedChange, disabled: disabled, name: name, value: value, id: id, "aria-label": rest['aria-label'], className: cn('mrs-switch', className), children: _jsx(RadixSwitch.Thumb, { className: "mrs-switch__thumb" }) }));
+export function Switch({ checked, defaultChecked, onCheckedChange, disabled, name, value, id, className, fullWidth = false, ...rest }) {
+    return (_jsx(RadixSwitch.Root, { checked: checked, defaultChecked: defaultChecked, onCheckedChange: onCheckedChange, disabled: disabled, name: name, value: value, id: id, "aria-label": rest['aria-label'], className: cn('mrs-switch', fullWidth && 'mrs-switch--full', className), children: _jsx(RadixSwitch.Thumb, { className: "mrs-switch__thumb" }) }));
 }

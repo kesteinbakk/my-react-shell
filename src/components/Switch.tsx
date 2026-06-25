@@ -17,6 +17,8 @@ export interface SwitchProps {
   /** Accessible label — required when there's no associated `<label>`. */
   'aria-label'?: string
   className?: string
+  /** Stretch to fill the available container width. Defaults to `false`. */
+  fullWidth?: boolean
 }
 
 /**
@@ -38,6 +40,7 @@ export function Switch({
   value,
   id,
   className,
+  fullWidth = false,
   ...rest
 }: SwitchProps) {
   return (
@@ -50,7 +53,7 @@ export function Switch({
       value={value}
       id={id}
       aria-label={rest['aria-label']}
-      className={cn('mrs-switch', className)}
+      className={cn('mrs-switch', fullWidth && 'mrs-switch--full', className)}
     >
       <RadixSwitch.Thumb className="mrs-switch__thumb" />
     </RadixSwitch.Root>

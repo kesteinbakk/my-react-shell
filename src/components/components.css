@@ -713,11 +713,11 @@
 .mrs-input--error-icon,
 .mrs-field__input--saved-icon,
 .mrs-field__input--error-icon {
-  padding-right: 2.25rem !important;
+  padding-right: 2.5rem !important;
 }
 .mrs-textarea--saved-icon,
 .mrs-textarea--error-icon {
-  padding-right: 2.25rem !important;
+  padding-right: 2.5rem !important;
 }
 @keyframes mrs-input-icon-fade-in {
   from {
@@ -3002,6 +3002,10 @@
   cursor: pointer;
   transition: background-color 120ms ease;
 }
+.mrs-switch--full {
+  display: flex;
+  width: 100%;
+}
 .mrs-switch:focus-visible {
   outline: 2px solid var(--color-focus);
   outline-offset: 2px;
@@ -3015,17 +3019,18 @@
 }
 .mrs-switch__thumb {
   display: block;
+  position: absolute;
+  top: 0.125rem;
+  left: 0.125rem;
   width: 1.125rem;
   height: 1.125rem;
   border-radius: 9999px;
   background: var(--color-surface-primary);
   box-shadow: 0 1px 2px var(--color-shadow-sm);
-  transform: translateX(0.125rem);
-  transition: transform 120ms cubic-bezier(0.4, 0, 0.2, 1);
-  will-change: transform;
+  transition: left 120ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 .mrs-switch__thumb[data-state='checked'] {
-  transform: translateX(1.25rem);
+  left: calc(100% - 1.25rem);
 }
 
 /* ── RadioGroup (Radix RadioGroup) ───────────────────────────────────────────
