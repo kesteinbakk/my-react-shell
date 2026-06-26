@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import * as Dialog from '@radix-ui/react-dialog'
 import { cn } from './cn'
+import type { DialogButtonProp, DialogButtonConfig } from './Dialog'
 
 export interface ConfirmDialogProps {
   /** Controlled open state. */
@@ -13,6 +14,10 @@ export interface ConfirmDialogProps {
   description?: ReactNode
   /** Optional custom body, rendered below the description. */
   children?: ReactNode
+  /** Confirm button label or configuration. If omitted, uses confirmLabel / onConfirm / tone. */
+  useConfirm?: DialogButtonProp
+  /** Cancel button label or configuration. If omitted, uses cancelLabel. */
+  useCancel?: DialogButtonProp
   /** Confirm button label. Defaults to `"Confirm"`. */
   confirmLabel?: string
   /** Cancel button label. Defaults to `"Cancel"`. */
@@ -20,7 +25,7 @@ export interface ConfirmDialogProps {
   /** `danger` makes the confirm button destructive. */
   tone?: 'neutral' | 'danger'
   /** Called when the confirm button is pressed. */
-  onConfirm: () => void
+  onConfirm?: () => void
   /** Disables both buttons while an async confirm is in flight. */
   loading?: boolean
   className?: string
@@ -37,6 +42,8 @@ export function ConfirmDialog({
   title,
   description,
   children,
+  useConfirm,
+  useCancel,
   confirmLabel = 'Confirm',
   cancelLabel = 'Cancel',
   tone = 'neutral',
@@ -44,6 +51,34 @@ export function ConfirmDialog({
   loading = false,
   className,
 }: ConfirmDialogProps) {
+  const getButtonClass = (t: 'primary' | 'neutral' | 'danger') => {
+    if (t === 'danger') return 'mrs-dialog__btn--danger'
+    if (t === 'primary') return 'mrs-dialog__btn--primary'
+    return 'mrs-dialog__btn--ghost'
+  }
+
+  // Parse cancel config
+  const cancelConfig: DialogButtonConfig = (() => {
+    if (useCancel != null) {
+      return typeof useCancel === 'string' ? { label: useCancel } : useCancel
+    }
+    return { label: cancelLabel }
+  })()
+  const cancelClick = cancelConfig.onClick ?? (() => onOpenChange(false))
+  const cancelLoading = cancelConfig.loading ?? loading
+  const cancelTone = cancelConfig.tone ?? 'neutral'
+
+  // Parse confirm config
+  const confirmConfig: DialogButtonConfig = (() => {
+    if (useConfirm != null) {
+      return typeof useConfirm === 'string' ? { label: useConfirm } : useConfirm
+    }
+    return { label: confirmLabel }
+  })()
+  const confirmClick = confirmConfig.onClick ?? onConfirm ?? (() => onOpenChange(false))
+  const confirmLoading = confirmConfig.loading ?? loading
+  const confirmTone = confirmConfig.tone ?? (tone === 'danger' ? 'danger' : 'primary')
+
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Portal>
@@ -57,23 +92,22 @@ export function ConfirmDialog({
           <div className="mrs-dialog__actions">
             <button
               type="button"
-              className="mrs-dialog__btn mrs-dialog__btn--ghost"
-              onClick={() => onOpenChange(false)}
-              disabled={loading}
+              className={cn('mrs-dialog__btn', getButtonClass(cancelTone))}
+              style={{ marginRight: 'auto' }}
+              onClick={cancelClick}
+              disabled={cancelLoading}
+              aria-busy={cancelLoading || undefined}
             >
-              {cancelLabel}
+              {cancelConfig.label}
             </button>
             <button
               type="button"
-              className={cn(
-                'mrs-dialog__btn',
-                tone === 'danger' ? 'mrs-dialog__btn--danger' : 'mrs-dialog__btn--primary',
-              )}
-              onClick={onConfirm}
-              disabled={loading}
-              aria-busy={loading || undefined}
+              className={cn('mrs-dialog__btn', getButtonClass(confirmTone))}
+              onClick={confirmClick}
+              disabled={confirmLoading}
+              aria-busy={confirmLoading || undefined}
             >
-              {confirmLabel}
+              {confirmConfig.label}
             </button>
           </div>
         </Dialog.Content>

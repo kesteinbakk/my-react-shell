@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import type { DialogButtonProp } from './Dialog';
 export interface ConfirmDialogProps {
     /** Controlled open state. */
     open: boolean;
@@ -10,6 +11,10 @@ export interface ConfirmDialogProps {
     description?: ReactNode;
     /** Optional custom body, rendered below the description. */
     children?: ReactNode;
+    /** Confirm button label or configuration. If omitted, uses confirmLabel / onConfirm / tone. */
+    useConfirm?: DialogButtonProp;
+    /** Cancel button label or configuration. If omitted, uses cancelLabel. */
+    useCancel?: DialogButtonProp;
     /** Confirm button label. Defaults to `"Confirm"`. */
     confirmLabel?: string;
     /** Cancel button label. Defaults to `"Cancel"`. */
@@ -17,7 +22,7 @@ export interface ConfirmDialogProps {
     /** `danger` makes the confirm button destructive. */
     tone?: 'neutral' | 'danger';
     /** Called when the confirm button is pressed. */
-    onConfirm: () => void;
+    onConfirm?: () => void;
     /** Disables both buttons while an async confirm is in flight. */
     loading?: boolean;
     className?: string;
@@ -27,4 +32,4 @@ export interface ConfirmDialogProps {
  * close, portal). Styled with the theme tokens; renders its own confirm/cancel
  * buttons.
  */
-export declare function ConfirmDialog({ open, onOpenChange, title, description, children, confirmLabel, cancelLabel, tone, onConfirm, loading, className, }: ConfirmDialogProps): import("react").JSX.Element;
+export declare function ConfirmDialog({ open, onOpenChange, title, description, children, useConfirm, useCancel, confirmLabel, cancelLabel, tone, onConfirm, loading, className, }: ConfirmDialogProps): import("react").JSX.Element;

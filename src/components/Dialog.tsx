@@ -1,6 +1,19 @@
-import type { ReactNode } from 'react'
+import type { ReactNode, CSSProperties } from 'react'
 import * as RadixDialog from '@radix-ui/react-dialog'
 import { cn } from './cn'
+
+export interface DialogButtonConfig {
+  /** The button label. */
+  label: ReactNode
+  /** Click callback. If omitted, defaults to closing the dialog via onOpenChange(false). */
+  onClick?: () => void
+  /** Style tone. */
+  tone?: 'primary' | 'neutral' | 'danger'
+  /** Shows loading state and disables the button. */
+  loading?: boolean
+}
+
+export type DialogButtonProp = string | DialogButtonConfig
 
 /** Outer width of the dialog card. `full` fills the viewport (minus a small inset). */
 export type DialogSize = 'sm' | 'md' | 'lg' | 'xl' | 'full'
@@ -22,6 +35,10 @@ export interface DialogProps {
   children?: ReactNode
   /** Optional content for the bottom actions row (e.g. buttons). */
   footer?: ReactNode
+  /** Render a default Cancel button on the left of the footer with this label or config. */
+  useCancel?: DialogButtonProp
+  /** Render a default Primary button on the right of the footer with this label or config. */
+  usePrimary?: DialogButtonProp
   /** Outer width. Defaults to `md`. */
   size?: DialogSize
   /**
@@ -80,6 +97,8 @@ export function Dialog({
   description,
   children,
   footer,
+  useCancel,
+  usePrimary,
   size = 'md',
   bleed = false,
   showClose = true,
@@ -88,6 +107,45 @@ export function Dialog({
   closeOnEsc = true,
   className,
 }: DialogProps) {
+  const getButtonClass = (tone: 'primary' | 'neutral' | 'danger') => {
+    if (tone === 'danger') return 'mrs-dialog__btn--danger'
+    if (tone === 'primary') return 'mrs-dialog__btn--primary'
+    return 'mrs-dialog__btn--ghost'
+  }
+
+  const renderButton = (
+    prop: DialogButtonProp,
+    defaultTone: 'primary' | 'neutral' | 'danger',
+    style?: CSSProperties
+  ) => {
+    const config: DialogButtonConfig = typeof prop === 'string' ? { label: prop } : prop
+    const tone = config.tone ?? defaultTone
+    const onClick = config.onClick ?? (() => onOpenChange(false))
+    const loading = config.loading ?? false
+
+    return (
+      <button
+        type="button"
+        className={cn('mrs-dialog__btn', getButtonClass(tone))}
+        style={style}
+        onClick={onClick}
+        disabled={loading}
+        aria-busy={loading || undefined}
+      >
+        {config.label}
+      </button>
+    )
+  }
+
+  const hasActions = useCancel != null || usePrimary != null || footer != null
+  const renderedFooter = hasActions ? (
+    <>
+      {useCancel != null && renderButton(useCancel, 'neutral', { marginRight: 'auto' })}
+      {footer}
+      {usePrimary != null && renderButton(usePrimary, 'primary')}
+    </>
+  ) : null
+
   return (
     <RadixDialog.Root open={open} onOpenChange={onOpenChange}>
       <RadixDialog.Portal>
@@ -130,7 +188,7 @@ export function Dialog({
                 </RadixDialog.Description>
               )}
               {children != null && <div className="mrs-dialog__body">{children}</div>}
-              {footer != null && <div className="mrs-dialog__actions">{footer}</div>}
+              {renderedFooter != null && <div className="mrs-dialog__actions">{renderedFooter}</div>}
             </>
           )}
           {(showClose || headerActions != null) && (

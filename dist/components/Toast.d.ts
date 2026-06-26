@@ -23,7 +23,7 @@ export interface ToastApi {
 export declare function useToast(): ToastApi;
 export interface ToastProviderProps {
     children: ReactNode;
-    /** Default auto-dismiss in ms (a per-toast `duration` overrides). Defaults to 5000. */
+    /** Default auto-dismiss in ms (a per-toast `duration` overrides). Defaults to 3000. */
     duration?: number;
 }
 /**

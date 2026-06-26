@@ -916,6 +916,7 @@
   display: flex;
   align-items: center;
   gap: 0.25rem;
+  z-index: 50;
 }
 .mrs-dialog__close-container .mrs-action-btn,
 .mrs-sheet__header-actions .mrs-action-btn {

@@ -15,7 +15,7 @@ export function useToast() {
  * exposes the imperative API via `useToast()`. Each toast renders as an `Alert`,
  * so toasts inherit the same tone tokens.
  */
-export function ToastProvider({ children, duration = 5000 }) {
+export function ToastProvider({ children, duration = 3000 }) {
     const [toasts, setToasts] = useState([]);
     const idRef = useRef(0);
     const dismiss = useCallback((id) => {
