@@ -18,6 +18,7 @@ export type { I18nContextValue, Locale, LocaleInfo, TFunction } from './i18nCont
 // ── typed keys (opt-in, compile-time) ─────────────────────────────────────────
 export { createTypedI18n } from './createTypedI18n'
 export type { TypedI18n } from './createTypedI18n'
+export { createProjectI18n } from './createProjectI18n'
 
 // ── imperative translation ────────────────────────────────────────────────────
 export { translateNow } from './translateNow'

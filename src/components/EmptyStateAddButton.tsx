@@ -1,6 +1,7 @@
-import type { ButtonHTMLAttributes, CSSProperties, ReactNode } from 'react'
+import type { ButtonHTMLAttributes, ReactNode } from 'react'
 import { forwardRef } from 'react'
 import { cva } from 'class-variance-authority'
+
 import { cn } from './cn'
 import type { Tone } from './tone'
 

@@ -12,6 +12,8 @@ import { cn } from './cn'
 /** Output format of the free picker — what `onChange` emits and `value` is read as. */
 export type ColorFormat = 'hex' | 'rgb' | 'hsl'
 
+export type ColorPickerSize = 'sm' | 'md' | 'lg'
+
 export interface ColorPickerProps {
   /**
    * Selected color (controlled). A CSS color string: in free mode it is in `format`
@@ -40,6 +42,8 @@ export interface ColorPickerProps {
   disabled?: boolean
   /** Accessible label for the trigger (falls back to a string `label`). */
   'aria-label'?: string
+  /** Trigger height / padding — matches the `Input` size scale. Defaults to `'md'`. */
+  size?: ColorPickerSize
   /** Stretch to fill the available container width. Defaults to `false`. */
   fullWidth?: boolean
   className?: string
@@ -109,6 +113,7 @@ export function ColorPicker({
   align = 'start',
   placeholder,
   disabled,
+  size = 'md',
   fullWidth = false,
   className,
   style,
@@ -132,7 +137,10 @@ export function ColorPicker({
         <Popover.Trigger asChild>
           <button
             type="button"
-            className="mrs-color-picker__trigger"
+            className={cn(
+              'mrs-color-picker__trigger',
+              size !== 'md' && `mrs-color-picker__trigger--${size}`
+            )}
             disabled={disabled}
             aria-label={ariaLabel}
           >

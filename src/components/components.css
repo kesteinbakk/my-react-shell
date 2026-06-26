@@ -181,6 +181,9 @@
 }
 .mrs-empty__action {
   margin-top: 0.75rem;
+  width: 100%;
+  display: flex;
+  justify-content: center;
 }
 
 /* ── InfoBox (neutral, tone-free) ────────────────────────────────────────── */
@@ -2428,6 +2431,22 @@
   opacity: 0.6;
   cursor: not-allowed;
 }
+
+/* Size variants — mirror the `Input` and `Select` scale. The base rule's height/padding are
+   the `md` defaults; these override for `sm` and `lg`. */
+.mrs-color-picker__trigger--sm {
+  height: 2rem;
+  padding: 0 0.5rem;
+  font-size: 0.8125rem;
+  min-width: 9rem;
+}
+.mrs-color-picker__trigger--lg {
+  height: 2.5rem;
+  padding: 0 0.75rem;
+  font-size: 1rem;
+  min-width: 13rem;
+}
+
 .mrs-color-picker--full {
   width: 100%;
 }

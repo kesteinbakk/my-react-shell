@@ -6,6 +6,7 @@ export { useI18nContext } from './i18nContext';
 export type { I18nContextValue, Locale, LocaleInfo, TFunction } from './i18nContext';
 export { createTypedI18n } from './createTypedI18n';
 export type { TypedI18n } from './createTypedI18n';
+export { createProjectI18n } from './createProjectI18n';
 export { translateNow } from './translateNow';
 export { flattenMessages, interpolate, mergeMessages } from './translate';
 export type { DotPaths, FlatMessages, Messages, TranslateParams } from './translate';

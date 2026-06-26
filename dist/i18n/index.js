@@ -12,6 +12,7 @@ export { useTranslation, useI18n } from './useTranslation';
 export { useI18nContext } from './i18nContext';
 // ── typed keys (opt-in, compile-time) ─────────────────────────────────────────
 export { createTypedI18n } from './createTypedI18n';
+export { createProjectI18n } from './createProjectI18n';
 // ── imperative translation ────────────────────────────────────────────────────
 export { translateNow } from './translateNow';
 // ── translator core (pure) ────────────────────────────────────────────────────

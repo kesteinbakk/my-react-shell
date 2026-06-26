@@ -1,0 +1,217 @@
+{
+  "common": {
+    "site": {
+      "label": "Område",
+      "labelPlural": "Områder"
+    },
+    "zone": {
+      "label": "Sone",
+      "labelPlural": "Soner"
+    },
+    "boolean": {
+      "yes": "Ja",
+      "no": "Nei"
+    },
+    "identityType": {
+      "profile": {
+        "label": "Profil"
+      },
+      "friends": {
+        "label": "Venner"
+      },
+      "work": {
+        "label": "Jobb"
+      },
+      "family": {
+        "label": "Familie"
+      },
+      "consumer": {
+        "label": "Forbruker"
+      },
+      "anonymous": {
+        "label": "Anonym"
+      },
+      "custom": {
+        "label": "Egendefinert"
+      }
+    },
+    "dataScope": {
+      "identity": {
+        "label": "Identitet"
+      },
+      "trust": {
+        "label": "Tillitsnivå"
+      },
+      "trustDetails": {
+        "label": "Tillitsdetaljer"
+      },
+      "riskLevel": {
+        "label": "Risikonivå"
+      },
+      "roles": {
+        "label": "Roller"
+      },
+      "siteAccount": {
+        "label": "Områdekonto"
+      }
+    },
+    "siteType": {
+      "work": {
+        "label": "Jobb"
+      },
+      "leisure": {
+        "label": "Fritid"
+      },
+      "trade": {
+        "label": "Handel"
+      },
+      "personal": {
+        "label": "Personlig"
+      },
+      "zing": {
+        "label": "Zing"
+      }
+    },
+    "access": {
+      "public": {
+        "label": "Offentlig"
+      },
+      "shared": {
+        "label": "Delt"
+      },
+      "private": {
+        "label": "Privat"
+      },
+      "restricted": {
+        "label": "Begrenset"
+      }
+    },
+    "ok": "OK",
+    "cancel": "Avbryt",
+    "confirm": "Bekreft",
+    "close": "Lukk",
+    "closeSidebar": "Lukk sidefelt",
+    "loading": "Laster...",
+    "noData": "Ingen data tilgjengelig",
+    "online": "Tilkoblet",
+    "offline": "Frakoblet",
+    "add": "Legg til",
+    "copy": "Kopier",
+    "copied": "Kopiert",
+    "copiedToClipboard": "Kopiert til utklippstavle",
+    "copyFailed": "Kunne ikke kopiere",
+    "edit": "Rediger",
+    "delete": "Slett",
+    "share": "Del",
+    "revoke": "Tilbakekall",
+    "chat": "Chat",
+    "favorite": "Favoritt",
+    "addDocument": "Legg til dokument",
+    "addItem": "Legg til element",
+    "editItem": "Rediger element",
+    "deleteItem": "Slett element",
+    "back": "Tilbake",
+    "returnHome": "Tilbake til hjem",
+    "settings": "Innstillinger",
+    "save": "Lagre",
+    "search": "Søk...",
+    "actions": "Handlinger",
+    "collapse": "Skjul",
+    "continue": "Fortsett",
+    "daysAgo": "{{count}} dager siden",
+    "default": "Standard",
+    "dismiss": "Avvis",
+    "expand": "Vis",
+    "home": "Hjem",
+    "loadingApp": "Starter applikasjonen...",
+    "loadingAuth": "Sjekker autentisering...",
+    "loadingContent": "Laster innhold...",
+    "mine": "Min",
+    "next": "Neste",
+    "saved": "Lagret",
+    "saving": "Lagrer...",
+    "today": "I dag",
+    "tryAgain": "Prøv igjen",
+    "unknown": "Ukjent",
+    "yesterday": "I går",
+    "you": "deg",
+    "error": "Feil",
+    "more": "Mer",
+    "moreActions": "Flere handlinger",
+    "moveDown": "Flytt ned",
+    "moveUp": "Flytt opp",
+    "backToHome": "Tilbake til hjem",
+    "create": "Opprett",
+    "customized": "Tilpasset",
+    "description": "Beskrivelse",
+    "title": "Tittel",
+    "content": "Innhold",
+    "read": "Les",
+    "write": "Skriv",
+    "admin": "Admin",
+    "name": "Navn",
+    "notSet": "Ikke satt",
+    "optional": "valgfritt",
+    "rename": "Gi nytt navn",
+    "required": "Påkrevd",
+    "reset": "Tilbakestill",
+    "retry": "Prøv igjen",
+    "refresh": "Last inn på nytt",
+    "authenticate": "Autentiser",
+    "endSession": "Avslutt økt",
+    "profile": "Profil",
+    "anonymous": "Anonym",
+    "themeSettings": "Temainnstillinger",
+    "yearsOld": "år gammel",
+    "unknownUser": "Ukjent bruker",
+    "pending": "Venter",
+    "accept": "Godta",
+    "accepted": "Godtatt",
+    "decline": "Avslå",
+    "declined": "Avslått",
+    "sent": "Sendt",
+    "cancelled": "Avbrutt",
+    "expired": "Utløpt",
+    "created": "Opprettet",
+    "active": "Aktiv",
+    "locked": "Låst",
+    "idle": "Inaktiv",
+    "recentlyActive": "Nylig aktiv",
+    "type": "Type",
+    "never": "Aldri",
+    "notifications": "Varsler",
+    "trust": "Tillit",
+    "identities": "Identiteter",
+    "data": "Data",
+    "subject": "Emne",
+    "send": "Send",
+    "noPendingRequests": "Ingen ventende forespørsler",
+    "userMenu": {
+      "trigger": "Brukermeny",
+      "endSession": "Avslutt økt",
+      "switchIdentity": "Bytt identitet",
+      "myProfile": "Min profil",
+      "authenticate": "Autentiser"
+    },
+    "fields": {
+      "name": "Navn",
+      "email": "E-post",
+      "phone": "Telefon",
+      "address": "Adresse",
+      "location": "Sted",
+      "dateOfBirth": "Født",
+      "age": "Alder",
+      "image": "Bilde",
+      "preferences": {
+        "label": "Preferanser",
+        "theme": "Tema",
+        "mode": "Modus",
+        "languages": "Språk",
+        "useEmojis": "Emoji"
+      }
+    },
+    "deviceLink": {
+      "body": "Skann denne koden fra kameraappen på telefonen din."
+    }
+  }
+}

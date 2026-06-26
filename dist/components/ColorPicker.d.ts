@@ -1,6 +1,7 @@
 import { type ReactNode, type CSSProperties } from 'react';
 /** Output format of the free picker — what `onChange` emits and `value` is read as. */
 export type ColorFormat = 'hex' | 'rgb' | 'hsl';
+export type ColorPickerSize = 'sm' | 'md' | 'lg';
 export interface ColorPickerProps {
     /**
      * Selected color (controlled). A CSS color string: in free mode it is in `format`
@@ -29,6 +30,8 @@ export interface ColorPickerProps {
     disabled?: boolean;
     /** Accessible label for the trigger (falls back to a string `label`). */
     'aria-label'?: string;
+    /** Trigger height / padding — matches the `Input` size scale. Defaults to `'md'`. */
+    size?: ColorPickerSize;
     /** Stretch to fill the available container width. Defaults to `false`. */
     fullWidth?: boolean;
     className?: string;
@@ -45,4 +48,4 @@ export interface ColorPickerProps {
  * Controlled via `value` / `onChange`; persists nothing. `value` is always a
  * directly-usable CSS color string — drop it into a `style`/`background`.
  */
-export declare function ColorPicker({ value, onChange, colors, format, label, description, align, placeholder, disabled, fullWidth, className, style, ...rest }: ColorPickerProps): import("react").JSX.Element;
+export declare function ColorPicker({ value, onChange, colors, format, label, description, align, placeholder, disabled, size, fullWidth, className, style, ...rest }: ColorPickerProps): import("react").JSX.Element;
