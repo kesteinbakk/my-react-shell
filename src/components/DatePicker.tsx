@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { type CSSProperties } from 'react'
 import { format as formatDate } from 'date-fns'
 import * as RadixPopover from '@radix-ui/react-popover'
 import type { Matcher } from 'react-day-picker'
@@ -31,6 +32,7 @@ export interface DatePickerProps {
   /** Stretch to fill the available container width. Defaults to `false`. */
   fullWidth?: boolean
   className?: string
+  style?: CSSProperties
 }
 
 const CalendarGlyph = () => (
@@ -73,6 +75,7 @@ export function DatePicker({
   disabled,
   fullWidth = false,
   className,
+  style,
   ...rest
 }: DatePickerProps) {
   const [open, setOpen] = useState(false)
@@ -95,6 +98,7 @@ export function DatePicker({
           aria-label={rest['aria-label']}
           data-empty={selected ? undefined : ''}
           className={cn('mrs-datepicker__trigger', fullWidth && 'mrs-datepicker__trigger--full', className)}
+          style={style}
         >
           <CalendarGlyph />
           <span className="mrs-datepicker__label">

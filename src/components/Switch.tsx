@@ -1,5 +1,5 @@
 import * as RadixSwitch from '@radix-ui/react-switch'
-import { useId, type ReactNode } from 'react'
+import { useId, type ReactNode, type CSSProperties } from 'react'
 import { cn } from './cn'
 import { Label } from './Label'
 
@@ -19,6 +19,7 @@ export interface SwitchProps {
   /** Accessible label — required when there's no associated `<label>`. */
   'aria-label'?: string
   className?: string
+  style?: CSSProperties
   /** Stretch to fill the available container width. Defaults to `false`. */
   fullWidth?: boolean
   /** Optional label. If provided, renders a label next to the switch. */
@@ -46,6 +47,7 @@ export function Switch({
   value,
   id: passedId,
   className,
+  style,
   fullWidth = false,
   label,
   labelPlacement = 'right',
@@ -65,6 +67,7 @@ export function Switch({
       id={id}
       aria-label={rest['aria-label']}
       className={cn('mrs-switch', className)}
+      style={label == null ? style : undefined}
     >
       <RadixSwitch.Thumb className="mrs-switch__thumb" />
     </RadixSwitch.Root>
@@ -77,6 +80,7 @@ export function Switch({
           'mrs-switch-wrapper',
           fullWidth && 'mrs-switch-wrapper--full'
         )}
+        style={style}
       >
         {labelPlacement === 'left' && (
           <Label htmlFor={id} className="text-sm font-medium">

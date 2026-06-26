@@ -1,3 +1,4 @@
+import { type CSSProperties } from 'react';
 import type { Matcher } from 'react-day-picker';
 export interface DatePickerProps {
     /** Selected date (controlled). */
@@ -25,6 +26,7 @@ export interface DatePickerProps {
     /** Stretch to fill the available container width. Defaults to `false`. */
     fullWidth?: boolean;
     className?: string;
+    style?: CSSProperties;
 }
 /**
  * Single-date field — a trigger button showing the selected date that opens a {@link
@@ -37,4 +39,4 @@ export interface DatePickerProps {
  * <DatePicker value={date} onChange={setDate} disabledDays={{ before: new Date() }} />
  * ```
  */
-export declare function DatePicker({ value, defaultValue, onChange, placeholder, displayFormat, disabledDays, startMonth, endMonth, disabled, fullWidth, className, ...rest }: DatePickerProps): import("react").JSX.Element;
+export declare function DatePicker({ value, defaultValue, onChange, placeholder, displayFormat, disabledDays, startMonth, endMonth, disabled, fullWidth, className, style, ...rest }: DatePickerProps): import("react").JSX.Element;

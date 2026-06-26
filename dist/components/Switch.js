@@ -13,12 +13,12 @@ import { Label } from './Label';
  * <Switch checked={enabled} onCheckedChange={setEnabled} aria-label="Notifications" />
  * ```
  */
-export function Switch({ checked, defaultChecked, onCheckedChange, disabled, name, value, id: passedId, className, fullWidth = false, label, labelPlacement = 'right', ...rest }) {
+export function Switch({ checked, defaultChecked, onCheckedChange, disabled, name, value, id: passedId, className, style, fullWidth = false, label, labelPlacement = 'right', ...rest }) {
     const generatedId = useId();
     const id = passedId ?? generatedId;
-    const switchEl = (_jsx(RadixSwitch.Root, { checked: checked, defaultChecked: defaultChecked, onCheckedChange: onCheckedChange, disabled: disabled, name: name, value: value, id: id, "aria-label": rest['aria-label'], className: cn('mrs-switch', className), children: _jsx(RadixSwitch.Thumb, { className: "mrs-switch__thumb" }) }));
+    const switchEl = (_jsx(RadixSwitch.Root, { checked: checked, defaultChecked: defaultChecked, onCheckedChange: onCheckedChange, disabled: disabled, name: name, value: value, id: id, "aria-label": rest['aria-label'], className: cn('mrs-switch', className), style: label == null ? style : undefined, children: _jsx(RadixSwitch.Thumb, { className: "mrs-switch__thumb" }) }));
     if (label != null) {
-        return (_jsxs("div", { className: cn('mrs-switch-wrapper', fullWidth && 'mrs-switch-wrapper--full'), children: [labelPlacement === 'left' && (_jsx(Label, { htmlFor: id, className: "text-sm font-medium", children: label })), switchEl, labelPlacement === 'right' && (_jsx(Label, { htmlFor: id, className: "text-sm font-medium", children: label }))] }));
+        return (_jsxs("div", { className: cn('mrs-switch-wrapper', fullWidth && 'mrs-switch-wrapper--full'), style: style, children: [labelPlacement === 'left' && (_jsx(Label, { htmlFor: id, className: "text-sm font-medium", children: label })), switchEl, labelPlacement === 'right' && (_jsx(Label, { htmlFor: id, className: "text-sm font-medium", children: label }))] }));
     }
     return switchEl;
 }

@@ -1,3 +1,4 @@
+import { type CSSProperties } from 'react';
 import { type Tone } from './tone';
 export interface SliderProps {
     /** Selected value(s) (controlled). One number = a single thumb; two = a range. */
@@ -26,6 +27,7 @@ export interface SliderProps {
     /** Accessible label applied to every thumb. */
     'aria-label'?: string;
     className?: string;
+    style?: CSSProperties;
 }
 /**
  * Un-opinionated range slider on Radix Slider — a track with one or more draggable
@@ -39,4 +41,4 @@ export interface SliderProps {
  * <Slider value={range} onValueChange={setRange} min={0} max={1000} step={10} />
  * ```
  */
-export declare function Slider({ value, defaultValue, onValueChange, onValueCommit, min, max, step, minStepsBetweenThumbs, tone, orientation, disabled, name, className, ...rest }: SliderProps): import("react").JSX.Element;
+export declare function Slider({ value, defaultValue, onValueChange, onValueCommit, min, max, step, minStepsBetweenThumbs, tone, orientation, disabled, name, className, style, ...rest }: SliderProps): import("react").JSX.Element;

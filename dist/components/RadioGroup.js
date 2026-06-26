@@ -1,4 +1,5 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+import {} from 'react';
 import * as RadixRadioGroup from '@radix-ui/react-radio-group';
 import { cn } from './cn';
 /**
@@ -18,8 +19,8 @@ import { cn } from './cn';
  * />
  * ```
  */
-export function RadioGroup({ options, value, defaultValue, onValueChange, name, disabled, orientation = 'vertical', className, }) {
-    return (_jsx(RadixRadioGroup.Root, { value: value, defaultValue: defaultValue, onValueChange: onValueChange, name: name, disabled: disabled, orientation: orientation, className: cn('mrs-radio-group', `mrs-radio-group--${orientation}`, className), children: options.map((opt) => {
+export function RadioGroup({ options, value, defaultValue, onValueChange, name, disabled, orientation = 'vertical', className, style, }) {
+    return (_jsx(RadixRadioGroup.Root, { value: value, defaultValue: defaultValue, onValueChange: onValueChange, name: name, disabled: disabled, orientation: orientation, className: cn('mrs-radio-group', `mrs-radio-group--${orientation}`, className), style: style, children: options.map((opt) => {
             const itemId = name ? `${name}-${opt.value}` : undefined;
             return (_jsxs("label", { className: "mrs-radio-group__row", children: [_jsx(RadixRadioGroup.Item, { value: opt.value, disabled: opt.disabled, id: itemId, className: "mrs-radio", children: _jsx(RadixRadioGroup.Indicator, { className: "mrs-radio__dot" }) }), _jsx("span", { className: "mrs-radio-group__label", children: opt.label })] }, opt.value));
         }) }));

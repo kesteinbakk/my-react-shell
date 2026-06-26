@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import { type ReactNode, type CSSProperties } from 'react';
 export interface SegmentedOption<T extends string> {
     value: T;
     label: ReactNode;
@@ -15,9 +15,10 @@ export interface SegmentedControlProps<T extends string> {
     /** Accessible label for the group. */
     'aria-label'?: string;
     className?: string;
+    style?: CSSProperties;
 }
 /**
  * Single-select segmented control — a row of mutually-exclusive options on a track,
  * the active one lifted onto a surface chip. Controlled via `value` / `onChange`.
  */
-export declare function SegmentedControl<T extends string>({ options, value, onChange, size, fullWidth, className, ...rest }: SegmentedControlProps<T>): import("react").JSX.Element;
+export declare function SegmentedControl<T extends string>({ options, value, onChange, size, fullWidth, className, style, ...rest }: SegmentedControlProps<T>): import("react").JSX.Element;

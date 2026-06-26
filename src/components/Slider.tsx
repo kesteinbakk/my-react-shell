@@ -1,3 +1,4 @@
+import { type CSSProperties } from 'react'
 import * as RadixSlider from '@radix-ui/react-slider'
 import { type Tone, TONE_COLOR } from './tone'
 import { cn } from './cn'
@@ -29,6 +30,7 @@ export interface SliderProps {
   /** Accessible label applied to every thumb. */
   'aria-label'?: string
   className?: string
+  style?: CSSProperties
 }
 
 /**
@@ -57,6 +59,7 @@ export function Slider({
   disabled,
   name,
   className,
+  style,
   ...rest
 }: SliderProps) {
   // One thumb per value entry; default to a single thumb when neither is given.
@@ -75,7 +78,7 @@ export function Slider({
       disabled={disabled}
       name={name}
       className={cn('mrs-slider', className)}
-      style={{ ['--mrs-slider-tone' as string]: TONE_COLOR[tone] }}
+      style={{ ...style, ['--mrs-slider-tone' as string]: TONE_COLOR[tone] }}
     >
       <RadixSlider.Track className="mrs-slider__track">
         <RadixSlider.Range className="mrs-slider__range" />

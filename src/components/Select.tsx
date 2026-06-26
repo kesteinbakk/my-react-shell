@@ -1,4 +1,4 @@
-import { useId, type ReactNode } from 'react'
+import { useId, type ReactNode, type CSSProperties } from 'react'
 import * as RadixSelect from '@radix-ui/react-select'
 import { cn } from './cn'
 import { Label } from './Label'
@@ -25,6 +25,7 @@ export interface SelectProps {
   /** Stretch to fill the available container width. Defaults to `false`. */
   fullWidth?: boolean
   className?: string
+  style?: CSSProperties
   /** Visual save status. If 'saved', transitions the trigger border to success. */
   saveStatus?: 'idle' | 'pending' | 'saving' | 'saved' | 'error'
   /** Optional label. If provided, renders a small label above the select trigger. */
@@ -76,6 +77,7 @@ export function Select({
   size = 'md',
   fullWidth = false,
   className,
+  style,
   saveStatus,
   label,
   id: passedId,
@@ -97,6 +99,7 @@ export function Select({
           isError && 'mrs-select__trigger--error',
           className,
         )}
+        style={style}
         aria-invalid={isError || undefined}
         aria-label={rest['aria-label']}
       >

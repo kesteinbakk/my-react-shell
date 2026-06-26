@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import { type ReactNode, type CSSProperties } from 'react';
 /** Output format of the free picker — what `onChange` emits and `value` is read as. */
 export type ColorFormat = 'hex' | 'rgb' | 'hsl';
 export interface ColorPickerProps {
@@ -32,6 +32,7 @@ export interface ColorPickerProps {
     /** Stretch to fill the available container width. Defaults to `false`. */
     fullWidth?: boolean;
     className?: string;
+    style?: CSSProperties;
 }
 /**
  * <ColorPicker> — a general, controlled color picker behind a compact popover trigger.
@@ -44,4 +45,4 @@ export interface ColorPickerProps {
  * Controlled via `value` / `onChange`; persists nothing. `value` is always a
  * directly-usable CSS color string — drop it into a `style`/`background`.
  */
-export declare function ColorPicker({ value, onChange, colors, format, label, description, align, placeholder, disabled, fullWidth, className, ...rest }: ColorPickerProps): import("react").JSX.Element;
+export declare function ColorPicker({ value, onChange, colors, format, label, description, align, placeholder, disabled, fullWidth, className, style, ...rest }: ColorPickerProps): import("react").JSX.Element;

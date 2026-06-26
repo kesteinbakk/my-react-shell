@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import type { ReactNode } from 'react'
+import { type ReactNode, type CSSProperties } from 'react'
 import * as Popover from '@radix-ui/react-popover'
 import {
   HexColorPicker,
@@ -43,6 +43,7 @@ export interface ColorPickerProps {
   /** Stretch to fill the available container width. Defaults to `false`. */
   fullWidth?: boolean
   className?: string
+  style?: CSSProperties
 }
 
 /** Neutral starting point for the free picker when no `value` is provided yet. */
@@ -110,6 +111,7 @@ export function ColorPicker({
   disabled,
   fullWidth = false,
   className,
+  style,
   ...rest
 }: ColorPickerProps) {
   const [open, setOpen] = useState(false)
@@ -122,7 +124,7 @@ export function ColorPicker({
   const current = value && value !== '' ? value : DEFAULT_SEED[format]
 
   return (
-    <div className={cn('mrs-color-picker', fullWidth && 'mrs-color-picker--full', className)}>
+    <div className={cn('mrs-color-picker', fullWidth && 'mrs-color-picker--full', className)} style={style}>
       {label != null && <span className="mrs-color-picker__label">{label}</span>}
       {description != null && <p className="mrs-color-picker__desc">{description}</p>}
 

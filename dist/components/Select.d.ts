@@ -1,4 +1,4 @@
-import { type ReactNode } from 'react';
+import { type ReactNode, type CSSProperties } from 'react';
 export interface SelectOption {
     value: string;
     label: ReactNode;
@@ -19,6 +19,7 @@ export interface SelectProps {
     /** Stretch to fill the available container width. Defaults to `false`. */
     fullWidth?: boolean;
     className?: string;
+    style?: CSSProperties;
     /** Visual save status. If 'saved', transitions the trigger border to success. */
     saveStatus?: 'idle' | 'pending' | 'saving' | 'saved' | 'error';
     /** Optional label. If provided, renders a small label above the select trigger. */
@@ -30,4 +31,4 @@ export interface SelectProps {
  * handling), styled on the theme tokens. Pass an `options` list; controlled via
  * `value` / `onValueChange`.
  */
-export declare function Select({ options, value, onValueChange, placeholder, disabled, size, fullWidth, className, saveStatus, label, id: passedId, ...rest }: SelectProps): import("react").JSX.Element;
+export declare function Select({ options, value, onValueChange, placeholder, disabled, size, fullWidth, className, style, saveStatus, label, id: passedId, ...rest }: SelectProps): import("react").JSX.Element;

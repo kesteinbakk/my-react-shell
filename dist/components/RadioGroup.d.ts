@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import { type ReactNode, type CSSProperties } from 'react';
 export interface RadioOption {
     value: string;
     label: ReactNode;
@@ -20,6 +20,7 @@ export interface RadioGroupProps {
     /** Layout axis. Defaults to `vertical`. */
     orientation?: 'vertical' | 'horizontal';
     className?: string;
+    style?: CSSProperties;
 }
 /**
  * Un-opinionated radio group on Radix RadioGroup — a single-select set with roving
@@ -38,4 +39,4 @@ export interface RadioGroupProps {
  * />
  * ```
  */
-export declare function RadioGroup({ options, value, defaultValue, onValueChange, name, disabled, orientation, className, }: RadioGroupProps): import("react").JSX.Element;
+export declare function RadioGroup({ options, value, defaultValue, onValueChange, name, disabled, orientation, className, style, }: RadioGroupProps): import("react").JSX.Element;

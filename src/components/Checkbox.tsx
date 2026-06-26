@@ -1,3 +1,4 @@
+import { type CSSProperties } from 'react'
 import * as RadixCheckbox from '@radix-ui/react-checkbox'
 import { cn } from './cn'
 
@@ -18,6 +19,7 @@ export interface CheckboxProps {
   /** Accessible label — required when there's no associated `<label>`. */
   'aria-label'?: string
   className?: string
+  style?: CSSProperties
 }
 
 const check = (
@@ -73,6 +75,7 @@ export function Checkbox({
   value,
   id,
   className,
+  style,
   ...rest
 }: CheckboxProps) {
   return (
@@ -87,6 +90,7 @@ export function Checkbox({
       id={id}
       aria-label={rest['aria-label']}
       className={cn('mrs-checkbox', className)}
+      style={style}
     >
       <RadixCheckbox.Indicator className="mrs-checkbox__indicator">
         {/* Both glyphs are present; CSS picks one off the Indicator's

@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import { type ReactNode, type CSSProperties } from 'react'
 import * as RadixRadioGroup from '@radix-ui/react-radio-group'
 import { cn } from './cn'
 
@@ -24,6 +24,7 @@ export interface RadioGroupProps {
   /** Layout axis. Defaults to `vertical`. */
   orientation?: 'vertical' | 'horizontal'
   className?: string
+  style?: CSSProperties
 }
 
 /**
@@ -52,6 +53,7 @@ export function RadioGroup({
   disabled,
   orientation = 'vertical',
   className,
+  style,
 }: RadioGroupProps) {
   return (
     <RadixRadioGroup.Root
@@ -62,6 +64,7 @@ export function RadioGroup({
       disabled={disabled}
       orientation={orientation}
       className={cn('mrs-radio-group', `mrs-radio-group--${orientation}`, className)}
+      style={style}
     >
       {options.map((opt) => {
         const itemId = name ? `${name}-${opt.value}` : undefined

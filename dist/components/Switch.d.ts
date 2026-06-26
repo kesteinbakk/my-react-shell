@@ -1,4 +1,4 @@
-import { type ReactNode } from 'react';
+import { type ReactNode, type CSSProperties } from 'react';
 export interface SwitchProps {
     /** Checked state (controlled). */
     checked?: boolean;
@@ -15,6 +15,7 @@ export interface SwitchProps {
     /** Accessible label — required when there's no associated `<label>`. */
     'aria-label'?: string;
     className?: string;
+    style?: CSSProperties;
     /** Stretch to fill the available container width. Defaults to `false`. */
     fullWidth?: boolean;
     /** Optional label. If provided, renders a label next to the switch. */
@@ -32,4 +33,4 @@ export interface SwitchProps {
  * <Switch checked={enabled} onCheckedChange={setEnabled} aria-label="Notifications" />
  * ```
  */
-export declare function Switch({ checked, defaultChecked, onCheckedChange, disabled, name, value, id: passedId, className, fullWidth, label, labelPlacement, ...rest }: SwitchProps): import("react").JSX.Element;
+export declare function Switch({ checked, defaultChecked, onCheckedChange, disabled, name, value, id: passedId, className, style, fullWidth, label, labelPlacement, ...rest }: SwitchProps): import("react").JSX.Element;

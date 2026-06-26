@@ -1521,6 +1521,13 @@
 .mrs-select__trigger--full {
   width: 100%;
 }
+.mrs-field:not(.mrs-field--full),
+.mrs-input-wrapper:not(.mrs-input-wrapper--full),
+.mrs-textarea-wrapper:not(.mrs-textarea-wrapper--full),
+.mrs-select__trigger:not(.mrs-select__trigger--full) {
+  align-self: flex-start;
+  justify-self: start;
+}
 .mrs-select__chevron {
   display: inline-flex;
   color: var(--color-text-tertiary);

@@ -1,3 +1,4 @@
+import { type CSSProperties } from 'react';
 export interface CheckboxProps {
     /** Checked state (controlled) — `true`, `false`, or `'indeterminate'`. */
     checked?: boolean | 'indeterminate';
@@ -15,6 +16,7 @@ export interface CheckboxProps {
     /** Accessible label — required when there's no associated `<label>`. */
     'aria-label'?: string;
     className?: string;
+    style?: CSSProperties;
 }
 /**
  * Un-opinionated checkbox on Radix Checkbox — keyboard- and form-aware, with a
@@ -27,4 +29,4 @@ export interface CheckboxProps {
  * <Checkbox checked={agreed} onCheckedChange={(c) => setAgreed(c === true)} aria-label="Agree" />
  * ```
  */
-export declare function Checkbox({ checked, defaultChecked, onCheckedChange, disabled, required, name, value, id, className, ...rest }: CheckboxProps): import("react").JSX.Element;
+export declare function Checkbox({ checked, defaultChecked, onCheckedChange, disabled, required, name, value, id, className, style, ...rest }: CheckboxProps): import("react").JSX.Element;

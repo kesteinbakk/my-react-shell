@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import { type ReactNode, type CSSProperties } from 'react'
 import { cn } from './cn'
 
 export interface SegmentedOption<T extends string> {
@@ -18,6 +18,7 @@ export interface SegmentedControlProps<T extends string> {
   /** Accessible label for the group. */
   'aria-label'?: string
   className?: string
+  style?: CSSProperties
 }
 
 /**
@@ -31,6 +32,7 @@ export function SegmentedControl<T extends string>({
   size = 'md',
   fullWidth = false,
   className,
+  style,
   ...rest
 }: SegmentedControlProps<T>) {
   return (
@@ -38,6 +40,7 @@ export function SegmentedControl<T extends string>({
       role="radiogroup"
       aria-label={rest['aria-label']}
       className={cn('mrs-segmented', `mrs-segmented--${size}`, fullWidth && 'mrs-segmented--full', className)}
+      style={style}
     >
       {options.map((opt) => {
         const active = opt.value === value
