@@ -10,6 +10,8 @@ export interface DialogProps {
     title: ReactNode;
     /** Optional control rendered on the title row, next to the heading (standard mode). */
     titleActions?: ReactNode;
+    /** Optional header action icon buttons displayed next to the close button. */
+    headerActions?: ReactNode;
     /** Supporting line under the title. */
     description?: ReactNode;
     /** Dialog body. */
@@ -64,4 +66,4 @@ export interface DialogProps {
  * </Dialog>
  * ```
  */
-export declare function Dialog({ open, onOpenChange, title, titleActions, description, children, footer, size, bleed, showClose, closeLabel, closeOnBackdrop, closeOnEsc, className, }: DialogProps): import("react").JSX.Element;
+export declare function Dialog({ open, onOpenChange, title, titleActions, headerActions, description, children, footer, size, bleed, showClose, closeLabel, closeOnBackdrop, closeOnEsc, className, }: DialogProps): import("react").JSX.Element;

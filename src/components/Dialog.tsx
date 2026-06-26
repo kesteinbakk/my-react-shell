@@ -14,6 +14,8 @@ export interface DialogProps {
   title: ReactNode
   /** Optional control rendered on the title row, next to the heading (standard mode). */
   titleActions?: ReactNode
+  /** Optional header action icon buttons displayed next to the close button. */
+  headerActions?: ReactNode
   /** Supporting line under the title. */
   description?: ReactNode
   /** Dialog body. */
@@ -74,6 +76,7 @@ export function Dialog({
   onOpenChange,
   title,
   titleActions,
+  headerActions,
   description,
   children,
   footer,
@@ -130,23 +133,28 @@ export function Dialog({
               {footer != null && <div className="mrs-dialog__actions">{footer}</div>}
             </>
           )}
-          {showClose && (
-            <RadixDialog.Close className="mrs-dialog__close" aria-label={closeLabel}>
-              <svg
-                width={16}
-                height={16}
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth={2}
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                aria-hidden="true"
-              >
-                <path d="M18 6 6 18" />
-                <path d="m6 6 12 12" />
-              </svg>
-            </RadixDialog.Close>
+          {(showClose || headerActions != null) && (
+            <div className="mrs-dialog__close-container">
+              {headerActions}
+              {showClose && (
+                <RadixDialog.Close className="mrs-dialog__close" aria-label={closeLabel}>
+                  <svg
+                    width={16}
+                    height={16}
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    aria-hidden="true"
+                  >
+                    <path d="M18 6 6 18" />
+                    <path d="m6 6 12 12" />
+                  </svg>
+                </RadixDialog.Close>
+              )}
+            </div>
           )}
         </RadixDialog.Content>
       </RadixDialog.Portal>

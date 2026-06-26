@@ -18,6 +18,8 @@ export interface SheetProps {
     title?: ReactNode;
     /** Custom header content, replacing the default title row. */
     header?: ReactNode;
+    /** Optional header action icon buttons displayed next to the close button. */
+    headerActions?: ReactNode;
     /** Supporting line under the title. */
     description?: ReactNode;
     /** Which edge the panel slides from. Defaults to `right`. */
@@ -73,4 +75,4 @@ export interface SheetProps {
  * </Sheet>
  * ```
  */
-export declare function Sheet({ children, trigger, open, onOpenChange, defaultOpen, title, header, description, side, size, showClose, closeLabel, scrim, modal, bare, className, overlayClass, panelTestId, }: SheetProps): import("react").JSX.Element;
+export declare function Sheet({ children, trigger, open, onOpenChange, defaultOpen, title, header, headerActions, description, side, size, showClose, closeLabel, scrim, modal, bare, className, overlayClass, panelTestId, }: SheetProps): import("react").JSX.Element;

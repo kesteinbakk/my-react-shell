@@ -22,6 +22,8 @@ export interface SheetProps {
   title?: ReactNode
   /** Custom header content, replacing the default title row. */
   header?: ReactNode
+  /** Optional header action icon buttons displayed next to the close button. */
+  headerActions?: ReactNode
   /** Supporting line under the title. */
   description?: ReactNode
   /** Which edge the panel slides from. Defaults to `right`. */
@@ -103,6 +105,7 @@ export function Sheet({
   defaultOpen,
   title,
   header,
+  headerActions,
   description,
   side = 'right',
   size = 'md',
@@ -115,7 +118,7 @@ export function Sheet({
   overlayClass,
   panelTestId,
 }: SheetProps) {
-  const showHeader = !bare && (header != null || title != null || showClose)
+  const showHeader = !bare && (header != null || title != null || showClose || headerActions != null)
   return (
     <RadixDialog.Root open={open} onOpenChange={onOpenChange} defaultOpen={defaultOpen} modal={modal}>
       {trigger != null && <RadixDialog.Trigger asChild>{trigger}</RadixDialog.Trigger>}
@@ -157,10 +160,15 @@ export function Sheet({
                       <RadixDialog.Title className="mrs-sheet__title">{title}</RadixDialog.Title>
                     )
                   )}
-                  {showClose && (
-                    <RadixDialog.Close className="mrs-sheet__close" aria-label={closeLabel}>
-                      <CloseIcon />
-                    </RadixDialog.Close>
+                  {(showClose || headerActions != null) && (
+                    <div className="mrs-sheet__header-actions">
+                      {headerActions}
+                      {showClose && (
+                        <RadixDialog.Close className="mrs-sheet__close" aria-label={closeLabel}>
+                          <CloseIcon />
+                        </RadixDialog.Close>
+                      )}
+                    </div>
                   )}
                 </div>
               )}
