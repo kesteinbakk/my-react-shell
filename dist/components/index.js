@@ -26,6 +26,7 @@ export { DropdownMenu } from './DropdownMenu';
 export { Alert } from './Alert';
 export { Spinner, PageSpinner, SectionSpinner } from './Spinner';
 export { EmptyState } from './EmptyState';
+export { EmptyStateAddButton } from './EmptyStateAddButton';
 export { InfoBox } from './InfoBox';
 export { ConfirmDialog } from './ConfirmDialog';
 export { ToastProvider, useToast } from './Toast';

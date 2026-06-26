@@ -69,9 +69,9 @@ const DEFAULT_ICONS: Record<AlertTone, ReactNode> = {
   ),
   danger: (
     <svg {...iconProps}>
-      <circle cx="12" cy="12" r="10" />
-      <path d="m15 9-6 6" />
-      <path d="m9 9 6 6" />
+      <polygon points="7.86 2 16.14 2 22 7.86 22 16.14 16.14 22 7.86 22 2 16.14 2 7.86" />
+      <path d="M12 8v4" />
+      <path d="M12 16h.01" />
     </svg>
   ),
 }

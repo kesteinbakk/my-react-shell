@@ -4034,3 +4034,129 @@
   line-height: 1;
   user-select: none;
 }
+
+/* ────────────────────────────────────────────────────────────────────────── */
+/* EmptyStateAddButton */
+/* ────────────────────────────────────────────────────────────────────────── */
+
+.mrs-empty-add-btn {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  transition: colors 200ms ease;
+  --ec-color: var(--color-success);
+}
+
+.mrs-empty-add-btn--border {
+  border: 2px dashed var(--color-border-secondary);
+  border-radius: 0.5rem;
+  padding: 2rem;
+  background-color: color-mix(in srgb, var(--color-surface-sunken) 50%, transparent);
+}
+
+.mrs-empty-add-btn--border:hover {
+  border-color: color-mix(in srgb, var(--ec-color) 50%, transparent);
+  background-color: color-mix(in srgb, var(--ec-color) 5%, transparent);
+}
+
+.mrs-empty-add-btn__inner {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.mrs-empty-add-btn__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  border: none;
+  background-color: color-mix(in srgb, var(--ec-color) 10%, transparent);
+  color: var(--ec-color);
+  transition: all 200ms ease;
+  cursor: pointer;
+  outline: none;
+}
+
+.mrs-empty-add-btn__btn:hover {
+  background-color: color-mix(in srgb, var(--ec-color) 20%, transparent);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--ec-color) 40%, transparent);
+}
+
+.mrs-empty-add-btn__btn:focus-visible {
+  box-shadow: 0 0 0 2px var(--color-focus), 0 0 0 4px var(--color-background-primary);
+}
+
+.mrs-empty-add-btn__btn:disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.mrs-empty-add-btn__icon {
+  display: flex;
+  transition: transform 200ms ease;
+}
+
+.mrs-empty-add-btn__btn:hover .mrs-empty-add-btn__icon {
+  transform: scale(1.1);
+}
+
+.mrs-empty-add-btn__label {
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  text-align: center;
+  transition: color 200ms ease;
+}
+
+.mrs-empty-add-btn__btn:hover + .mrs-empty-add-btn__label,
+.mrs-empty-add-btn:hover .mrs-empty-add-btn__label {
+  color: var(--color-text-primary);
+}
+
+.mrs-empty-add-btn__desc {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+  text-align: center;
+  max-width: 24rem;
+  margin-top: 0.25rem;
+  transition: color 200ms ease;
+}
+
+.mrs-empty-add-btn:hover .mrs-empty-add-btn__desc {
+  color: var(--color-text-primary);
+}
+
+/* Sizes */
+.mrs-empty-add-btn--sm .mrs-empty-add-btn__btn {
+  width: 5rem;
+  height: 5rem;
+}
+.mrs-empty-add-btn--sm .mrs-empty-add-btn__label {
+  font-size: 0.875rem;
+}
+
+.mrs-empty-add-btn--md .mrs-empty-add-btn__btn {
+  width: 7.5rem;
+  height: 7.5rem;
+}
+.mrs-empty-add-btn--md .mrs-empty-add-btn__label {
+  font-size: 1rem;
+}
+
+.mrs-empty-add-btn--lg .mrs-empty-add-btn__btn {
+  width: 10rem;
+  height: 10rem;
+}
+.mrs-empty-add-btn--lg .mrs-empty-add-btn__label {
+  font-size: 1.125rem;
+}
+
+/* Tones */
+.mrs-empty-add-btn--neutral { --ec-color: var(--color-text-secondary); }
+.mrs-empty-add-btn--primary { --ec-color: var(--color-primary); }
+.mrs-empty-add-btn--success { --ec-color: var(--color-success); }
+.mrs-empty-add-btn--warning { --ec-color: var(--color-warning); }
+.mrs-empty-add-btn--danger { --ec-color: var(--color-danger); }
+.mrs-empty-add-btn--info { --ec-color: var(--color-info); }

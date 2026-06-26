@@ -29,6 +29,8 @@ export { Spinner, PageSpinner, SectionSpinner } from './Spinner';
 export type { SpinnerProps, SpinnerBlockProps, SpinnerSize } from './Spinner';
 export { EmptyState } from './EmptyState';
 export type { EmptyStateProps } from './EmptyState';
+export { EmptyStateAddButton } from './EmptyStateAddButton';
+export type { EmptyStateAddButtonProps, EmptyStateAddButtonSize, EmptyStateAddButtonTone } from './EmptyStateAddButton';
 export { InfoBox } from './InfoBox';
 export type { InfoBoxProps } from './InfoBox';
 export { ConfirmDialog } from './ConfirmDialog';
