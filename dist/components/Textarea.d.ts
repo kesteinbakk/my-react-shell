@@ -1,4 +1,4 @@
-import { type ChangeEvent, type TextareaHTMLAttributes } from 'react';
+import { type ChangeEvent, type TextareaHTMLAttributes, type ReactNode } from 'react';
 export interface TextareaProps extends Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, 'onChange'> {
     /** Error state — sets `aria-invalid` and the error styling. */
     invalid?: boolean;
@@ -12,6 +12,8 @@ export interface TextareaProps extends Omit<TextareaHTMLAttributes<HTMLTextAreaE
     saveStatus?: 'idle' | 'pending' | 'saving' | 'saved' | 'error';
     /** Custom onChange handler. Crucial for typing tracking. */
     onChange?: (e: ChangeEvent<HTMLTextAreaElement>) => void;
+    /** Optional label. If provided, renders a small label above the textarea. */
+    label?: ReactNode;
 }
 /**
  * Un-opinionated native `<textarea>` wrapper. All native textarea props (`value`,
@@ -19,4 +21,4 @@ export interface TextareaProps extends Omit<TextareaHTMLAttributes<HTMLTextAreaE
  * the only additions are `invalid` (error styling + `aria-invalid`) and
  * `onDebouncedChange` / `debounceMs` for stop-typing callbacks.
  */
-export declare function Textarea({ invalid, fullWidth, className, onDebouncedChange, debounceMs, onChange, saveStatus, onBlur, ...rest }: TextareaProps): import("react").JSX.Element;
+export declare function Textarea({ invalid, fullWidth, className, onDebouncedChange, debounceMs, onChange, saveStatus, onBlur, label, id: passedId, ...rest }: TextareaProps): import("react").JSX.Element;

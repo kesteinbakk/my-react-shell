@@ -1,7 +1,8 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
-import { useState, useEffect } from 'react';
+import { useId, useState, useEffect } from 'react';
 import { cn } from './cn';
 import { useDebounce } from './useDebounce';
+import { Label } from './Label';
 const CheckIcon = () => (_jsx("svg", { xmlns: "http://www.w3.org/2000/svg", viewBox: "4 5 16 13", fill: "none", stroke: "currentColor", strokeWidth: "3", strokeLinecap: "round", strokeLinejoin: "round", style: { width: '0.8em', height: '0.65em' }, children: _jsx("polyline", { points: "20 6 9 17 4 12" }) }));
 const ErrorIcon = () => (_jsxs("svg", { xmlns: "http://www.w3.org/2000/svg", viewBox: "2 2 20 20", fill: "none", stroke: "currentColor", strokeWidth: "3", strokeLinecap: "round", strokeLinejoin: "round", style: { width: '0.95em', height: '0.95em' }, children: [_jsx("circle", { cx: "12", cy: "12", r: "10" }), _jsx("line", { x1: "12", y1: "8", x2: "12", y2: "12" }), _jsx("line", { x1: "12", y1: "16", x2: "12.01", y2: "16" })] }));
 /**
@@ -10,8 +11,10 @@ const ErrorIcon = () => (_jsxs("svg", { xmlns: "http://www.w3.org/2000/svg", vie
  * the only additions are `invalid` (error styling + `aria-invalid`) and
  * `onDebouncedChange` / `debounceMs` for stop-typing callbacks.
  */
-export function Textarea({ invalid = false, fullWidth = false, className, onDebouncedChange, debounceMs = 500, onChange, saveStatus, onBlur, ...rest }) {
+export function Textarea({ invalid = false, fullWidth = false, className, onDebouncedChange, debounceMs = 500, onChange, saveStatus, onBlur, label, id: passedId, ...rest }) {
     const [localStatus, setLocalStatus] = useState(saveStatus);
+    const generatedId = useId();
+    const id = passedId ?? generatedId;
     useEffect(() => {
         setLocalStatus(saveStatus);
     }, [saveStatus]);
@@ -30,5 +33,9 @@ export function Textarea({ invalid = false, fullWidth = false, className, onDebo
         onBlur?.(e);
     };
     const isInvalid = invalid || localStatus === 'error';
-    return (_jsxs("div", { className: cn('mrs-textarea-wrapper', fullWidth && 'mrs-textarea-wrapper--full'), children: [_jsx("textarea", { className: cn('mrs-textarea', isInvalid && 'mrs-textarea--invalid', fullWidth && 'mrs-textarea--full', localStatus === 'saved' && 'mrs-textarea--saved-icon', localStatus === 'error' && 'mrs-textarea--error-icon', localStatus === 'saving' && 'mrs-textarea--saving', className), "aria-invalid": isInvalid || undefined, onChange: handleChange, onBlur: handleBlur, ...rest }), localStatus === 'saved' && (_jsx("span", { className: "mrs-textarea-icon-saved", children: _jsx(CheckIcon, {}) })), localStatus === 'error' && (_jsx("span", { className: "mrs-textarea-icon-error", children: _jsx(ErrorIcon, {}) }))] }));
+    const textareaEl = (_jsxs("div", { className: cn('mrs-textarea-wrapper', fullWidth && 'mrs-textarea-wrapper--full'), children: [_jsx("textarea", { id: id, className: cn('mrs-textarea', isInvalid && 'mrs-textarea--invalid', fullWidth && 'mrs-textarea--full', localStatus === 'saved' && 'mrs-textarea--saved-icon', localStatus === 'error' && 'mrs-textarea--error-icon', localStatus === 'saving' && 'mrs-textarea--saving', className), "aria-invalid": isInvalid || undefined, onChange: handleChange, onBlur: handleBlur, ...rest }), localStatus === 'saved' && (_jsx("span", { className: "mrs-textarea-icon-saved", children: _jsx(CheckIcon, {}) })), localStatus === 'error' && (_jsx("span", { className: "mrs-textarea-icon-error", children: _jsx(ErrorIcon, {}) }))] }));
+    if (label != null) {
+        return (_jsxs("div", { className: cn('mrs-field', fullWidth && 'mrs-field--full'), children: [_jsx(Label, { htmlFor: id, className: "mrs-field__label", children: label }), textareaEl] }));
+    }
+    return textareaEl;
 }

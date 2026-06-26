@@ -3011,7 +3011,17 @@
 }
 .mrs-switch--full {
   display: flex;
+}
+.mrs-switch-wrapper {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.mrs-switch-wrapper--full {
+  display: flex;
   width: 100%;
+  justify-content: space-between;
+  align-items: center;
 }
 .mrs-switch:focus-visible {
   outline: 2px solid var(--color-focus);

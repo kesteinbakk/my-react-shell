@@ -1,6 +1,7 @@
-import { type ChangeEvent, type TextareaHTMLAttributes, useState, useEffect, type FocusEvent } from 'react'
+import { useId, type ChangeEvent, type TextareaHTMLAttributes, useState, useEffect, type FocusEvent, type ReactNode } from 'react'
 import { cn } from './cn'
 import { useDebounce } from './useDebounce'
+import { Label } from './Label'
 
 export interface TextareaProps extends Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, 'onChange'> {
   /** Error state — sets `aria-invalid` and the error styling. */
@@ -15,6 +16,8 @@ export interface TextareaProps extends Omit<TextareaHTMLAttributes<HTMLTextAreaE
   saveStatus?: 'idle' | 'pending' | 'saving' | 'saved' | 'error'
   /** Custom onChange handler. Crucial for typing tracking. */
   onChange?: (e: ChangeEvent<HTMLTextAreaElement>) => void
+  /** Optional label. If provided, renders a small label above the textarea. */
+  label?: ReactNode
 }
 
 const CheckIcon = () => (
@@ -64,9 +67,13 @@ export function Textarea({
   onChange,
   saveStatus,
   onBlur,
+  label,
+  id: passedId,
   ...rest
 }: TextareaProps) {
   const [localStatus, setLocalStatus] = useState<typeof saveStatus>(saveStatus)
+  const generatedId = useId()
+  const id = passedId ?? generatedId
 
   useEffect(() => {
     setLocalStatus(saveStatus)
@@ -91,9 +98,10 @@ export function Textarea({
 
   const isInvalid = invalid || localStatus === 'error'
 
-  return (
+  const textareaEl = (
     <div className={cn('mrs-textarea-wrapper', fullWidth && 'mrs-textarea-wrapper--full')}>
       <textarea
+        id={id}
         className={cn(
           'mrs-textarea',
           isInvalid && 'mrs-textarea--invalid',
@@ -120,4 +128,18 @@ export function Textarea({
       )}
     </div>
   )
+
+  if (label != null) {
+    return (
+      <div className={cn('mrs-field', fullWidth && 'mrs-field--full')}>
+        <Label htmlFor={id} className="mrs-field__label">
+          {label}
+        </Label>
+        {textareaEl}
+      </div>
+    )
+  }
+
+  return textareaEl
 }
+

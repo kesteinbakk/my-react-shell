@@ -1,5 +1,7 @@
 import * as RadixSwitch from '@radix-ui/react-switch'
+import { useId, type ReactNode } from 'react'
 import { cn } from './cn'
+import { Label } from './Label'
 
 export interface SwitchProps {
   /** Checked state (controlled). */
@@ -19,6 +21,10 @@ export interface SwitchProps {
   className?: string
   /** Stretch to fill the available container width. Defaults to `false`. */
   fullWidth?: boolean
+  /** Optional label. If provided, renders a label next to the switch. */
+  label?: ReactNode
+  /** Placement of the label relative to the switch. Defaults to `'right'`. */
+  labelPlacement?: 'left' | 'right'
 }
 
 /**
@@ -38,12 +44,17 @@ export function Switch({
   disabled,
   name,
   value,
-  id,
+  id: passedId,
   className,
   fullWidth = false,
+  label,
+  labelPlacement = 'right',
   ...rest
 }: SwitchProps) {
-  return (
+  const generatedId = useId()
+  const id = passedId ?? generatedId
+
+  const switchEl = (
     <RadixSwitch.Root
       checked={checked}
       defaultChecked={defaultChecked}
@@ -53,9 +64,35 @@ export function Switch({
       value={value}
       id={id}
       aria-label={rest['aria-label']}
-      className={cn('mrs-switch', fullWidth && 'mrs-switch--full', className)}
+      className={cn('mrs-switch', className)}
     >
       <RadixSwitch.Thumb className="mrs-switch__thumb" />
     </RadixSwitch.Root>
   )
+
+  if (label != null) {
+    return (
+      <div
+        className={cn(
+          'mrs-switch-wrapper',
+          fullWidth && 'mrs-switch-wrapper--full'
+        )}
+      >
+        {labelPlacement === 'left' && (
+          <Label htmlFor={id} className="text-sm font-medium">
+            {label}
+          </Label>
+        )}
+        {switchEl}
+        {labelPlacement === 'right' && (
+          <Label htmlFor={id} className="text-sm font-medium">
+            {label}
+          </Label>
+        )}
+      </div>
+    )
+  }
+
+  return switchEl
 }
+

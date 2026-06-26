@@ -1,7 +1,8 @@
-import { type ChangeEvent, type InputHTMLAttributes, useState, useEffect, type FocusEvent } from 'react'
+import { useId, type ChangeEvent, type InputHTMLAttributes, useState, useEffect, type FocusEvent, type ReactNode } from 'react'
 import { cva } from 'class-variance-authority'
 import { cn } from './cn'
 import { useDebounce } from './useDebounce'
+import { Label } from './Label'
 
 export type InputSize = 'sm' | 'md' | 'lg'
 
@@ -36,6 +37,8 @@ export interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 
   saveStatus?: 'idle' | 'pending' | 'saving' | 'saved' | 'error'
   /** Custom onChange handler. Crucial for typing tracking. */
   onChange?: (e: ChangeEvent<HTMLInputElement>) => void
+  /** Optional label. If provided, renders a small label above the input. */
+  label?: ReactNode
 }
 
 const CheckIcon = () => (
@@ -86,9 +89,13 @@ export function Input({
   onChange,
   saveStatus,
   onBlur,
+  label,
+  id: passedId,
   ...rest
 }: InputProps) {
   const [localStatus, setLocalStatus] = useState<typeof saveStatus>(saveStatus)
+  const generatedId = useId()
+  const id = passedId ?? generatedId
 
   useEffect(() => {
     setLocalStatus(saveStatus)
@@ -113,9 +120,10 @@ export function Input({
 
   const isInvalid = invalid || localStatus === 'error'
 
-  return (
+  const inputEl = (
     <div className={cn('mrs-input-wrapper', fullWidth && 'mrs-input-wrapper--full')}>
       <input
+        id={id}
         className={cn(
           inputVariants({ inputSize, invalid: isInvalid || undefined, fullWidth: fullWidth || undefined }),
           localStatus === 'saved' && 'mrs-input--saved-icon',
@@ -140,4 +148,18 @@ export function Input({
       )}
     </div>
   )
+
+  if (label != null) {
+    return (
+      <div className={cn('mrs-field', fullWidth && 'mrs-field--full')}>
+        <Label htmlFor={id} className="mrs-field__label">
+          {label}
+        </Label>
+        {inputEl}
+      </div>
+    )
+  }
+
+  return inputEl
 }
+

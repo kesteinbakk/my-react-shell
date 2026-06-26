@@ -1,6 +1,7 @@
-import type { ReactNode } from 'react'
+import { useId, type ReactNode } from 'react'
 import * as RadixSelect from '@radix-ui/react-select'
 import { cn } from './cn'
+import { Label } from './Label'
 
 export interface SelectOption {
   value: string
@@ -26,6 +27,9 @@ export interface SelectProps {
   className?: string
   /** Visual save status. If 'saved', transitions the trigger border to success. */
   saveStatus?: 'idle' | 'pending' | 'saving' | 'saved' | 'error'
+  /** Optional label. If provided, renders a small label above the select trigger. */
+  label?: ReactNode
+  id?: string
 }
 
 const chevron = (
@@ -73,12 +77,18 @@ export function Select({
   fullWidth = false,
   className,
   saveStatus,
+  label,
+  id: passedId,
   ...rest
 }: SelectProps) {
   const isError = saveStatus === 'error'
-  return (
+  const generatedId = useId()
+  const id = passedId ?? generatedId
+
+  const selectEl = (
     <RadixSelect.Root value={value} onValueChange={onValueChange} disabled={disabled}>
       <RadixSelect.Trigger
+        id={id}
         className={cn(
           'mrs-select__trigger',
           `mrs-select__trigger--${size}`,
@@ -118,4 +128,18 @@ export function Select({
       </RadixSelect.Portal>
     </RadixSelect.Root>
   )
+
+  if (label != null) {
+    return (
+      <div className={cn('mrs-field', fullWidth && 'mrs-field--full')}>
+        <Label htmlFor={id} className="mrs-field__label">
+          {label}
+        </Label>
+        {selectEl}
+      </div>
+    )
+  }
+
+  return selectEl
 }
+

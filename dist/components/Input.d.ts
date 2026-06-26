@@ -1,4 +1,4 @@
-import { type ChangeEvent, type InputHTMLAttributes } from 'react';
+import { type ChangeEvent, type InputHTMLAttributes, type ReactNode } from 'react';
 export type InputSize = 'sm' | 'md' | 'lg';
 export interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange'> {
     /** Error state — sets `aria-invalid` and the error styling. */
@@ -18,6 +18,8 @@ export interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 
     saveStatus?: 'idle' | 'pending' | 'saving' | 'saved' | 'error';
     /** Custom onChange handler. Crucial for typing tracking. */
     onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
+    /** Optional label. If provided, renders a small label above the input. */
+    label?: ReactNode;
 }
 /**
  * Un-opinionated native `<input>` wrapper. All native input props (`type`, `value`,
@@ -25,4 +27,4 @@ export interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 
  * additions are `invalid` (error styling + `aria-invalid`), `inputSize`, and
  * `onDebouncedChange` / `debounceMs` for stop-typing callbacks.
  */
-export declare function Input({ invalid, inputSize, fullWidth, className, onDebouncedChange, debounceMs, onChange, saveStatus, onBlur, ...rest }: InputProps): import("react").JSX.Element;
+export declare function Input({ invalid, inputSize, fullWidth, className, onDebouncedChange, debounceMs, onChange, saveStatus, onBlur, label, id: passedId, ...rest }: InputProps): import("react").JSX.Element;

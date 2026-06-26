@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import { type ReactNode } from 'react';
 export interface SelectOption {
     value: string;
     label: ReactNode;
@@ -21,10 +21,13 @@ export interface SelectProps {
     className?: string;
     /** Visual save status. If 'saved', transitions the trigger border to success. */
     saveStatus?: 'idle' | 'pending' | 'saving' | 'saved' | 'error';
+    /** Optional label. If provided, renders a small label above the select trigger. */
+    label?: ReactNode;
+    id?: string;
 }
 /**
  * Opinionated select on Radix Select (keyboard nav, typeahead, portal, collision
  * handling), styled on the theme tokens. Pass an `options` list; controlled via
  * `value` / `onValueChange`.
  */
-export declare function Select({ options, value, onValueChange, placeholder, disabled, size, fullWidth, className, saveStatus, ...rest }: SelectProps): import("react").JSX.Element;
+export declare function Select({ options, value, onValueChange, placeholder, disabled, size, fullWidth, className, saveStatus, label, id: passedId, ...rest }: SelectProps): import("react").JSX.Element;

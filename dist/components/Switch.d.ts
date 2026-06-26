@@ -1,3 +1,4 @@
+import { type ReactNode } from 'react';
 export interface SwitchProps {
     /** Checked state (controlled). */
     checked?: boolean;
@@ -16,6 +17,10 @@ export interface SwitchProps {
     className?: string;
     /** Stretch to fill the available container width. Defaults to `false`. */
     fullWidth?: boolean;
+    /** Optional label. If provided, renders a label next to the switch. */
+    label?: ReactNode;
+    /** Placement of the label relative to the switch. Defaults to `'right'`. */
+    labelPlacement?: 'left' | 'right';
 }
 /**
  * Un-opinionated toggle switch on Radix Switch — a track with a sliding thumb,
@@ -27,4 +32,4 @@ export interface SwitchProps {
  * <Switch checked={enabled} onCheckedChange={setEnabled} aria-label="Notifications" />
  * ```
  */
-export declare function Switch({ checked, defaultChecked, onCheckedChange, disabled, name, value, id, className, fullWidth, ...rest }: SwitchProps): import("react").JSX.Element;
+export declare function Switch({ checked, defaultChecked, onCheckedChange, disabled, name, value, id: passedId, className, fullWidth, label, labelPlacement, ...rest }: SwitchProps): import("react").JSX.Element;
