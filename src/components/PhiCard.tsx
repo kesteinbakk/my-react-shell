@@ -321,7 +321,7 @@ export const PhiCard = forwardRef<HTMLDivElement, PhiCardProps>(function PhiCard
     topSectionMod = 'mrs-phi-card__section--split'
   } else if (hasIcon) {
     topContent = figure
-    topSectionMod = 'mrs-phi-card__section--padded'
+    topSectionMod = 'mrs-phi-card__section--padded mrs-phi-card__section--lone-figure'
   } else {
     topContent = body
     topSectionMod = hasBody ? 'mrs-phi-card__section--padded' : undefined

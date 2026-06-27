@@ -1755,7 +1755,7 @@
 
 .mrs-phi-card__drag-handle {
   position: absolute;
-  top: 4px;
+  top: 6px;
   left: 50%;
   transform: translateX(-50%);
   z-index: 10;
@@ -1778,6 +1778,16 @@
 
 .mrs-phi-card__drag-handle:active {
   cursor: grabbing !important;
+}
+
+/* Expand the clickable area beyond the visual bounds */
+.mrs-phi-card__drag-handle::after {
+  content: '';
+  position: absolute;
+  top: -8px;
+  right: -16px;
+  bottom: -8px;
+  left: -16px;
 }
 
 /* Optional accent stripe (opt-in via `tone`/`color`) — a 4px bar along the top
@@ -1827,6 +1837,11 @@
 }
 .mrs-phi-card__section--padded {
   padding: 1.1em;
+}
+/* If the card has a footer, a lone figure in the top section looks too high.
+   We add top padding to push it down so it optically centers in the whole card. */
+.mrs-phi-card:not(.mrs-phi-card--single) .mrs-phi-card__section--lone-figure {
+  padding-top: calc(1.1em + 12%);
 }
 .mrs-phi-card__section--split {
   padding: 1.1em 1.1em 1.1em 0;
@@ -2100,7 +2115,7 @@
 
 .mrs-stat-card__drag-handle {
   position: absolute;
-  top: 4px;
+  top: 10px;
   left: 50%;
   transform: translateX(-50%);
   z-index: 10;
@@ -2123,6 +2138,16 @@
 
 .mrs-stat-card__drag-handle:active {
   cursor: grabbing !important;
+}
+
+/* Expand the clickable area beyond the visual bounds */
+.mrs-stat-card__drag-handle::after {
+  content: '';
+  position: absolute;
+  top: -8px;
+  right: -16px;
+  bottom: -8px;
+  left: -16px;
 }
 
 /* Inner content — padded flex column, sits above the watermark */
@@ -2735,6 +2760,21 @@
   gap: 0.5rem;
 }
 
+.mrs-collapsible__trigger-main,
+.mrs-collapsible__trigger-end {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.mrs-collapsible__trigger-main {
+  min-width: 0;
+}
+.mrs-collapsible__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
 /* Sizes */
 .mrs-collapsible__trigger--sm {
   padding: 0.25rem 0.5rem;
@@ -2836,6 +2876,21 @@
   text-align: left;
   cursor: pointer;
   transition: background-color 120ms ease, color 120ms ease;
+}
+
+.mrs-accordion__trigger-main,
+.mrs-accordion__trigger-end {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.mrs-accordion__trigger-main {
+  min-width: 0;
+}
+.mrs-accordion__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
 }
 .mrs-accordion__trigger:hover:not(:disabled) {
   background: var(--color-hover);
