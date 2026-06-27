@@ -88,6 +88,10 @@ export interface StatCardProps {
     /**
      * Horizontal alignment of the freeform body slot.
      * Default: `'center'`
+     *
+     * Note: Centering or right-aligning text will not work as expected when a
+     * medallion is present. The body container narrows to prevent overlapping
+     * the medallion, making the text visually off-center or inset from the right.
      */
     bodyAlignX?: 'left' | 'center' | 'right';
     /**

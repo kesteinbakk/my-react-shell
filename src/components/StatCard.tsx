@@ -123,6 +123,10 @@ export interface StatCardProps {
   /**
    * Horizontal alignment of the freeform body slot.
    * Default: `'center'`
+   *
+   * Note: Centering or right-aligning text will not work as expected when a
+   * medallion is present. The body container narrows to prevent overlapping
+   * the medallion, making the text visually off-center or inset from the right.
    */
   bodyAlignX?: 'left' | 'center' | 'right'
   /**
@@ -521,6 +525,7 @@ export const StatCard = forwardRef<HTMLDivElement, StatCardProps>(function StatC
       )}
       style={style}
       data-watermark={effectiveWatermark}
+      data-has-medallion={medallion != null ? "true" : undefined}
       onClick={onClick}
     >
       {dragHandle ? (
