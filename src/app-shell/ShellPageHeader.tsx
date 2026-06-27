@@ -158,7 +158,7 @@ export function ShellPageHeaderUI(props: ShellPageHeaderUIProps): ReactNode {
               }
 
               if (actionItem === 'search') {
-                return <SearchInputComponent key={i} />
+                return <SearchInputComponent key={i} style={{ backgroundColor: 'transparent' }} />
               }
 
               if (typeof actionItem === 'string') {
@@ -172,7 +172,7 @@ export function ShellPageHeaderUI(props: ShellPageHeaderUIProps): ReactNode {
               if (typeof actionItem === 'object' && actionItem !== null) {
                 if (actionItem.action === 'search') {
                   const { action, ...searchProps } = actionItem as PageHeaderSearchAction
-                  return <SearchInputComponent key={i} {...searchProps} />
+                  return <SearchInputComponent key={i} style={{ backgroundColor: 'transparent', ...(searchProps as any).style }} {...searchProps} />
                 }
                 if (actionItem.action) {
                   const presetAction = actionItem as PageHeaderPresetAction
@@ -485,6 +485,7 @@ function HeaderSearchInput(props: HeaderSearchInputProps): ReactNode {
       <input
         type="search"
         className="mrs-page-header__search-input"
+        style={{ backgroundColor: 'transparent', ...(slot as any).style }}
         value={value}
         placeholder={placeholder}
         onInput={e => {

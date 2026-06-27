@@ -79,7 +79,7 @@ export function ShellPageHeaderUI(props) {
                                 return _jsx("span", { children: actionThunk() }, i);
                             }
                             if (actionItem === 'search') {
-                                return _jsx(SearchInputComponent, {}, i);
+                                return _jsx(SearchInputComponent, { style: { backgroundColor: 'transparent' } }, i);
                             }
                             if (typeof actionItem === 'string') {
                                 return (_jsx("span", { children: _jsx(ActionButton, { action: actionItem }) }, i));
@@ -87,7 +87,7 @@ export function ShellPageHeaderUI(props) {
                             if (typeof actionItem === 'object' && actionItem !== null) {
                                 if (actionItem.action === 'search') {
                                     const { action, ...searchProps } = actionItem;
-                                    return _jsx(SearchInputComponent, { ...searchProps }, i);
+                                    return _jsx(SearchInputComponent, { style: { backgroundColor: 'transparent', ...searchProps.style }, ...searchProps }, i);
                                 }
                                 if (actionItem.action) {
                                     const presetAction = actionItem;
@@ -178,7 +178,7 @@ function HeaderSearchInput(props) {
     const { slot, shell } = props;
     const [value, setValue] = useState(slot.initialValue ?? '');
     const placeholder = slot.placeholder?.();
-    return (_jsxs("div", { className: "mrs-page-header__search", children: [_jsx("span", { className: "mrs-page-header__search-icon", children: shell.config.renderIcon('search', 16) }), _jsx("input", { type: "search", className: "mrs-page-header__search-input", value: value, placeholder: placeholder, onInput: e => {
+    return (_jsxs("div", { className: "mrs-page-header__search", children: [_jsx("span", { className: "mrs-page-header__search-icon", children: shell.config.renderIcon('search', 16) }), _jsx("input", { type: "search", className: "mrs-page-header__search-input", style: { backgroundColor: 'transparent', ...slot.style }, value: value, placeholder: placeholder, onInput: e => {
                     const next = e.currentTarget.value;
                     setValue(next);
                     slot.onChange(next);

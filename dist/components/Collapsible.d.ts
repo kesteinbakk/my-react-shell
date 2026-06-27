@@ -1,7 +1,7 @@
 import { type ReactNode } from 'react';
 import { type VariantProps } from 'class-variance-authority';
 declare const triggerVariants: (props?: ({
-    variant?: "ghost" | "default" | "filled" | "bordered" | null | undefined;
+    variant?: "default" | "filled" | "ghost" | "bordered" | null | undefined;
     size?: "sm" | "md" | "lg" | null | undefined;
     layout?: "inline" | "spread" | null | undefined;
 } & import("class-variance-authority/types").ClassProp) | undefined) => string;

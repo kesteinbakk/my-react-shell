@@ -27,6 +27,10 @@ export interface SearchInputProps extends Omit<InputHTMLAttributes<HTMLInputElem
         enabled?: boolean;
         transitionMs?: number;
     };
+    /** Custom class for the wrapper element. */
+    wrapperClassName?: string;
+    /** Custom styles for the wrapper element. */
+    wrapperStyle?: React.CSSProperties;
 }
 /**
  * An opinionated search input component with built-in debouncing, left magnifier glass icon,

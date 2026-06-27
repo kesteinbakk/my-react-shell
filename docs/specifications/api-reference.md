@@ -438,6 +438,8 @@ An opinionated search input component with built-in debouncing, left magnifier g
 | `defaultValue` | — | Default initial value. |
 | `inputSize` | `md` | `sm` · `md` · `lg` — drives height, padding, and font size. |
 | `loadedIconState` | — | `boolean` or `{ icon?, duration?, enabled?, transitionMs? }`. On `true` or `{ enabled: true }`, fades in a green check mark. `duration` defaults to `2000`ms. |
+| `wrapperClassName` | — | Custom class for the wrapper element. |
+| `wrapperStyle` | — | Custom style object for the wrapper element. |
 | All other native `<input>` attributes | — | Spreads standard input props (`placeholder`, `disabled`, `onInput`, `onFocus`, `onBlur`, `className`, etc.). |
 
 ### `ColorPicker`

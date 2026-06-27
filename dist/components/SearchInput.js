@@ -9,7 +9,7 @@ const SearchIcon = () => (_jsxs("svg", { width: "16", height: "16", viewBox: "0 
  * end icon support, and a loaded icon state (fades in a green check mark).
  */
 export const SearchInput = forwardRef(function SearchInput(props, ref) {
-    const { icon, endIcon, onDebounceSearch, debounceMs = 500, value, defaultValue, inputSize = 'md', onChange, loadedIconState, className, ...rest } = props;
+    const { icon, endIcon, onDebounceSearch, debounceMs = 500, value, defaultValue, inputSize = 'md', onChange, loadedIconState, className, wrapperClassName, wrapperStyle, ...rest } = props;
     const id = useId();
     const [inputValue, setInputValue] = useState(value ?? defaultValue ?? '');
     // Handle controlled value changes
@@ -51,7 +51,8 @@ export const SearchInput = forwardRef(function SearchInput(props, ref) {
         }
     }, [loadedEnabled, loadedDuration]);
     const hasEndIcon = endIcon != null || loadedIconState !== undefined;
-    return (_jsxs("div", { className: cn('mrs-search-input-wrapper', `mrs-search-input-wrapper--${inputSize}`, hasEndIcon && 'mrs-search-input-wrapper--has-end-icon'), style: {
+    return (_jsxs("div", { className: cn('mrs-search-input-wrapper', `mrs-search-input-wrapper--${inputSize}`, hasEndIcon && 'mrs-search-input-wrapper--has-end-icon', wrapperClassName), style: {
             '--mrs-search-transition-duration': `${transitionMs}ms`,
+            ...wrapperStyle,
         }, children: [_jsx("span", { className: cn('mrs-search-input-icon-start', `mrs-search-input-icon-start--${inputSize}`), "aria-hidden": "true", children: icon ?? _jsx(SearchIcon, {}) }), _jsx("input", { ref: ref, id: id, type: "text", value: inputValue, onChange: handleChange, className: cn('mrs-search-input', `mrs-search-input--${inputSize}`, hasEndIcon && 'mrs-search-input--has-end-icon', className), ...rest }), endIcon != null && !showLoaded && (_jsx("span", { className: cn('mrs-search-input-icon-end', `mrs-search-input-icon-end--${inputSize}`), children: endIcon })), _jsx("span", { className: cn('mrs-search-input-loaded-icon', `mrs-search-input-loaded-icon--${inputSize}`, showLoaded && 'mrs-search-input-loaded-icon--active'), "aria-hidden": "true", children: loadedIcon })] }));
 });

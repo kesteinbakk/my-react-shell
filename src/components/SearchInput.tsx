@@ -65,6 +65,10 @@ export interface SearchInputProps
         enabled?: boolean
         transitionMs?: number
       }
+  /** Custom class for the wrapper element. */
+  wrapperClassName?: string
+  /** Custom styles for the wrapper element. */
+  wrapperStyle?: React.CSSProperties
 }
 
 /**
@@ -84,6 +88,8 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
       onChange,
       loadedIconState,
       className,
+      wrapperClassName,
+      wrapperStyle,
       ...rest
     } = props
 
@@ -141,9 +147,11 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
           'mrs-search-input-wrapper',
           `mrs-search-input-wrapper--${inputSize}`,
           hasEndIcon && 'mrs-search-input-wrapper--has-end-icon',
+          wrapperClassName,
         )}
         style={{
           '--mrs-search-transition-duration': `${transitionMs}ms`,
+          ...wrapperStyle,
         } as React.CSSProperties}
       >
         <span
