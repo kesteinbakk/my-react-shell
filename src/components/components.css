@@ -2406,12 +2406,34 @@
 .mrs-stat-card__body {
   flex: 1 1 auto;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
   min-height: 0;
   overflow: hidden;
   margin-top: -0.3em;
+}
+
+/* Horizontal alignment */
+.mrs-stat-card__body[data-align-x="left"] {
+  justify-content: flex-start;
+  text-align: left;
+}
+.mrs-stat-card__body[data-align-x="center"] {
+  justify-content: center;
+  text-align: center;
+}
+.mrs-stat-card__body[data-align-x="right"] {
+  justify-content: flex-end;
+  text-align: right;
+}
+
+/* Vertical alignment */
+.mrs-stat-card__body[data-align-y="top"] {
+  align-items: flex-start;
+}
+.mrs-stat-card__body[data-align-y="center"] {
+  align-items: center;
+}
+.mrs-stat-card__body[data-align-y="bottom"] {
+  align-items: flex-end;
 }
 
 /* Ensure any text directly in body also truncates if it gets too long */

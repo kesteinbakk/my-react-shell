@@ -86,6 +86,16 @@ export interface StatCardProps {
      */
     body?: ReactNode;
     /**
+     * Horizontal alignment of the freeform body slot.
+     * Default: `'center'`
+     */
+    bodyAlignX?: 'left' | 'center' | 'right';
+    /**
+     * Vertical alignment of the freeform body slot.
+     * Default: `'center'`
+     */
+    bodyAlignY?: 'top' | 'center' | 'bottom';
+    /**
      * Structural variant — overrides `tone` to the same value (so the accent stripe,
      * badge tint, and body text all reflect the variant hue) and forces `⚠️` as the
      * watermark background emoji, ignoring the `watermark` prop.
