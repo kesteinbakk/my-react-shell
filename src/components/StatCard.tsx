@@ -572,7 +572,9 @@ export const StatCard = forwardRef<HTMLDivElement, StatCardProps>(function StatC
             data-align-x={bodyAlignX}
             data-align-y={bodyAlignY}
           >
-            {body}
+            <div className="mrs-stat-card__body-content">
+              {body}
+            </div>
           </div>
         ) : stats && stats.length > 0 ? (
           <dl className="mrs-stat-card__stats">
