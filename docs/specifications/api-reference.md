@@ -907,18 +907,19 @@ custom `() => string` resolver. `pages` may be **empty** for a nav-less card-das
 ```tsx
 export const shellConfig = defineShellConfig({
   appName: 'Acme',
+  // Internal chrome keys: 'menu', 'home', 'chevronRight', 'chevronDown', 'search', 'alert'
   renderIcon: (key, size) => { const I = icons[key] ?? Home; return <I size={size} /> }, // REQUIRED
   pages: [{ id: 'dashboard', route: '/dashboard', label: () => t('nav.dashboard'), icon: 'dashboard' }],
 })
 <AppShell config={shellConfig} useMenu actions={[() => <ThemeToggle/>]} mobileNav="drawer"><Outlet/></AppShell>
 ```
 
-> **Band actions and shortcuts.** The `actions` slot in `usePageHeader` accepts thunks `(() => ReactNode)` or preset action shortcuts:
+> **Band actions.** The `actions` slot in `usePageHeader` accepts thunks `(() => ReactNode)` or preset action items:
 > - Preset strings (e.g. `'add'`, `'edit'`, `'delete'`) which render a standard inline `ActionButton`.
 > - A `'search'` string which renders a default `SearchInput` component with magnifier icon and debouncing. This is meant to be used for filtering or lookups on the content on the current page.
 > - Custom preset objects: `{ action: Exclude<ActionType, 'search'>, onClick?, label?, showLabel?, showEmoji?, tone?, size?, layout?, disabled?, hint? }` to customize standard preset buttons.
 > - Custom search objects: `{ action: 'search', icon?, endIcon?, onDebounceSearch?, debounceMs?, value?, defaultValue?, loadedIconState? }` to customize the search input field.
-> - Any custom ReactNode thunk. An `ActionButton` mounted here always lays out inline (glyph before label). **Anti-pattern:** Action buttons in the header should NEVER be styled as normal buttons (e.g. `<Button>`). Action items must either be default supported strings (e.g. `'add'`), a custom label + icon via `ActionButton`, or an icon-only `ActionButton`.
+> - Any custom ReactNode thunk. An `ActionButton` mounted here always lays out inline (glyph before label). **Anti-pattern:** Action items in the header should NEVER be styled as normal buttons (e.g. `<Button>`). Action items must either be default supported strings (e.g. `'add'`), a custom label + icon via `ActionButton`, or an icon-only `ActionButton`.
 >
 > **`route: '/'` is reserved.** Never put `/` in `pages` — `defineShellConfig` throws
 > `ShellConfigError` if you do. Home is always reachable via the brand link and the

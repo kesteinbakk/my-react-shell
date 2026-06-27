@@ -10,7 +10,7 @@
  */
 import type { ReactNode } from 'react';
 export interface AppHeaderProps {
-    /** Action render thunks, rendered in the right zone. `[]` for none. */
+    /** Action item render thunks, rendered in the right zone. `[]` for none. */
     actions: Array<() => ReactNode>;
     /** Brand text. Required standalone; inside the shell falls back to `config.appName`. */
     title?: string;

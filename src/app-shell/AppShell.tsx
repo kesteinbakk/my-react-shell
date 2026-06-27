@@ -46,7 +46,7 @@ export interface AppShellProps {
   config: ShellConfig
   /** `true` → sidebar (`AppMenu`); `false` → top banner (`AppHeader`). */
   useMenu: boolean
-  /** Chrome action thunks (theme toggle, language, bell, …). `[]` for none. */
+  /** Chrome action item thunks (theme toggle, language, bell, …). `[]` for none. */
   actions: Array<() => ReactNode>
   /** Under the brand. */
   subtitle?: () => ReactNode

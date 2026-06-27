@@ -42,6 +42,7 @@ at runtime. The icon library is yours: pass one `renderIcon(key, size)`.
 import { defineShellConfig } from 'my-react-shell/app-shell'
 import { Home, Database, Shield } from 'lucide-react'
 
+// The shell internally requests keys: 'menu', 'home', 'chevronRight', 'chevronDown', 'search', 'alert'
 const icons: Record<string, typeof Home> = { home: Home, data: Database, trust: Shield }
 
 export const shellConfig = defineShellConfig({

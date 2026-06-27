@@ -5,7 +5,7 @@ export interface PageSectionProps {
     title: ReactNode;
     /** Optional icon: a string key resolved by the shell config's renderIcon, or a custom ReactNode. */
     icon?: Exclude<ReactNode, string> | ShellIcon;
-    /** Optional actions (elements/buttons) to display on the right side of the header. */
+    /** Optional action items (elements/buttons) to display on the right side of the header. */
     actions?: ReactNode[];
     /** Custom CSS class name for the card container. */
     className?: string;

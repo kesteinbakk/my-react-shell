@@ -226,7 +226,7 @@ export interface PageHeaderOptions {
   /** Overrides the leaf breadcrumb label (only when the leaf is the current page). */
   title?: () => string
   /**
-   * Action cluster rendered on the right of the band. An `ActionButton` here always
+   * Action items cluster rendered on the right of the band. An `ActionButton` here always
    * lays out inline (glyph before label) — the band's stylesheet overrides its
    * `layout` prop, since the kit default `vertical` would stack the label under the
    * glyph and blow out the band height. Pass `layout="inline"` anyway for clarity.

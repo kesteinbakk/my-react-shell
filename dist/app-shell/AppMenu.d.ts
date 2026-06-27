@@ -16,7 +16,7 @@
  */
 import type { ReactNode } from 'react';
 export interface AppMenuProps {
-    /** Action render thunks for the footer. `[]` for none. */
+    /** Action item render thunks for the footer. `[]` for none. */
     actions: Array<() => ReactNode>;
     /** Node rendered right of the brand (badge / pill). */
     titleAdornment?: () => ReactNode;
