@@ -26,7 +26,7 @@ export function ToastProvider({ children, duration = 3000 }) {
         const ms = options?.duration ?? duration;
         setToasts((list) => [
             ...list,
-            { id, tone: options?.tone ?? 'info', title: options?.title, message },
+            { id, tone: options?.tone ?? 'info', title: options?.title, message, autoDismiss: ms > 0 },
         ]);
         if (ms > 0) {
             setTimeout(() => dismiss(id), ms);
@@ -42,5 +42,5 @@ export function ToastProvider({ children, duration = 3000 }) {
         dismiss,
     }), [show, dismiss]);
     return (_jsxs(ToastContext.Provider, { value: api, children: [children, typeof document !== 'undefined' &&
-                createPortal(_jsx("div", { className: "mrs-toast-viewport", children: toasts.map((t) => (_jsx("div", { className: "mrs-toast", children: _jsx(Alert, { tone: t.tone, title: t.title, role: "status", onDismiss: () => dismiss(t.id), children: t.message }) }, t.id))) }), document.body)] }));
+                createPortal(_jsx("div", { className: "mrs-toast-viewport", children: toasts.map((t) => (_jsx("div", { className: "mrs-toast", children: _jsx(Alert, { tone: t.tone, title: t.title, role: "status", onDismiss: t.autoDismiss ? undefined : () => dismiss(t.id), children: t.message }) }, t.id))) }), document.body)] }));
 }

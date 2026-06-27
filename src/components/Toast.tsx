@@ -29,6 +29,7 @@ interface ToastItem {
   tone: ToastTone
   title?: ReactNode
   message: ReactNode
+  autoDismiss: boolean
 }
 
 export interface ToastApi {
@@ -74,7 +75,7 @@ export function ToastProvider({ children, duration = 3000 }: ToastProviderProps)
       const ms = options?.duration ?? duration
       setToasts((list) => [
         ...list,
-        { id, tone: options?.tone ?? 'info', title: options?.title, message },
+        { id, tone: options?.tone ?? 'info', title: options?.title, message, autoDismiss: ms > 0 },
       ])
       if (ms > 0) {
         setTimeout(() => dismiss(id), ms)
@@ -108,7 +109,7 @@ export function ToastProvider({ children, duration = 3000 }: ToastProviderProps)
                   tone={t.tone}
                   title={t.title}
                   role="status"
-                  onDismiss={() => dismiss(t.id)}
+                  onDismiss={t.autoDismiss ? undefined : () => dismiss(t.id)}
                 >
                   {t.message}
                 </Alert>

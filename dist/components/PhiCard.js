@@ -90,7 +90,7 @@ export const PhiCard = forwardRef(function PhiCard({ upper, content, image, imag
     }
     else if (hasIcon) {
         topContent = figure;
-        topSectionMod = 'mrs-phi-card__section--padded';
+        topSectionMod = 'mrs-phi-card__section--padded mrs-phi-card__section--lone-figure';
     }
     else {
         topContent = body;

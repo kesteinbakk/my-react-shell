@@ -23,6 +23,10 @@ export interface CollapsibleProps {
     renderTrigger?: (expanded: boolean) => ReactNode;
     /** The content revealed when expanded. */
     children?: ReactNode;
+    /** Actions rendered before the trigger label. Interacting with them won't toggle the collapsible. */
+    actionsStart?: ReactNode;
+    /** Actions rendered before the chevron. Interacting with them won't toggle the collapsible. */
+    actionsEnd?: ReactNode;
     /** Render the rotating chevron. Defaults to `true`. */
     showArrow?: boolean;
     /** Expand/collapse animation duration in milliseconds. Defaults to `200`. */
@@ -55,5 +59,5 @@ export interface CollapsibleProps {
  * For a set of disclosures with one-open-at-a-time / roving-focus behavior, use
  * `Accordion` instead.
  */
-export declare function Collapsible({ expanded, defaultExpanded, onExpandedChange, trigger, renderTrigger, children, showArrow, animationDuration, disabled, variant, size, inlineChevron, className, triggerClassName, contentClassName, arrowClassName, }: CollapsibleProps): import("react").JSX.Element;
+export declare function Collapsible({ expanded, defaultExpanded, onExpandedChange, trigger, renderTrigger, children, actionsStart, actionsEnd, showArrow, animationDuration, disabled, variant, size, inlineChevron, className, triggerClassName, contentClassName, arrowClassName, }: CollapsibleProps): import("react").JSX.Element;
 export {};

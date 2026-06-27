@@ -8,6 +8,10 @@ export interface AccordionItem {
     content: ReactNode;
     /** Disable this item's trigger. */
     disabled?: boolean;
+    /** Actions rendered before the trigger label. Interacting with them won't toggle the accordion. */
+    actionsStart?: ReactNode;
+    /** Actions rendered before the chevron. Interacting with them won't toggle the accordion. */
+    actionsEnd?: ReactNode;
 }
 export type AccordionVariant = 'default' | 'bordered' | 'separated';
 export type AccordionSize = 'sm' | 'md' | 'lg';
