@@ -61,3 +61,4 @@ export { DatePicker } from './DatePicker';
 export { EmojiPicker, EmojiEmpty, EMOJI_FREQUENT } from './EmojiPicker';
 export { EmojiBar } from './EmojiBar';
 export { cn } from './cn';
+export { CardGrid } from './CardGrid';

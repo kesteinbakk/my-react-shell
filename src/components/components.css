@@ -4452,3 +4452,125 @@
   padding-right: 2.75rem !important;
 }
 
+
+/* ── CardGrid ────────────────────────────────────────────────────────────── */
+.mrs-card-grid {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+.mrs-card-grid__toolbar-wrap {
+  flex-shrink: 0;
+  padding-bottom: 1rem;
+}
+.mrs-card-grid__toolbar {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+@media (min-width: 640px) {
+  .mrs-card-grid__toolbar {
+    flex-direction: row;
+    align-items: center;
+  }
+}
+.mrs-card-grid__search {
+  width: 12rem;
+}
+@media (min-width: 1024px) {
+  .mrs-card-grid__search {
+    width: 16rem;
+  }
+}
+.mrs-card-grid__filter-group,
+.mrs-card-grid__sort-group {
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--color-border-secondary);
+  border-radius: 0.5rem;
+}
+.mrs-card-grid__filter-group {
+  gap: 0.75rem;
+  padding: 0.375rem 0.75rem;
+}
+.mrs-card-grid__sort-group {
+  gap: 0.25rem;
+  padding: 0.25rem 0.5rem;
+}
+.mrs-card-grid__filter-icon {
+  flex-shrink: 0;
+  color: var(--color-text-tertiary);
+}
+.mrs-card-grid__sort-select {
+  width: 8rem;
+}
+/* Override internal select styling to blend in */
+.mrs-card-grid__sort-select-inner {
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+.mrs-card-grid__sort-select-inner:focus-visible {
+  box-shadow: none !important;
+}
+.mrs-card-grid__sort-dir {
+  padding: 0.25rem;
+  border-radius: 0.375rem;
+  color: var(--color-text-secondary);
+  transition: background-color 200ms ease;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.mrs-card-grid__sort-dir:hover {
+  background-color: var(--color-surface-sunken);
+}
+.mrs-card-grid__scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+.mrs-card-grid__empty,
+.mrs-card-grid__no-results {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding-block: 4rem;
+  text-align: center;
+}
+.mrs-card-grid__empty-text,
+.mrs-card-grid__no-results-msg {
+  color: var(--color-text-secondary);
+}
+.mrs-card-grid__no-results-icon {
+  width: 4rem;
+  height: 4rem;
+  margin-inline: auto;
+  margin-bottom: 1rem;
+  background-color: var(--color-surface-sunken);
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-secondary);
+}
+.mrs-card-grid__no-results-desc {
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+  margin-top: 0.25rem;
+}
+.mrs-card-grid__cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding-bottom: 1rem;
+  justify-content: flex-start;
+}
+.mrs-card-grid__cards--center {
+  justify-content: center;
+}

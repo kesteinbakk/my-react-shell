@@ -212,3 +212,5 @@ export { EmojiBar } from './EmojiBar'
 export type { EmojiBarProps } from './EmojiBar'
 
 export { cn } from './cn'
+export { CardGrid } from './CardGrid'
+export type { CardGridProps, ToggleFilter, SortOption } from './CardGrid'
