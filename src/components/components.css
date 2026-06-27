@@ -2160,10 +2160,17 @@
   padding: 1.1em;
   gap: 0.6em;
   box-sizing: border-box;
+  min-width: 0;
 }
 /* Nudge content off the 4px accent stripe, on whichever edge it sits. */
 .mrs-stat-card--accent-top .mrs-stat-card__inner {
   padding-top: calc(1.1em + 4px);
+}
+.mrs-stat-card--draggable.mrs-stat-card--accent-top .mrs-stat-card__inner {
+  padding-top: calc(2.2em + 4px);
+}
+.mrs-stat-card--draggable:not(.mrs-stat-card--accent-top) .mrs-stat-card__inner {
+  padding-top: 2.2em;
 }
 .mrs-stat-card--accent-left .mrs-stat-card__inner {
   padding-left: calc(1.1em + 4px);
@@ -2243,6 +2250,11 @@
   font-weight: 700;
   line-height: 1.2;
   color: var(--color-text-primary);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 /* Auto-fit: very long titles step the font size down (up to three steps) so they
    stay within ~two lines without resizing the card. Driven by `data-fit` (set from
@@ -2256,6 +2268,9 @@
   font-size: 0.8em;
   color: var(--color-text-secondary);
   line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* Medallion circle — plain number + label style */
@@ -2395,6 +2410,19 @@
   justify-content: center;
   text-align: center;
   min-height: 0;
+  overflow: hidden;
+  margin-top: -0.3em;
+}
+
+/* Ensure any text directly in body also truncates if it gets too long */
+.mrs-stat-card__body > * {
+  max-width: 100%;
+  max-height: 100%;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* When a `variant` is active, body text matches the accent/tone hue. */

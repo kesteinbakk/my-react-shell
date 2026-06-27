@@ -504,6 +504,7 @@ export const StatCard = forwardRef<HTMLDivElement, StatCardProps>(function StatC
         variant && 'mrs-stat-card--variant',
         isHoverable && 'mrs-stat-card--hoverable',
         effectiveWatermark && 'mrs-stat-card--watermark',
+        dragHandle && 'mrs-stat-card--draggable',
         className,
       )}
       style={style}
