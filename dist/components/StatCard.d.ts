@@ -7,8 +7,8 @@ export type { PhiCardFooter as StatCardFooter, PhiCardFooterLine as StatCardFoot
 export type StatCardTone = Tone;
 /** Structural alert variant — overrides `tone` to the same value and forces the ⚠️ watermark. */
 export type StatCardVariant = 'warning' | 'danger';
-export interface StatCardBadge {
-    /** Primary value shown in the badge circle. */
+export interface StatCardMedallion {
+    /** Primary value shown in the medallion circle. */
     value: number | string;
     /** Short uppercase label below the value. Omit when `max` is present. */
     label?: string;
@@ -36,14 +36,14 @@ export interface StatCardProps {
     title: string;
     /** Optional subtitle shown below the title. */
     subtitle?: string;
-    /** Circle badge in the top-right corner. */
-    badge?: StatCardBadge;
+    /** Circle medallion in the top-right corner. */
+    medallion?: StatCardMedallion;
     /**
-     * Semantic tone — drives the accent stripe color and badge tint.
+     * Semantic tone — drives the accent stripe color and medallion tint.
      * Ignored when `color` is set.
      */
     tone?: StatCardTone;
-    /** Raw CSS color string for the accent stripe and badge; overrides `tone`. */
+    /** Raw CSS color string for the accent stripe and medallion; overrides `tone`. */
     color?: string;
     /** Where the accent reads: a `'top'` stripe (default) or a `'left'` bar. */
     accentPlacement?: AccentPlacement;
@@ -63,13 +63,13 @@ export interface StatCardProps {
      */
     sideBarCompleteness?: number;
     /**
-     * When `true`, the whole accent — top stripe, badge tint, and stat numbers —
+     * When `true`, the whole accent — top stripe, medallion tint, and stat numbers —
      * takes the **gauge's** completeness color (red → amber → green) instead of
      * `tone`/`color`, so the card reads as one coherent color, and the stripe is
      * forced to the top edge.
      *
      * Bound to `sideBarCompleteness`: the top stripe renders only when a gauge is
-     * present — `sideBarCompleteness === undefined` → **no top stripe** (badge and
+     * present — `sideBarCompleteness === undefined` → **no top stripe** (medallion and
      * stat numbers fall back to `tone`/`color`). Throws in dev if combined with
      * `accentPlacement='left'`. Default `false`.
      */
@@ -112,15 +112,17 @@ export interface StatCardProps {
     onClick?: () => void;
     /** Hover lift effect. Defaults to `true` when `onClick` is set. */
     hoverable?: boolean;
+    /** Click handler for the medallion. */
+    onMedallionPress?: () => void;
     /** Extra classes on the outer card element. */
     className?: string;
 }
 /**
  * Stat card — a φ-framed KPI/status card with a title, an optional accent
- * badge circle (plain number or arc-ring progress), a row of data stats, and an
+ * medallion circle (plain number or arc-ring progress), a row of data stats, and an
  * optional footer or freeform lower slot. Shares the same size system as PhiCard.
  *
- * The accent stripe, badge tint, and watermark are driven by `tone` (mapped to
+ * The accent stripe, medallion tint, and watermark are driven by `tone` (mapped to
  * semantic tokens) or overridden with a raw CSS `color` string.
  */
-export declare function StatCard({ title, subtitle, badge, tone, color, accentPlacement, sideBarCompleteness, topStripeFollowsGauge, stats, body, variant, footer, lower, watermark, size, onClick, hoverable, className, }: StatCardProps): import("react").JSX.Element;
+export declare function StatCard({ title, subtitle, medallion, tone, color, accentPlacement, sideBarCompleteness, topStripeFollowsGauge, stats, body, variant, footer, lower, watermark, size, onClick, onMedallionPress, hoverable, className, }: StatCardProps): import("react").JSX.Element;

@@ -34,10 +34,10 @@ export type StatCardTone = Tone
 /** Structural alert variant — overrides `tone` to the same value and forces the ⚠️ watermark. */
 export type StatCardVariant = 'warning' | 'danger'
 
-// ── Badge ─────────────────────────────────────────────────────────────────────
+// ── Medallion ─────────────────────────────────────────────────────────────────
 
-export interface StatCardBadge {
-  /** Primary value shown in the badge circle. */
+export interface StatCardMedallion {
+  /** Primary value shown in the medallion circle. */
   value: number | string
   /** Short uppercase label below the value. Omit when `max` is present. */
   label?: string
@@ -71,14 +71,14 @@ export interface StatCardProps {
   title: string
   /** Optional subtitle shown below the title. */
   subtitle?: string
-  /** Circle badge in the top-right corner. */
-  badge?: StatCardBadge
+  /** Circle medallion in the top-right corner. */
+  medallion?: StatCardMedallion
   /**
-   * Semantic tone — drives the accent stripe color and badge tint.
+   * Semantic tone — drives the accent stripe color and medallion tint.
    * Ignored when `color` is set.
    */
   tone?: StatCardTone
-  /** Raw CSS color string for the accent stripe and badge; overrides `tone`. */
+  /** Raw CSS color string for the accent stripe and medallion; overrides `tone`. */
   color?: string
   /** Where the accent reads: a `'top'` stripe (default) or a `'left'` bar. */
   accentPlacement?: AccentPlacement
@@ -98,13 +98,13 @@ export interface StatCardProps {
    */
   sideBarCompleteness?: number
   /**
-   * When `true`, the whole accent — top stripe, badge tint, and stat numbers —
+   * When `true`, the whole accent — top stripe, medallion tint, and stat numbers —
    * takes the **gauge's** completeness color (red → amber → green) instead of
    * `tone`/`color`, so the card reads as one coherent color, and the stripe is
    * forced to the top edge.
    *
    * Bound to `sideBarCompleteness`: the top stripe renders only when a gauge is
-   * present — `sideBarCompleteness === undefined` → **no top stripe** (badge and
+   * present — `sideBarCompleteness === undefined` → **no top stripe** (medallion and
    * stat numbers fall back to `tone`/`color`). Throws in dev if combined with
    * `accentPlacement='left'`. Default `false`.
    */
@@ -147,6 +147,8 @@ export interface StatCardProps {
   onClick?: () => void
   /** Hover lift effect. Defaults to `true` when `onClick` is set. */
   hoverable?: boolean
+  /** Click handler for the medallion. */
+  onMedallionPress?: () => void
   /** Extra classes on the outer card element. */
   className?: string
 }
@@ -289,16 +291,16 @@ function titleFitStep(title: string): 0 | 1 | 2 | 3 {
 
 /**
  * Stat card — a φ-framed KPI/status card with a title, an optional accent
- * badge circle (plain number or arc-ring progress), a row of data stats, and an
+ * medallion circle (plain number or arc-ring progress), a row of data stats, and an
  * optional footer or freeform lower slot. Shares the same size system as PhiCard.
  *
- * The accent stripe, badge tint, and watermark are driven by `tone` (mapped to
+ * The accent stripe, medallion tint, and watermark are driven by `tone` (mapped to
  * semantic tokens) or overridden with a raw CSS `color` string.
  */
 export function StatCard({
   title,
   subtitle,
-  badge,
+  medallion,
   tone = 'neutral',
   color,
   accentPlacement = 'top',
@@ -312,37 +314,38 @@ export function StatCard({
   watermark,
   size = 'md',
   onClick,
+  onMedallionPress,
   hoverable,
   className,
 }: StatCardProps) {
   // variant overrides tone to the same value; ⚠️ always used as the watermark.
   const effectiveTone: StatCardTone = variant ?? tone
   const effectiveWatermark = variant ? '⚠️' : watermark
-
+ 
   const width = SIZE_WIDTH_PX[size]
   const height = width / PHI
   const isHoverable = hoverable ?? !!onClick
-
+ 
   // `undefined` → no gauge; `0` → gauge with an empty fill. Checked, never
   // truthy-tested, so `0` is rendered rather than swallowed.
   const hasGauge = sideBarCompleteness !== undefined
   const gaugeFraction = hasGauge ? Math.min(1, Math.max(0, sideBarCompleteness)) : 0
   const gaugePct = Math.round(gaugeFraction * 100)
-
-  // `topStripeFollowsGauge`: the whole accent (top stripe + badge tint + stat
+ 
+  // `topStripeFollowsGauge`: the whole accent (top stripe + medallion tint + stat
   // numbers) takes the gauge's completeness colour, so the card reads as one
   // coherent colour, and the stripe is forced to the top edge.
   const followGauge = topStripeFollowsGauge && hasGauge
   // variant forces the top stripe; topStripeFollowsGauge also forces top.
   const effectiveAccentPlacement = (topStripeFollowsGauge || variant) ? 'top' : accentPlacement
-
+ 
   // Accent paint: the gauge colour when following it, else tone/color (tone/color
   // is also the fallback when the mode is on but there's no gauge to follow). tone
   // defaults to 'neutral', so the non-follow branch is always defined.
   const accentColor = followGauge
     ? completenessFill(gaugeFraction)
     : resolveAccentColor(effectiveTone, color) ?? TONE_COLOR.neutral
-
+ 
   // When to drop the accent stripe entirely:
   //  • mode on but no gauge → the top stripe has nothing to follow (no stripe);
   //  • gauge + a left accent → the gauge owns the left edge (suppress the stripe).
@@ -353,11 +356,11 @@ export function StatCard({
       (topStripeFollowsGauge && !hasGauge) ||
       (!topStripeFollowsGauge && hasGauge && accentPlacement === 'left')
     )
-
+ 
   // variant left stripe: shown alongside the top stripe unless the gauge already
   // occupies the left edge (6px gauge > 4px stripe; they'd overlap).
   const showVariantLeftStripe = !!variant && !hasGauge
-
+ 
   // Dev guards
   if (process.env.NODE_ENV !== 'production') {
     if (footer && lower != null) {
@@ -381,11 +384,11 @@ export function StatCard({
       }
     })
   }
-
+ 
   const hasFooter =
     (footer && ((footer.lines?.length ?? 0) > 0 || (footer.badges?.length ?? 0) > 0)) ||
     lower != null
-
+ 
   // PhiCard footer renderer reused (same JSX structure, same CSS classes)
   let footerNode: ReactNode = null
   if (footer) {
@@ -414,33 +417,57 @@ export function StatCard({
       </div>
     )
   }
-
+ 
   const style = {
     width: `${width}px`,
     height: `${height}px`,
     fontSize: `${SIZE_FONT_REM[size]}rem`,
     '--mrs-stat-accent': accentColor,
   } as unknown as CSSProperties
+ 
+  // Medallion circle or arc ring
+  let medallionNode: ReactNode = null
+  if (medallion) {
+    const isPressable = !!onMedallionPress
+    const MedallionTag = isPressable ? 'button' : 'div'
+    const medallionProps = isPressable
+      ? {
+          type: 'button' as const,
+          onClick: (e: React.MouseEvent) => {
+            e.stopPropagation()
+            onMedallionPress()
+          },
+        }
+      : {}
 
-  // Badge circle or arc ring
-  let badgeNode: ReactNode = null
-  if (badge) {
-    if (badge.max != null) {
-      badgeNode = (
-        <div className="mrs-stat-card__badge mrs-stat-card__badge--arc">
-          <ArcRing value={badge.value} max={badge.max} />
-        </div>
+    if (medallion.max != null) {
+      medallionNode = (
+        <MedallionTag
+          className={cn(
+            'mrs-stat-card__medallion mrs-stat-card__medallion--arc',
+            isPressable && 'mrs-stat-card__medallion--pressable'
+          )}
+          {...medallionProps}
+        >
+          <ArcRing value={medallion.value} max={medallion.max} />
+        </MedallionTag>
       )
     } else {
-      badgeNode = (
-        <div className="mrs-stat-card__badge">
-          <span className="mrs-stat-card__badge-value">{badge.value}</span>
-          {badge.label ? <span className="mrs-stat-card__badge-label">{badge.label}</span> : null}
-        </div>
+      medallionNode = (
+        <MedallionTag
+          className={cn(
+            'mrs-stat-card__medallion',
+            isPressable && 'mrs-stat-card__medallion--pressable'
+          )}
+          {...medallionProps}
+        >
+          <span className="mrs-stat-card__medallion-value">{medallion.value}</span>
+          {medallion.label ? <span className="mrs-stat-card__medallion-label">{medallion.label}</span> : null}
+        </MedallionTag>
       )
     }
   }
-
+ 
   return (
     <div
       className={cn(
@@ -475,15 +502,15 @@ export function StatCard({
         </div>
       ) : null}
       <div className="mrs-stat-card__inner">
-        {/* Header: title block + badge */}
+        {/* Header: title block + medallion */}
         <div className="mrs-stat-card__header">
           <div className="mrs-stat-card__head-text">
             <p className="mrs-stat-card__title" data-fit={titleFitStep(title) || undefined}>{title}</p>
             {subtitle ? <p className="mrs-stat-card__subtitle">{subtitle}</p> : null}
           </div>
-          {badgeNode}
+          {medallionNode}
         </div>
-
+ 
         {/* Body (freeform center) — suppresses stats when set */}
         {body != null ? (
           <div className={cn('mrs-stat-card__body', variant && 'mrs-stat-card__body--variant')}>

@@ -33,7 +33,8 @@ import type { ReactNode } from 'react'
 import { ScrollableTabRow } from '../ScrollableTabRow'
 import { useShellContextOptional } from '../shellContext'
 import type { ShellTabsVariant } from '../shellContract'
-import type { PageSection } from './types'
+import type { PageSection as PageSectionConfig } from './types'
+import { PageSection } from '../PageSection'
 
 // ----------------------------------------------------------------------------
 // LazyContent — render placeholder until in-view OR forceMountAll fires
@@ -103,7 +104,7 @@ function LazyContentInner(props: LazyContentProps): ReactNode {
 // ----------------------------------------------------------------------------
 
 interface ListModeProps {
-  sections: PageSection[]
+  sections: PageSectionConfig[]
   registerRef: (id: string, el: HTMLElement | null) => void
   forceMountAll: boolean
   /** Scroll container — threaded through to LazyContent as IO root. */
@@ -112,12 +113,12 @@ interface ListModeProps {
 }
 
 interface SingleModeProps {
-  sections: PageSection[]
+  sections: PageSectionConfig[]
   activeId: string
 }
 
 interface SectionTabsStripProps {
-  sections: PageSection[]
+  sections: PageSectionConfig[]
   activeId: string
   onTabClick: (id: string) => void
   className?: string
@@ -136,29 +137,19 @@ export function SectionsListMode(props: ListModeProps): ReactNode {
           // scrollbar — the gap keeps the rounded corner clear of the track.
           className="mrs-section"
         >
-          <div className="mrs-section__card">
-            <div className="mrs-section__head">
-              {section.icon && props.renderIcon?.(section.icon, 18)}
-              <h3 className="mrs-section__title">{section.label()}</h3>
-              {(section.actions?.length ?? 0) > 0 && (
-                <div className="mrs-section__actions">
-                  {section.actions!.map((thunk, i) => (
-                    // eslint-disable-next-line react/no-array-index-key -- action thunks have no stable id
-                    <span key={i}>{thunk()}</span>
-                  ))}
-                </div>
-              )}
-            </div>
-            <div className="mrs-section__body">
-              <LazyContent
-                lazy={section.lazy}
-                forceMountAll={props.forceMountAll}
-                scrollRoot={props.scrollRoot}
-              >
-                {section.children()}
-              </LazyContent>
-            </div>
-          </div>
+          <PageSection
+            title={section.label()}
+            icon={section.icon}
+            actions={section.actions?.map((thunk) => thunk())}
+          >
+            <LazyContent
+              lazy={section.lazy}
+              forceMountAll={props.forceMountAll}
+              scrollRoot={props.scrollRoot}
+            >
+              {section.children()}
+            </LazyContent>
+          </PageSection>
         </div>
       ))}
     </>

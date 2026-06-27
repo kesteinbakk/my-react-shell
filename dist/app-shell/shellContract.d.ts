@@ -9,6 +9,8 @@
  * never imports i18n.
  */
 import type { ReactNode } from 'react';
+import type { ActionType, ActionButtonTone, ActionButtonSize, ActionButtonLayout } from '../components/ActionButton';
+import type { SearchInputProps } from '../components/SearchInput';
 /**
  * Brand symbol — `Symbol.for` so HMR / multi-bundle duplication compares equal.
  * @internal never import this to forge a brand; go through `defineShellConfig`.
@@ -147,6 +149,22 @@ export interface ShellPageHeaderSearchSlot {
     placeholder?: () => string;
     initialValue?: string;
 }
+export interface PageHeaderSearchAction extends Omit<SearchInputProps, 'action'> {
+    action: 'search';
+}
+export interface PageHeaderPresetAction {
+    action: Exclude<ActionType, 'search'>;
+    onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
+    label?: string;
+    showLabel?: boolean;
+    showEmoji?: boolean;
+    tone?: ActionButtonTone;
+    size?: ActionButtonSize;
+    layout?: ActionButtonLayout;
+    disabled?: boolean;
+    hint?: string;
+}
+export type PageHeaderAction = (() => ReactNode) | ActionType | PageHeaderSearchAction | PageHeaderPresetAction;
 /**
  * Public options for the `usePageHeader` hook — the page chrome a route contributes
  * to the shell band. Every field is optional; a route that contributes none still
@@ -164,7 +182,7 @@ export interface PageHeaderOptions {
      * `layout` prop, since the kit default `vertical` would stack the label under the
      * glyph and blow out the band height. Pass `layout="inline"` anyway for clarity.
      */
-    actions?: Array<() => ReactNode>;
+    actions?: Array<PageHeaderAction>;
     /** Page-level search slot. */
     search?: ShellPageHeaderSearchSlot;
     /** Pinned tab strip rendered under the breadcrumbs. */

@@ -23,7 +23,7 @@ const iconProps = {
     strokeLinejoin: 'round',
 };
 const DEFAULT_ICONS = {
-    info: (_jsxs("svg", { ...iconProps, children: [_jsx("circle", { cx: "12", cy: "12", r: "10" }), _jsx("path", { d: "M12 16v-4" }), _jsx("path", { d: "M12 8h.01" })] })),
+    info: (_jsxs("svg", { ...iconProps, children: [_jsx("path", { d: "M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" }), _jsx("path", { d: "M12 14v-3" }), _jsx("path", { d: "M12 7h.01" })] })),
     success: (_jsxs("svg", { ...iconProps, children: [_jsx("circle", { cx: "12", cy: "12", r: "10" }), _jsx("path", { d: "m9 12 2 2 4-4" })] })),
     warning: (_jsxs("svg", { ...iconProps, children: [_jsx("path", { d: "m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" }), _jsx("path", { d: "M12 9v4" }), _jsx("path", { d: "M12 17h.01" })] })),
     danger: (_jsxs("svg", { ...iconProps, children: [_jsx("polygon", { points: "7.86 2 16.14 2 22 7.86 22 16.14 16.14 22 7.86 22 2 16.14 2 7.86" }), _jsx("path", { d: "M12 8v4" }), _jsx("path", { d: "M12 16h.01" })] })),

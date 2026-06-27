@@ -35,7 +35,9 @@ export type { ShellContextValue } from './shellContext'
 export { PageTabs } from './PageTabs'
 export type { PageTab, PageTabsProps } from './PageTabs'
 export { PageSections } from './PageSections'
-export type { PageSection, PageSectionsMode, PageSectionsProps } from './pageSections/types'
+export type { PageSectionsMode, PageSectionsProps } from './pageSections/types'
+export { PageSection } from './PageSectionExport'
+export type { PageSectionProps } from './PageSection'
 
 // ── contract types ────────────────────────────────────────────────────────────
 export type {
@@ -52,4 +54,7 @@ export type {
   ShellIconRenderer,
   ShellChromeLabels,
   PageHeaderOptions,
+  PageHeaderAction,
+  PageHeaderSearchAction,
+  PageHeaderPresetAction,
 } from './shellContract'

@@ -28,7 +28,7 @@
  * only the standalone fallback.
  */
 import type { ReactNode } from 'react';
-import type { PageSection } from './types';
+import type { PageSection as PageSectionConfig } from './types';
 interface LazyContentProps {
     lazy?: boolean;
     forceMountAll: boolean;
@@ -44,7 +44,7 @@ interface LazyContentProps {
 }
 export declare function LazyContent(props: LazyContentProps): ReactNode;
 interface ListModeProps {
-    sections: PageSection[];
+    sections: PageSectionConfig[];
     registerRef: (id: string, el: HTMLElement | null) => void;
     forceMountAll: boolean;
     /** Scroll container — threaded through to LazyContent as IO root. */
@@ -52,11 +52,11 @@ interface ListModeProps {
     renderIcon?: (key: string, size: number) => ReactNode;
 }
 interface SingleModeProps {
-    sections: PageSection[];
+    sections: PageSectionConfig[];
     activeId: string;
 }
 interface SectionTabsStripProps {
-    sections: PageSection[];
+    sections: PageSectionConfig[];
     activeId: string;
     onTabClick: (id: string) => void;
     className?: string;

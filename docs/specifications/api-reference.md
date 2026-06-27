@@ -273,7 +273,7 @@ import 'my-react-shell/components/styles.css' // REQUIRED (plain prebuilt CSS; a
 | `Avatar`, `AvatarGroup` | component | Image + initials fallback (also on image error); falls back to a person icon/emoji when no `fallback` is set (`showEmoji` follows the icons↔emojis seam); group stacks with `+N` overflow. |
 | `Table` | component | Column-config data table: per-column sort, zebra, sticky header, empty state. Whole-row click (`onRowClick`, suppressed for clicks on in-cell controls/expand cells), an expandable per-row detail region (`renderExpanded`, kit-owned disclosure toggle + open state, full-width below the row; supply `renderDisclosure(row, isOpen, toggle)` to replace the kit's chevron with a consumer-styled control), per-cell expansion (`TableColumn.cellExpand(row)` — clicking cells in that column toggles a detail region keyed to that column, radio-style; one cell open at a time), per-row emphasis (`rowVariant`: `default`·`muted`·`selected`), and `frameless` to drop the wrapper border/radius when nesting inside a `Card`. `columns` is a plain array, so a dynamic column set can be built at render time. `TableColumn.align` sets the alignment for both the header and content cells equally (default `left`); `TableColumn.headerAlign` overrides alignment for just the header, leaving content at `align`. |
 | `PhiCard`, `PHI` | component + const | Golden-ratio card (W:H = φ:1): a figure (`icon`/`image`) fills its column, a centered text body (`upper` + `content`), and a structured `footer` (meta lines + stacked badges, per-size caps) or freeform `lower`. Collapses when there's no footer. Top-right ⋮ menu via `actions` or a `corner` slot. Uses the `@radix-ui/react-dropdown-menu` optional peer. |
-| `StatCard` | component | φ-framed KPI/status card (same size system as PhiCard). Title + subtitle, an optional accent badge circle (plain number+label **or** SVG arc-ring when `badge.max` is set), a stats row **or** a freeform `body` center slot (vertically centered; suppresses stats), and a structured `footer` or freeform `lower`. Accent stripe (`accentPlacement` top/left) + badge tint driven by `tone` (semantic tokens) or a raw CSS `color`. `variant` (`'warning'`·`'danger'`) overrides tone, forces ⚠️ watermark, and colors `body` text to match. Optional left-edge completion gauge (`sideBarCompleteness`, red→amber→green) that coexists with the top stripe, or drives the whole accent's color via `topStripeFollowsGauge`. Optional emoji `watermark`. Hover-lift via `onClick`/`hoverable`. |
+| `StatCard` | component | φ-framed KPI/status card (same size system as PhiCard). Title + subtitle, an optional accent medallion circle (plain number+label **or** SVG arc-ring when `medallion.max` is set), a stats row **or** a freeform `body` center slot (vertically centered; suppresses stats), and a structured `footer` or freeform `lower`. Accent stripe (`accentPlacement` top/left) + medallion tint driven by `tone` (semantic tokens) or a raw CSS `color`. `variant` (`'warning'`·`'danger'`) overrides tone, forces ⚠️ watermark, and colors `body` text to match. Optional left-edge completion gauge (`sideBarCompleteness`, red→amber→green) that coexists with the top stripe, or drives the whole accent's color via `topStripeFollowsGauge`. Optional emoji `watermark`. Hover-lift via `onClick`/`hoverable`. |
 | `InputField` | component | Full field: label + input + helper + error, a11y-wired (`htmlFor`/`aria-invalid`/`aria-describedby`). Spreads native input props; pass `error` to switch on error styling. `inputSize` (`sm`·`md`·`lg`, default `md`) matches the `Input` height/padding scale. `onDebouncedChange(value)` (fires `debounceMs` after the user stops typing; default 500 ms), `saveStatus` (visual status `'idle'`·`'pending'`·`'saving'`·`'saved'`·`'error'`). |
 | `SegmentedControl` | component | Single-select `radiogroup` on a track; controlled via `value`/`onChange`; generic over value type. |
 | `Select` | component | Opinionated select on Radix Select (keyboard nav, typeahead, portal); `options` list; controlled via `value`/`onValueChange`; `size` (`sm`·`md`·`lg`, default `md`) matches the `Input` height/padding scale; `saveStatus` (visual status `'idle'`·`'pending'`·`'saving'`·`'saved'`·`'error'`); optional `label` (renders above the select trigger); supports custom `className` and `style` on the trigger. |
@@ -311,7 +311,7 @@ Every component has a matching `…Props` type export (e.g. `ButtonProps`, `Butt
 `SelectOption`, `SelectSize`, `SegmentedOption`, `BadgeTone`, `CountPillProps`, `CountPillTone`, `AvatarSize`, `ActionType`,
 `ActionPreset`, `ActionButtonTone`/`Size`/`Layout`, `PhiCardProps`, `PhiCardAction`,
 `PhiCardSize`, `PhiCardFooter`, `PhiCardFooterLine`, `PhiCardFooterLineType`,
-`StatCardProps`, `StatCardBadge`, `StatItem`, `StatCardTone`, `StatCardVariant`,
+`StatCardProps`, `StatCardMedallion`, `StatItem`, `StatCardTone`, `StatCardVariant`,
 `StatCardFooter`, `StatCardFooterLine`, `StatCardFooterLineType`, `ColorPickerProps`,
 `ColorFormat`, `CollapsibleProps`, `CollapsibleVariant`, `CollapsibleSize`,
 `AccordionProps`, `AccordionItem`, `AccordionVariant`, `AccordionSize`,
@@ -423,6 +423,22 @@ trigger (e.g. a `Popover` / `Tooltip` / `DropdownMenu` anchor) with no wrapper e
   <ActionButton icon={<Upload size={20} />} label="Import" tone="info" onClick={onImport} />
 </ActionButtonGroup>
 ```
+
+### `SearchInput`
+
+An opinionated search input component with built-in debouncing, left magnifier glass icon, custom start/end icons, and a loaded icon state.
+
+| Prop | Default | Meaning |
+|---|---|---|
+| `icon` | magnifier glass | Custom left icon node (overrides the magnifier glass). |
+| `endIcon` | — | Custom right icon node. |
+| `onDebounceSearch` | — | Callback fired with the current value after the user stops typing. |
+| `debounceMs` | `500` | Debounce delay in milliseconds for `onDebounceSearch`. |
+| `value` | — | Controlled input value. |
+| `defaultValue` | — | Default initial value. |
+| `inputSize` | `md` | `sm` · `md` · `lg` — drives height, padding, and font size. |
+| `loadedIconState` | — | `boolean` or `{ icon?, duration?, enabled?, transitionMs? }`. On `true` or `{ enabled: true }`, fades in a green check mark. `duration` defaults to `2000`ms. |
+| All other native `<input>` attributes | — | Spreads standard input props (`placeholder`, `disabled`, `onInput`, `onFocus`, `onBlur`, `className`, etc.). |
 
 ### `ColorPicker`
 
@@ -628,21 +644,21 @@ pass translated labels. The corner never triggers a clickable card's `onClick`.
 
 ### `StatCard`
 
-φ-framed KPI card — same outer dimensions as `PhiCard` (same `size` system, same W:H = φ:1), with a different internal layout: title + subtitle header, an accent badge circle, a data-stats row, and an optional footer or freeform lower slot. Accent stripe + badge tint are driven by `tone` (semantic tokens) or a raw `color` CSS string. An optional left-edge completion gauge (`sideBarCompleteness`) reads independently of the accent, so a top stripe and a side gauge can show at once — or, with `topStripeFollowsGauge`, the whole accent takes the gauge's completeness color.
+φ-framed KPI card — same outer dimensions as `PhiCard` (same `size` system, same W:H = φ:1), with a different internal layout: title + subtitle header, an accent medallion circle, a data-stats row, and an optional footer or freeform lower slot. Accent stripe + medallion tint are driven by `tone` (semantic tokens) or a raw `color` CSS string. An optional left-edge completion gauge (`sideBarCompleteness`) reads independently of the accent, so a top stripe and a side gauge can show at once — or, with `topStripeFollowsGauge`, the whole accent takes the gauge's completeness color.
 
 | Prop | Default | Meaning |
 |---|---|---|
 | `title` | — | Card title. **Required.** Auto-fits: a very long title steps its font size down in up to three steps (by character count) so it stays within ~two lines without resizing the card. Short titles are unaffected. |
 | `subtitle` | — | Optional subtitle below the title. |
-| `badge` | — | `{ value, label?, max? }` — the top-right circle. Plain circle (number + label) when `max` is absent; SVG arc-ring showing `value/max` progress when `max` is set. |
-| `tone` | `'neutral'` | `'primary'`·`'info'`·`'success'`·`'warning'`·`'danger'`·`'neutral'` — maps to semantic `--color-*` tokens for the accent stripe and badge tint. |
+| `medallion` | — | `{ value, label?, max? }` — the top-right circle. Plain circle (number + label) when `max` is absent; SVG arc-ring showing `value/max` progress when `max` is set. |
+| `tone` | `'neutral'` | `'primary'`·`'info'`·`'success'`·`'warning'`·`'danger'`·`'neutral'` — maps to semantic `--color-*` tokens for the accent stripe and medallion tint. |
 | `color` | — | Raw CSS color (overrides `tone`). E.g. `'var(--color-primary)'` or `'#7c3aed'`. |
 | `accentPlacement` | `'top'` | Where the accent reads: a `'top'` stripe or a `'left'` bar. |
 | `sideBarCompleteness` | — | Left-edge completion gauge — a `0`–`1` fraction (clamped). The colored fill rises from the bottom to `value × height`, interpolating **red → amber → green** (`danger → warning → success` tokens) over a faint track. Independent of `accentPlacement`, so it coexists with a top stripe. **Checked, not defaulted:** `undefined` → no gauge; `0` → gauge with an empty fill. Combining with `accentPlacement='left'` throws in dev; in prod the gauge wins and the left accent stripe is suppressed (no overlap). |
-| `topStripeFollowsGauge` | `false` | When `true`, the **whole accent** (top stripe + badge tint + stat numbers) takes the gauge's completeness color instead of `tone`/`color`, so the card reads as one coherent color, and the stripe is forced to the top edge. Bound to `sideBarCompleteness`: the top stripe renders only when a gauge is present — `undefined` → **no top stripe** (badge + stats fall back to `tone`/`color`). Throws in dev if combined with `accentPlacement='left'`. |
+| `topStripeFollowsGauge` | `false` | When `true`, the **whole accent** (top stripe + medallion tint + stat numbers) takes the gauge's completeness color instead of `tone`/`color`, so the card reads as one coherent color, and the stripe is forced to the top edge. Bound to `sideBarCompleteness`: the top stripe renders only when a gauge is present — `undefined` → **no top stripe** (medallion + stats fall back to `tone`/`color`). Throws in dev if combined with `accentPlacement='left'`. |
 | `stats` | — | `{ value, label?, max? }[]` — data items. `label` → label above + number below. `max` → compact arc-ring. **Cannot combine `label` and `max` on the same item** (throws in dev). Suppressed (not rendered) when `body` is set. |
 | `body` | — | Freeform center slot — vertically centered between the header and `lower`/`footer`. When set, `stats` are not rendered. Body text is accent-colored when `variant` is active. |
-| `variant` | — | `'warning'` · `'danger'` — structural alert variant. Overrides `tone` to the same value (accent stripe, badge tint, and body text all reflect the variant hue) and forces `⚠️` as the watermark background emoji, ignoring the `watermark` prop. |
+| `variant` | — | `'warning'` · `'danger'` — structural alert variant. Overrides `tone` to the same value (accent stripe, medallion tint, and body text all reflect the variant hue) and forces `⚠️` as the watermark background emoji, ignoring the `watermark` prop. |
 | `footer` | — | `{ lines?, badges? }` — same structured shape as `PhiCard`. Throws if given with `lower`. |
 | `lower` | — | Freeform footer node (e.g. a CTA pill via `.mrs-stat-card__cta`). Throws if given with `footer`. |
 | `watermark` | — | Emoji rendered as a faint oversized background watermark. E.g. `'🏆'`. Ignored when `variant` is set. |
@@ -652,25 +668,25 @@ pass translated labels. The corner never triggers a clickable card's `onClick`.
 | `className` | — | Extra classes. |
 
 ```tsx
-// Plain badge circle:
+// Plain medallion circle:
 <StatCard
   size="lg" tone="success" title="Vinnere" subtitle="Unike leverandører"
-  badge={{ value: 27, label: 'LEV' }} watermark="🏆"
+  medallion={{ value: 27, label: 'LEV' }} watermark="🏆"
   stats={[{ value: 18, label: 'Bredde' }, { value: 14, label: 'Spisset' }]}
   lower={<button className="mrs-stat-card__cta" onClick={open}>🏆 Vis resultater →</button>}
   onClick={open}
 />
 
-// Arc-ring badge (badge.max):
+// Arc-ring medallion (medallion.max):
 <StatCard
   size="lg" tone="warning" title="Leveransemodell"
-  badge={{ value: 10, max: 100 }} watermark="📊"
+  medallion={{ value: 10, max: 100 }} watermark="📊"
   stats={[{ value: 10, label: 'Vurdert' }, { value: 100, label: 'Totalt' }]}
 />
 
 // Structured footer (same as PhiCard):
 <StatCard size="xl" tone="info" title="Project Atlas"
-  badge={{ value: 12, label: 'TASKS' }}
+  medallion={{ value: 12, label: 'TASKS' }}
   stats={[{ value: 8, label: 'Done' }, { value: 3, label: 'Open' }]}
   footer={{ lines: [{ type: 'date', text: 'Jun 2026' }], badges: [<Badge tone="success">Live</Badge>] }}
 />
@@ -678,15 +694,15 @@ pass translated labels. The corner never triggers a clickable card's `onClick`.
 // Side completion gauge (red→amber→green) alongside the default top stripe:
 <StatCard
   size="lg" tone="info" title="Onboarding" subtitle="Profile completeness"
-  badge={{ value: 7, label: 'STEPS' }}
+  medallion={{ value: 7, label: 'STEPS' }}
   sideBarCompleteness={0.7}            // 0–1; `0` shows an empty gauge, `undefined` shows none
   stats={[{ value: 7, label: 'Done' }, { value: 3, label: 'Left' }]}
 />
 
-// One coherent color — top stripe + badge + stat numbers all follow the gauge:
+// One coherent color — top stripe + medallion + stat numbers all follow the gauge:
 <StatCard
   size="lg" title="Onboarding" subtitle="Profile completeness"
-  badge={{ value: 7, label: 'STEPS' }}
+  medallion={{ value: 7, label: 'STEPS' }}
   sideBarCompleteness={0.85}
   topStripeFollowsGauge          // tone/color ignored while a gauge is present
   stats={[{ value: 6, label: 'Done' }, { value: 1, label: 'Left' }]}
@@ -864,6 +880,7 @@ import 'my-react-shell/app-shell/styles.css'
 | `findActiveChain` | function | Compute the active breadcrumb chain for a pathname — pure function of `(roots, pathname, dynamicByParent)`. Walks `subPages` recursively at each depth level; merges `useDynamicPages` registrations keyed by parent route. |
 | `PageTabs` | component | Route-based tab strip (each tab = a route). Pin via `usePageHeader({ tabs: () => <PageTabs … /> })`. Scrolls horizontally when it overflows — edge fades + arrow buttons appear on the side(s) with hidden tabs. |
 | `PageSections` | component | In-page sections synced to `?<persistKey>=`. Modes `single` / `list` (scrollspy). Its section-tab strip scrolls horizontally on overflow (edge fades + arrows), like `PageTabs`. |
+| `PageSection` | component | Standalone section card. `title`, `icon` (string key or custom Node), `actions[]`, `children`, `className`. |
 | `useDynamicPages(cfg)` | hook | Register runtime breadcrumb levels (record names, slugs) under a `parent` route. Works at any depth — set `parent` to whichever registered route the dynamic items hang under. Each item may carry `hideCrumb?: () => boolean` to omit it from the rendered trail while keeping it in the chain (the access-gated-ancestor pattern; same semantics as `PageEntry.hideCrumb`), or `disableCrumbLink?: () => boolean` to render the ancestor as a plain label with no click target (same semantics as `PageEntry.disableCrumbLink`). |
 | `useShellContext()`, `useShellContextOptional()` | hook | Read shell context — incl. `scrollContainer` (the only scroller; use instead of `window`). |
 
@@ -873,7 +890,7 @@ import 'my-react-shell/app-shell/styles.css'
 `ShellPageHeaderSearchSlot`, `ShellDocumentTitleMode`, `ShellIconRenderer`,
 `ShellChromeLabels`, plus component props (`AppShellProps`, `AppShellMobileNav`,
 `AppShellContentPadding`, `PageHeaderOptions`, `ChainLevel`, `PageTab`, `PageTabsProps`,
-`PageSection`, `PageSectionsMode`, `PageSectionsProps`, `DynamicPageInput`,
+`PageSection`, `PageSectionProps`, `PageSectionsMode`, `PageSectionsProps`, `DynamicPageInput`,
 `DynamicPagesConfig`, `ShellContextValue`).
 
 **Config value sets** (full reference in the [guide](../guides/app-shell.md#optional-config-root-fields)):
@@ -892,11 +909,12 @@ export const shellConfig = defineShellConfig({
 <AppShell config={shellConfig} useMenu actions={[() => <ThemeToggle/>]} mobileNav="drawer"><Outlet/></AppShell>
 ```
 
-> **Band actions render inline.** An `ActionButton` mounted in `usePageHeader`'s
-> `actions` slot always lays out inline (glyph before label) — the band's stylesheet
-> overrides its `layout` prop, since the kit default `vertical` stacks the label under
-> the glyph and blows out the band height. Pass `layout="inline"` anyway for clarity;
-> icon-only actions are unaffected.
+> **Band actions and shortcuts.** The `actions` slot in `usePageHeader` accepts thunks `(() => ReactNode)` or preset action shortcuts:
+> - Preset strings (e.g. `'add'`, `'edit'`, `'delete'`) which render a standard inline `ActionButton`.
+> - A `'search'` string which renders a default `SearchInput` component with magnifier icon and debouncing. This is meant to be used for filtering or lookups on the content on the current page.
+> - Custom preset objects: `{ action: Exclude<ActionType, 'search'>, onClick?, label?, showLabel?, showEmoji?, tone?, size?, layout?, disabled?, hint? }` to customize standard preset buttons.
+> - Custom search objects: `{ action: 'search', icon?, endIcon?, onDebounceSearch?, debounceMs?, value?, defaultValue?, loadedIconState? }` to customize the search input field.
+> - Any custom ReactNode thunk. An `ActionButton` mounted here always lays out inline (glyph before label).
 >
 > **`route: '/'` is reserved.** Never put `/` in `pages` — `defineShellConfig` throws
 > `ShellConfigError` if you do. Home is always reachable via the brand link and the

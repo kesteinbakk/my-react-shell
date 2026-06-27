@@ -2,6 +2,7 @@ import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate, useRouterState } from '@tanstack/react-router';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
+import { SearchInput as SearchInputComponent, ActionButton } from '../components';
 /**
  * Resolve the breadcrumb chain for a pathname. PURE — a function of the URL
  * pathname plus the static `roots` tree and the runtime `dynamicByParent` map.
@@ -72,7 +73,29 @@ export function ShellPageHeaderUI(props) {
     const className = spec.className
         ? `mrs-page-header ${spec.className}`
         : 'mrs-page-header';
-    return (_jsxs("div", { className: className, "data-border": border, children: [_jsxs("div", { className: "mrs-page-header__row", children: [_jsx(Breadcrumbs, { chain: chain, shell: shell, spec: spec, leafMatchesPath: leafMatchesPath, showMenuButton: showMenuButton, onOpenMenu: onOpenMenu }), hasActions ? (_jsx("div", { className: "mrs-page-header__actions", children: spec.actions.map((thunk, i) => (_jsx("span", { children: thunk() }, i))) })) : null, spec.search ? _jsx(SearchInput, { slot: spec.search, shell: shell }) : null] }), spec.tabs ? (_jsx("div", { className: "mrs-page-header__tabs", children: spec.tabs() })) : null] }));
+    return (_jsxs("div", { className: className, "data-border": border, children: [_jsxs("div", { className: "mrs-page-header__row", children: [_jsx(Breadcrumbs, { chain: chain, shell: shell, spec: spec, leafMatchesPath: leafMatchesPath, showMenuButton: showMenuButton, onOpenMenu: onOpenMenu }), hasActions ? (_jsx("div", { className: "mrs-page-header__actions", children: spec.actions.map((actionItem, i) => {
+                            if (typeof actionItem === 'function') {
+                                const actionThunk = actionItem;
+                                return _jsx("span", { children: actionThunk() }, i);
+                            }
+                            if (actionItem === 'search') {
+                                return _jsx(SearchInputComponent, {}, i);
+                            }
+                            if (typeof actionItem === 'string') {
+                                return (_jsx("span", { children: _jsx(ActionButton, { action: actionItem }) }, i));
+                            }
+                            if (typeof actionItem === 'object' && actionItem !== null) {
+                                if (actionItem.action === 'search') {
+                                    const { action, ...searchProps } = actionItem;
+                                    return _jsx(SearchInputComponent, { ...searchProps }, i);
+                                }
+                                if (actionItem.action) {
+                                    const presetAction = actionItem;
+                                    return (_jsx("span", { children: _jsx(ActionButton, { action: presetAction.action, onClick: presetAction.onClick, label: presetAction.label, showLabel: presetAction.showLabel, showEmoji: presetAction.showEmoji, tone: presetAction.tone, size: presetAction.size, layout: presetAction.layout, disabled: presetAction.disabled, hint: presetAction.hint }) }, i));
+                                }
+                            }
+                            return null;
+                        }) })) : null, spec.search ? _jsx(HeaderSearchInput, { slot: spec.search, shell: shell }) : null] }), spec.tabs ? (_jsx("div", { className: "mrs-page-header__tabs", children: spec.tabs() })) : null] }));
 }
 /** Default middle-collapse: keep the first crumb + the last two (incl. leaf). */
 const DEFAULT_BREADCRUMB_COLLAPSE = {
@@ -151,7 +174,7 @@ function LeafDropdown(props) {
     const navigate = useNavigate();
     return (_jsxs(DropdownMenu.Root, { children: [_jsx(DropdownMenu.Trigger, { asChild: true, children: _jsxs("button", { type: "button", className: "mrs-breadcrumbs__leaf", title: label, children: [_jsx("span", { className: "mrs-breadcrumbs__label", children: label }), _jsx("span", { className: "mrs-breadcrumbs__caret", children: shell.config.renderIcon('chevronDown', 16) })] }) }), _jsx(DropdownMenu.Portal, { children: _jsx(DropdownMenu.Content, { className: "mrs-breadcrumbs__menu", children: siblings.map(s => (_jsxs(DropdownMenu.Item, { className: "mrs-breadcrumbs__menu-item", "data-current": s.id === selectedId, onSelect: () => navigate({ to: s.route }), children: [shell.config.renderIcon(s.icon, 16), s.label()] }, s.id))) }) })] }));
 }
-function SearchInput(props) {
+function HeaderSearchInput(props) {
     const { slot, shell } = props;
     const [value, setValue] = useState(slot.initialValue ?? '');
     const placeholder = slot.placeholder?.();

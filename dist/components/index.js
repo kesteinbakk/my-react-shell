@@ -39,6 +39,7 @@ export { Table } from './Table';
 export { PhiCard, PHI } from './PhiCard';
 export { StatCard } from './StatCard';
 export { InputField } from './InputField';
+export { SearchInput } from './SearchInput';
 export { SegmentedControl } from './SegmentedControl';
 export { Select } from './Select';
 export { Checkbox } from './Checkbox';

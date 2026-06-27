@@ -24,3 +24,4 @@ export { useShellContext, useShellContextOptional } from './shellContext';
 // ── page tabs ─────────────────────────────────────────────────────────────────
 export { PageTabs } from './PageTabs';
 export { PageSections } from './PageSections';
+export { PageSection } from './PageSectionExport';

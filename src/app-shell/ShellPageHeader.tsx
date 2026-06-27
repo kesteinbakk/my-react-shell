@@ -27,8 +27,11 @@ import type {
   ShellBreadcrumbCollapseConfig,
   ShellPageHeaderSearchSlot,
   ShellPageHeaderSpec,
+  PageHeaderPresetAction,
+  PageHeaderSearchAction,
 } from './shellContract'
 import type { ShellContextValue } from './shellContext'
+import { SearchInput as SearchInputComponent, ActionButton } from '../components'
 
 /* ── Breadcrumb chain (pure) ─────────────────────────────────────────────── */
 
@@ -148,13 +151,56 @@ export function ShellPageHeaderUI(props: ShellPageHeaderUIProps): ReactNode {
 
         {hasActions ? (
           <div className="mrs-page-header__actions">
-            {spec.actions!.map((thunk, i) => (
-              <span key={i}>{thunk()}</span>
-            ))}
+            {spec.actions!.map((actionItem, i) => {
+              if (typeof actionItem === 'function') {
+                const actionThunk = actionItem as () => ReactNode
+                return <span key={i}>{actionThunk()}</span>
+              }
+
+              if (actionItem === 'search') {
+                return <SearchInputComponent key={i} />
+              }
+
+              if (typeof actionItem === 'string') {
+                return (
+                  <span key={i}>
+                    <ActionButton action={actionItem} />
+                  </span>
+                )
+              }
+
+              if (typeof actionItem === 'object' && actionItem !== null) {
+                if (actionItem.action === 'search') {
+                  const { action, ...searchProps } = actionItem as PageHeaderSearchAction
+                  return <SearchInputComponent key={i} {...searchProps} />
+                }
+                if (actionItem.action) {
+                  const presetAction = actionItem as PageHeaderPresetAction
+                  return (
+                    <span key={i}>
+                      <ActionButton
+                        action={presetAction.action}
+                        onClick={presetAction.onClick}
+                        label={presetAction.label}
+                        showLabel={presetAction.showLabel}
+                        showEmoji={presetAction.showEmoji}
+                        tone={presetAction.tone}
+                        size={presetAction.size}
+                        layout={presetAction.layout}
+                        disabled={presetAction.disabled}
+                        hint={presetAction.hint}
+                      />
+                    </span>
+                  )
+                }
+              }
+
+              return null
+            })}
           </div>
         ) : null}
 
-        {spec.search ? <SearchInput slot={spec.search} shell={shell} /> : null}
+        {spec.search ? <HeaderSearchInput slot={spec.search} shell={shell} /> : null}
       </div>
 
       {spec.tabs ? (
@@ -421,12 +467,12 @@ function LeafDropdown(props: LeafDropdownProps): ReactNode {
 
 /* ── Search input ────────────────────────────────────────────────────────── */
 
-interface SearchInputProps {
+interface HeaderSearchInputProps {
   slot: ShellPageHeaderSearchSlot
   shell: ShellContextValue
 }
 
-function SearchInput(props: SearchInputProps): ReactNode {
+function HeaderSearchInput(props: HeaderSearchInputProps): ReactNode {
   const { slot, shell } = props
   const [value, setValue] = useState(slot.initialValue ?? '')
   const placeholder = slot.placeholder?.()

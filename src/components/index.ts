@@ -126,7 +126,7 @@ export type {
 export { StatCard } from './StatCard'
 export type {
   StatCardProps,
-  StatCardBadge,
+  StatCardMedallion,
   StatItem,
   StatCardTone,
   StatCardFooter,
@@ -136,6 +136,9 @@ export type {
 
 export { InputField } from './InputField'
 export type { InputFieldProps } from './InputField'
+
+export { SearchInput } from './SearchInput'
+export type { SearchInputProps, SearchInputSize } from './SearchInput'
 
 
 export { SegmentedControl } from './SegmentedControl'

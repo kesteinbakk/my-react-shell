@@ -1,4 +1,4 @@
-import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "react/jsx-runtime";
+import { jsx as _jsx, Fragment as _Fragment, jsxs as _jsxs } from "react/jsx-runtime";
 /**
  * Render components for the two `<PageSections>` modes.
  *
@@ -31,6 +31,7 @@ import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "react/jsx-run
 import { useEffect, useRef, useState } from 'react';
 import { ScrollableTabRow } from '../ScrollableTabRow';
 import { useShellContextOptional } from '../shellContext';
+import { PageSection } from '../PageSection';
 export function LazyContent(props) {
     if (!props.lazy)
         return props.children;
@@ -73,7 +74,7 @@ export function SectionsListMode(props) {
             // `margin-right` (via .mrs-section): the card's rounded right edge
             // would otherwise butt against the scroll container's vertical
             // scrollbar — the gap keeps the rounded corner clear of the track.
-            className: "mrs-section", children: _jsxs("div", { className: "mrs-section__card", children: [_jsxs("div", { className: "mrs-section__head", children: [section.icon && props.renderIcon?.(section.icon, 18), _jsx("h3", { className: "mrs-section__title", children: section.label() }), (section.actions?.length ?? 0) > 0 && (_jsx("div", { className: "mrs-section__actions", children: section.actions.map((thunk, i) => (_jsx("span", { children: thunk() }, i))) }))] }), _jsx("div", { className: "mrs-section__body", children: _jsx(LazyContent, { lazy: section.lazy, forceMountAll: props.forceMountAll, scrollRoot: props.scrollRoot, children: section.children() }) })] }) }, section.id))) }));
+            className: "mrs-section", children: _jsx(PageSection, { title: section.label(), icon: section.icon, actions: section.actions?.map((thunk) => thunk()), children: _jsx(LazyContent, { lazy: section.lazy, forceMountAll: props.forceMountAll, scrollRoot: props.scrollRoot, children: section.children() }) }) }, section.id))) }));
 }
 export function SectionsSingleMode(props) {
     return (_jsx(_Fragment, { children: props.sections.map((section) => section.id === props.activeId ? _jsx("div", { children: section.children() }, section.id) : null) }));
