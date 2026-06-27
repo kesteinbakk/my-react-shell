@@ -130,12 +130,17 @@ export function ShellPageHeaderUI(props: ShellPageHeaderUIProps): ReactNode {
     )
   }, [pathname, leafMatchesPath, leaf, shell.dynamicPages])
 
-  const border = config.shellPageHeader?.border ?? true
-  const hasActions = (spec.actions?.length ?? 0) > 0
+  const alertAction = shell.pageAlertSpec
+
+  const hideOther = alertAction?.hideOtherActions === true
+  const visibleActions = hideOther ? undefined : spec.actions
+  const hasActions = (visibleActions?.length ?? 0) > 0 || alertAction !== null
 
   const className = spec.className
     ? `mrs-page-header ${spec.className}`
     : 'mrs-page-header'
+
+  const border = config.shellPageHeader?.border ?? true
 
   return (
     <div className={className} data-border={border}>
@@ -151,7 +156,13 @@ export function ShellPageHeaderUI(props: ShellPageHeaderUIProps): ReactNode {
 
         {hasActions ? (
           <div className="mrs-page-header__actions">
-            {spec.actions!.map((actionItem, i) => {
+            {alertAction ? (
+              <span className={`mrs-page-header__error-action mrs-page-header__error-action--${alertAction.tone}`}>
+                {shell.config.renderIcon('alert', 16)}
+                <span className="mrs-page-header__error-label">{alertAction.label}</span>
+              </span>
+            ) : null}
+            {visibleActions?.map((actionItem, i) => {
               if (typeof actionItem === 'function') {
                 const actionThunk = actionItem as () => ReactNode
                 return <span key={i}>{actionThunk()}</span>
@@ -200,7 +211,7 @@ export function ShellPageHeaderUI(props: ShellPageHeaderUIProps): ReactNode {
           </div>
         ) : null}
 
-        {spec.search ? <HeaderSearchInput slot={spec.search} shell={shell} /> : null}
+        {(!hideOther && spec.search) ? <HeaderSearchInput slot={spec.search} shell={shell} /> : null}
       </div>
 
       {spec.tabs ? (

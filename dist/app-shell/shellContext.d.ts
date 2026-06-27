@@ -7,7 +7,7 @@
  * page-header spec and dynamic-pages map are plain React state too. `<AppShell>`
  * owns and rebuilds the value via `useMemo` keyed on its reactive pieces.
  */
-import type { PageEntry, ShellConfig, ShellPageHeaderSpec } from './shellContract';
+import type { PageEntry, ShellConfig, ShellPageHeaderSpec, PageHeaderAlertSpec } from './shellContract';
 /** One dynamic page — same fields as `PageEntry`, produced at runtime. */
 export interface DynamicPagesEntry extends PageEntry {
 }
@@ -24,6 +24,13 @@ export interface ShellContextValue {
     dynamicPages: Record<string, DynamicPagesEntry[]>;
     /** Internal — `useDynamicPages` registers a registrant's children under a parent. Returns an unregister. */
     registerDynamicPages: (registrantId: string, parent: string, items: DynamicPagesEntry[]) => () => void;
+    /** The global page-level alert spec, or `null`. */
+    pageAlertSpec: PageHeaderAlertSpec | null;
+    /** Internal — `usePageAlert` registers a global page-level alert. Returns an unregister. */
+    registerPageAlert: (spec: PageHeaderAlertSpec) => {
+        update: (next: PageHeaderAlertSpec) => void;
+        unregister: () => void;
+    };
     /** The winning page-header spec (deepest-mounted contributor), or `null`. */
     pageHeaderSpec: ShellPageHeaderSpec | null;
     /**
@@ -44,6 +51,10 @@ export interface ShellContextValue {
 export interface ShellAPIContextValue {
     setScrollContainer: (el: HTMLElement | null) => void;
     registerDynamicPages: (registrantId: string, parent: string, items: DynamicPagesEntry[]) => () => void;
+    registerPageAlert: (spec: PageHeaderAlertSpec) => {
+        update: (next: PageHeaderAlertSpec) => void;
+        unregister: () => void;
+    };
     registerPageHeader: (order: number, spec: ShellPageHeaderSpec) => {
         update: (next: ShellPageHeaderSpec) => void;
         unregister: () => void;

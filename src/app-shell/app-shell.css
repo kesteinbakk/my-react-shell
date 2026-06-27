@@ -430,6 +430,42 @@ button.mrs-breadcrumbs__leaf {
     order: 3;
   }
 }
+.mrs-page-header__actions:has(.mrs-page-header__error-action) {
+  flex: 1;
+  margin-left: 0;
+}
+.mrs-page-header__error-action {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.375rem 0.75rem;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  flex: 1;
+  min-width: 0;
+  margin-right: auto;
+}
+.mrs-page-header__error-action--danger {
+  background: var(--color-danger-bg);
+  color: var(--color-danger-on-bg);
+}
+.mrs-page-header__error-action--warning {
+  background: var(--color-warning-bg);
+  color: var(--color-warning-on-bg);
+}
+.mrs-page-header__error-action--success {
+  background: var(--color-success-bg);
+  color: var(--color-success-on-bg);
+}
+.mrs-page-header__error-action--info {
+  background: var(--color-info-bg);
+  color: var(--color-info-on-bg);
+}
+.mrs-page-header__error-label {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 /* Header-band guard: any ActionButton in the actions slot lays out inline (glyph
    before label), overriding its `layout` prop. The kit's ActionButton defaults to
    `vertical`, which stacks the label under the glyph — right for standalone

@@ -17,6 +17,7 @@ export { AppMenu } from './AppMenu';
 export { AppBottomNav } from './AppBottomNav';
 // ── page header + config ──────────────────────────────────────────────────────
 export { usePageHeader } from './usePageHeader';
+export { usePageAlert } from './usePageAlert';
 export { findActiveChain } from './ShellPageHeader';
 export { useDynamicPages } from './useDynamicPages';
 export { defineShellConfig, ShellConfigError } from './defineShellConfig';

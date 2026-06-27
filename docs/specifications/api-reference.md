@@ -653,6 +653,7 @@ pass translated labels. The corner never triggers a clickable card's `onClick`.
 | `title` | — | Card title. **Required.** Auto-fits: a very long title steps its font size down in up to three steps (by character count) so it stays within ~two lines without resizing the card. Short titles are unaffected. |
 | `subtitle` | — | Optional subtitle below the title. |
 | `medallion` | — | `{ value, label?, max? }` — the top-right circle. Plain circle (number + label) when `max` is absent; SVG arc-ring showing `value/max` progress when `max` is set. |
+| `onMedallionPress` | — | Optional callback triggered when the medallion is clicked. When set, the medallion renders as a `<button>` with a pressable hover/active lift effect. |
 | `tone` | `'neutral'` | `'primary'`·`'info'`·`'success'`·`'warning'`·`'danger'`·`'neutral'` — maps to semantic `--color-*` tokens for the accent stripe and medallion tint. |
 | `color` | — | Raw CSS color (overrides `tone`). E.g. `'var(--color-primary)'` or `'#7c3aed'`. |
 | `accentPlacement` | `'top'` | Where the accent reads: a `'top'` stripe or a `'left'` bar. |
@@ -866,9 +867,9 @@ shell-config contract, and page-tab primitives. Router-coupled (TanStack Router)
 Radix — both optional peers. **Guide:** [app-shell.md](../guides/app-shell.md).
 
 ```ts
-import { AppShell, usePageHeader, PageTabs, PageSections, useDynamicPages,
+import { AppShell, usePageHeader, usePageAlert, PageTabs, PageSections, useDynamicPages,
          defineShellConfig, ShellConfigError, useShellContext } from 'my-react-shell/app-shell'
-import type { ShellConfig, ShellConfigInput, PageEntry, PageHeaderOptions /* … */ } from 'my-react-shell/app-shell'
+import type { ShellConfig, ShellConfigInput, PageEntry, PageHeaderOptions, PageHeaderAlertSpec /* … */ } from 'my-react-shell/app-shell'
 import 'my-react-shell/app-shell/styles.css'
 ```
 
@@ -879,6 +880,7 @@ import 'my-react-shell/app-shell/styles.css'
 | `AppShell` | component | Mount once at root. `config`, `useMenu` (sidebar vs banner), `actions[]`, `mobileNav` (`'drawer'`\|`'tabBar'`), `children`. |
 | `AppHeader`, `AppMenu`, `AppBottomNav` | component | Chrome sub-parts (usually composed by `AppShell`). |
 | `usePageHeader(options)` | hook | Call from a route subtree to add page chrome to the band — `title`/`actions`/`search`/`tabs`/`documentTitle`/`className`. The band shows **automatically** from the URL chain; call this only to *add* chrome. When more than one call is active (e.g. a layout band + a leaf's actions), the **deepest-mounted wins** and updates in place — no flicker. |
+| `usePageAlert(spec)` | hook | Set a global page-level alert in the header band (`{ label, tone, hideOtherActions? }`). If `hideOtherActions` is true, the renderer hides the regular actions and search input. |
 | `findActiveChain` | function | Compute the active breadcrumb chain for a pathname — pure function of `(roots, pathname, dynamicByParent)`. Walks `subPages` recursively at each depth level; merges `useDynamicPages` registrations keyed by parent route. |
 | `PageTabs` | component | Route-based tab strip (each tab = a route). Pin via `usePageHeader({ tabs: () => <PageTabs … /> })`. Scrolls horizontally when it overflows — edge fades + arrow buttons appear on the side(s) with hidden tabs. |
 | `PageSections` | component | In-page sections synced to `?<persistKey>=`. Modes `single` / `list` (scrollspy). Its section-tab strip scrolls horizontally on overflow (edge fades + arrows), like `PageTabs`. |

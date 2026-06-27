@@ -2205,7 +2205,6 @@
   filter: brightness(1.1);
   color: var(--color-info);
   border-color: var(--color-info);
-  --mrs-stat-accent: var(--color-info);
 }
 
 .mrs-stat-card__medallion--pressable:active {
@@ -2255,7 +2254,6 @@
 
 /* Arc percentage text */
 .mrs-stat-card__arc-text {
-  fill: var(--color-text-primary);
   font-variant-numeric: tabular-nums;
 }
 

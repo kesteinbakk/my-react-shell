@@ -53,6 +53,16 @@ export function AppShell({ config, useMenu, actions, subtitle, titleAdornment, f
             unregister: () => setHeaderStack((prev) => prev.filter((e) => e.id !== id)),
         };
     }, []);
+    const [alertStack, setAlertStack] = useState([]);
+    const pageAlertSpec = alertStack.at(-1)?.spec ?? null;
+    const registerPageAlert = useCallback((spec) => {
+        const id = Symbol('shell-page-alert');
+        setAlertStack((prev) => [...prev, { id, spec }]);
+        return {
+            update: (next) => setAlertStack((prev) => prev.map((e) => (e.id === id ? { id, spec: next } : e))),
+            unregister: () => setAlertStack((prev) => prev.filter((e) => e.id !== id)),
+        };
+    }, []);
     // Per-registrant state: parent → registrantId → items.
     // Multiple layout components can each contribute children to the same parent
     // route without clobbering each other. The flat view below is what context
@@ -92,14 +102,17 @@ export function AppShell({ config, useMenu, actions, subtitle, titleAdornment, f
         setScrollContainer: setScrollEl,
         dynamicPages: flatDynamicPages,
         registerDynamicPages,
+        pageAlertSpec,
+        registerPageAlert,
         pageHeaderSpec,
         registerPageHeader,
-    }), [config, scrollEl, flatDynamicPages, registerDynamicPages, pageHeaderSpec, registerPageHeader]);
+    }), [config, scrollEl, flatDynamicPages, registerDynamicPages, pageAlertSpec, registerPageAlert, pageHeaderSpec, registerPageHeader]);
     const apiCtx = useMemo(() => ({
         setScrollContainer: setScrollEl,
         registerDynamicPages,
+        registerPageAlert,
         registerPageHeader,
-    }), [setScrollEl, registerDynamicPages, registerPageHeader]);
+    }), [setScrollEl, registerDynamicPages, registerPageAlert, registerPageHeader]);
     // Document title — single owner; routes without a header fall through to appName.
     const documentTitleText = useMemo(() => {
         const spec = pageHeaderSpec;

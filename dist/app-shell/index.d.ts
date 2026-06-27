@@ -7,6 +7,7 @@ export type { AppMenuProps } from './AppMenu';
 export { AppBottomNav } from './AppBottomNav';
 export type { AppBottomNavProps } from './AppBottomNav';
 export { usePageHeader } from './usePageHeader';
+export { usePageAlert } from './usePageAlert';
 export { findActiveChain } from './ShellPageHeader';
 export type { ChainLevel } from './ShellPageHeader';
 export { useDynamicPages } from './useDynamicPages';

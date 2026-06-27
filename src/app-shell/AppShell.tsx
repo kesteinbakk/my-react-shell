@@ -18,7 +18,7 @@ import type { ReactNode } from 'react'
 import { Link, useRouterState } from '@tanstack/react-router'
 import * as Dialog from '@radix-ui/react-dialog'
 import { SHELL_CONFIG_BRAND } from './shellContract'
-import type { ShellConfig, ShellDocumentTitleMode, ShellPageHeaderSpec } from './shellContract'
+import type { ShellConfig, ShellDocumentTitleMode, ShellPageHeaderSpec, PageHeaderAlertSpec } from './shellContract'
 import {
   ShellContext,
   ShellAPIContext,
@@ -133,6 +133,23 @@ export function AppShell({
     }
   }, [])
 
+  const [alertStack, setAlertStack] = useState<
+    { id: symbol; spec: PageHeaderAlertSpec }[]
+  >([])
+  const pageAlertSpec = alertStack.at(-1)?.spec ?? null
+
+  const registerPageAlert = useCallback((spec: PageHeaderAlertSpec) => {
+    const id = Symbol('shell-page-alert')
+    setAlertStack((prev) => [...prev, { id, spec }])
+    return {
+      update: (next: PageHeaderAlertSpec) =>
+        setAlertStack((prev) =>
+          prev.map((e) => (e.id === id ? { id, spec: next } : e)),
+        ),
+      unregister: () => setAlertStack((prev) => prev.filter((e) => e.id !== id)),
+    }
+  }, [])
+
   // Per-registrant state: parent → registrantId → items.
   // Multiple layout components can each contribute children to the same parent
   // route without clobbering each other. The flat view below is what context
@@ -190,19 +207,22 @@ export function AppShell({
       setScrollContainer: setScrollEl,
       dynamicPages: flatDynamicPages,
       registerDynamicPages,
+      pageAlertSpec,
+      registerPageAlert,
       pageHeaderSpec,
       registerPageHeader,
     }),
-    [config, scrollEl, flatDynamicPages, registerDynamicPages, pageHeaderSpec, registerPageHeader],
+    [config, scrollEl, flatDynamicPages, registerDynamicPages, pageAlertSpec, registerPageAlert, pageHeaderSpec, registerPageHeader],
   )
 
   const apiCtx = useMemo<ShellAPIContextValue>(
     () => ({
       setScrollContainer: setScrollEl,
       registerDynamicPages,
+      registerPageAlert,
       registerPageHeader,
     }),
-    [setScrollEl, registerDynamicPages, registerPageHeader],
+    [setScrollEl, registerDynamicPages, registerPageAlert, registerPageHeader],
   )
 
   // Document title — single owner; routes without a header fall through to appName.

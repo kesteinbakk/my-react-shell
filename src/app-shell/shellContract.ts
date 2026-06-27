@@ -12,6 +12,7 @@
 import type { ReactNode } from 'react'
 import type { ActionType, ActionButtonTone, ActionButtonSize, ActionButtonLayout } from '../components/ActionButton'
 import type { SearchInputProps } from '../components/SearchInput'
+import type { AlertTone } from '../components/Alert'
 
 /**
  * Brand symbol — `Symbol.for` so HMR / multi-bundle duplication compares equal.
@@ -180,6 +181,12 @@ export interface PageHeaderPresetAction {
   layout?: ActionButtonLayout
   disabled?: boolean
   hint?: string
+}
+
+export interface PageHeaderAlertSpec {
+  label: string
+  tone: AlertTone
+  hideOtherActions?: boolean
 }
 
 export type PageHeaderAction =

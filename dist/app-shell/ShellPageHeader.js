@@ -68,34 +68,37 @@ export function ShellPageHeaderUI(props) {
         console.warn(`[AppShell] No registered page for "${pathname}" (nearest ancestor: ${ancestor}). ` +
             'Register it in shell config `pages` or via useDynamicPages.');
     }, [pathname, leafMatchesPath, leaf, shell.dynamicPages]);
-    const border = config.shellPageHeader?.border ?? true;
-    const hasActions = (spec.actions?.length ?? 0) > 0;
+    const alertAction = shell.pageAlertSpec;
+    const hideOther = alertAction?.hideOtherActions === true;
+    const visibleActions = hideOther ? undefined : spec.actions;
+    const hasActions = (visibleActions?.length ?? 0) > 0 || alertAction !== null;
     const className = spec.className
         ? `mrs-page-header ${spec.className}`
         : 'mrs-page-header';
-    return (_jsxs("div", { className: className, "data-border": border, children: [_jsxs("div", { className: "mrs-page-header__row", children: [_jsx(Breadcrumbs, { chain: chain, shell: shell, spec: spec, leafMatchesPath: leafMatchesPath, showMenuButton: showMenuButton, onOpenMenu: onOpenMenu }), hasActions ? (_jsx("div", { className: "mrs-page-header__actions", children: spec.actions.map((actionItem, i) => {
-                            if (typeof actionItem === 'function') {
-                                const actionThunk = actionItem;
-                                return _jsx("span", { children: actionThunk() }, i);
-                            }
-                            if (actionItem === 'search') {
-                                return _jsx(SearchInputComponent, { style: { backgroundColor: 'transparent' } }, i);
-                            }
-                            if (typeof actionItem === 'string') {
-                                return (_jsx("span", { children: _jsx(ActionButton, { action: actionItem }) }, i));
-                            }
-                            if (typeof actionItem === 'object' && actionItem !== null) {
-                                if (actionItem.action === 'search') {
-                                    const { action, ...searchProps } = actionItem;
-                                    return _jsx(SearchInputComponent, { style: { backgroundColor: 'transparent', ...searchProps.style }, ...searchProps }, i);
+    const border = config.shellPageHeader?.border ?? true;
+    return (_jsxs("div", { className: className, "data-border": border, children: [_jsxs("div", { className: "mrs-page-header__row", children: [_jsx(Breadcrumbs, { chain: chain, shell: shell, spec: spec, leafMatchesPath: leafMatchesPath, showMenuButton: showMenuButton, onOpenMenu: onOpenMenu }), hasActions ? (_jsxs("div", { className: "mrs-page-header__actions", children: [alertAction ? (_jsxs("span", { className: `mrs-page-header__error-action mrs-page-header__error-action--${alertAction.tone}`, children: [shell.config.renderIcon('alert', 16), _jsx("span", { className: "mrs-page-header__error-label", children: alertAction.label })] })) : null, visibleActions?.map((actionItem, i) => {
+                                if (typeof actionItem === 'function') {
+                                    const actionThunk = actionItem;
+                                    return _jsx("span", { children: actionThunk() }, i);
                                 }
-                                if (actionItem.action) {
-                                    const presetAction = actionItem;
-                                    return (_jsx("span", { children: _jsx(ActionButton, { action: presetAction.action, onClick: presetAction.onClick, label: presetAction.label, showLabel: presetAction.showLabel, showEmoji: presetAction.showEmoji, tone: presetAction.tone, size: presetAction.size, layout: presetAction.layout, disabled: presetAction.disabled, hint: presetAction.hint }) }, i));
+                                if (actionItem === 'search') {
+                                    return _jsx(SearchInputComponent, { style: { backgroundColor: 'transparent' } }, i);
                                 }
-                            }
-                            return null;
-                        }) })) : null, spec.search ? _jsx(HeaderSearchInput, { slot: spec.search, shell: shell }) : null] }), spec.tabs ? (_jsx("div", { className: "mrs-page-header__tabs", children: spec.tabs() })) : null] }));
+                                if (typeof actionItem === 'string') {
+                                    return (_jsx("span", { children: _jsx(ActionButton, { action: actionItem }) }, i));
+                                }
+                                if (typeof actionItem === 'object' && actionItem !== null) {
+                                    if (actionItem.action === 'search') {
+                                        const { action, ...searchProps } = actionItem;
+                                        return _jsx(SearchInputComponent, { style: { backgroundColor: 'transparent', ...searchProps.style }, ...searchProps }, i);
+                                    }
+                                    if (actionItem.action) {
+                                        const presetAction = actionItem;
+                                        return (_jsx("span", { children: _jsx(ActionButton, { action: presetAction.action, onClick: presetAction.onClick, label: presetAction.label, showLabel: presetAction.showLabel, showEmoji: presetAction.showEmoji, tone: presetAction.tone, size: presetAction.size, layout: presetAction.layout, disabled: presetAction.disabled, hint: presetAction.hint }) }, i));
+                                    }
+                                }
+                                return null;
+                            })] })) : null, (!hideOther && spec.search) ? _jsx(HeaderSearchInput, { slot: spec.search, shell: shell }) : null] }), spec.tabs ? (_jsx("div", { className: "mrs-page-header__tabs", children: spec.tabs() })) : null] }));
 }
 /** Default middle-collapse: keep the first crumb + the last two (incl. leaf). */
 const DEFAULT_BREADCRUMB_COLLAPSE = {
