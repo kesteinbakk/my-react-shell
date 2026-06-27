@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import { type CSSProperties, type ReactNode } from 'react';
 import type { AccentPlacement } from './accent';
 import type { Tone } from './tone';
 import type { PhiCardFooter, PhiCardFooterLine, PhiCardFooterLineType, PhiCardSize } from './PhiCard';
@@ -114,8 +114,20 @@ export interface StatCardProps {
     hoverable?: boolean;
     /** Click handler for the medallion. */
     onMedallionPress?: () => void;
+    /**
+     * Enables the drag handler. If `true`, renders a built-in top-center grip handle.
+     * If a `ReactNode`, renders your custom handle.
+     */
+    dragHandle?: boolean | ReactNode;
+    /**
+     * The event listeners and attributes from your DND library (e.g. `@dnd-kit`),
+     * spread onto the drag handle element.
+     */
+    dragHandleProps?: React.HTMLAttributes<HTMLButtonElement>;
     /** Extra classes on the outer card element. */
     className?: string;
+    /** Optional style override. */
+    style?: CSSProperties;
 }
 /**
  * Stat card — a φ-framed KPI/status card with a title, an optional accent
@@ -125,4 +137,4 @@ export interface StatCardProps {
  * The accent stripe, medallion tint, and watermark are driven by `tone` (mapped to
  * semantic tokens) or overridden with a raw CSS `color` string.
  */
-export declare function StatCard({ title, subtitle, medallion, tone, color, accentPlacement, sideBarCompleteness, topStripeFollowsGauge, stats, body, variant, footer, lower, watermark, size, onClick, onMedallionPress, hoverable, className, }: StatCardProps): import("react").JSX.Element;
+export declare const StatCard: import("react").ForwardRefExoticComponent<StatCardProps & import("react").RefAttributes<HTMLDivElement>>;

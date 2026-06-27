@@ -1,4 +1,4 @@
-import type { CSSProperties, ReactNode } from 'react'
+import { forwardRef, type CSSProperties, type ReactNode } from 'react'
 import { cn } from './cn'
 import { resolveAccentColor } from './accent'
 import type { AccentPlacement } from './accent'
@@ -149,8 +149,20 @@ export interface StatCardProps {
   hoverable?: boolean
   /** Click handler for the medallion. */
   onMedallionPress?: () => void
+  /**
+   * Enables the drag handler. If `true`, renders a built-in top-center grip handle.
+   * If a `ReactNode`, renders your custom handle.
+   */
+  dragHandle?: boolean | ReactNode
+  /**
+   * The event listeners and attributes from your DND library (e.g. `@dnd-kit`),
+   * spread onto the drag handle element.
+   */
+  dragHandleProps?: React.HTMLAttributes<HTMLButtonElement>
   /** Extra classes on the outer card element. */
   className?: string
+  /** Optional style override. */
+  style?: CSSProperties
 }
 
 // ── Footer glyphs (same kit-shipped icons as PhiCard) ────────────────────────
@@ -289,6 +301,13 @@ function titleFitStep(title: string): 0 | 1 | 2 | 3 {
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
+const DEFAULT_DRAG_HANDLE = (
+  <svg width="64" height="12" viewBox="0 0 64 12" fill="currentColor" aria-hidden="true" opacity="0.4">
+    <rect x="0" y="1" width="64" height="3" rx="1.5" />
+    <rect x="0" y="8" width="64" height="3" rx="1.5" />
+  </svg>
+)
+
 /**
  * Stat card — a φ-framed KPI/status card with a title, an optional accent
  * medallion circle (plain number or arc-ring progress), a row of data stats, and an
@@ -297,27 +316,33 @@ function titleFitStep(title: string): 0 | 1 | 2 | 3 {
  * The accent stripe, medallion tint, and watermark are driven by `tone` (mapped to
  * semantic tokens) or overridden with a raw CSS `color` string.
  */
-export function StatCard({
-  title,
-  subtitle,
-  medallion,
-  tone = 'neutral',
-  color,
-  accentPlacement = 'top',
-  sideBarCompleteness,
-  topStripeFollowsGauge = false,
-  stats,
-  body,
-  variant,
-  footer,
-  lower,
-  watermark,
-  size = 'md',
-  onClick,
-  onMedallionPress,
-  hoverable,
-  className,
-}: StatCardProps) {
+export const StatCard = forwardRef<HTMLDivElement, StatCardProps>(function StatCard(
+  {
+    title,
+    subtitle,
+    medallion,
+    tone = 'neutral',
+    color,
+    accentPlacement = 'top',
+    sideBarCompleteness,
+    topStripeFollowsGauge = false,
+    stats,
+    body,
+    variant,
+    footer,
+    lower,
+    watermark,
+    size = 'md',
+    onClick,
+    onMedallionPress,
+    hoverable,
+    dragHandle,
+    dragHandleProps,
+    className,
+    style: styleProp,
+  },
+  ref,
+) {
   // variant overrides tone to the same value; ⚠️ always used as the watermark.
   const effectiveTone: StatCardTone = variant ?? tone
   const effectiveWatermark = variant ? '⚠️' : watermark
@@ -419,6 +444,7 @@ export function StatCard({
   }
  
   const style = {
+    ...styleProp,
     width: `${width}px`,
     height: `${height}px`,
     fontSize: `${SIZE_FONT_REM[size]}rem`,
@@ -470,6 +496,7 @@ export function StatCard({
  
   return (
     <div
+      ref={ref}
       className={cn(
         'mrs-stat-card',
         !accentSuppressed && `mrs-stat-card--accent-${effectiveAccentPlacement}`,
@@ -483,6 +510,20 @@ export function StatCard({
       data-watermark={effectiveWatermark}
       onClick={onClick}
     >
+      {dragHandle ? (
+        <button
+          type="button"
+          className="mrs-stat-card__drag-handle"
+          aria-label="Drag to reorder"
+          {...dragHandleProps}
+          onClick={(e) => {
+            e.stopPropagation()
+            dragHandleProps?.onClick?.(e as any)
+          }}
+        >
+          {dragHandle === true ? DEFAULT_DRAG_HANDLE : dragHandle}
+        </button>
+      ) : null}
       {showVariantLeftStripe ? (
         <div className="mrs-stat-card__variant-stripe" aria-hidden="true" />
       ) : null}
@@ -548,4 +589,4 @@ export function StatCard({
       </div>
     </div>
   )
-}
+})

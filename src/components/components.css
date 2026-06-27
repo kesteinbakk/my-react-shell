@@ -1753,6 +1753,33 @@
   box-shadow: var(--mrs-elevation-card-hover);
 }
 
+.mrs-phi-card__drag-handle {
+  position: absolute;
+  top: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 8px;
+  background: transparent;
+  border: none;
+  color: var(--color-text-tertiary);
+  cursor: grab !important;
+  border-radius: 4px;
+  transition: background-color 120ms ease, color 120ms ease;
+}
+
+.mrs-phi-card__drag-handle:hover {
+  background-color: var(--color-hover);
+  color: var(--color-text-primary);
+}
+
+.mrs-phi-card__drag-handle:active {
+  cursor: grabbing !important;
+}
+
 /* Optional accent stripe (opt-in via `tone`/`color`) — a 4px bar along the top
    edge (default) or the left edge, per the `accentPlacement` modifier. The stripe
    is an absolute `::before`, so it paints over full-bleed section content but
@@ -2071,6 +2098,33 @@
   box-shadow: 0 0 0 1px var(--color-focus), var(--mrs-elevation-card-hover);
 }
 
+.mrs-stat-card__drag-handle {
+  position: absolute;
+  top: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 8px;
+  background: transparent;
+  border: none;
+  color: var(--color-text-tertiary);
+  cursor: grab !important;
+  border-radius: 4px;
+  transition: background-color 120ms ease, color 120ms ease;
+}
+
+.mrs-stat-card__drag-handle:hover {
+  background-color: var(--color-hover);
+  color: var(--color-text-primary);
+}
+
+.mrs-stat-card__drag-handle:active {
+  cursor: grabbing !important;
+}
+
 /* Inner content — padded flex column, sits above the watermark */
 .mrs-stat-card__inner {
   position: relative;
@@ -2272,6 +2326,7 @@
   display: flex;
   flex-direction: column;
   gap: 0.2em;
+  min-width: 4.5em;
 }
 
 /* Arc-ring stat item — sized like the badge but slightly smaller */

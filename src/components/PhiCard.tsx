@@ -1,4 +1,4 @@
-import type { CSSProperties, ReactNode } from 'react'
+import { forwardRef, type CSSProperties, type ReactNode } from 'react'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 import { cn } from './cn'
 import { resolveAccentColor } from './accent'
@@ -151,6 +151,18 @@ export interface PhiCardProps {
   hoverable?: boolean
   /** Extra classes on the outer card, merged via `cn()`. */
   className?: string
+  /**
+   * Enables the drag handler. If `true`, renders a built-in top-center grip handle.
+   * If a `ReactNode`, renders your custom handle.
+   */
+  dragHandle?: boolean | ReactNode
+  /**
+   * The event listeners and attributes from your DND library (e.g. `@dnd-kit`),
+   * spread onto the drag handle element.
+   */
+  dragHandleProps?: React.HTMLAttributes<HTMLButtonElement>
+  /** Optional style override. */
+  style?: CSSProperties
 }
 
 // A section counts as empty (→ not rendered) for the common "no content" signals.
@@ -206,6 +218,13 @@ function PhiCardMenu({
   )
 }
 
+const DEFAULT_DRAG_HANDLE = (
+  <svg width="64" height="12" viewBox="0 0 64 12" fill="currentColor" aria-hidden="true" opacity="0.4">
+    <rect x="0" y="1" width="64" height="3" rx="1.5" />
+    <rect x="0" y="8" width="64" height="3" rx="1.5" />
+  </svg>
+)
+
 /**
  * Golden-ratio card. Width is the only size knob; height (= width / φ), the φ:1 split,
  * and a base font-size derive from it. The card owns its padding: a figure (`icon` /
@@ -213,28 +232,34 @@ function PhiCardMenu({
  * the footer (`footer` structured, or `lower` freeform) spreads its rows evenly. The
  * bottom collapses (card shortens) when there's no footer.
  */
-export function PhiCard({
-  upper,
-  content,
-  image,
-  imageAlt = '',
-  icon,
-  iconFill = false,
-  lower,
-  footer,
-  divider = false,
-  size = 'md',
-  actions,
-  menuIcon,
-  menuLabel = 'Actions',
-  corner,
-  tone,
-  color,
-  accentPlacement = 'top',
-  onClick,
-  hoverable,
-  className,
-}: PhiCardProps) {
+export const PhiCard = forwardRef<HTMLDivElement, PhiCardProps>(function PhiCard(
+  {
+    upper,
+    content,
+    image,
+    imageAlt = '',
+    icon,
+    iconFill = false,
+    lower,
+    footer,
+    divider = false,
+    size = 'md',
+    actions,
+    menuIcon,
+    menuLabel = 'Actions',
+    corner,
+    tone,
+    color,
+    accentPlacement = 'top',
+    onClick,
+    hoverable,
+    dragHandle,
+    dragHandleProps,
+    className,
+    style: styleProp,
+  },
+  ref,
+) {
   const accent = resolveAccentColor(tone, color)
   const width = SIZE_WIDTH_PX[size]
   const hasIcon = !isEmpty(icon)
@@ -341,6 +366,7 @@ export function PhiCard({
     ) : null)
 
   const style = {
+    ...styleProp,
     width: `${width}px`,
     height: `${height}px`,
     fontSize: `${SIZE_FONT_REM[size]}rem`,
@@ -349,6 +375,7 @@ export function PhiCard({
 
   return (
     <div
+      ref={ref}
       className={cn(
         'mrs-phi-card',
         !hasBottom && 'mrs-phi-card--single',
@@ -360,6 +387,20 @@ export function PhiCard({
       style={style}
       onClick={onClick}
     >
+      {dragHandle ? (
+        <button
+          type="button"
+          className="mrs-phi-card__drag-handle"
+          aria-label="Drag to reorder"
+          {...dragHandleProps}
+          onClick={(e) => {
+            e.stopPropagation()
+            dragHandleProps?.onClick?.(e as any)
+          }}
+        >
+          {dragHandle === true ? DEFAULT_DRAG_HANDLE : dragHandle}
+        </button>
+      ) : null}
       <div className={cn('mrs-phi-card__section', topSectionMod)}>{topContent}</div>
       {hasBottom ? (
         <div
@@ -379,4 +420,4 @@ export function PhiCard({
       ) : null}
     </div>
   )
-}
+})

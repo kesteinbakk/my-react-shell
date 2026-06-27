@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import { type CSSProperties, type ReactNode } from 'react';
 import type { AccentPlacement } from './accent';
 import type { Tone } from './tone';
 /**
@@ -98,6 +98,18 @@ export interface PhiCardProps {
     hoverable?: boolean;
     /** Extra classes on the outer card, merged via `cn()`. */
     className?: string;
+    /**
+     * Enables the drag handler. If `true`, renders a built-in top-center grip handle.
+     * If a `ReactNode`, renders your custom handle.
+     */
+    dragHandle?: boolean | ReactNode;
+    /**
+     * The event listeners and attributes from your DND library (e.g. `@dnd-kit`),
+     * spread onto the drag handle element.
+     */
+    dragHandleProps?: React.HTMLAttributes<HTMLButtonElement>;
+    /** Optional style override. */
+    style?: CSSProperties;
 }
 /**
  * Golden-ratio card. Width is the only size knob; height (= width / φ), the φ:1 split,
@@ -106,4 +118,4 @@ export interface PhiCardProps {
  * the footer (`footer` structured, or `lower` freeform) spreads its rows evenly. The
  * bottom collapses (card shortens) when there's no footer.
  */
-export declare function PhiCard({ upper, content, image, imageAlt, icon, iconFill, lower, footer, divider, size, actions, menuIcon, menuLabel, corner, tone, color, accentPlacement, onClick, hoverable, className, }: PhiCardProps): import("react").JSX.Element;
+export declare const PhiCard: import("react").ForwardRefExoticComponent<PhiCardProps & import("react").RefAttributes<HTMLDivElement>>;

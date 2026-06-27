@@ -1,4 +1,5 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+import { forwardRef } from 'react';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { cn } from './cn';
 import { resolveAccentColor } from './accent';
@@ -36,6 +37,7 @@ const DEFAULT_MENU_GLYPH = (_jsxs("svg", { width: "18", height: "18", viewBox: "
 function PhiCardMenu({ actions, icon, label, }) {
     return (_jsxs(DropdownMenu.Root, { children: [_jsx(DropdownMenu.Trigger, { asChild: true, children: _jsx("button", { type: "button", className: "mrs-phi-card__menu-trigger", "aria-label": label, children: icon ?? DEFAULT_MENU_GLYPH }) }), _jsx(DropdownMenu.Portal, { children: _jsx(DropdownMenu.Content, { className: "mrs-phi-card__menu", align: "end", sideOffset: 4, children: actions.map((action) => (_jsxs(DropdownMenu.Item, { className: cn('mrs-phi-card__menu-item', action.destructive && 'mrs-phi-card__menu-item--danger'), disabled: action.disabled, onSelect: () => action.onSelect(), children: [action.icon != null ? (_jsx("span", { className: "mrs-phi-card__menu-icon", children: action.icon })) : null, _jsx("span", { children: action.label })] }, action.label))) }) })] }));
 }
+const DEFAULT_DRAG_HANDLE = (_jsxs("svg", { width: "64", height: "12", viewBox: "0 0 64 12", fill: "currentColor", "aria-hidden": "true", opacity: "0.4", children: [_jsx("rect", { x: "0", y: "1", width: "64", height: "3", rx: "1.5" }), _jsx("rect", { x: "0", y: "8", width: "64", height: "3", rx: "1.5" })] }));
 /**
  * Golden-ratio card. Width is the only size knob; height (= width / φ), the φ:1 split,
  * and a base font-size derive from it. The card owns its padding: a figure (`icon` /
@@ -43,7 +45,7 @@ function PhiCardMenu({ actions, icon, label, }) {
  * the footer (`footer` structured, or `lower` freeform) spreads its rows evenly. The
  * bottom collapses (card shortens) when there's no footer.
  */
-export function PhiCard({ upper, content, image, imageAlt = '', icon, iconFill = false, lower, footer, divider = false, size = 'md', actions, menuIcon, menuLabel = 'Actions', corner, tone, color, accentPlacement = 'top', onClick, hoverable, className, }) {
+export const PhiCard = forwardRef(function PhiCard({ upper, content, image, imageAlt = '', icon, iconFill = false, lower, footer, divider = false, size = 'md', actions, menuIcon, menuLabel = 'Actions', corner, tone, color, accentPlacement = 'top', onClick, hoverable, dragHandle, dragHandleProps, className, style: styleProp, }, ref) {
     const accent = resolveAccentColor(tone, color);
     const width = SIZE_WIDTH_PX[size];
     const hasIcon = !isEmpty(icon);
@@ -112,10 +114,14 @@ export function PhiCard({ upper, content, image, imageAlt = '', icon, iconFill =
     const cornerNode = corner ??
         (actions && actions.length > 0 ? (_jsx(PhiCardMenu, { actions: actions, icon: menuIcon, label: menuLabel })) : null);
     const style = {
+        ...styleProp,
         width: `${width}px`,
         height: `${height}px`,
         fontSize: `${SIZE_FONT_REM[size]}rem`,
         ...(accent != null ? { '--mrs-phi-accent': accent } : {}),
     };
-    return (_jsxs("div", { className: cn('mrs-phi-card', !hasBottom && 'mrs-phi-card--single', isHoverable && 'mrs-phi-card--hoverable', accent != null && 'mrs-phi-card--accent', accent != null && `mrs-phi-card--accent-${accentPlacement}`, className), style: style, onClick: onClick, children: [_jsx("div", { className: cn('mrs-phi-card__section', topSectionMod), children: topContent }), hasBottom ? (_jsx("div", { className: cn('mrs-phi-card__section', 'mrs-phi-card__section--lower', divider && 'mrs-phi-card__section--divider'), children: hasFooter ? footerNode : lower })) : null, cornerNode != null ? (_jsx("div", { className: "mrs-phi-card__corner", onClick: (e) => e.stopPropagation(), children: cornerNode })) : null] }));
-}
+    return (_jsxs("div", { ref: ref, className: cn('mrs-phi-card', !hasBottom && 'mrs-phi-card--single', isHoverable && 'mrs-phi-card--hoverable', accent != null && 'mrs-phi-card--accent', accent != null && `mrs-phi-card--accent-${accentPlacement}`, className), style: style, onClick: onClick, children: [dragHandle ? (_jsx("button", { type: "button", className: "mrs-phi-card__drag-handle", "aria-label": "Drag to reorder", ...dragHandleProps, onClick: (e) => {
+                    e.stopPropagation();
+                    dragHandleProps?.onClick?.(e);
+                }, children: dragHandle === true ? DEFAULT_DRAG_HANDLE : dragHandle })) : null, _jsx("div", { className: cn('mrs-phi-card__section', topSectionMod), children: topContent }), hasBottom ? (_jsx("div", { className: cn('mrs-phi-card__section', 'mrs-phi-card__section--lower', divider && 'mrs-phi-card__section--divider'), children: hasFooter ? footerNode : lower })) : null, cornerNode != null ? (_jsx("div", { className: "mrs-phi-card__corner", onClick: (e) => e.stopPropagation(), children: cornerNode })) : null] }));
+});
