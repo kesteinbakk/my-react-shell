@@ -50,7 +50,7 @@ export const SearchInput = forwardRef(function SearchInput(props, ref) {
             setShowLoaded(false);
         }
     }, [loadedEnabled, loadedDuration]);
-    const hasEndIcon = endIcon != null || showLoaded;
+    const hasEndIcon = endIcon != null || loadedIconState !== undefined;
     return (_jsxs("div", { className: cn('mrs-search-input-wrapper', `mrs-search-input-wrapper--${inputSize}`, hasEndIcon && 'mrs-search-input-wrapper--has-end-icon'), style: {
             '--mrs-search-transition-duration': `${transitionMs}ms`,
         }, children: [_jsx("span", { className: cn('mrs-search-input-icon-start', `mrs-search-input-icon-start--${inputSize}`), "aria-hidden": "true", children: icon ?? _jsx(SearchIcon, {}) }), _jsx("input", { ref: ref, id: id, type: "text", value: inputValue, onChange: handleChange, className: cn('mrs-search-input', `mrs-search-input--${inputSize}`, hasEndIcon && 'mrs-search-input--has-end-icon', className), ...rest }), endIcon != null && !showLoaded && (_jsx("span", { className: cn('mrs-search-input-icon-end', `mrs-search-input-icon-end--${inputSize}`), children: endIcon })), _jsx("span", { className: cn('mrs-search-input-loaded-icon', `mrs-search-input-loaded-icon--${inputSize}`, showLoaded && 'mrs-search-input-loaded-icon--active'), "aria-hidden": "true", children: loadedIcon })] }));

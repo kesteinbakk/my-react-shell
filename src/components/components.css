@@ -4223,16 +4223,15 @@
   width: 100%;
   border-radius: 0.375rem;
   background: var(--color-surface-sunken);
-  border: 1px solid var(--color-border-primary);
+  border: none;
   color: var(--color-text-primary);
   line-height: normal;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  transition: box-shadow 0.15s ease;
 }
 
 .mrs-search-input:focus {
   outline: none;
   box-shadow: 0 0 0 2px var(--color-focus-ring);
-  border-color: var(--color-focus-ring);
 }
 
 .mrs-search-input-icon-start {

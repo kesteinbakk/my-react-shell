@@ -914,7 +914,7 @@ export const shellConfig = defineShellConfig({
 > - A `'search'` string which renders a default `SearchInput` component with magnifier icon and debouncing. This is meant to be used for filtering or lookups on the content on the current page.
 > - Custom preset objects: `{ action: Exclude<ActionType, 'search'>, onClick?, label?, showLabel?, showEmoji?, tone?, size?, layout?, disabled?, hint? }` to customize standard preset buttons.
 > - Custom search objects: `{ action: 'search', icon?, endIcon?, onDebounceSearch?, debounceMs?, value?, defaultValue?, loadedIconState? }` to customize the search input field.
-> - Any custom ReactNode thunk. An `ActionButton` mounted here always lays out inline (glyph before label).
+> - Any custom ReactNode thunk. An `ActionButton` mounted here always lays out inline (glyph before label). **Anti-pattern:** Action buttons in the header should NEVER be styled as normal buttons (e.g. `<Button>`). Action items must either be default supported strings (e.g. `'add'`), a custom label + icon via `ActionButton`, or an icon-only `ActionButton`.
 >
 > **`route: '/'` is reserved.** Never put `/` in `pages` — `defineShellConfig` throws
 > `ShellConfigError` if you do. Home is always reachable via the brand link and the

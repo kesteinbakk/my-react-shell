@@ -133,7 +133,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
       }
     }, [loadedEnabled, loadedDuration])
 
-    const hasEndIcon = endIcon != null || showLoaded
+    const hasEndIcon = endIcon != null || loadedIconState !== undefined
 
     return (
       <div
