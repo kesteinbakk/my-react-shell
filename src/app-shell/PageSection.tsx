@@ -1,11 +1,12 @@
 import type { ReactNode } from 'react'
 import { useShellContextOptional } from './shellContext'
+import type { ShellIcon } from './shellContract'
 
 export interface PageSectionProps {
   /** The section title text or element. */
   title: ReactNode
   /** Optional icon: a string key resolved by the shell config's renderIcon, or a custom ReactNode. */
-  icon?: ReactNode
+  icon?: Exclude<ReactNode, string> | ShellIcon
   /** Optional actions (elements/buttons) to display on the right side of the header. */
   actions?: ReactNode[]
   /** Custom CSS class name for the card container. */
@@ -30,7 +31,7 @@ export function PageSection({
   const renderIcon = shell?.config.renderIcon
 
   const resolvedIcon =
-    typeof icon === 'string' && renderIcon ? renderIcon(icon, 18) : icon
+    typeof icon === 'string' && renderIcon ? renderIcon(icon as ShellIcon, 18) : icon
 
   return (
     <div className={`mrs-section__card${className ? ` ${className}` : ''}`}>

@@ -21,7 +21,7 @@ import { Link, useRouterState } from '@tanstack/react-router'
 import type { ReactNode } from 'react'
 import { ScrollableTabRow } from './ScrollableTabRow'
 import { useShellContextOptional } from './shellContext'
-import type { ShellTabsVariant } from './shellContract'
+import type { ShellTabsVariant, ShellIcon } from './shellContract'
 
 export interface PageTab {
   /** Stable id (used as render key). */
@@ -29,7 +29,7 @@ export interface PageTab {
   /** Display label (literal string — the consumer pre-translates if needed). */
   label: string
   /** Optional icon key — resolved by the consumer-supplied `renderIcon`. */
-  icon?: string
+  icon?: ShellIcon
   /** Route this tab points at. Click navigates here. */
   route: string
 }

@@ -17,13 +17,14 @@
  * equality. `useShellContextOptional` for the variant; tolerates standalone use.
  */
 import type { ReactNode } from 'react';
+import type { ShellIcon } from './shellContract';
 export interface PageTab {
     /** Stable id (used as render key). */
     id: string;
     /** Display label (literal string — the consumer pre-translates if needed). */
     label: string;
     /** Optional icon key — resolved by the consumer-supplied `renderIcon`. */
-    icon?: string;
+    icon?: ShellIcon;
     /** Route this tab points at. Click navigates here. */
     route: string;
 }

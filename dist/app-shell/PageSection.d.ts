@@ -1,9 +1,10 @@
 import type { ReactNode } from 'react';
+import type { ShellIcon } from './shellContract';
 export interface PageSectionProps {
     /** The section title text or element. */
     title: ReactNode;
     /** Optional icon: a string key resolved by the shell config's renderIcon, or a custom ReactNode. */
-    icon?: ReactNode;
+    icon?: Exclude<ReactNode, string> | ShellIcon;
     /** Optional actions (elements/buttons) to display on the right side of the header. */
     actions?: ReactNode[];
     /** Custom CSS class name for the card container. */

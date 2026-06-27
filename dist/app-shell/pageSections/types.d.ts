@@ -6,6 +6,7 @@
  * notification surface is out of scope for this module.
  */
 import type { ReactNode } from 'react';
+import type { ShellIcon } from '../shellContract';
 export interface PageSection {
     /** Unique identifier. */
     id: string;
@@ -16,7 +17,7 @@ export interface PageSection {
      */
     label: () => string;
     /** Optional icon key — resolved by the consumer-supplied `renderIcon`. */
-    icon?: string;
+    icon?: ShellIcon;
     /**
      * Section content. A thunk — `() => <X />` — never eager JSX.
      *

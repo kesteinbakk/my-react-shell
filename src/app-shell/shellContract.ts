@@ -15,6 +15,25 @@ import type { SearchInputProps } from '../components/SearchInput'
 import type { AlertTone } from '../components/Alert'
 
 /**
+ * Consumer-extensible interface for strict icon typing.
+ * By default it is empty, meaning the shell falls back to `string`.
+ * Consumers can augment this in their own `.d.ts` file:
+ * ```ts
+ * declare module 'my-react-shell/app-shell' {
+ *   interface AppShellIcons extends Record<MyIconName, true> {}
+ * }
+ * ```
+ */
+export interface AppShellIcons {}
+
+/**
+ * The strictly-typed icon key.
+ * If `AppShellIcons` is empty, this resolves to `string`.
+ * If augmented, this strictly resolves to the consumer's keys.
+ */
+export type ShellIcon = keyof AppShellIcons extends never ? string : keyof AppShellIcons
+
+/**
  * Brand symbol — `Symbol.for` so HMR / multi-bundle duplication compares equal.
  * @internal never import this to forge a brand; go through `defineShellConfig`.
  */
@@ -44,7 +63,7 @@ export interface PageEntry {
    */
   label: () => string
   /** Icon key — resolved by the consumer-supplied `renderIcon`. */
-  icon: string
+  icon: ShellIcon
   /** Nested entries — render as breadcrumb-chain levels after the parent. */
   subPages?: PageEntry[]
   /**
@@ -118,7 +137,7 @@ export interface ShellPageHeaderConfig {
  * function that turns an icon key + pixel size into a node. The module ships no
  * icon kit, so this is required.
  */
-export type ShellIconRenderer = (key: string, size: number) => ReactNode
+export type ShellIconRenderer = (key: ShellIcon, size: number) => ReactNode
 
 /**
  * Aria-label / tooltip strings the chrome needs. The consumer supplies
