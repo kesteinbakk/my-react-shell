@@ -45,6 +45,25 @@ export interface ShellContextValue {
   }
 }
 
+export interface ShellAPIContextValue {
+  setScrollContainer: (el: HTMLElement | null) => void
+  registerDynamicPages: (registrantId: string, parent: string, items: DynamicPagesEntry[]) => () => void
+  registerPageHeader: (order: number, spec: ShellPageHeaderSpec) => {
+    update: (next: ShellPageHeaderSpec) => void
+    unregister: () => void
+  }
+}
+
+export const ShellAPIContext = createContext<ShellAPIContextValue | null>(null)
+
+export function useShellAPIContext(): ShellAPIContextValue {
+  const ctx = useContext(ShellAPIContext)
+  if (!ctx) {
+    throw new Error('useShellAPIContext must be called inside <AppShell>')
+  }
+  return ctx
+}
+
 export const ShellContext = createContext<ShellContextValue | null>(null)
 
 /** Read the shell context. Throws if used outside `<AppShell>`. */

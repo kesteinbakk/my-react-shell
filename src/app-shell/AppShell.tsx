@@ -19,8 +19,13 @@ import { Link, useRouterState } from '@tanstack/react-router'
 import * as Dialog from '@radix-ui/react-dialog'
 import { SHELL_CONFIG_BRAND } from './shellContract'
 import type { ShellConfig, ShellDocumentTitleMode, ShellPageHeaderSpec } from './shellContract'
-import { ShellContext } from './shellContext'
-import type { DynamicPagesEntry, ShellContextValue } from './shellContext'
+import {
+  ShellContext,
+  ShellAPIContext,
+  type DynamicPagesEntry,
+  type ShellAPIContextValue,
+  type ShellContextValue,
+} from './shellContext'
 import { ShellPageHeaderUI, findActiveChain } from './ShellPageHeader'
 import { AppHeader } from './AppHeader'
 import { AppMenu } from './AppMenu'
@@ -191,6 +196,15 @@ export function AppShell({
     [config, scrollEl, flatDynamicPages, registerDynamicPages, pageHeaderSpec, registerPageHeader],
   )
 
+  const apiCtx = useMemo<ShellAPIContextValue>(
+    () => ({
+      setScrollContainer: setScrollEl,
+      registerDynamicPages,
+      registerPageHeader,
+    }),
+    [setScrollEl, registerDynamicPages, registerPageHeader],
+  )
+
   // Document title — single owner; routes without a header fall through to appName.
   const documentTitleText = useMemo(() => {
     const spec = pageHeaderSpec
@@ -250,86 +264,88 @@ export function AppShell({
   )
 
   return (
-    <ShellContext.Provider value={ctx}>
-      <div className="mrs-shell" data-content-padding={containerPadding} data-max-width={maxWidth}>
-        {!showMenu && (
-          <div className="mrs-shell__header-row">
-            <AppHeader actions={actions} subtitle={subtitle} titleAdornment={titleAdornment} />
-          </div>
-        )}
-
-        <div className="mrs-shell__middle">
-          {showMenu && menuOnLeft && (
-            <div className="mrs-shell__sidebar mrs-shell__sidebar--left">{menu}</div>
+    <ShellAPIContext.Provider value={apiCtx}>
+      <ShellContext.Provider value={ctx}>
+        <div className="mrs-shell" data-content-padding={containerPadding} data-max-width={maxWidth}>
+          {!showMenu && (
+            <div className="mrs-shell__header-row">
+              <AppHeader actions={actions} subtitle={subtitle} titleAdornment={titleAdornment} />
+            </div>
           )}
 
-          <div className="mrs-shell__page-area">
-            {showBand ? (
-              <div className="mrs-shell__chrome">
-                <div className="mrs-shell__container">
-                  <ShellPageHeaderUI
-                    spec={pageHeaderSpec ?? EMPTY_HEADER_SPEC}
-                    shell={ctx}
-                    showMenuButton={showMenu && !useTabBar}
-                    onOpenMenu={() => setMobileMenuOpen(true)}
-                  />
-                </div>
-              </div>
-            ) : (
-              showMenu && (
-                <div className="mrs-shell__mobile-brand">
-                  {!useTabBar && (
-                    <button
-                      type="button"
-                      className="mrs-shell__hamburger"
-                      onClick={() => setMobileMenuOpen(true)}
-                      aria-label={openMenuLabel}
-                    >
-                      {config.renderIcon('menu', 20)}
-                    </button>
-                  )}
-                  <Link to="/" className="mrs-shell__brand-link">
-                    {brand()}
-                  </Link>
-                </div>
-              )
+          <div className="mrs-shell__middle">
+            {showMenu && menuOnLeft && (
+              <div className="mrs-shell__sidebar mrs-shell__sidebar--left">{menu}</div>
             )}
 
-            <div ref={setScrollEl} className="mrs-shell__content" data-shell-content>
-              <div className="mrs-shell__container mrs-shell__container--fill">{children}</div>
+            <div className="mrs-shell__page-area">
+              {showBand ? (
+                <div className="mrs-shell__chrome">
+                  <div className="mrs-shell__container">
+                    <ShellPageHeaderUI
+                      spec={pageHeaderSpec ?? EMPTY_HEADER_SPEC}
+                      shell={ctx}
+                      showMenuButton={showMenu && !useTabBar}
+                      onOpenMenu={() => setMobileMenuOpen(true)}
+                    />
+                  </div>
+                </div>
+              ) : (
+                showMenu && (
+                  <div className="mrs-shell__mobile-brand">
+                    {!useTabBar && (
+                      <button
+                        type="button"
+                        className="mrs-shell__hamburger"
+                        onClick={() => setMobileMenuOpen(true)}
+                        aria-label={openMenuLabel}
+                      >
+                        {config.renderIcon('menu', 20)}
+                      </button>
+                    )}
+                    <Link to="/" className="mrs-shell__brand-link">
+                      {brand()}
+                    </Link>
+                  </div>
+                )
+              )}
+
+              <div ref={setScrollEl} className="mrs-shell__content" data-shell-content>
+                <div className="mrs-shell__container mrs-shell__container--fill">{children}</div>
+              </div>
             </div>
+
+            {showMenu && !menuOnLeft && (
+              <div className="mrs-shell__sidebar mrs-shell__sidebar--right">{menu}</div>
+            )}
           </div>
 
-          {showMenu && !menuOnLeft && (
-            <div className="mrs-shell__sidebar mrs-shell__sidebar--right">{menu}</div>
+          {footer && (
+            <div
+              className={
+                useTabBar ? 'mrs-shell__footer mrs-shell__footer--hide-mobile' : 'mrs-shell__footer'
+              }
+            >
+              {footer()}
+            </div>
+          )}
+
+          {useTabBar && (
+            <AppBottomNav onOpenMore={() => setMobileMenuOpen(true)} moreOpen={mobileMenuOpen} />
           )}
         </div>
 
-        {footer && (
-          <div
-            className={
-              useTabBar ? 'mrs-shell__footer mrs-shell__footer--hide-mobile' : 'mrs-shell__footer'
-            }
+        {showMenu && (
+          <MobileMenuDrawer
+            open={mobileMenuOpen}
+            onOpenChange={setMobileMenuOpen}
+            side={menuOnLeft ? 'left' : 'right'}
+            title={navLabel}
           >
-            {footer()}
-          </div>
+            {menu}
+          </MobileMenuDrawer>
         )}
-
-        {useTabBar && (
-          <AppBottomNav onOpenMore={() => setMobileMenuOpen(true)} moreOpen={mobileMenuOpen} />
-        )}
-      </div>
-
-      {showMenu && (
-        <MobileMenuDrawer
-          open={mobileMenuOpen}
-          onOpenChange={setMobileMenuOpen}
-          side={menuOnLeft ? 'left' : 'right'}
-          title={navLabel}
-        >
-          {menu}
-        </MobileMenuDrawer>
-      )}
-    </ShellContext.Provider>
+      </ShellContext.Provider>
+    </ShellAPIContext.Provider>
   )
 }

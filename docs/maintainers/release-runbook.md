@@ -53,8 +53,10 @@ work around it:
 - `../themes` is **behind/divergent** from its latest tag → reconcile the checkout.
 
 `--push` is required to publish. Without it, everything is local (tag not pushed) —
-use that only for a dry run. Pushing is gated by the `pre-push-checks` skill
-(clean tree, typecheck, build); the script performs the equivalent.
+use that only for a dry run. **Pushing is still the user's call** — only run `--push`
+on an explicit instruction to release/publish; the local (no-`--push`) form is fine
+to run when preparing. Pushing is gated by the `pre-push-checks` skill (clean tree,
+typecheck, build); the script performs the equivalent.
 
 ## Rule 2 — to release themes ALONE (rare)
 

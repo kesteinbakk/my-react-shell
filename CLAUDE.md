@@ -317,24 +317,13 @@ docs/
 
 ## Releases (agent-handled — never hand steps to the user)
 
-**Releasing is an agent responsibility, every time.** Agents run the release
-commands; never give the user a list of release steps, and never call the release
-guide "your runbook" — it is the **agent rulebook**:
+**Releasing is an agent responsibility, every time.** All instructions, commands,
+and checks for releasing the shell, themes, or a consumer are documented in the
+**agent rulebook**:
 [docs/maintainers/release-runbook.md](docs/maintainers/release-runbook.md) (authoritative,
-self-contained for agents with no context). The user requires 100% dev↔prod visual
-parity and an unfailable, fully-scripted release.
+self-contained for agents with no context).
 
-- **One command ships shell and/or themes changes:** `pnpm release <bump> --push` in
-  this repo. It **auto-cascades themes** — inspects the sibling `../themes`, releases
-  + pushes it if it has unreleased work, pins the shell to that themes tag, then
-  vendors + builds + tags + pushes the shell. You do **not** release themes
-  separately. It aborts only when a human must decide (uncommitted/divergent themes)
-  — relay that, don't work around it.
-- **Deploy a consumer:** `pnpm release <shellTag> --push` in the consumer, then the
-  **parity gate** — eyeball the Vercel preview (the real pinned-tag artifact) and
-  promote it. The consumer depends on **only `my-react-shell`** (themes is vendored).
-- **Pushing is still the user's call** — only run `--push` on an explicit instruction
-  to release/push; the local (no-`--push`) form is fine to run when preparing.
+Read and follow that file exactly when asked to perform a release.
 
 ## Dev servers (agent rules)
 

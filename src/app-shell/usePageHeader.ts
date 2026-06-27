@@ -17,7 +17,7 @@
 
 import { useEffect, useRef } from 'react'
 import type { PageHeaderOptions, ShellPageHeaderSpec } from './shellContract'
-import { useShellContext } from './shellContext'
+import { useShellAPIContext } from './shellContext'
 
 /**
  * Monotonic, module-wide counter handing each `usePageHeader` instance a token in
@@ -30,7 +30,7 @@ let nextHeaderOrder = 0
 
 /** Register page chrome onto the shell band. No-op band-wise if every field is absent. */
 export function usePageHeader(options: PageHeaderOptions): void {
-  const shell = useShellContext()
+  const shell = useShellAPIContext()
 
   // Claim a render-order token once per instance (ref guard ⇒ StrictMode-safe).
   const orderRef = useRef(-1)

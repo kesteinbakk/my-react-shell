@@ -8,6 +8,14 @@
  * owns and rebuilds the value via `useMemo` keyed on its reactive pieces.
  */
 import { createContext, useContext } from 'react';
+export const ShellAPIContext = createContext(null);
+export function useShellAPIContext() {
+    const ctx = useContext(ShellAPIContext);
+    if (!ctx) {
+        throw new Error('useShellAPIContext must be called inside <AppShell>');
+    }
+    return ctx;
+}
 export const ShellContext = createContext(null);
 /** Read the shell context. Throws if used outside `<AppShell>`. */
 export function useShellContext() {

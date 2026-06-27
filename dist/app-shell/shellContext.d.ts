@@ -41,6 +41,16 @@ export interface ShellContextValue {
         unregister: () => void;
     };
 }
+export interface ShellAPIContextValue {
+    setScrollContainer: (el: HTMLElement | null) => void;
+    registerDynamicPages: (registrantId: string, parent: string, items: DynamicPagesEntry[]) => () => void;
+    registerPageHeader: (order: number, spec: ShellPageHeaderSpec) => {
+        update: (next: ShellPageHeaderSpec) => void;
+        unregister: () => void;
+    };
+}
+export declare const ShellAPIContext: import("react").Context<ShellAPIContextValue | null>;
+export declare function useShellAPIContext(): ShellAPIContextValue;
 export declare const ShellContext: import("react").Context<ShellContextValue | null>;
 /** Read the shell context. Throws if used outside `<AppShell>`. */
 export declare function useShellContext(): ShellContextValue;
