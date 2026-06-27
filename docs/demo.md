@@ -81,3 +81,21 @@ reaches the demo is unfinished. The operational lockstep rules live in this repo
 - **A new or renamed `--color-*` token** → add it to `PALETTE_GROUPS` in
   `my-react-shell-demo/src/sections/PaletteReference.tsx`, or it won't appear on the
   palette page.
+
+## Gotchas
+
+### Fonts failing to load with `403 (Forbidden)` in Vite
+When running the demo locally, you might see errors like this in the console or network tab:
+`GET http://localhost:2000/@fs/.../my-react-shell/node_modules/.../geist-latin-wght-normal.woff2 net::ERR_ABORTED 403 (Forbidden)`
+
+**Why this happens:** The demo consumes `my-react-shell` via a `link:` dependency. The font CSS exports from `my-react-shell` reference font files in the shell's `node_modules` (e.g. `@fontsource-variable/geist`). Vite's default security policy restricts serving files outside the consumer's workspace root, causing the 403 error.
+
+**The Fix:** You must explicitly allow Vite to serve files from the shell's directory by updating the consumer's `vite.config.ts`:
+```ts
+server: {
+  fs: {
+    allow: ['.', '../my-react-shell'],
+  },
+},
+```
+*(This is already configured in `my-react-shell-demo`, but keep this in mind if you spin up another test harness. See the `Local dev-loop` section in `docs/guides/distribution-model.md` for full details.)*
