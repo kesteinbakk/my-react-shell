@@ -2167,10 +2167,10 @@
   padding-top: calc(1.1em + 4px);
 }
 .mrs-stat-card--draggable.mrs-stat-card--accent-top .mrs-stat-card__inner {
-  padding-top: calc(2.2em + 4px);
+  padding-top: calc(1.6em + 4px);
 }
 .mrs-stat-card--draggable:not(.mrs-stat-card--accent-top) .mrs-stat-card__inner {
-  padding-top: 2.2em;
+  padding-top: 1.6em;
 }
 .mrs-stat-card--accent-left .mrs-stat-card__inner {
   padding-left: calc(1.1em + 4px);
@@ -2435,6 +2435,14 @@
 .mrs-stat-card__lower {
   margin-top: auto;
   flex-shrink: 0;
+}
+
+/* StatCards reuse the PhiCard footer, but unlike PhiCards, StatCard footers should 
+   only take the height they need, making room for the main content. */
+.mrs-stat-card__lower .mrs-phi-card__footer {
+  height: auto;
+  justify-content: flex-end;
+  gap: 0.5em;
 }
 
 /* When the lower slot is used (freeform, e.g. a CTA pill), it inherits the
