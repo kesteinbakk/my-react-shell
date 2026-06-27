@@ -2201,6 +2201,7 @@
   justify-content: space-between;
   gap: 0.75em;
   flex-shrink: 0;
+  min-height: 3.75em;
 }
 
 .mrs-stat-card__head-text {
@@ -2313,20 +2314,21 @@
 
 /* Stats row — flex wrap, each stat is either label+number or a compact arc */
 .mrs-stat-card__stats {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 0.4em 1.4em;
   margin: 0;
   flex: 1 1 auto;
   align-items: flex-start;
   align-content: flex-start;
+  min-width: 0;
 }
 
 .mrs-stat-card__stat {
   display: flex;
   flex-direction: column;
   gap: 0.2em;
-  min-width: 4.5em;
+  min-width: 0;
 }
 
 /* Arc-ring stat item — sized like the badge but slightly smaller */
@@ -2342,6 +2344,9 @@
   letter-spacing: 0.05em;
   color: var(--color-text-secondary);
   line-height: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .mrs-stat-card__stat-value {
@@ -2351,6 +2356,9 @@
   line-height: 1;
   font-variant-numeric: tabular-nums;
   color: var(--mrs-stat-accent, var(--color-text-heading));
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* Freeform center slot — vertically centered between the header and lower/footer.
