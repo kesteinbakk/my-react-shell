@@ -77,7 +77,7 @@ export function SectionsListMode(props) {
             className: "mrs-section", children: _jsx(PageSection, { title: section.label(), icon: section.icon, actions: section.actions?.map((thunk) => thunk()), children: _jsx(LazyContent, { lazy: section.lazy, forceMountAll: props.forceMountAll, scrollRoot: props.scrollRoot, children: section.children() }) }) }, section.id))) }));
 }
 export function SectionsSingleMode(props) {
-    return (_jsx(_Fragment, { children: props.sections.map((section) => section.id === props.activeId ? _jsx("div", { children: section.children() }, section.id) : null) }));
+    return (_jsx(_Fragment, { children: props.sections.map((section) => section.id === props.activeId ? _jsx("div", { className: "mrs-sections__single-section", children: section.children() }, section.id) : null) }));
 }
 /**
  * Section tab strip — rendered above content for both modes.

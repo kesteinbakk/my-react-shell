@@ -310,7 +310,7 @@ export function PageSections(props: PageSectionsProps): ReactNode {
   }, [])
 
   return (
-    <div className={`mrs-sections${props.className ? ` ${props.className}` : ''}`}>
+    <div className={`mrs-sections${props.fullHeight ? ' mrs-sections--full-height' : ''}${props.className ? ` ${props.className}` : ''}`}>
       {/*
         Pinned tab strip — sticky to the top of the scroll container (the
         AppShell body cell). The opaque background occludes section content

@@ -160,7 +160,7 @@ export function SectionsSingleMode(props: SingleModeProps): ReactNode {
   return (
     <>
       {props.sections.map((section) =>
-        section.id === props.activeId ? <div key={section.id}>{section.children()}</div> : null,
+        section.id === props.activeId ? <div key={section.id} className="mrs-sections__single-section">{section.children()}</div> : null,
       )}
     </>
   )

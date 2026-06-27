@@ -64,4 +64,6 @@ export interface PageSectionsProps {
     activeId?: string;
     /** URL query param key for persistence (e.g. `'tab'`). Omit to disable. */
     persistKey?: string;
+    /** Render sections at full height, expanding to fill the scroll container. */
+    fullHeight?: boolean;
 }

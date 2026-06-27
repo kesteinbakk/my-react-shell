@@ -11,6 +11,10 @@ export interface AccordionItem {
   content: ReactNode
   /** Disable this item's trigger. */
   disabled?: boolean
+  /** Actions rendered before the trigger label. Interacting with them won't toggle the accordion. */
+  actionsStart?: ReactNode
+  /** Actions rendered before the chevron. Interacting with them won't toggle the accordion. */
+  actionsEnd?: ReactNode
 }
 
 export type AccordionVariant = 'default' | 'bordered' | 'separated'
@@ -106,11 +110,35 @@ export function Accordion({
     >
       <RadixAccordion.Header className="mrs-accordion__header">
         <RadixAccordion.Trigger className="mrs-accordion__trigger">
-          <span className="mrs-accordion__label">{item.trigger}</span>
-          {showArrow && (
-            <span className="mrs-accordion__chevron" aria-hidden="true">
-              {chevronDown}
-            </span>
+          <div className="mrs-accordion__trigger-main">
+            {item.actionsStart && (
+              <div
+                className="mrs-accordion__actions"
+                onClick={(e) => e.stopPropagation()}
+                onPointerDown={(e) => e.stopPropagation()}
+              >
+                {item.actionsStart}
+              </div>
+            )}
+            <span className="mrs-accordion__label">{item.trigger}</span>
+          </div>
+          {(item.actionsEnd || showArrow) && (
+            <div className="mrs-accordion__trigger-end">
+              {item.actionsEnd && (
+                <div
+                  className="mrs-accordion__actions"
+                  onClick={(e) => e.stopPropagation()}
+                  onPointerDown={(e) => e.stopPropagation()}
+                >
+                  {item.actionsEnd}
+                </div>
+              )}
+              {showArrow && (
+                <span className="mrs-accordion__chevron" aria-hidden="true">
+                  {chevronDown}
+                </span>
+              )}
+            </div>
           )}
         </RadixAccordion.Trigger>
       </RadixAccordion.Header>

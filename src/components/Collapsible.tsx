@@ -45,6 +45,10 @@ export interface CollapsibleProps {
   renderTrigger?: (expanded: boolean) => ReactNode
   /** The content revealed when expanded. */
   children?: ReactNode
+  /** Actions rendered before the trigger label. Interacting with them won't toggle the collapsible. */
+  actionsStart?: ReactNode
+  /** Actions rendered before the chevron. Interacting with them won't toggle the collapsible. */
+  actionsEnd?: ReactNode
   /** Render the rotating chevron. Defaults to `true`. */
   showArrow?: boolean
   /** Expand/collapse animation duration in milliseconds. Defaults to `200`. */
@@ -100,6 +104,8 @@ export function Collapsible({
   trigger,
   renderTrigger,
   children,
+  actionsStart,
+  actionsEnd,
   showArrow = true,
   animationDuration = 200,
   disabled,
@@ -137,20 +143,44 @@ export function Collapsible({
           triggerClassName,
         )}
       >
-        <span className="mrs-collapsible__label">
-          {renderTrigger ? renderTrigger(open) : trigger}
-        </span>
-        {showArrow && (
-          <span
-            className={cn(
-              'mrs-collapsible__chevron',
-              open && 'mrs-collapsible__chevron--open',
-              arrowClassName,
-            )}
-            aria-hidden="true"
-          >
-            {chevronDown}
+        <div className="mrs-collapsible__trigger-main">
+          {actionsStart && (
+            <div
+              className="mrs-collapsible__actions"
+              onClick={(e) => e.stopPropagation()}
+              onPointerDown={(e) => e.stopPropagation()}
+            >
+              {actionsStart}
+            </div>
+          )}
+          <span className="mrs-collapsible__label">
+            {renderTrigger ? renderTrigger(open) : trigger}
           </span>
+        </div>
+        {(actionsEnd || showArrow) && (
+          <div className="mrs-collapsible__trigger-end">
+            {actionsEnd && (
+              <div
+                className="mrs-collapsible__actions"
+                onClick={(e) => e.stopPropagation()}
+                onPointerDown={(e) => e.stopPropagation()}
+              >
+                {actionsEnd}
+              </div>
+            )}
+            {showArrow && (
+              <span
+                className={cn(
+                  'mrs-collapsible__chevron',
+                  open && 'mrs-collapsible__chevron--open',
+                  arrowClassName,
+                )}
+                aria-hidden="true"
+              >
+                {chevronDown}
+              </span>
+            )}
+          </div>
         )}
       </RadixCollapsible.Trigger>
       <RadixCollapsible.Content

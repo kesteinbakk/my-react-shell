@@ -497,6 +497,8 @@ roving-focus behavior, use [`Accordion`](#accordion).
 | `trigger` | — | Static trigger content. |
 | `renderTrigger` | — | `(expanded) => node` — trigger as a function of the open state; takes precedence over `trigger`. |
 | `children` | — | The revealed content. |
+| `actionsStart` | — | Actions rendered before the trigger label. Interacting with them won't toggle the collapsible. |
+| `actionsEnd` | — | Actions rendered before the chevron. Interacting with them won't toggle the collapsible. |
 | `expanded` | — | Controlled open state. Omit for uncontrolled. |
 | `defaultExpanded` | `false` | Initial open state when uncontrolled. |
 | `onExpandedChange` | — | Fires on every open-state change (controlled + uncontrolled). |
@@ -530,7 +532,7 @@ headers, and single (one-open-at-a-time) or multiple-open mode — on Radix Acco
 `onValueChange`) or **uncontrolled** (`defaultValue`). For a lone trigger+region,
 use [`Collapsible`](#collapsible).
 
-`AccordionItem`: `{ value: string; trigger: ReactNode; content: ReactNode; disabled?: boolean }`.
+`AccordionItem`: `{ value: string; trigger: ReactNode; content: ReactNode; disabled?: boolean; actionsStart?: ReactNode; actionsEnd?: ReactNode }`.
 
 | Prop | Default | Meaning |
 |---|---|---|
@@ -883,7 +885,7 @@ import 'my-react-shell/app-shell/styles.css'
 | `usePageAlert(spec)` | hook | Set a global page-level alert in the header band (`{ label, tone, hideOtherActions? }`). If `hideOtherActions` is true, the renderer hides the regular actions and search input. |
 | `findActiveChain` | function | Compute the active breadcrumb chain for a pathname — pure function of `(roots, pathname, dynamicByParent)`. Walks `subPages` recursively at each depth level; merges `useDynamicPages` registrations keyed by parent route. |
 | `PageTabs` | component | Route-based tab strip (each tab = a route). Pin via `usePageHeader({ tabs: () => <PageTabs … /> })`. Scrolls horizontally when it overflows — edge fades + arrow buttons appear on the side(s) with hidden tabs. |
-| `PageSections` | component | In-page sections synced to `?<persistKey>=`. Modes `single` / `list` (scrollspy). Its section-tab strip scrolls horizontally on overflow (edge fades + arrows), like `PageTabs`. |
+| `PageSections` | component | In-page sections synced to `?<persistKey>=`. Modes `single` / `list` (scrollspy). Its section-tab strip scrolls horizontally on overflow (edge fades + arrows). `fullHeight` expands sections to fill the scroll container. |
 | `PageSection` | component | Standalone section card. `title`, `icon` (string key or custom Node), `actions[]`, `children`, `className`. |
 | `useDynamicPages(cfg)` | hook | Register runtime breadcrumb levels (record names, slugs) under a `parent` route. Works at any depth — set `parent` to whichever registered route the dynamic items hang under. Each item may carry `hideCrumb?: () => boolean` to omit it from the rendered trail while keeping it in the chain (the access-gated-ancestor pattern; same semantics as `PageEntry.hideCrumb`), or `disableCrumbLink?: () => boolean` to render the ancestor as a plain label with no click target (same semantics as `PageEntry.disableCrumbLink`). |
 | `useShellContext()`, `useShellContextOptional()` | hook | Read shell context — incl. `scrollContainer` (the only scroller; use instead of `window`). |

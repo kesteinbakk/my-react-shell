@@ -43,6 +43,8 @@
   min-height: 0;
   overflow-y: auto;
   overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
 }
 .mrs-shell__footer {
   flex-shrink: 0;
@@ -59,7 +61,9 @@
   margin-inline: auto;
 }
 .mrs-shell__container--fill {
-  height: 100%;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 .mrs-shell[data-content-padding='default'] .mrs-shell__container {
   padding-inline: 1rem;
@@ -663,6 +667,22 @@ button.mrs-breadcrumbs__leaf {
 /* ── PageSections frame ──────────────────────────────────────────────────── */
 .mrs-sections {
   min-width: 0;
+}
+.mrs-sections--full-height {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+.mrs-sections--full-height .mrs-sections__body {
+  flex: 1;
+  min-height: 0;
+}
+.mrs-sections--full-height .mrs-sections__single-section {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
 }
 /* Sticky against the body cell (Hard Rule #4b). */
 .mrs-sections__strip {
