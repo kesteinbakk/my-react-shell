@@ -1,6 +1,6 @@
 # T029 — Card link / interactive-root pattern (nav cards first)
 
-**Status:** finished (EntityCard deletion carved out — see Status section)
+**Status:** finished
 **Filed:** 2026-06-28
 
 ## Goal
@@ -309,18 +309,18 @@ the fluid grid is the right pairing. Rule: fixed-size cards (`StatCard`/`Content
 → `CardGrid`; size-less `DynamicGridCard` → `DynamicCardGrid`. Browser-verified: the overlap is
 gone and CriteriaView's draggable cards lay out cleanly.
 
-### Carved out — EntityCard full deletion + per-call-site link conversion
+### Phase 3c — EntityCard deleted (done)
 
-The task's Phase 3 also called for **deleting `EntityCard`** and converting its `onOpen`
-(mouse-click) call sites to the `renderLink` overlay link. This is **deferred** because it
-collides with an **active, in-flight session** reworking the same surface — `offansk-ev`'s
-`T079` "unified drilldown system" (`src/components/drilldown/DrilldownCard.tsx` etc.) imports
-`EntityCard`, and `EntityCard` is used at ~10 sites (`TenantsPage`, `AdminPage`, `ProjectHome`,
-`ProjectsView`, `HomePage`, `CriterionCard`, …). Deleting it now would clobber another agent's
-uncommitted files. `EntityCard` was left functional (its freeform `body`→`footer` pass-through
-is fixed) and can adopt `renderLink` once T079 lands. Follow-up: once T079 settles, delete
-`EntityCard`, repoint its call sites to `StatCard` directly, and convert the navigable ones to
-`renderLink`.
+Once T079 landed (committed), `EntityCard` was deleted and every call site inlines `StatCard`
+directly: `HomePage`, `ProjectsView`, `AdminPage`, `TenantsPage`, `ProjectHome` (~10 cards),
+`CriterionCard`, `DrilldownCard`. Prop mapping `badge`→`medallion`, `body`→`footer`,
+`onOpen`→`onClick`; the dead `openText`/`openLabel` dropped; re-exported types repointed
+(`EntityCardTone`→`StatCardTone`, `EntityCardBadge`→`StatCardMedallion`, `EntityCardStat`→`StatItem`).
+Each card carries an explicit `size="md"` — matching `EntityCard`'s current default (a sibling
+commit had shrunk it `lg`→`md`); `StatCard`'s own default is `md` too. `AdminPage`'s hand-rolled
+`flex flex-wrap` div also moved to `CardGrid`. CriterionCard test green; browser-verified the
+ProjectHome module-card grid renders identically at `md`. No navigable EntityCard site needed
+`renderLink` (they use `onClick` whole-card navigation, which `StatCard` carries natively).
 
 ## References
 
