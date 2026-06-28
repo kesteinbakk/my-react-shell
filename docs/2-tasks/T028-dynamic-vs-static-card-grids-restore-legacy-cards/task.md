@@ -1,6 +1,10 @@
 # T028 — Dynamic vs static card grids · restore legacy cards
 
-**Status:** planning · **Filed:** 2026-06-28 · **Branch:** main
+**Status:** finished · **Filed:** 2026-06-28 · **Branch:** main
+
+> **Done (2026-06-28).** Shell `8483376`, demo `77eb2e5`. Browser-verified: 4 StatCards/
+> ContentCards per `wide` row at 312×193px; dynamic grid intact post-rename; PhiCard restored.
+> BaseCard removed (orphaned). See `docs/4-reports/status/2026-06-28-away-report.md`.
 
 ## Problem
 
