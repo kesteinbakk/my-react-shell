@@ -36,8 +36,7 @@ import { CardGrid, StatCard, ContentCard } from 'my-react-shell/components'
 preset sets the pixel width and the height follows `height = width / φ`.
 
 - `StatCard` and `ContentCard` are **self-contained** — they carry their own `size` scale
-  and golden-ratio constant and no longer depend on `PhiCard` (which is being phased out).
-  Their `size` widths are `sm` 240 · `md` 312 · `lg` 400 · `xl` 520 px (default `md`).
+  and golden-ratio constant. Their `size` widths are `sm` 240 · `md` 312 · `lg` 400 · `xl` 520 px (default `md`).
 - `PhiCard` keeps its own scale (`sm` 180 · `md` 240 · `lg` 320 · `xl` 480 px).
 
 ---

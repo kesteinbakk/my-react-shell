@@ -35,18 +35,26 @@ Two verification surfaces, two jobs:
 A TanStack Router app (code-based route tree, no router plugin) whose sidebar nav and
 URL-derived breadcrumbs come from the **app-shell** module. The top-level routes:
 
-| Route | Module exercised |
-|-------|------------------|
-| `/` | **theme** — intro + active-palette card + follow-system switch |
-| `/components` | **kit** — un-opinionated primitives (`Button`, `Input`, `Checkbox`, …) |
-| `/inputs-actions` | **kit** — `ActionButton`/`ActionButtonGroup`, `InputField`, `SegmentedControl`, `Select` |
-| `/tables-cards` | **kit** — `Table`, `PhiCard`, `StatCard` |
-| `/tags-avatars` | **kit** — `Badge`, `Chip`/`ChipGroup`, `Avatar`/`AvatarGroup` |
-| `/feedback-overlays` | **kit** — `Alert`, `Spinner`/`SectionSpinner`, `InfoBox`, `EmptyState`, `ConfirmDialog`, `Toast` |
-| `/palette` | **theme** — every `--color-*` token, per palette, light + dark (`PaletteReference`) |
-| `/i18n` | the **i18n** `t()` seam (`I18nProvider` + `useTranslation`) |
-| `/feedback` | error-handling & feedback patterns |
-| `/nested/**` | **app-shell** deep breadcrumbs — `pages → subPages → subPages → useDynamicPages` (four levels) |
+| Route | Page file | What it exercises |
+|-------|-----------|-------------------|
+| `/` | `HomePage` | **theme** — intro + active-palette card + follow-system switch |
+| `/buttons-toggles` | `ButtonsTogglesPage` | **kit** — `Button`, `ActionButton`/`ActionButtonGroup`, `Checkbox`, `RadioGroup`, `Switch`, `SegmentedControl`, `EmptyStateAddButton` |
+| `/inputs-selects` | `InputsSelectsPage` | **kit** — `Input`, `InputField`, `Textarea`, `Label`, `Select`, `DatePicker`, `Calendar` |
+| `/specialized-pickers` | `SpecializedPickersPage` | **kit** — `ColorPicker`, `EmojiPicker`, `EmojiBar`, `Slider`, `Popover` |
+| `/tables-data` | `TablesDataPage` | **kit** — `Table`, `Card` |
+| `/containers-layout` | `ContainersLayoutPage` | **app-shell** — `usePageHeader`, `usePageAlert`; **kit** — `Separator`, `Skeleton`, `ActionButton` |
+| `/surfaces` | `SurfacesPage` | **kit** — `Card`, `SearchInput`; app-shell `PageSection` as a surface |
+| `/cards-grid` | `CardsGridPage` | **kit** — `CardGrid`, `StatCard`, `ContentCard` |
+| `/card-grids` | `CardGridsPage` | **kit** — `DynamicCardGrid`, `DynamicGridCard` |
+| `/cards-old` | `CardsOldPage` | **kit** — `PhiCard` |
+| `/tags-avatars` | `TagsAvatarsPage` | **kit** — `Badge`, `Chip`/`ChipGroup`, `Avatar`/`AvatarGroup`, `CountPill` |
+| `/feedback-status` | `FeedbackStatusPage` | **kit** — `Alert`, `EmptyState`, `InfoBox`, `Progress`, `Spinner`/`SectionSpinner` |
+| `/overlays-dialogs` | `OverlaysDialogsPage` | **kit** — `Dialog`, `Sheet`, `ConfirmDialog`, `DropdownMenu`, `Tooltip`, `Popover`, `Preview` |
+| `/disclosure` | `DisclosurePage` | **kit** — `Accordion`, `Collapsible`, `Tabs` |
+| `/palette` | `PalettePage` | **theme** — every `--color-*` token, per palette, light + dark |
+| `/i18n` | `I18nPage` | **i18n** — the `t()` seam (`I18nProvider` + `useTranslation`) |
+| `/feedback` | `FeedbackPage` | error-handling & feedback patterns |
+| `/nested/**` | | **app-shell** deep breadcrumbs — `pages → subPages → subPages → useDynamicPages` (four levels) |
 
 The **theme** module re-themes every page live from the sidebar footer (palette +
 light/dark); the **icons** seam flips the whole shell between glyphs and emojis via
@@ -74,10 +82,11 @@ reaches the demo is unfinished. The operational lockstep rules live in this repo
 [CLAUDE.md](../CLAUDE.md) (*Demos & visual showcasing*); in short:
 
 - **A new or changed kit component** → add or update its `PageSection` in the relevant
-  kit page's `sections` array (`InputsActionsPage`, `TablesCardsPage`,
-  `TagsAvatarsPage`, `FeedbackOverlaysPage`), and register the section's `icon` key in
-  **both** the `ICONS` and `EMOJIS` maps in `my-react-shell-demo/src/shell-config.tsx`,
-  or its scroll-spy tab falls back to a generic glyph.
+  kit page's `sections` array (see `my-react-shell-demo/src/pages/` — one page per kit
+  area; the route table above maps routes to file names), and register the section's
+  `icon` key in **both** the `ICONS` and `EMOJIS` maps in
+  `my-react-shell-demo/src/shell-config.tsx`, or its scroll-spy tab falls back to a
+  generic glyph.
 - **A new or renamed `--color-*` token** → add it to `PALETTE_GROUPS` in
   `my-react-shell-demo/src/sections/PaletteReference.tsx`, or it won't appear on the
   palette page.

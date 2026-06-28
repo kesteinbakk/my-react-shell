@@ -114,18 +114,21 @@ token won't appear (or renders as a stray "unset" hatch).
 
 **New and changed components must reach the demo's kit pages.** The opinionated kit
 (`my-react-shell/components`) is showcased section-by-section across the demo's **kit
-pages** (`my-react-shell-demo/src/pages/` — `InputsActionsPage`, `TablesCardsPage`,
-`TagsAvatarsPage`, `FeedbackOverlaysPage`, each grouping related components); the
+pages** (`my-react-shell-demo/src/pages/` — one per kit area:
+`ButtonsTogglesPage`, `InputsSelectsPage`, `SpecializedPickersPage`, `TablesDataPage`,
+`ContainersLayoutPage`, `SurfacesPage`, `CardsGridPage`, `CardGridsPage`, `CardsOldPage`,
+`TagsAvatarsPage`, `FeedbackStatusPage`, `OverlaysDialogsPage`, `DisclosurePage`); the
 library and its showcase ship together, so a component change that never reaches the
 demo is unfinished. Whenever you add a kit component or change one's props / variants
 / behavior, keep the two in lockstep:
 
 - **A new component won't appear until you add its `PageSection`** to the relevant kit
   page's `sections` array — import it and render a live example, mirroring the existing
-  entries (an `id`, a `label`, an `icon` key, a short `Lead` blurb). The section's
-  scroll-spy tab also needs that same `icon` key registered in **both** the `ICONS`
-  (lucide) and `EMOJIS` maps in `my-react-shell-demo/src/shell-config.tsx`, or the
-  tab falls back to a generic glyph.
+  entries (an `id`, a `label`, an `icon` key, a short `Lead` blurb). Consult
+  [docs/demo.md](docs/demo.md) for the route-to-page-file map. The section's scroll-spy
+  tab also needs that same `icon` key registered in **both** the `ICONS` (lucide) and
+  `EMOJIS` maps in `my-react-shell-demo/src/shell-config.tsx`, or the tab falls back to
+  a generic glyph.
 - **A changed component** — a new prop, variant, or behavior worth seeing — updates
   its existing section so the demo renders the new surface.
 
