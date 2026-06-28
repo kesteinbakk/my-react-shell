@@ -60,6 +60,36 @@ listed in the [API reference](../specifications/api-reference.md#surfaces--eleva
 consumer composing its own surfaces should follow the same role mapping so cards, menus,
 and wells read consistently across every palette.
 
+### Other Base Variables
+
+Along with the surface ladder, the base contract provides strictly named tokens for text, borders, and overlays. Use **only** these exact names:
+
+**Text hierarchy:**
+- `--color-text-primary` (main text)
+- `--color-text-secondary` (dimmer, supporting text)
+- `--color-text-tertiary` (even dimmer text)
+- `--color-text-muted` (faint text, disabled states)
+
+**Borders:**
+- `--color-border-primary` (main structural borders)
+- `--color-border-secondary` (subtler dividers)
+- `--color-border-hover` (interactive border states)
+
+**Overlays & Elevation:**
+- `--color-overlay` (modal/drawer backdrops — mode-independent `rgba(0,0,0,0.5)`)
+- `--mrs-elevation-popover` (the standard dropdown/dialog box-shadow variable defined internally)
+
+## Anti-patterns & Hallucinated Tokens
+
+> [!WARNING]
+> **For AI Agents:** Do **NOT** invent, assume, or hallucinate CSS variable names based on generic patterns. The shell's tokens are strictly defined in `src/themes/contract.css`.
+
+**Common mistakes to avoid:**
+- ❌ `--color-base-root` / `--color-base-surface` / `--color-base-dim` (Hallucinated. Use `--color-surface-raised`, `--color-surface`, `--color-overlay` etc. instead.)
+- ❌ `--color-text-body` (Hallucinated. Use `--color-text-primary` instead.)
+- ❌ `--color-border-subtle` (Hallucinated. Use `--color-border-secondary` instead.)
+- ❌ `--radius-lg` / `--shadow-xl` (No generic radius/shadow utility tokens exist; use hardcoded `rem` for borders, and standard elevation tokens or `--color-shadow-*` for shadows).
+
 ## Typography
 
 The shell ships an opinionated default **sans face** behind an overridable token,

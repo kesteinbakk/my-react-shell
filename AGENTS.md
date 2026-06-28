@@ -38,6 +38,7 @@ Each module is self-contained and independently importable.
   - **Multi-Field Isolation:** If multiple inputs share one `useDebouncedAutoSave` hook, track `lastModifiedField` so they don't all flash green together. Bind dynamically: `saveStatus={lastModifiedField === fieldKey ? state : 'idle'}`.
   - **Toasts:** Trigger permanent error toasts for failures. NEVER display a success toast for auto-saves.
   - **Exceptions:** Transactional entity creation dialogs (e.g. "Create Project") retain their explicit Submit buttons.
+- **No hallucinated CSS tokens:** NEVER invent CSS variables (e.g., `--color-base-root`, `--color-base-dim`, `--radius-lg`, `--shadow-xl`). The shell's tokens are strictly defined. Always refer to `docs/guides/theme.md` and `docs/specifications/api-reference.md` for the exact supported token names (e.g., `--color-surface-raised`, `--color-overlay`, `--mrs-elevation-popover`).
 
 ### Porting from SolidJS `foundation`
 - **Port faithfully:** Port every feature, scroll affordance, keyboard behavior, ARIA wiring, sizing contract, and edge/empty state. The feature set must not change.
