@@ -4801,8 +4801,8 @@
 }
 .mrs-card-grid__cards {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--mrs-card-grid-min, 20rem)), 1fr));
-  gap: 2rem;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--mrs-card-grid-min, 19.5rem)), 1fr));
+  gap: 2.5rem;
   padding-bottom: 1rem;
 }
 .mrs-card-grid__cards--center {
