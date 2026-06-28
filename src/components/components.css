@@ -2349,6 +2349,20 @@
   font-variant-numeric: tabular-nums;
 }
 
+/* Adjust font size based on number of characters (1-4 digits) */
+.mrs-stat-card__medallion-value[data-len="1"] {
+  font-size: 1.8em;
+}
+.mrs-stat-card__medallion-value[data-len="2"] {
+  font-size: 1.4em;
+}
+.mrs-stat-card__medallion-value[data-len="3"] {
+  font-size: 1.1em;
+}
+.mrs-stat-card__medallion-value[data-len="4"] {
+  font-size: 0.85em;
+}
+
 .mrs-stat-card__medallion-label {
   /* Default/fallback font size for longest string */
   font-size: 0.4em;

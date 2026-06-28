@@ -492,6 +492,20 @@ export const StatCard = forwardRef<HTMLDivElement, StatCardProps>(function StatC
         </MedallionTag>
       )
     } else {
+      let displayValue = medallion.value
+      if (typeof displayValue === 'number') {
+        displayValue = Math.round(displayValue)
+      } else if (typeof displayValue === 'string' && !isNaN(Number(displayValue)) && displayValue.trim() !== '') {
+        displayValue = Math.round(Number(displayValue)).toString()
+      }
+      const valueStr = String(displayValue)
+
+      if (process.env.NODE_ENV !== 'production') {
+        if (valueStr.length > 4) {
+          throw new Error(`StatCard: medallion.value cannot exceed 4 characters (got "${valueStr}").`)
+        }
+      }
+
       medallionNode = (
         <MedallionTag
           className={cn(
@@ -500,7 +514,7 @@ export const StatCard = forwardRef<HTMLDivElement, StatCardProps>(function StatC
           )}
           {...medallionProps}
         >
-          <span className="mrs-stat-card__medallion-value">{medallion.value}</span>
+          <span className="mrs-stat-card__medallion-value" data-len={valueStr.length}>{displayValue}</span>
           {medallion.label ? <span className="mrs-stat-card__medallion-label" data-len={medallion.label.length}>{medallion.label}</span> : null}
         </MedallionTag>
       )

@@ -188,7 +188,20 @@ export const StatCard = forwardRef(function StatCard({ title, subtitle, medallio
             medallionNode = (_jsx(MedallionTag, { className: cn('mrs-stat-card__medallion mrs-stat-card__medallion--arc', isPressable && 'mrs-stat-card__medallion--pressable'), ...medallionProps, children: _jsx(ArcRing, { value: medallion.value, max: medallion.max }) }));
         }
         else {
-            medallionNode = (_jsxs(MedallionTag, { className: cn('mrs-stat-card__medallion', isPressable && 'mrs-stat-card__medallion--pressable'), ...medallionProps, children: [_jsx("span", { className: "mrs-stat-card__medallion-value", children: medallion.value }), medallion.label ? _jsx("span", { className: "mrs-stat-card__medallion-label", "data-len": medallion.label.length, children: medallion.label }) : null] }));
+            let displayValue = medallion.value;
+            if (typeof displayValue === 'number') {
+                displayValue = Math.round(displayValue);
+            }
+            else if (typeof displayValue === 'string' && !isNaN(Number(displayValue)) && displayValue.trim() !== '') {
+                displayValue = Math.round(Number(displayValue)).toString();
+            }
+            const valueStr = String(displayValue);
+            if (process.env.NODE_ENV !== 'production') {
+                if (valueStr.length > 4) {
+                    throw new Error(`StatCard: medallion.value cannot exceed 4 characters (got "${valueStr}").`);
+                }
+            }
+            medallionNode = (_jsxs(MedallionTag, { className: cn('mrs-stat-card__medallion', isPressable && 'mrs-stat-card__medallion--pressable'), ...medallionProps, children: [_jsx("span", { className: "mrs-stat-card__medallion-value", "data-len": valueStr.length, children: displayValue }), medallion.label ? _jsx("span", { className: "mrs-stat-card__medallion-label", "data-len": medallion.label.length, children: medallion.label }) : null] }));
         }
     }
     return (_jsxs("div", { ref: ref, className: cn('mrs-stat-card', !accentSuppressed && `mrs-stat-card--accent-${effectiveAccentPlacement}`, hasGauge && 'mrs-stat-card--gauge', variant && 'mrs-stat-card--variant', isHoverable && 'mrs-stat-card--hoverable', effectiveWatermark && 'mrs-stat-card--watermark', dragHandle && 'mrs-stat-card--draggable', className), style: style, "data-watermark": effectiveWatermark, "data-has-medallion": medallion != null ? "true" : undefined, onClick: onClick, children: [dragHandle ? (_jsx("button", { type: "button", className: "mrs-stat-card__drag-handle", "aria-label": "Drag to reorder", ...dragHandleProps, onClick: (e) => {
