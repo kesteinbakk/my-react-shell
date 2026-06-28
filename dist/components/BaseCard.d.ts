@@ -1,7 +1,9 @@
 import { type HTMLAttributes } from 'react';
-export type BaseCardSize = 'sm' | 'md' | 'lg';
+export type BaseCardSize = 'sm' | 'md' | 'lg' | 'xl';
+export type BaseCardVariant = 'standard' | 'landscape';
 export interface BaseCardProps extends HTMLAttributes<HTMLDivElement> {
     size?: BaseCardSize;
+    variant?: BaseCardVariant;
 }
 /**
  * A purely structural card establishing the Phi golden ratio and size boundaries,

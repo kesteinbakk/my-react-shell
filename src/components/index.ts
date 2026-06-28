@@ -230,3 +230,6 @@ export type { PreviewProps } from './Preview'
 
 export { BaseCard } from './BaseCard'
 export type { BaseCardProps, BaseCardSize } from './BaseCard'
+
+export { GridCard } from './GridCard'
+export type { GridCardProps, GridCardSize, GridCardVariant } from './GridCard'

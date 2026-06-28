@@ -2,6 +2,7 @@ import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import { forwardRef } from 'react';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { cn } from './cn';
+import { BaseCard } from './BaseCard';
 import { resolveAccentColor } from './accent';
 /**
  * φ — the golden ratio. Exported so a consumer can size a layout against the exact
@@ -115,12 +116,10 @@ export const PhiCard = forwardRef(function PhiCard({ upper, content, image, imag
         (actions && actions.length > 0 ? (_jsx(PhiCardMenu, { actions: actions, icon: menuIcon, label: menuLabel })) : null);
     const style = {
         ...styleProp,
-        '--mrs-card-width': `${width}px`,
-        '--mrs-card-aspect-ratio': hasBottom ? `${PHI} / 1` : `${PHI * PHI} / 1`,
         fontSize: `${SIZE_FONT_REM[size]}rem`,
         ...(accent != null ? { '--mrs-phi-accent': accent } : {}),
     };
-    return (_jsxs("div", { ref: ref, className: cn('mrs-phi-card', !hasBottom && 'mrs-phi-card--single', isHoverable && 'mrs-phi-card--hoverable', accent != null && 'mrs-phi-card--accent', accent != null && `mrs-phi-card--accent-${accentPlacement}`, className), style: style, onClick: onClick, children: [dragHandle ? (_jsx("button", { type: "button", className: "mrs-phi-card__drag-handle", "aria-label": "Drag to reorder", ...dragHandleProps, onClick: (e) => {
+    return (_jsxs(BaseCard, { ref: ref, size: size, variant: hasBottom ? 'standard' : 'landscape', className: cn('mrs-phi-card', !hasBottom && 'mrs-phi-card--single', isHoverable && 'mrs-phi-card--hoverable', accent != null && 'mrs-phi-card--accent', accent != null && `mrs-phi-card--accent-${accentPlacement}`, className), style: style, onClick: onClick, children: [dragHandle ? (_jsx("button", { type: "button", className: "mrs-phi-card__drag-handle", "aria-label": "Drag to reorder", ...dragHandleProps, onClick: (e) => {
                     e.stopPropagation();
                     dragHandleProps?.onClick?.(e);
                 }, children: dragHandle === true ? DEFAULT_DRAG_HANDLE : dragHandle })) : null, _jsx("div", { className: cn('mrs-phi-card__section', topSectionMod), children: topContent }), hasBottom ? (_jsx("div", { className: cn('mrs-phi-card__section', 'mrs-phi-card__section--lower', divider && 'mrs-phi-card__section--divider'), children: hasFooter ? footerNode : lower })) : null, cornerNode != null ? (_jsx("div", { className: "mrs-phi-card__corner", onClick: (e) => e.stopPropagation(), children: cornerNode })) : null] }));

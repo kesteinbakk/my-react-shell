@@ -1741,23 +1741,57 @@
   transition: box-shadow 200ms ease;
 }
 
+/* ── GridCard ────────────────────────────────────────────────────────────── */
+.mrs-grid-card {
+  width: 100%;
+  aspect-ratio: var(--mrs-grid-card-aspect-ratio);
+  background: var(--color-surface-primary);
+  border: 1px solid var(--color-border-primary);
+  border-radius: 0.5rem;
+  box-shadow: var(--mrs-elevation-card);
+  overflow: hidden;
+  padding: 1rem;
+  color: var(--color-text-primary);
+  transition: box-shadow 200ms ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.mrs-grid-card__header {
+  margin-bottom: 0.5rem;
+}
+
+.mrs-grid-card__title {
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.mrs-grid-card__subtitle {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+}
+
+.mrs-grid-card__body {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.mrs-grid-card__footer {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-border-primary);
+}
+
 /* ── PhiCard ─────────────────────────────────────────────────────────────── */
 /* Golden-ratio card. Outer width:height = φ:1 (both set inline from PHI); the two
    sections split φ:1 via the `1.6180339887fr` literals (φ, kept in lockstep with PHI).
    `minmax(0, …)` keeps a tall figure or footer from blowing the φ tracks open. */
 .mrs-phi-card {
   position: relative;
-  width: 100%;
-  aspect-ratio: var(--mrs-card-aspect-ratio);
+  padding: 0;
   display: grid;
   grid-template-rows: minmax(0, 1.6180339887fr) minmax(0, 1fr); /* upper : lower = φ : 1 */
-  overflow: hidden;
-  border: 1px solid var(--color-border-primary);
-  border-radius: 0.5rem;
-  background: var(--color-surface-primary);
-  color: var(--color-text-primary);
-  box-shadow: var(--mrs-elevation-card);
-  transition: box-shadow 200ms ease;
 }
 .mrs-phi-card--single {
   grid-template-rows: minmax(0, 1fr); /* no footer → single row; inline height already W/φ² */
