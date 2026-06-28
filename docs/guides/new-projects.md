@@ -55,7 +55,7 @@ To configure the page width for your entire application, pass `pageContainer.def
 export const shellConfig = defineShellConfig({
   // ...
   pageContainer: {
-    defaultMaxWidth: 'x-wide', // Options: 'narrow' | 'medium' | 'wide' | 'x-wide' | 'full'
+    defaultMaxWidth: 'x-wide', // Options: 'narrow' (1000px) | 'medium' (1200px) | 'wide' (1400px - fits 4 cards) | 'x-wide' (1600px) | 'full'
   }
 })
 ```
