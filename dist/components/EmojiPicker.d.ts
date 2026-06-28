@@ -29,6 +29,10 @@ export interface EmojiPickerProps {
     searchPlaceholder?: string;
     /** Label shown when search returns no results. Default `'🤷'`. Pass a translated string via your i18n seam. */
     noResultsLabel?: string;
+    /** Accessible label for the category tablist — **required**; pass a translated string. */
+    categoriesLabel: string;
+    /** Accessible label + tooltip for the frequently-used tab — **required**; pass a translated string. */
+    frequentLabel: string;
     /** Extra classes on the root element. */
     className?: string;
 }
@@ -51,4 +55,4 @@ export interface EmojiPickerProps {
  * </Popover>
  * ```
  */
-export declare function EmojiPicker({ onSelect, locale, showSearch, searchPlaceholder, noResultsLabel, className, }: EmojiPickerProps): import("react").JSX.Element;
+export declare function EmojiPicker({ onSelect, locale, showSearch, searchPlaceholder, noResultsLabel, categoriesLabel, frequentLabel, className, }: EmojiPickerProps): import("react").JSX.Element;

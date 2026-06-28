@@ -231,6 +231,8 @@ export function DynamicCardGrid<T>({
                     options={sortSelectOptions}
                     value={sortKey}
                     onValueChange={handleSortChange}
+                    // The sort control always has a selected value, so the placeholder never shows.
+                    placeholder=""
                   />
                 </div>
                 <button

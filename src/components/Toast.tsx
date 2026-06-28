@@ -54,6 +54,8 @@ export interface ToastProviderProps {
   children: ReactNode
   /** Default auto-dismiss in ms (a per-toast `duration` overrides). Defaults to 3000. */
   duration?: number
+  /** Accessible label for a dismissible toast's ✕ button — **required**; pass a translated string. */
+  dismissLabel: string
 }
 
 /**
@@ -61,7 +63,7 @@ export interface ToastProviderProps {
  * exposes the imperative API via `useToast()`. Each toast renders as an `Alert`,
  * so toasts inherit the same tone tokens.
  */
-export function ToastProvider({ children, duration = 3000 }: ToastProviderProps) {
+export function ToastProvider({ children, duration = 3000, dismissLabel }: ToastProviderProps) {
   const [toasts, setToasts] = useState<ToastItem[]>([])
   const idRef = useRef(0)
 
@@ -105,14 +107,21 @@ export function ToastProvider({ children, duration = 3000 }: ToastProviderProps)
           <div className="mrs-toast-viewport">
             {toasts.map((t) => (
               <div className="mrs-toast" key={t.id}>
-                <Alert
-                  tone={t.tone}
-                  title={t.title}
-                  role="status"
-                  onDismiss={t.autoDismiss ? undefined : () => dismiss(t.id)}
-                >
-                  {t.message}
-                </Alert>
+                {t.autoDismiss ? (
+                  <Alert tone={t.tone} title={t.title} role="status">
+                    {t.message}
+                  </Alert>
+                ) : (
+                  <Alert
+                    tone={t.tone}
+                    title={t.title}
+                    role="status"
+                    onDismiss={() => dismiss(t.id)}
+                    dismissLabel={dismissLabel}
+                  >
+                    {t.message}
+                  </Alert>
+                )}
               </div>
             ))}
           </div>,

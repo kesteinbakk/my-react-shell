@@ -34,7 +34,7 @@ const DEFAULT_ICONS = {
  * (`--color-<tone>-border`), and AA-legible on-tint text (`--color-<tone>-on-bg`),
  * with a per-tone leading icon and an optional dismiss control.
  */
-export function Alert({ tone = 'info', title, children, icon, onDismiss, dismissLabel = 'Dismiss', role = 'alert', className, }) {
+export function Alert({ tone = 'info', title, children, icon, onDismiss, dismissLabel, role = 'alert', className, }) {
     const leading = icon === false ? null : (icon ?? DEFAULT_ICONS[tone]);
     return (_jsxs("div", { role: role, className: cn(alertVariants({ tone }), className), children: [leading != null && (_jsx("span", { className: "mrs-alert__icon", "aria-hidden": "true", children: leading })), _jsxs("div", { className: "mrs-alert__content", children: [title != null && _jsx("div", { className: "mrs-alert__title", children: title }), children != null && _jsx("div", { className: "mrs-alert__body", children: children })] }), onDismiss != null && (_jsx("button", { type: "button", className: "mrs-alert__dismiss", onClick: onDismiss, "aria-label": dismissLabel, children: _jsxs("svg", { ...iconProps, width: 16, height: 16, children: [_jsx("path", { d: "M18 6 6 18" }), _jsx("path", { d: "m6 6 12 12" })] }) }))] }));
 }

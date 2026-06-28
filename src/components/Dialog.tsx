@@ -51,8 +51,8 @@ export interface DialogProps {
   bleed?: boolean
   /** Render the top-right ✕ close button. Defaults to `true`. */
   showClose?: boolean
-  /** Accessible label for the ✕ close button. Defaults to `"Close"`. */
-  closeLabel?: string
+  /** Accessible label for the ✕ close button — **required**; pass a translated string. */
+  closeLabel: string
   /** Close when the backdrop is clicked. Defaults to `true`; set `false` to guard unsaved edits. */
   closeOnBackdrop?: boolean
   /** Close when Esc is pressed. Defaults to `true`. */
@@ -102,7 +102,7 @@ export function Dialog({
   size = 'md',
   bleed = false,
   showClose = true,
-  closeLabel = 'Close',
+  closeLabel,
   closeOnBackdrop = true,
   closeOnEsc = true,
   className,

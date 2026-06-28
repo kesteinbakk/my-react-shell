@@ -54,10 +54,11 @@ function Segment({ active, onClick, children, }) {
  * Fully **controlled** — it reads the current values and emits an `onChange` for each
  * preference, and persists nothing itself, so the consumer decides where state lives
  * (localStorage via the shipped providers, or a per-user account / Convex). Auth-free:
- * surface sign-out / profile through the `accountActions` slot. Labels come via props
- * (English defaults), so the kit never imports i18n.
+ * surface sign-out / profile through the `accountActions` slot. Every label is a
+ * **required, no-default prop** — pass translated strings via your t() seam, so the
+ * kit never imports i18n and never renders a hardcoded language.
  */
-export function UserPreferences({ theme, themes, onThemeChange, mode, onModeChange, followSystem, onFollowSystemChange, iconMode, onIconModeChange, accountActions, trigger, open, onOpenChange, triggerLabel = 'Preferences', title = 'Preferences', description, themeHeading = 'Theme', modeHeading = 'Appearance', displayHeading = 'Icons', lightLabel = 'Light', darkLabel = 'Dark', systemLabel = 'System', iconsLabel = 'Icons', emojisLabel = 'Emojis', closeLabel = 'Close', className, }) {
+export function UserPreferences({ theme, themes, onThemeChange, mode, onModeChange, followSystem, onFollowSystemChange, iconMode, onIconModeChange, accountActions, trigger, open, onOpenChange, triggerLabel, title, description, themeHeading, modeHeading, displayHeading, lightLabel, darkLabel, systemLabel, iconsLabel, emojisLabel, closeLabel, className, }) {
     const [internalOpen, setInternalOpen] = useState(false);
     const isControlled = open !== undefined;
     const isOpen = isControlled ? open : internalOpen;

@@ -27,6 +27,8 @@ export interface ColorPickerProps {
     align?: 'start' | 'center' | 'end';
     /** Trigger text when nothing is selected. Pass a translated string via your i18n seam. */
     placeholder: string;
+    /** Accessible label for the hex input (free `hex` mode) — **required**; pass a translated string. */
+    hexLabel: string;
     disabled?: boolean;
     /** Accessible label for the trigger (falls back to a string `label`). */
     'aria-label'?: string;
@@ -48,4 +50,4 @@ export interface ColorPickerProps {
  * Controlled via `value` / `onChange`; persists nothing. `value` is always a
  * directly-usable CSS color string — drop it into a `style`/`background`.
  */
-export declare function ColorPicker({ value, onChange, colors, format, label, description, align, placeholder, disabled, size, fullWidth, className, style, ...rest }: ColorPickerProps): import("react").JSX.Element;
+export declare function ColorPicker({ value, onChange, colors, format, label, description, align, placeholder, hexLabel, disabled, size, fullWidth, className, style, ...rest }: ColorPickerProps): import("react").JSX.Element;

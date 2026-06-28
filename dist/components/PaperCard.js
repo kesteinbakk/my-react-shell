@@ -55,7 +55,7 @@ const FOOTER_GLYPHS = {
  * Optional `tone`/`color` adds an accent stripe (none by default). Shares the card-family
  * footer, watermark, hover-lift, drag-handle, and `renderLink` block-link seams.
  */
-export const PaperCard = forwardRef(function PaperCard({ title, subtitle, content, contentAlignX = 'left', contentAlignY = 'top', maxLines, tone, color, accentPlacement = 'top', footer, watermark, size = 'md', onClick, hoverable, dragHandle, dragHandleProps, renderLink, className, style: styleProp, }, ref) {
+export const PaperCard = forwardRef(function PaperCard({ title, subtitle, content, contentAlignX = 'left', contentAlignY = 'top', maxLines, tone, color, accentPlacement = 'top', footer, watermark, size = 'md', onClick, hoverable, dragHandle, dragHandleProps, dragHandleLabel, renderLink, className, style: styleProp, }, ref) {
     const width = SIZE_WIDTH_PX[size];
     const height = width * SQRT2;
     const fold = SIZE_FOLD_PX[size];
@@ -105,7 +105,7 @@ export const PaperCard = forwardRef(function PaperCard({ title, subtitle, conten
     };
     return (_jsxs("div", { ref: ref, className: cn('mrs-paper-card', hasAccent && `mrs-paper-card--accent-${accentPlacement}`, isHoverable && 'mrs-paper-card--hoverable', watermark && 'mrs-paper-card--watermark', dragHandle && 'mrs-paper-card--draggable', renderLink && 'mrs-paper-card--linked', className), style: style, onClick: onClick, children: [renderLink
                 ? renderLink({ className: 'mrs-paper-card__link-overlay', 'aria-labelledby': titleId })
-                : null, dragHandle ? (_jsx("button", { type: "button", className: "mrs-paper-card__drag-handle", "aria-label": "Drag to reorder", ...dragHandleProps, onClick: (e) => {
+                : null, dragHandle ? (_jsx("button", { type: "button", className: "mrs-paper-card__drag-handle", "aria-label": dragHandleLabel, ...dragHandleProps, onClick: (e) => {
                     e.stopPropagation();
                     dragHandleProps?.onClick?.(e);
                 }, children: dragHandle === true ? DEFAULT_DRAG_HANDLE : dragHandle })) : null, _jsxs("div", { className: "mrs-paper-card__sheet", "data-watermark": watermark, children: [_jsx("span", { className: "mrs-paper-card__fold", "aria-hidden": "true" }), _jsxs("div", { className: "mrs-paper-card__inner", children: [_jsx("div", { className: "mrs-paper-card__header", children: _jsxs("div", { className: "mrs-paper-card__head-text", children: [_jsx("p", { className: "mrs-paper-card__title", id: titleId, children: title }), subtitle ? _jsx("p", { className: "mrs-paper-card__subtitle", children: subtitle }) : null] }) }), content != null ? (_jsx("div", { className: "mrs-paper-card__body", "data-align-x": contentAlignX, "data-align-y": contentAlignY, children: _jsx("div", { className: "mrs-paper-card__content", style: contentStyle, children: content }) })) : null, hasFooter ? (_jsx("div", { className: "mrs-paper-card__lower", children: structuredFooter ? footerNode : footer })) : null] })] })] }));

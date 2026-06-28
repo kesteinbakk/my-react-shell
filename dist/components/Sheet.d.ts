@@ -28,8 +28,8 @@ export interface SheetProps {
     size?: SheetSize;
     /** Render the ✕ close button in the header. Defaults to `true`. */
     showClose?: boolean;
-    /** Accessible label for the ✕ close button. Defaults to `"Close"`. */
-    closeLabel?: string;
+    /** Accessible label for the ✕ close button — **required**; pass a translated string. */
+    closeLabel: string;
     /**
      * Render the dimming backdrop behind the panel (default `true`). Set `false` for a
      * sheet that floats over a still-visible page; pair with `modal={false}` to also keep

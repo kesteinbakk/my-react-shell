@@ -29,7 +29,7 @@ import { cn } from './cn';
  * </Dialog>
  * ```
  */
-export function Dialog({ open, onOpenChange, title, titleActions, headerActions, description, children, footer, useCancel, usePrimary, size = 'md', bleed = false, showClose = true, closeLabel = 'Close', closeOnBackdrop = true, closeOnEsc = true, className, }) {
+export function Dialog({ open, onOpenChange, title, titleActions, headerActions, description, children, footer, useCancel, usePrimary, size = 'md', bleed = false, showClose = true, closeLabel, closeOnBackdrop = true, closeOnEsc = true, className, }) {
     const getButtonClass = (tone) => {
         if (tone === 'danger')
             return 'mrs-dialog__btn--danger';

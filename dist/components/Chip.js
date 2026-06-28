@@ -5,7 +5,7 @@ import { cn } from './cn';
  * (`onRemove`). The label and the remove control are separate buttons, so a
  * removable toggle chip never nests interactive elements.
  */
-export function Chip({ children, selected = false, onClick, onRemove, removeLabel = 'Remove', className, }) {
+export function Chip({ children, selected = false, onClick, onRemove, removeLabel, className, }) {
     const interactive = onClick != null;
     return (_jsxs("span", { className: cn('mrs-chip', selected && 'mrs-chip--selected', interactive && 'mrs-chip--interactive', className), children: [interactive ? (_jsx("button", { type: "button", className: "mrs-chip__label mrs-chip__label--btn", onClick: onClick, "aria-pressed": selected, children: children })) : (_jsx("span", { className: "mrs-chip__label", children: children })), onRemove != null && (_jsx("button", { type: "button", className: "mrs-chip__remove", "aria-label": removeLabel, onClick: onRemove, children: _jsxs("svg", { width: 14, height: 14, viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: 2, strokeLinecap: "round", strokeLinejoin: "round", children: [_jsx("path", { d: "M18 6 6 18" }), _jsx("path", { d: "m6 6 12 12" })] }) }))] }));
 }

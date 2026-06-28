@@ -23,7 +23,7 @@ const CloseIcon = () => (_jsxs("svg", { width: 16, height: 16, viewBox: "0 0 24 
  * </Sheet>
  * ```
  */
-export function Sheet({ children, trigger, open, onOpenChange, defaultOpen, title, header, headerActions, description, side = 'right', size = 'md', showClose = true, closeLabel = 'Close', scrim = true, modal = true, bare = false, className, overlayClass, panelTestId, }) {
+export function Sheet({ children, trigger, open, onOpenChange, defaultOpen, title, header, headerActions, description, side = 'right', size = 'md', showClose = true, closeLabel, scrim = true, modal = true, bare = false, className, overlayClass, panelTestId, }) {
     const showHeader = !bare && (header != null || title != null || showClose || headerActions != null);
     return (_jsxs(RadixDialog.Root, { open: open, onOpenChange: onOpenChange, defaultOpen: defaultOpen, modal: modal, children: [trigger != null && _jsx(RadixDialog.Trigger, { asChild: true, children: trigger }), _jsxs(RadixDialog.Portal, { children: [scrim && _jsx(RadixDialog.Overlay, { className: cn('mrs-sheet__overlay', overlayClass) }), _jsx(RadixDialog.Content, { "data-testid": panelTestId, className: cn('mrs-sheet', `mrs-sheet--${side}`, `mrs-sheet--${size}`, className), 
                         // Without a scrim, Radix still traps focus when modal; keep the panel from

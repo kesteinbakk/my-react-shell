@@ -15,7 +15,7 @@ export function useToast() {
  * exposes the imperative API via `useToast()`. Each toast renders as an `Alert`,
  * so toasts inherit the same tone tokens.
  */
-export function ToastProvider({ children, duration = 3000 }) {
+export function ToastProvider({ children, duration = 3000, dismissLabel }) {
     const [toasts, setToasts] = useState([]);
     const idRef = useRef(0);
     const dismiss = useCallback((id) => {
@@ -42,5 +42,5 @@ export function ToastProvider({ children, duration = 3000 }) {
         dismiss,
     }), [show, dismiss]);
     return (_jsxs(ToastContext.Provider, { value: api, children: [children, typeof document !== 'undefined' &&
-                createPortal(_jsx("div", { className: "mrs-toast-viewport", children: toasts.map((t) => (_jsx("div", { className: "mrs-toast", children: _jsx(Alert, { tone: t.tone, title: t.title, role: "status", onDismiss: t.autoDismiss ? undefined : () => dismiss(t.id), children: t.message }) }, t.id))) }), document.body)] }));
+                createPortal(_jsx("div", { className: "mrs-toast-viewport", children: toasts.map((t) => (_jsx("div", { className: "mrs-toast", children: t.autoDismiss ? (_jsx(Alert, { tone: t.tone, title: t.title, role: "status", children: t.message })) : (_jsx(Alert, { tone: t.tone, title: t.title, role: "status", onDismiss: () => dismiss(t.id), dismissLabel: dismissLabel, children: t.message })) }, t.id))) }), document.body)] }));
 }

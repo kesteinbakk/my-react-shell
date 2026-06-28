@@ -60,6 +60,6 @@ function renderItem(item, key) {
  * />
  * ```
  */
-export function DropdownMenu({ trigger, iconTrigger, iconTriggerLabel = 'Open menu', onOpenChange, items, align = 'center', side = 'bottom', sideOffset = 8, className, }) {
+export function DropdownMenu({ trigger, iconTrigger, iconTriggerLabel, onOpenChange, items, align = 'center', side = 'bottom', sideOffset = 8, className, }) {
     return (_jsxs(RadixMenu.Root, { onOpenChange: onOpenChange, children: [iconTrigger != null ? (_jsx(RadixMenu.Trigger, { asChild: true, children: _jsx("button", { type: "button", className: "mrs-menu__icon-trigger", "aria-label": iconTriggerLabel, children: iconTrigger }) })) : (_jsx(RadixMenu.Trigger, { asChild: true, children: trigger })), _jsx(RadixMenu.Portal, { children: _jsx(RadixMenu.Content, { className: cn('mrs-menu', className), align: align, side: side, sideOffset: sideOffset, children: items.map((item, i) => renderItem(item, String(i))) }) })] }));
 }

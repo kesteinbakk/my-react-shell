@@ -10,7 +10,7 @@ const check = (_jsx("svg", { width: 16, height: 16, viewBox: "0 0 24 24", fill: 
  * handling), styled on the theme tokens. Pass an `options` list; controlled via
  * `value` / `onValueChange`.
  */
-export function Select({ options, value, onValueChange, placeholder = 'Select…', disabled, size = 'md', fullWidth = false, className, style, saveStatus, label, id: passedId, ...rest }) {
+export function Select({ options, value, onValueChange, placeholder, disabled, size = 'md', fullWidth = false, className, style, saveStatus, label, id: passedId, ...rest }) {
     const isError = saveStatus === 'error';
     const generatedId = useId();
     const id = passedId ?? generatedId;

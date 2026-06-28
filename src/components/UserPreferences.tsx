@@ -40,19 +40,20 @@ export interface UserPreferencesProps {
   /** Open-state change handler. */
   onOpenChange?: (open: boolean) => void
 
-  // ── Labels (English defaults; pass translated strings via your t()) ───────
-  triggerLabel?: string
-  title?: ReactNode
+  // ── Labels (all **required** — pass translated strings via your t() seam) ──
+  triggerLabel: string
+  title: ReactNode
+  /** Optional supporting line under the title. */
   description?: ReactNode
-  themeHeading?: ReactNode
-  modeHeading?: ReactNode
-  displayHeading?: ReactNode
-  lightLabel?: ReactNode
-  darkLabel?: ReactNode
-  systemLabel?: ReactNode
-  iconsLabel?: ReactNode
-  emojisLabel?: ReactNode
-  closeLabel?: string
+  themeHeading: ReactNode
+  modeHeading: ReactNode
+  displayHeading: ReactNode
+  lightLabel: ReactNode
+  darkLabel: ReactNode
+  systemLabel: ReactNode
+  iconsLabel: ReactNode
+  emojisLabel: ReactNode
+  closeLabel: string
   className?: string
 }
 
@@ -213,8 +214,9 @@ function Segment({
  * Fully **controlled** — it reads the current values and emits an `onChange` for each
  * preference, and persists nothing itself, so the consumer decides where state lives
  * (localStorage via the shipped providers, or a per-user account / Convex). Auth-free:
- * surface sign-out / profile through the `accountActions` slot. Labels come via props
- * (English defaults), so the kit never imports i18n.
+ * surface sign-out / profile through the `accountActions` slot. Every label is a
+ * **required, no-default prop** — pass translated strings via your t() seam, so the
+ * kit never imports i18n and never renders a hardcoded language.
  */
 export function UserPreferences({
   theme,
@@ -230,18 +232,18 @@ export function UserPreferences({
   trigger,
   open,
   onOpenChange,
-  triggerLabel = 'Preferences',
-  title = 'Preferences',
+  triggerLabel,
+  title,
   description,
-  themeHeading = 'Theme',
-  modeHeading = 'Appearance',
-  displayHeading = 'Icons',
-  lightLabel = 'Light',
-  darkLabel = 'Dark',
-  systemLabel = 'System',
-  iconsLabel = 'Icons',
-  emojisLabel = 'Emojis',
-  closeLabel = 'Close',
+  themeHeading,
+  modeHeading,
+  displayHeading,
+  lightLabel,
+  darkLabel,
+  systemLabel,
+  iconsLabel,
+  emojisLabel,
+  closeLabel,
   className,
 }: UserPreferencesProps) {
   const [internalOpen, setInternalOpen] = useState(false)

@@ -58,9 +58,6 @@ export const DynamicGridCard = forwardRef(function DynamicGridCard({ size, shape
     if (dragHandle && renderLink) {
         throw new Error('DynamicGridCard: `dragHandle` and `renderLink` are mutually exclusive — a navigable tile cannot also be drag-reordered.');
     }
-    if (dragHandle && dragHandleLabel == null && dragHandleProps?.['aria-label'] == null) {
-        throw new Error('DynamicGridCard: `dragHandleLabel` is required when `dragHandle` is set — pass a translated accessible label (or supply `aria-label` via `dragHandleProps`).');
-    }
     const minWidth = size ? DYNAMIC_GRID_CARD_MIN_WIDTH[size] : undefined;
     const maxWidth = size ? DYNAMIC_GRID_CARD_MAX_WIDTH[size] : undefined;
     const aspectRatio = shape === 'landscape' ? `${PHI * PHI} / 1` : `${PHI} / 1`;

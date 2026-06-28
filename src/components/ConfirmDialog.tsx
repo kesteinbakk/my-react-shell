@@ -18,10 +18,10 @@ export interface ConfirmDialogProps {
   useConfirm?: DialogButtonProp
   /** Cancel button label or configuration. If omitted, uses cancelLabel. */
   useCancel?: DialogButtonProp
-  /** Confirm button label. Defaults to `"Confirm"`. */
-  confirmLabel?: string
-  /** Cancel button label. Defaults to `"Cancel"`. */
-  cancelLabel?: string
+  /** Confirm button label — **required**; pass a translated string via your i18n seam. */
+  confirmLabel: string
+  /** Cancel button label — **required**; pass a translated string via your i18n seam. */
+  cancelLabel: string
   /** `danger` makes the confirm button destructive. */
   tone?: 'neutral' | 'danger'
   /** Called when the confirm button is pressed. */
@@ -44,8 +44,8 @@ export function ConfirmDialog({
   children,
   useConfirm,
   useCancel,
-  confirmLabel = 'Confirm',
-  cancelLabel = 'Cancel',
+  confirmLabel,
+  cancelLabel,
   tone = 'neutral',
   onConfirm,
   loading = false,

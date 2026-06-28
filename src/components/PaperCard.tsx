@@ -158,6 +158,11 @@ export interface PaperCardProps {
   /** Event listeners / attributes from your DND library, spread onto the drag handle. */
   dragHandleProps?: React.HTMLAttributes<HTMLButtonElement>
   /**
+   * Accessible label for the drag handle. No default — pass a translated string (or supply
+   * `aria-label` via `dragHandleProps`); absent → no label (the grip glyph stands alone).
+   */
+  dragHandleLabel?: string
+  /**
    * Interactive-root seam. The consumer renders its own router `<Link>` here, spreading the
    * supplied props, and the card mounts it as a **full-bleed block-link overlay** so the whole
    * tile is a real, keyboard-activatable anchor — while the card root stays a `<div>` that owns
@@ -203,6 +208,7 @@ export const PaperCard = forwardRef<HTMLDivElement, PaperCardProps>(function Pap
     hoverable,
     dragHandle,
     dragHandleProps,
+    dragHandleLabel,
     renderLink,
     className,
     style: styleProp,
@@ -303,7 +309,7 @@ export const PaperCard = forwardRef<HTMLDivElement, PaperCardProps>(function Pap
         <button
           type="button"
           className="mrs-paper-card__drag-handle"
-          aria-label="Drag to reorder"
+          aria-label={dragHandleLabel}
           {...dragHandleProps}
           onClick={(e) => {
             e.stopPropagation()

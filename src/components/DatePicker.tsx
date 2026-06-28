@@ -13,8 +13,8 @@ export interface DatePickerProps {
   defaultValue?: Date
   /** Fired when a day is picked (or the selection is cleared). */
   onChange?: (date: Date | undefined) => void
-  /** Trigger text when no date is selected. Defaults to `"Pick a date"`. */
-  placeholder?: string
+  /** Trigger text when no date is selected — **required**; pass a translated string. */
+  placeholder: string
   /**
    * [date-fns format](https://date-fns.org/docs/format) string for the trigger label.
    * Defaults to `"PP"` (e.g. `Apr 29, 2024`).
@@ -67,7 +67,7 @@ export function DatePicker({
   value,
   defaultValue,
   onChange,
-  placeholder = 'Pick a date',
+  placeholder,
   displayFormat = 'PP',
   disabledDays,
   startMonth,

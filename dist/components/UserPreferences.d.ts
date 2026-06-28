@@ -28,18 +28,19 @@ export interface UserPreferencesProps {
     open?: boolean;
     /** Open-state change handler. */
     onOpenChange?: (open: boolean) => void;
-    triggerLabel?: string;
-    title?: ReactNode;
+    triggerLabel: string;
+    title: ReactNode;
+    /** Optional supporting line under the title. */
     description?: ReactNode;
-    themeHeading?: ReactNode;
-    modeHeading?: ReactNode;
-    displayHeading?: ReactNode;
-    lightLabel?: ReactNode;
-    darkLabel?: ReactNode;
-    systemLabel?: ReactNode;
-    iconsLabel?: ReactNode;
-    emojisLabel?: ReactNode;
-    closeLabel?: string;
+    themeHeading: ReactNode;
+    modeHeading: ReactNode;
+    displayHeading: ReactNode;
+    lightLabel: ReactNode;
+    darkLabel: ReactNode;
+    systemLabel: ReactNode;
+    iconsLabel: ReactNode;
+    emojisLabel: ReactNode;
+    closeLabel: string;
     className?: string;
 }
 /**
@@ -49,7 +50,8 @@ export interface UserPreferencesProps {
  * Fully **controlled** — it reads the current values and emits an `onChange` for each
  * preference, and persists nothing itself, so the consumer decides where state lives
  * (localStorage via the shipped providers, or a per-user account / Convex). Auth-free:
- * surface sign-out / profile through the `accountActions` slot. Labels come via props
- * (English defaults), so the kit never imports i18n.
+ * surface sign-out / profile through the `accountActions` slot. Every label is a
+ * **required, no-default prop** — pass translated strings via your t() seam, so the
+ * kit never imports i18n and never renders a hardcoded language.
  */
 export declare function UserPreferences({ theme, themes, onThemeChange, mode, onModeChange, followSystem, onFollowSystemChange, iconMode, onIconModeChange, accountActions, trigger, open, onOpenChange, triggerLabel, title, description, themeHeading, modeHeading, displayHeading, lightLabel, darkLabel, systemLabel, iconsLabel, emojisLabel, closeLabel, className, }: UserPreferencesProps): import("react").JSX.Element;

@@ -17,7 +17,7 @@ const CalendarGlyph = () => (_jsxs("svg", { width: 16, height: 16, viewBox: "0 0
  * <DatePicker value={date} onChange={setDate} disabledDays={{ before: new Date() }} />
  * ```
  */
-export function DatePicker({ value, defaultValue, onChange, placeholder = 'Pick a date', displayFormat = 'PP', disabledDays, startMonth, endMonth, disabled, fullWidth = false, className, style, ...rest }) {
+export function DatePicker({ value, defaultValue, onChange, placeholder, displayFormat = 'PP', disabledDays, startMonth, endMonth, disabled, fullWidth = false, className, style, ...rest }) {
     const [open, setOpen] = useState(false);
     // Support uncontrolled use: hold an internal selection only when `value` is absent.
     const [internal, setInternal] = useState(defaultValue);

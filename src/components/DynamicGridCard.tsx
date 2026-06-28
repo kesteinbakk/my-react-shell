@@ -99,9 +99,8 @@ export interface DynamicGridCardProps extends Omit<HTMLAttributes<HTMLDivElement
    */
   dragHandleProps?: React.HTMLAttributes<HTMLButtonElement>
   /**
-   * Accessible label for the drag handle. **Required when `dragHandle` is set** (no
-   * default — pass a translated string, or supply `aria-label` via `dragHandleProps`);
-   * throws in dev otherwise.
+   * Accessible label for the drag handle. No default — pass a translated string (or supply
+   * `aria-label` via `dragHandleProps`); absent → no label (the grip glyph stands alone).
    */
   dragHandleLabel?: string
   /**
@@ -213,9 +212,6 @@ export const DynamicGridCard = forwardRef<HTMLDivElement, DynamicGridCardProps>(
 ) {
   if (dragHandle && renderLink) {
     throw new Error('DynamicGridCard: `dragHandle` and `renderLink` are mutually exclusive — a navigable tile cannot also be drag-reordered.')
-  }
-  if (dragHandle && dragHandleLabel == null && dragHandleProps?.['aria-label'] == null) {
-    throw new Error('DynamicGridCard: `dragHandleLabel` is required when `dragHandle` is set — pass a translated accessible label (or supply `aria-label` via `dragHandleProps`).')
   }
 
   const minWidth = size ? DYNAMIC_GRID_CARD_MIN_WIDTH[size] : undefined

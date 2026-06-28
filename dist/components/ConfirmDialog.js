@@ -6,7 +6,7 @@ import { cn } from './cn';
  * close, portal). Styled with the theme tokens; renders its own confirm/cancel
  * buttons.
  */
-export function ConfirmDialog({ open, onOpenChange, title, description, children, useConfirm, useCancel, confirmLabel = 'Confirm', cancelLabel = 'Cancel', tone = 'neutral', onConfirm, loading = false, className, }) {
+export function ConfirmDialog({ open, onOpenChange, title, description, children, useConfirm, useCancel, confirmLabel, cancelLabel, tone = 'neutral', onConfirm, loading = false, className, }) {
     const getButtonClass = (t) => {
         if (t === 'danger')
             return 'mrs-dialog__btn--danger';

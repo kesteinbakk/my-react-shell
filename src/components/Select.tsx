@@ -16,7 +16,8 @@ export interface SelectProps {
   /** Selected value (controlled). */
   value?: string
   onValueChange?: (value: string) => void
-  placeholder?: string
+  /** Placeholder text when nothing is selected — **required**; pass a translated string. */
+  placeholder: string
   disabled?: boolean
   /** Accessible label for the trigger. */
   'aria-label'?: string
@@ -72,7 +73,7 @@ export function Select({
   options,
   value,
   onValueChange,
-  placeholder = 'Select…',
+  placeholder,
   disabled,
   size = 'md',
   fullWidth = false,

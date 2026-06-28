@@ -122,6 +122,10 @@ export interface EmojiPickerProps {
   searchPlaceholder?: string
   /** Label shown when search returns no results. Default `'🤷'`. Pass a translated string via your i18n seam. */
   noResultsLabel?: string
+  /** Accessible label for the category tablist — **required**; pass a translated string. */
+  categoriesLabel: string
+  /** Accessible label + tooltip for the frequently-used tab — **required**; pass a translated string. */
+  frequentLabel: string
   /** Extra classes on the root element. */
   className?: string
 }
@@ -153,6 +157,8 @@ export function EmojiPicker({
   showSearch = true,
   searchPlaceholder = '🔍',
   noResultsLabel = '🤷',
+  categoriesLabel,
+  frequentLabel,
   className,
 }: EmojiPickerProps) {
   const [data, setData] = useState<CompactEmoji[]>([])
@@ -257,14 +263,14 @@ export function EmojiPicker({
             <div
               className="mrs-emoji-picker__tabs"
               role="tablist"
-              aria-label="Emoji categories"
+              aria-label={categoriesLabel}
             >
               <button
                 type="button"
                 role="tab"
                 aria-selected={activeTab === FREQUENT_TAB}
-                aria-label="Frequently used"
-                title="Frequently used"
+                aria-label={frequentLabel}
+                title={frequentLabel}
                 className={cn(
                   'mrs-emoji-picker__tab',
                   activeTab === FREQUENT_TAB && 'mrs-emoji-picker__tab--active',

@@ -25,11 +25,13 @@ export interface ToastProviderProps {
     children: ReactNode;
     /** Default auto-dismiss in ms (a per-toast `duration` overrides). Defaults to 3000. */
     duration?: number;
+    /** Accessible label for a dismissible toast's ✕ button — **required**; pass a translated string. */
+    dismissLabel: string;
 }
 /**
  * Mounts the toast store and a fixed viewport (portaled to `document.body`), and
  * exposes the imperative API via `useToast()`. Each toast renders as an `Alert`,
  * so toasts inherit the same tone tokens.
  */
-export declare function ToastProvider({ children, duration }: ToastProviderProps): import("react").JSX.Element;
+export declare function ToastProvider({ children, duration, dismissLabel }: ToastProviderProps): import("react").JSX.Element;
 export {};

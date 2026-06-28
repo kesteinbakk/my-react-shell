@@ -83,21 +83,13 @@ export type DropdownMenuItem = DropdownMenuActionItem | {
     type: 'label';
     label: ReactNode;
 } | DropdownMenuCheckboxItem | DropdownMenuRadioGroupItem | DropdownMenuSubmenuItem;
-export interface DropdownMenuProps {
+interface DropdownMenuBaseProps {
     /**
      * The clickable anchor — wrapped in the Radix trigger (`asChild`). Provide either
      * `trigger` or `iconTrigger`; when `iconTrigger` is given the kit renders its own
      * square ghost icon button.
      */
     trigger?: ReactNode;
-    /**
-     * Icon element for an icon-only trigger. The kit renders a square ghost button
-     * around it — consistent with the rest of the kit's icon controls. Provide either
-     * `iconTrigger` or `trigger`.
-     */
-    iconTrigger?: ReactNode;
-    /** Accessible label for the icon-only trigger. Defaults to `'Open menu'`. */
-    iconTriggerLabel?: string;
     /** Fires when the menu opens or closes. Receives `true` on open, `false` on close. */
     onOpenChange?: (open: boolean) => void;
     /** The menu rows, in order. */
@@ -111,6 +103,19 @@ export interface DropdownMenuProps {
     /** Extra classes on the menu content, merged via `cn()`. */
     className?: string;
 }
+/**
+ * Icon-trigger props: when `iconTrigger` is given the kit renders its own square ghost
+ * icon button, and `iconTriggerLabel` (its accessible label) is **required** — pass a
+ * translated string. Omit both to use a custom `trigger` instead.
+ */
+type DropdownIconTriggerProps = {
+    iconTrigger: ReactNode;
+    iconTriggerLabel: string;
+} | {
+    iconTrigger?: undefined;
+    iconTriggerLabel?: undefined;
+};
+export type DropdownMenuProps = DropdownMenuBaseProps & DropdownIconTriggerProps;
 /**
  * A data-driven dropdown menu on Radix DropdownMenu — pass an anchor as `trigger`
  * and the rows as `items` (a discriminated union of `item` · `separator` · `label` ·
@@ -139,3 +144,4 @@ export interface DropdownMenuProps {
  * ```
  */
 export declare function DropdownMenu({ trigger, iconTrigger, iconTriggerLabel, onOpenChange, items, align, side, sideOffset, className, }: DropdownMenuProps): import("react").JSX.Element;
+export {};

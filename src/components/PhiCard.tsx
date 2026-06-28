@@ -131,7 +131,7 @@ export interface PhiCardProps {
   actions?: PhiCardAction[]
   /** Override the ⋮ trigger glyph. */
   menuIcon?: ReactNode
-  /** Accessible name for the menu trigger. Default: `'Actions'`. */
+  /** Accessible name for the ⋮ menu trigger. No default — pass a translated string; absent → no label (the ⋮ glyph stands alone). */
   menuLabel?: string
   /** Bring-your-own top-right node; replaces the built-in `actions` menu. */
   corner?: ReactNode
@@ -161,6 +161,8 @@ export interface PhiCardProps {
    * spread onto the drag handle element.
    */
   dragHandleProps?: React.HTMLAttributes<HTMLButtonElement>
+  /** Accessible label for the drag handle. No default — pass a translated string (or supply `aria-label` via `dragHandleProps`); absent → no label (the grip glyph stands alone). */
+  dragHandleLabel?: string
   /** Optional style override. */
   style?: CSSProperties
 }
@@ -185,7 +187,7 @@ function PhiCardMenu({
 }: {
   actions: PhiCardAction[]
   icon: ReactNode
-  label: string
+  label?: string
 }) {
   return (
     <DropdownMenu.Root>
@@ -246,7 +248,7 @@ export const PhiCard = forwardRef<HTMLDivElement, PhiCardProps>(function PhiCard
     size = 'md',
     actions,
     menuIcon,
-    menuLabel = 'Actions',
+    menuLabel,
     corner,
     tone,
     color,
@@ -255,6 +257,7 @@ export const PhiCard = forwardRef<HTMLDivElement, PhiCardProps>(function PhiCard
     hoverable,
     dragHandle,
     dragHandleProps,
+    dragHandleLabel,
     className,
     style: styleProp,
   },
@@ -391,7 +394,7 @@ export const PhiCard = forwardRef<HTMLDivElement, PhiCardProps>(function PhiCard
         <button
           type="button"
           className="mrs-phi-card__drag-handle"
-          aria-label="Drag to reorder"
+          aria-label={dragHandleLabel}
           {...dragHandleProps}
           onClick={(e) => {
             e.stopPropagation()

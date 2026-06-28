@@ -1,18 +1,24 @@
 import type { ReactNode } from 'react'
 import { cn } from './cn'
 
-export interface ChipProps {
+interface ChipBaseProps {
   children?: ReactNode
   /** Selected styling (for toggle chips). */
   selected?: boolean
   /** Makes the label a toggle button calling this. */
   onClick?: () => void
-  /** Shows a remove (×) button calling this. */
-  onRemove?: () => void
-  /** Accessible label for the remove button. Defaults to `"Remove"`. */
-  removeLabel?: string
   className?: string
 }
+
+/**
+ * Remove-button props: when `onRemove` is set, `removeLabel` (the accessible label) is
+ * **required** — pass a translated string. Omit both for a non-removable chip.
+ */
+type ChipRemoveProps =
+  | { onRemove: () => void; removeLabel: string }
+  | { onRemove?: undefined; removeLabel?: undefined }
+
+export type ChipProps = ChipBaseProps & ChipRemoveProps
 
 /**
  * A tag / chip — plain, toggleable (`onClick` + `selected`), or removable
@@ -24,7 +30,7 @@ export function Chip({
   selected = false,
   onClick,
   onRemove,
-  removeLabel = 'Remove',
+  removeLabel,
   className,
 }: ChipProps) {
   const interactive = onClick != null

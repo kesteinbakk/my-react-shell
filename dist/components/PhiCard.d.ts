@@ -78,7 +78,7 @@ export interface PhiCardProps {
     actions?: PhiCardAction[];
     /** Override the ⋮ trigger glyph. */
     menuIcon?: ReactNode;
-    /** Accessible name for the menu trigger. Default: `'Actions'`. */
+    /** Accessible name for the ⋮ menu trigger. No default — pass a translated string; absent → no label (the ⋮ glyph stands alone). */
     menuLabel?: string;
     /** Bring-your-own top-right node; replaces the built-in `actions` menu. */
     corner?: ReactNode;
@@ -108,6 +108,8 @@ export interface PhiCardProps {
      * spread onto the drag handle element.
      */
     dragHandleProps?: React.HTMLAttributes<HTMLButtonElement>;
+    /** Accessible label for the drag handle. No default — pass a translated string (or supply `aria-label` via `dragHandleProps`); absent → no label (the grip glyph stands alone). */
+    dragHandleLabel?: string;
     /** Optional style override. */
     style?: CSSProperties;
 }
