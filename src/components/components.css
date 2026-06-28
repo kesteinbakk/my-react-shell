@@ -2461,12 +2461,15 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
-/* Auto-fit: very long titles step the font size down (up to three steps) so they
+/* Auto-fit: very long titles step the font size down (up to five steps) so they
    stay within ~two lines without resizing the card. Driven by `data-fit` (set from
-   the title's character count); the attribute is absent at step 0 (no reduction). */
+   the title's character count); the attribute is absent at step 0 (no reduction).
+   The deeper steps let the card swallow a much longer title before it ellipsizes. */
 .mrs-stat-card__title[data-fit='1'] { font-size: 0.95em; }
 .mrs-stat-card__title[data-fit='2'] { font-size: 0.85em; }
 .mrs-stat-card__title[data-fit='3'] { font-size: 0.78em; line-height: 1.25; }
+.mrs-stat-card__title[data-fit='4'] { font-size: 0.70em; line-height: 1.25; }
+.mrs-stat-card__title[data-fit='5'] { font-size: 0.62em; line-height: 1.3; }
 
 .mrs-stat-card__subtitle {
   margin: 0;
@@ -5266,6 +5269,8 @@
 .mrs-content-card__title[data-fit='1'] { font-size: 0.95em; }
 .mrs-content-card__title[data-fit='2'] { font-size: 0.85em; }
 .mrs-content-card__title[data-fit='3'] { font-size: 0.78em; line-height: 1.25; }
+.mrs-content-card__title[data-fit='4'] { font-size: 0.70em; line-height: 1.25; }
+.mrs-content-card__title[data-fit='5'] { font-size: 0.62em; line-height: 1.3; }
 
 .mrs-content-card__subtitle {
   margin: 0;
@@ -5582,6 +5587,9 @@
 }
 .mrs-paper-card__title[data-fit='1'] { font-size: 0.95em; }
 .mrs-paper-card__title[data-fit='2'] { font-size: 0.85em; line-height: 1.25; }
+.mrs-paper-card__title[data-fit='3'] { font-size: 0.78em; line-height: 1.25; }
+.mrs-paper-card__title[data-fit='4'] { font-size: 0.70em; line-height: 1.25; }
+.mrs-paper-card__title[data-fit='5'] { font-size: 0.62em; line-height: 1.3; }
 
 .mrs-paper-card__subtitle {
   margin: 0.2em 0 0;

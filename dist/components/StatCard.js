@@ -70,14 +70,20 @@ function completenessFill(value) {
 }
 // ── Title auto-fit ──────────────────────────────────────────────────────────
 /**
- * Very long titles step the font size down (up to three steps) so they stay within
+ * Very long titles step the font size down (up to five steps) so they stay within
  * roughly two lines without changing the card geometry. Length-based: the title font
  * scales with `size`, so characters-per-line is roughly constant across presets, and
- * raw `title.length` is a good cross-size proxy for "is this title very long".
- * Returns `0` (no reduction) through `3` (smallest).
+ * raw `title.length` is a good cross-size proxy for "is this title very long". The
+ * extra deep steps let the card swallow a much longer title before it has to ellipsize.
+ * Returns `0` (no reduction) through `5` (smallest). Shared ladder across the
+ * string-title cards (`StatCard`/`ContentCard`/`PaperCard`).
  */
 function titleFitStep(title) {
     const n = title.length;
+    if (n > 116)
+        return 5;
+    if (n > 90)
+        return 4;
     if (n > 68)
         return 3;
     if (n > 48)

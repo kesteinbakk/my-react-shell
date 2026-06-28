@@ -593,7 +593,7 @@ whole-card link via `renderLink`. Medallion, gauge (`sideBarCompleteness`,
 
 | Prop | Default | Meaning |
 |---|---|---|
-| `title` | — | Card title. **Required.** Auto-fits: a very long title steps its font size down in up to three steps (by character count) so it stays within ~two lines without resizing the card. Short titles are unaffected. |
+| `title` | — | Card title. **Required.** Auto-fits: a very long title steps its font size down in up to five steps (by character count) so it stays within ~two lines without resizing the card; the deeper steps let a much longer title fit before it ellipsizes. Short titles are unaffected. |
 | `subtitle` | — | Optional subtitle below the title. |
 | `medallion` | — | `{ value, label?, max?, size? }` — the top-right circle. Plain circle (number + label) when `max` is absent; SVG arc-ring showing `value/max` progress when `max` is set. `size` defaults to `'lg'`; when `'sm'`, the medallion renders with a smaller footprint, drops its label, and clamps numeric values to `99`. |
 | `onMedallionPress` | — | Optional callback triggered when the medallion is clicked. When set, the medallion renders as a `<button>` with a pressable hover/active lift effect. |

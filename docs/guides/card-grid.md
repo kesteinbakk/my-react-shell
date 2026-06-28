@@ -241,8 +241,10 @@ footer slot.
   the same value and forces `⚠️` as the watermark, ignoring `watermark`.
 - **`stats`** — `{ value, label?, max? }[]`. `label` → label above + number below; `max` →
   compact arc-ring. **Cannot combine `label` and `max` on the same item** (throws in dev).
-- **Title auto-fit** — a very long title steps its font size down in up to three steps (by
-  character count) so it stays within ~two lines without resizing the card.
+- **Title auto-fit** — a very long title steps its font size down in up to five steps (by
+  character count) so it stays within ~two lines without resizing the card; the deeper steps
+  let a much longer title fit before it has to ellipsize. The same ladder backs `StatCard`,
+  `ContentCard`, and `PaperCard`.
 
 > **`.mrs-stat-card__cta`** is a pre-styled CTA pill class for the freeform `footer`/`lower`
 > slot — brand background, rounded, inherits font-size. Style it yourself or use this shortcut.
