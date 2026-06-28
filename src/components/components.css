@@ -1830,7 +1830,7 @@
 /* Faint oversized emoji watermark — centred horizontally, dropped a little below the
    card's vertical centre (top 56%). Sits at z-index 0 behind the content, which is
    raised to z-index 1 on watermarked cards. */
-.mrs-dynamic-grid-card--watermark::after {
+.mrs-dynamic-grid-card--watermark[data-watermark]::after {
   content: attr(data-watermark);
   position: absolute;
   top: 56%;
@@ -1848,6 +1848,20 @@
 .mrs-dynamic-grid-card--watermark .mrs-dynamic-grid-card__footer {
   position: relative;
   z-index: 1;
+}
+
+/* Element (art) watermark — a faint illustration layer behind the content (e.g. a `DrawerMark`),
+   framed like the emoji watermark: centred horizontally, dropped a little below centre. */
+.mrs-dynamic-grid-card__watermark {
+  position: absolute;
+  left: 54%;
+  top: 60%;
+  width: 62%;
+  transform: translate(-50%, -50%);
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.16;
+  user-select: none;
 }
 
 /* Corner action slot — raised above the link overlay so it stays independently clickable. */
@@ -5649,5 +5663,85 @@
 }
 .mrs-paper-card--linked .mrs-paper-card__sheet {
   pointer-events: none;
+}
+
+/* ── RevealMark — hover-reveal seam ───────────────────────────────────────────
+   Two stacked layers that cross-fade. `revealed` replaces `closed` when the mark's nearest
+   `.mrs-reveal-host` ancestor is hovered, or unconditionally when `data-open` is set. */
+.mrs-reveal-mark {
+  position: relative;
+  display: block;
+  width: 100%;
+}
+.mrs-reveal-mark__layer {
+  display: block;
+  width: 100%;
+}
+.mrs-reveal-mark__layer svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.mrs-reveal-mark__closed {
+  transition: opacity 350ms ease;
+}
+.mrs-reveal-mark__revealed {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 350ms ease;
+}
+.mrs-reveal-host:hover .mrs-reveal-mark__closed,
+.mrs-reveal-mark[data-open] .mrs-reveal-mark__closed {
+  opacity: 0;
+}
+.mrs-reveal-host:hover .mrs-reveal-mark__revealed,
+.mrs-reveal-mark[data-open] .mrs-reveal-mark__revealed {
+  opacity: 1;
+}
+@media (prefers-reduced-motion: reduce) {
+  .mrs-reveal-mark__closed,
+  .mrs-reveal-mark__revealed {
+    transition: none;
+  }
+}
+
+/* ── DrawerMark — isometric drawer, the first RevealMark instance ──────────────
+   Surfaces shade top → front → side (raised → primary → sunken); the open tray's floor and
+   inner walls are a gray `color-mix` of `--color-text-primary` so they invert with the theme. */
+.mrs-drawer-mark__top {
+  fill: var(--color-surface-raised);
+}
+.mrs-drawer-mark__front {
+  fill: var(--color-surface-primary);
+}
+.mrs-drawer-mark__side {
+  fill: var(--color-surface-sunken);
+}
+.mrs-drawer-mark__edge {
+  stroke: var(--color-border-secondary);
+  stroke-width: 1.4;
+  stroke-linejoin: round;
+}
+.mrs-drawer-mark__knob {
+  fill: var(--color-text-secondary);
+}
+.mrs-drawer-mark__slot {
+  fill: color-mix(in srgb, var(--color-surface-sunken-deep) 58%, #000);
+}
+.mrs-drawer-mark__wall {
+  fill: color-mix(in srgb, var(--color-text-primary) 56%, var(--color-surface-primary));
+}
+.mrs-drawer-mark__floor {
+  fill: color-mix(in srgb, var(--color-text-primary) 38%, var(--color-surface-primary));
+}
+.mrs-drawer-mark__sheet {
+  fill: var(--color-surface-raised);
+}
+.mrs-drawer-mark__line {
+  stroke: var(--color-text-secondary);
+  stroke-width: 1;
+  opacity: 0.45;
+  stroke-linecap: round;
 }
 

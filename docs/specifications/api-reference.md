@@ -283,7 +283,9 @@ import 'my-react-shell/components/styles.css' // REQUIRED (plain prebuilt CSS; a
 | `PaperCard` | component | Small **preview / thumbnail** card styled as a dog-eared sheet of paper at **A4 portrait** proportions (`height = width × √2`). Fixed-width size scale (`sm` 134 · `md` 168 · `lg` 210 · `xl` 264 · `xxl` 320 px, **default `md`**); the folded top-right corner is cut from the sheet with `clip-path`, and the drop shadow rides a wrapper (`filter: drop-shadow()`) so it follows the dog-eared silhouette. Title + optional subtitle / `content` (+ `contentAlignX/Y`, `maxLines`), shared `{ lines, badges }` `footer`, **opt-in** `tone`/`color` top/left accent (none by default), `watermark`, hover-lift, `dragHandle`, and the `renderLink` block-link overlay. Fixed-size → drops into the static `CardGrid`. |
 | `CardGrid` | component | **Static** card grid: fixed-size cards flow left-to-right and **wrap** when a row is full, separated by a fixed `gap`. Cards are **not** stretched (a larger gap may remain at the end of a row) and keep their own intrinsic width/height (`StatCard`/`ContentCard`/`PhiCard`/`PaperCard`). `align` (`start`·`center`, default `start`), `gap` (CSS length override; default `1.5rem`, sized so four ≈312px cards fit a `wide` row). Children-based. |
 | `DynamicCardGrid` | component | **Fluid** card grid with a built-in search / filter / sort toolbar. Cards stretch to fill uniform `1fr` columns sized by `cardSize` (`sm`·`md`·`lg`) or a raw `minColumnWidth`. Data-driven via `items` / `renderCard` / `getKey`; `filters`, `sortOptions`, `searchFields`/`searchFn`, `loading`, empty + no-results states. Pair with `DynamicGridCard`. |
-| `DynamicGridCard` | component | Fluid card for `DynamicCardGrid`: stretches to `width:100%` of its column, inherits the grid's max-width cap, keeps the golden-ratio shape via `aspect-ratio`. Optional `title` / `subtitle` / `figure` / `footer` slots, primary content as `children`. `size` (`sm`·`md`·`lg`), `shape` (`standard` = φ:1 · `landscape` = φ²:1), optional emoji `watermark` (centred, dropped a little below centre). Acts as a **whole-card navigation link** via `renderLink` (consumer supplies its router `<Link>`, rendered as a full-bleed block-link overlay), with `hoverable` lift and a raised `corner` action slot. |
+| `DynamicGridCard` | component | Fluid card for `DynamicCardGrid`: stretches to `width:100%` of its column, inherits the grid's max-width cap, keeps the golden-ratio shape via `aspect-ratio`. Optional `title` / `subtitle` / `figure` / `footer` slots, primary content as `children`. `size` (`sm`·`md`·`lg`), `shape` (`standard` = φ:1 · `landscape` = φ²:1), `watermark` — `string` (faint oversized emoji, centred, dropped a little below centre) **or** a `ReactNode` art layer (e.g. a `DrawerMark`); an element watermark makes the card root a `mrs-reveal-host`. Acts as a **whole-card navigation link** via `renderLink` (consumer supplies its router `<Link>`, rendered as a full-bleed block-link overlay), with `hoverable` lift and a raised `corner` action slot. |
+| `RevealMark` | component | Hover-reveal seam: two stacked layers (`closed` / `revealed`) that cross-fade. The `revealed` layer replaces `closed` when the mark's nearest `.mrs-reveal-host` ancestor is hovered, or unconditionally when `open` is `true` (e.g. the active route). Purely decorative (`aria-hidden`); meant for a card's `watermark` slot. Build new openable marks on it. |
+| `DrawerMark` | component | First `RevealMark` instance — an **isometric drawer** that rests as a closed box and slides open (tray with a gray interior floor + walls and one sheet lying flat inside) on hover, or stays open via `open`. Fully theme-token-driven; the gray interior is a `color-mix` of `--color-text-primary` into the surface, so it inverts between light/dark mode. Drop into `DynamicGridCard`'s `watermark`. |
 | `InputField` | component | Full field: label + input + helper + error, a11y-wired (`htmlFor`/`aria-invalid`/`aria-describedby`). Spreads native input props; pass `error` to switch on error styling. `inputSize` (`sm`·`md`·`lg`, default `md`) matches the `Input` height/padding scale. `onDebouncedChange(value)` (fires `debounceMs` after the user stops typing; default 500 ms), `saveStatus` (visual status `'idle'`·`'pending'`·`'saving'`·`'saved'`·`'error'`). |
 | `SegmentedControl` | component | Single-select `radiogroup` on a track; controlled via `value`/`onChange`; generic over value type. |
 | `Select` | component | Opinionated select on Radix Select (keyboard nav, typeahead, portal); `options` list; controlled via `value`/`onValueChange`; `size` (`sm`·`md`·`lg`, default `md`) matches the `Input` height/padding scale; `saveStatus` (visual status `'idle'`·`'pending'`·`'saving'`·`'saved'`·`'error'`); optional `label` (renders above the select trigger); supports custom `className` and `style` on the trigger. |
@@ -326,6 +328,7 @@ Every component has a matching `…Props` type export (e.g. `ButtonProps`, `Butt
 `ContentCardProps`, `ContentCardSize`, `ContentCardTone`, `ContentCardVariant`,
 `ContentCardFooter`, `ContentCardFooterLine`, `ContentCardFooterLineType`,
 `PaperCardProps`, `PaperCardSize`, `PaperCardTone`, `PaperCardFooter`, `PaperCardFooterLine`, `PaperCardFooterLineType`, `PaperCardLinkProps`,
+`RevealMarkProps`, `DrawerMarkProps`,
 `CardGridProps`, `DynamicCardGridProps`, `ToggleFilter`, `SortOption`,
 `DynamicGridCardProps`, `DynamicGridCardSize`, `DynamicGridCardShape`, `DynamicGridCardFooter`, `DynamicGridCardFooterLine`, `DynamicGridCardFooterLineType`, `DynamicGridCardLinkProps`, `ColorPickerProps`,
 `ColorFormat`, `CollapsibleProps`, `CollapsibleVariant`, `CollapsibleSize`,
@@ -685,7 +688,7 @@ import { DynamicCardGrid, DynamicGridCard } from 'my-react-shell/components'
 | `size` | — | `sm`·`md`·`lg` — a self-applied min/max-width cap for use **outside** a `DynamicCardGrid`. Inside one, omit it and let `cardSize` on the grid drive the columns. |
 | `shape` | `'standard'` | `'standard'` = φ:1 · `'landscape'` = φ²:1 (shorter/wider). |
 | `hoverable` | `false` | Cursor + hover-lift + `:focus-visible` ring on the card root. |
-| `watermark` | — | Emoji rendered as a faint oversized background watermark — centred horizontally and dropped a little below the card's vertical centre. E.g. `'🚀'`. |
+| `watermark` | — | Faint background watermark — centred horizontally, dropped a little below centre. A **`string`** is an oversized emoji (e.g. `'🚀'`); a **`ReactNode`** (e.g. a `DrawerMark`) renders in an art layer behind the content and makes the card root a `mrs-reveal-host` (so a hover-reveal mark opens on card hover). |
 | `corner` | — | Top-corner action slot (e.g. a `DropdownMenu` trigger). Rendered **above** the link overlay (`z-index`) as a sibling of the anchor, so it stays independently clickable — never nested in the link. |
 | `renderLink` | — | Interactive-root seam. `(linkProps) => ReactNode` — the consumer renders its router `<Link>` spreading `linkProps` (`className` + auto-wired `aria-labelledby` from the title), adding `to`/`params`. The card mounts it as a **full-bleed block-link overlay** so the whole tile is a real, keyboard-activatable anchor while the root `<div>` owns its hover/border/focus states. The shell imports no router; `to`/`params` type-safety lives at the call site. |
 
@@ -703,6 +706,38 @@ import { Link } from '@tanstack/react-router'
   renderLink={(p) => <Link {...p} to="/setup/$id" params={{ id }} />}
 />
 ```
+
+#### `DrawerMark` / `RevealMark` — hover-reveal watermark
+
+`RevealMark` cross-fades a `closed` layer to a `revealed` one when its nearest `.mrs-reveal-host`
+ancestor is hovered, or unconditionally when `open` is set. `DrawerMark` is the shipped drawer
+instance. Pass one as a `DynamicGridCard` `watermark` (which makes the card root the host) to get
+a drawer that rests closed and slides open on card hover; set `open` to keep it open for the
+active route. Both are decorative (`aria-hidden`).
+
+| Prop | Default | Meaning |
+|---|---|---|
+| `RevealMark` · `closed` | — | Resting layer (any node). |
+| `RevealMark` · `revealed` | — | Layer cross-faded in on host hover / when `open`. |
+| `RevealMark` · `open` | `false` | Force the `revealed` layer regardless of hover. |
+| `DrawerMark` · `open` | `false` | Force the open drawer (e.g. the active route). |
+
+```tsx
+import { DynamicGridCard, DrawerMark } from 'my-react-shell/components'
+
+// Drawer watermark that opens on hover; force-open on the active route:
+<DynamicGridCard
+  title="Files"
+  subtitle="Project documents"
+  footer={{ lines: [{ text: '8 items' }] }}
+  hoverable
+  watermark={<DrawerMark open={isActive} />}
+  renderLink={(p) => <Link {...p} to="/files/$id" params={{ id }} />}
+/>
+```
+
+> Build a new openable mark on `RevealMark` directly: `<RevealMark closed={…} revealed={…} />`.
+> It reveals inside **any** container carrying `mrs-reveal-host` — not only cards.
 
 ### `ContentCard`
 

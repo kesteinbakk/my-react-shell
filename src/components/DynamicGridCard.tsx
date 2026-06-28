@@ -45,10 +45,14 @@ export interface DynamicGridCardProps extends Omit<HTMLAttributes<HTMLDivElement
   /** Cursor + hover-lift + `:focus-visible` ring on the card root. */
   hoverable?: boolean
   /**
-   * Emoji or text rendered as a faint oversized background watermark, centred
-   * horizontally and dropped a little below the card's vertical centre. E.g. `'🚀'`.
+   * Faint background watermark behind the card content, centred horizontally and dropped a
+   * little below the card's vertical centre.
+   *
+   * - A **string** is an emoji/text watermark (e.g. `'🚀'`), drawn oversized via a pseudo-element.
+   * - A **`ReactNode`** (e.g. a {@link DrawerMark}) is rendered in a faint art layer; the card
+   *   root becomes a `mrs-reveal-host`, so a hover-reveal mark dropped here opens on card hover.
    */
-  watermark?: string
+  watermark?: ReactNode
   /**
    * Top-corner action slot (e.g. a `DropdownMenu` trigger). Rendered above the link overlay
    * (`z-index`) so it stays independently clickable — a sibling of the anchor, never nested in it.
@@ -170,6 +174,11 @@ export const DynamicGridCard = forwardRef<HTMLDivElement, DynamicGridCardProps>(
   const hasTitle = title != null
   const hasHeader = title != null || subtitle != null || figure != null
 
+  // A string watermark uses the emoji `::after` path; any other node renders in an art layer.
+  const watermarkIsString = typeof watermark === 'string'
+  const hasWatermark = watermarkIsString ? watermark.length > 0 : watermark != null
+  const hasArtWatermark = hasWatermark && !watermarkIsString
+
   const structuredFooter = isStructuredFooter(footer) ? footer : null
   const hasFooter = structuredFooter
     ? (structuredFooter.lines?.length ?? 0) > 0 || (structuredFooter.badges?.length ?? 0) > 0
@@ -189,11 +198,12 @@ export const DynamicGridCard = forwardRef<HTMLDivElement, DynamicGridCardProps>(
         'mrs-dynamic-grid-card',
         hoverable && 'mrs-dynamic-grid-card--hoverable',
         renderLink && 'mrs-dynamic-grid-card--linked',
-        watermark && 'mrs-dynamic-grid-card--watermark',
+        hasWatermark && 'mrs-dynamic-grid-card--watermark',
+        hasArtWatermark && 'mrs-reveal-host',
         className,
       )}
       style={cssVars}
-      data-watermark={watermark}
+      data-watermark={watermarkIsString ? watermark : undefined}
       {...props}
     >
       {renderLink
@@ -202,6 +212,10 @@ export const DynamicGridCard = forwardRef<HTMLDivElement, DynamicGridCardProps>(
             ...(hasTitle ? { 'aria-labelledby': titleId } : {}),
           })
         : null}
+
+      {hasArtWatermark ? (
+        <div className="mrs-dynamic-grid-card__watermark" aria-hidden="true">{watermark}</div>
+      ) : null}
 
       {corner != null ? <div className="mrs-dynamic-grid-card__corner">{corner}</div> : null}
 

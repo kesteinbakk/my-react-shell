@@ -162,6 +162,12 @@ export type {
   PaperCardLinkProps,
 } from './PaperCard'
 
+export { RevealMark } from './RevealMark'
+export type { RevealMarkProps } from './RevealMark'
+
+export { DrawerMark } from './DrawerMark'
+export type { DrawerMarkProps } from './DrawerMark'
+
 export { InputField } from './InputField'
 export type { InputFieldProps } from './InputField'
 

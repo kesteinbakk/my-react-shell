@@ -184,6 +184,30 @@ identical to the example above on all four cards.
 
 ---
 
+## 4. Watermarks — emoji or a hover-reveal mark
+
+`DynamicGridCard`'s `watermark` takes a **string** (a faint oversized emoji, the long-standing
+behaviour) **or** a **`ReactNode`** art layer. The shipped art mark is **`DrawerMark`** — an
+isometric drawer that rests closed and slides open on card hover, built on the **`RevealMark`**
+seam. An element watermark makes the card root a `mrs-reveal-host`, which is what drives the
+open-on-hover; pass `open` to keep it open for the active route.
+
+```tsx
+import { DynamicGridCard, DrawerMark } from 'my-react-shell/components'
+
+<DynamicGridCard title="Files" subtitle="Project documents"
+  footer={{ lines: [{ text: '8 items' }] }} hoverable
+  watermark={<DrawerMark open={isActive} />}
+  renderLink={(p) => <Link {...p} to="/files/$id" params={{ id }} />} />
+```
+
+`RevealMark` is the general seam — `<RevealMark closed={…} revealed={…} open?={…} />` cross-fades
+its two layers on hover of the nearest `.mrs-reveal-host` (or when `open`). Build new openable
+marks on it; the drawer is just the first instance. Both marks are decorative (`aria-hidden`) —
+the card's `title` carries the accessible name.
+
+---
+
 ## 4. Per-card behaviour & examples
 
 The full prop tables live in the
