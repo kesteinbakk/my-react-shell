@@ -37,7 +37,7 @@ export function Preview({
   headerContent,
   className,
 }: PreviewProps) {
-  const containerRef = useRef<HTMLDivElement | null>(null)
+  const [containerEl, setContainerEl] = useState<HTMLDivElement | null>(null)
   const [width, setWidth] = useState<number | null>(null)
   const [numPages, setNumPages] = useState<number>(0)
   const [aspect, setAspect] = useState(DEFAULT_ASPECT)
@@ -46,25 +46,24 @@ export function Preview({
 
   // Track the container width to fit the pages.
   useEffect(() => {
-    if (!open) return
-    const el = containerRef.current
-    if (!el) return
-    const update = () => setWidth(el.clientWidth)
+    if (!open || !containerEl) return
+    const update = () => {
+      // clientWidth includes padding. Subtract 48px (1.5rem * 2) to prevent horizontal overflow.
+      setWidth(Math.max(0, containerEl.clientWidth - 48))
+    }
     // Delay first measurement to let modal animate/render
     const timer = setTimeout(update, 50)
     const ro = new ResizeObserver(update)
-    ro.observe(el)
+    ro.observe(containerEl)
     return () => {
       clearTimeout(timer)
       ro.disconnect()
     }
-  }, [open])
+  }, [open, containerEl])
 
   // IntersectionObserver for lazy loading pages.
   useEffect(() => {
-    if (!open) return
-    const root = containerRef.current
-    if (!root) return
+    if (!open || !containerEl) return
     const io = new IntersectionObserver(
       (entries) => {
         const revealed: number[] = []
@@ -82,11 +81,11 @@ export function Preview({
           })
         }
       },
-      { root, rootMargin: '600px 0px' },
+      { root: containerEl, rootMargin: '600px 0px' },
     )
     observerRef.current = io
     return () => io.disconnect()
-  }, [open])
+  }, [open, containerEl])
 
   const pageRef = useCallback((node: HTMLDivElement | null) => {
     if (node) observerRef.current?.observe(node)
@@ -154,7 +153,7 @@ export function Preview({
             </div>
           </div>
           
-          <div className="mrs-preview__body" ref={containerRef}>
+          <div className="mrs-preview__body" ref={setContainerEl}>
             {!file ? (
               <div className="mrs-preview__msg">Ingen dokument er valgt.</div>
             ) : (
