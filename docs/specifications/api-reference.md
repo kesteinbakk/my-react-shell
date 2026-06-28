@@ -930,7 +930,7 @@ import 'my-react-shell/app-shell/styles.css'
 `DynamicPagesConfig`, `ShellContextValue`).
 
 **Config value sets** (full reference in the [guide](../guides/app-shell.md#optional-config-root-fields)):
-`pageContainer.defaultMaxWidth` ∈ `sm·md·lg·xl·2xl·full` (default `2xl`) · `tabs.variant`
+`pageContainer.defaultMaxWidth` ∈ `narrow·medium·wide·x-wide·full` (default `x-wide`) · `tabs.variant`
 ∈ `underline·pill` (default `underline`) · `shellPageHeader.documentTitle` ∈
 `composed·leaf·app` (default `composed` → `Leaf · AppName`; `leaf` → leaf only; `app` →
 app name only). `usePageHeader({ documentTitle })` takes the same three modes **or** a

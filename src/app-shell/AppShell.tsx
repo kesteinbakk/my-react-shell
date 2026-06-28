@@ -260,7 +260,7 @@ export function AppShell({
   const showMenu = useMenu
   const useTabBar = showMenu && (mobileNav ?? 'drawer') === 'tabBar'
   const menuOnLeft = (menuSide ?? 'left') !== 'right'
-  const maxWidth = config.pageContainer?.defaultMaxWidth ?? '2xl'
+  const maxWidth = config.pageContainer?.defaultMaxWidth ?? 'x-wide'
   const containerPadding = contentPadding ?? 'default'
 
   // Automatic band visibility — the band shows whenever the URL resolves to

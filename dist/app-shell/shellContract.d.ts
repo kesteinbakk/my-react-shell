@@ -36,7 +36,7 @@ export type ShellIcon = keyof AppShellIcons extends never ? string : keyof AppSh
  */
 export declare const SHELL_CONFIG_BRAND: unique symbol;
 /** Max-width values the shell's content container accepts. */
-export type PageContainerMaxWidth = 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'full';
+export type PageContainerMaxWidth = 'narrow' | 'medium' | 'wide' | 'x-wide' | 'full';
 /** Visual variant for `PageTabs` + the `PageSections` tab strip. */
 export type ShellTabsVariant = 'underline' | 'pill';
 /** Browser-tab document-title composition mode. */

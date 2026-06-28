@@ -81,19 +81,16 @@
 .mrs-shell[data-content-padding='none'] .mrs-shell__container {
   padding-inline: 0;
 }
-.mrs-shell[data-max-width='sm'] .mrs-shell__container {
-  max-width: 640px;
+.mrs-shell[data-max-width='narrow'] .mrs-shell__container {
+  max-width: 1000px;
 }
-.mrs-shell[data-max-width='md'] .mrs-shell__container {
-  max-width: 768px;
+.mrs-shell[data-max-width='medium'] .mrs-shell__container {
+  max-width: 1200px;
 }
-.mrs-shell[data-max-width='lg'] .mrs-shell__container {
-  max-width: 1024px;
+.mrs-shell[data-max-width='wide'] .mrs-shell__container {
+  max-width: 1400px;
 }
-.mrs-shell[data-max-width='xl'] .mrs-shell__container {
-  max-width: 1280px;
-}
-.mrs-shell[data-max-width='2xl'] .mrs-shell__container {
+.mrs-shell[data-max-width='x-wide'] .mrs-shell__container {
   max-width: 1600px;
 }
 /* data-max-width="full" → no max-width. */

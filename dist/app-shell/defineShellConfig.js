@@ -8,7 +8,7 @@
  * `<AppShell>` re-checks the symbol at runtime.
  */
 import { SHELL_CONFIG_BRAND } from './shellContract';
-const MAX_WIDTHS = ['sm', 'md', 'lg', 'xl', '2xl', 'full'];
+const MAX_WIDTHS = ['narrow', 'medium', 'wide', 'x-wide', 'full'];
 const TABS_VARIANTS = ['underline', 'pill'];
 export class ShellConfigError extends Error {
     constructor(message) {

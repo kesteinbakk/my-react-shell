@@ -17,7 +17,7 @@ import type {
   ShellTabsVariant,
 } from './shellContract'
 
-const MAX_WIDTHS: readonly PageContainerMaxWidth[] = ['sm', 'md', 'lg', 'xl', '2xl', 'full']
+const MAX_WIDTHS: readonly PageContainerMaxWidth[] = ['narrow', 'medium', 'wide', 'x-wide', 'full']
 const TABS_VARIANTS: readonly ShellTabsVariant[] = ['underline', 'pill']
 
 export class ShellConfigError extends Error {
