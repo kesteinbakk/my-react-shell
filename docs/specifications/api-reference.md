@@ -657,7 +657,7 @@ pass translated labels. The corner never triggers a clickable card's `onClick`.
 
 ### `StatCard`
 
-Self-contained φ-framed KPI card — a fixed-width golden-ratio card (W:H = φ:1, so `height = width / φ`). It carries its own `size` width scale (no longer derived from `PhiCard`, which is being phased out): `sm` 240 · `md` 312 · `lg` 400 · `xl` 520 px, default `md` ≈312px so four sit on a `wide` (1440px) row. Internal layout: title + subtitle header, an accent medallion circle, a data-stats row, and an optional footer or freeform lower slot. Accent stripe + medallion tint are driven by `tone` (semantic tokens) or a raw `color` CSS string. An optional left-edge completion gauge (`sideBarCompleteness`) reads independently of the accent, so a top stripe and a side gauge can show at once — or, with `topStripeFollowsGauge`, the whole accent takes the gauge's completeness color.
+Self-contained φ-framed KPI card — a fixed-width golden-ratio card (W:H = φ:1, so `height = width / φ`). It carries its own `size` width scale (no longer derived from `PhiCard`, which is being phased out): `sm` 240 · `md` 312 · `lg` 400 · `xl` 520 px, default `md` ≈312px so four sit on a `wide` (1440px) row. Internal layout: title + subtitle header, an accent medallion circle, a data-stats row, and an optional footer slot. Accent stripe + medallion tint are driven by `tone` (semantic tokens) or a raw `color` CSS string. An optional left-edge completion gauge (`sideBarCompleteness`) reads independently of the accent, so a top stripe and a side gauge can show at once — or, with `topStripeFollowsGauge`, the whole accent takes the gauge's completeness color. It can act as a **whole-card navigation link** via `renderLink` (a block-link overlay; the medallion button and drag handle stay clickable above it).
 
 | Prop | Default | Meaning |
 |---|---|---|
@@ -672,12 +672,14 @@ Self-contained φ-framed KPI card — a fixed-width golden-ratio card (W:H = φ:
 | `topStripeFollowsGauge` | `false` | When `true`, the **whole accent** (top stripe + medallion tint + stat numbers) takes the gauge's completeness color instead of `tone`/`color`, so the card reads as one coherent color, and the stripe is forced to the top edge. Bound to `sideBarCompleteness`: the top stripe renders only when a gauge is present — `undefined` → **no top stripe** (medallion + stats fall back to `tone`/`color`). Throws in dev if combined with `accentPlacement='left'`. |
 | `stats` | — | `{ value, label?, max? }[]` — data items. `label` → label above + number below. `max` → compact arc-ring. **Cannot combine `label` and `max` on the same item** (throws in dev). |
 | `variant` | — | `'warning'` · `'danger'` — structural alert variant. Overrides `tone` to the same value (accent stripe, medallion tint, and stat numbers all reflect the variant hue) and forces `⚠️` as the watermark background emoji, ignoring the `watermark` prop. |
-| `footer` | — | `{ lines?, badges? }` — same structured shape as `PhiCard`. Throws if given with `lower`. Max-height enforced to prevent pushing into content. |
-| `lower` | — | Freeform footer node (e.g. a CTA pill via `.mrs-stat-card__cta`). Throws if given with `footer`. |
+| `footer` | — | Footer slot: a freeform `ReactNode` (e.g. a CTA pill via `.mrs-stat-card__cta`) **or** a structured `{ lines?, badges? }` (meta lines left, badges right — same shape as `ContentCard`). The two are discriminated automatically. |
 | `watermark` | — | Emoji rendered as a faint oversized background watermark. E.g. `'🏆'`. Ignored when `variant` is set. |
 | `size` | `'md'` | `sm`·`md`·`lg`·`xl` = 240/312/400/520px wide; height = width / φ. Default `md` ≈312px → four to a `wide` (1440px) row. |
+| `shape` | `'standard'` | `'standard'` = φ:1 · `'landscape'` = φ²:1 (`height = width / φ²`, shorter box). For light cards (no footer, small content) where the standard height reads too tall; a full stats row + footer can overflow the shorter box. |
 | `onClick` | — | Click handler; also enables hover lift. |
 | `hoverable` | `!!onClick` | Hover lift (translateY + shadow). |
+| `dragHandle` / `dragHandleProps` | — | Drag-reorder grip (built-in or custom node). **Mutually exclusive with `renderLink`** — throws in dev. |
+| `renderLink` | — | Interactive-root seam — `(linkProps) => ReactNode`. The consumer renders its router `<Link>` spreading `linkProps` (`className` + auto-wired `aria-labelledby` from the title), adding `to`/`params`. The card mounts it as a **full-bleed block-link overlay** so the whole tile is a real, keyboard-activatable anchor while the root owns its hover/border/focus states; the medallion button (`onMedallionPress`) and drag handle stay raised above it. The shell imports no router; `to`/`params` type-safety lives at the call site. |
 | `className` | — | Extra classes. |
 
 ```tsx
@@ -824,9 +826,12 @@ Self-contained freeform text counterpart to `StatCard`. It carries the same fixe
 | `accentPlacement` | `'top'` | `'top'` or `'left'` |
 | `topStripeFollowsGauge` | `false` | Matches `StatCard` behavior (turns the top stripe into the gauge's completeness color). |
 | `variant` | — | `'warning'` · `'danger'`. Colors body text to match the alert hue. |
-| `footer` / `lower` | — | Same structured `footer` or freeform `lower` as `StatCard`. |
+| `footer` | — | Footer slot: a freeform `ReactNode` **or** a structured `{ lines?, badges? }` — same unified slot as `StatCard` (discriminated automatically). |
 | `watermark` | — | Faint background emoji. |
 | `size` | `'md'` | `sm`·`md`·`lg`·`xl` = 240/312/400/520px wide; height = width / φ. Default `md` ≈312px → four to a `wide` (1440px) row. |
+| `shape` | `'standard'` | `'standard'` = φ:1 · `'landscape'` = φ²:1 (`height = width / φ²`, shorter box). |
+| `dragHandle` / `dragHandleProps` | — | Drag-reorder grip. **Mutually exclusive with `renderLink`** — throws in dev. |
+| `renderLink` | — | Interactive-root seam — same block-link-overlay mechanism as `StatCard` (`(linkProps) => ReactNode`; the whole tile becomes the consumer's router `<Link>`, root owns its states, no router dep in the shell). |
 
 ```tsx
 // Text content (centered):

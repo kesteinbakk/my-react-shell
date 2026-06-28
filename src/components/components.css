@@ -2225,6 +2225,48 @@
   box-shadow: 0 0 0 1px var(--color-focus), var(--mrs-elevation-card-hover);
 }
 
+/* Interactive-root: the consumer's `<Link>` mounts as a full-bleed block-link overlay.
+   `__inner` carries `z-index: 1`, so the overlay (also `z-index: 1`, earlier in DOM) sits
+   visually beneath the content — we route clicks to it by making `__inner` click-transparent
+   and re-enabling the raised controls (medallion button, drag handle). The root projects the
+   anchor's focus ring (its own outline is clipped by the card's `overflow: hidden`). */
+.mrs-stat-card--linked {
+  cursor: pointer;
+}
+.mrs-stat-card--linked:hover {
+  box-shadow: var(--mrs-elevation-card-hover);
+}
+.mrs-stat-card__link-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+}
+.mrs-stat-card__link-overlay:focus {
+  outline: none;
+}
+.mrs-stat-card:has(> .mrs-stat-card__link-overlay:focus-visible) {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+.mrs-stat-card--linked .mrs-stat-card__inner {
+  pointer-events: none;
+}
+.mrs-stat-card--linked .mrs-stat-card__medallion--pressable,
+.mrs-stat-card--linked .mrs-stat-card__drag-handle {
+  pointer-events: auto;
+}
+
+/* Landscape (φ²:1) — shorter box, so tighten the inner vertical rhythm. */
+.mrs-stat-card--landscape .mrs-stat-card__inner {
+  padding-top: 0.7em;
+  padding-bottom: 0.2em;
+  gap: 0.35em;
+}
+.mrs-stat-card--landscape.mrs-stat-card--accent-top .mrs-stat-card__inner {
+  padding-top: calc(0.7em + 4px);
+}
+
 .mrs-stat-card__drag-handle {
   position: absolute;
   top: 10px;
@@ -5003,6 +5045,46 @@
   outline: 2px solid var(--color-focus);
   outline-offset: 2px;
   box-shadow: 0 0 0 1px var(--color-focus), var(--mrs-elevation-card-hover);
+}
+
+/* Interactive-root: full-bleed block-link overlay (same mechanism as StatCard). The overlay
+   sits beneath the content layer; `__inner` is click-transparent so taps fall through to the
+   anchor, and the root projects the anchor's focus ring (clipped on the anchor by the card's
+   `overflow: hidden`). */
+.mrs-content-card--linked {
+  cursor: pointer;
+}
+.mrs-content-card--linked:hover {
+  box-shadow: var(--mrs-elevation-card-hover);
+}
+.mrs-content-card__link-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+}
+.mrs-content-card__link-overlay:focus {
+  outline: none;
+}
+.mrs-content-card:has(> .mrs-content-card__link-overlay:focus-visible) {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+.mrs-content-card--linked .mrs-content-card__inner {
+  pointer-events: none;
+}
+.mrs-content-card--linked .mrs-content-card__drag-handle {
+  pointer-events: auto;
+}
+
+/* Landscape (φ²:1) — shorter box, so tighten the inner vertical rhythm. */
+.mrs-content-card--landscape .mrs-content-card__inner {
+  padding-top: 0.7em;
+  padding-bottom: 0.2em;
+  gap: 0.35em;
+}
+.mrs-content-card--landscape.mrs-content-card--accent-top .mrs-content-card__inner {
+  padding-top: calc(0.7em + 4px);
 }
 
 .mrs-content-card__drag-handle {

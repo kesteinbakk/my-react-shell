@@ -18,6 +18,17 @@ export interface ContentCardFooter {
     lines?: ContentCardFooterLine[];
     badges?: ReactNode[];
 }
+/** Proportion of the card: `'standard'` is φ:1 (`height = width / φ`); `'landscape'` is the shorter-wider φ²:1 (`height = width / φ²`). */
+export type ContentCardShape = 'standard' | 'landscape';
+/**
+ * Props the card hands the consumer's {@link ContentCardProps.renderLink} callback to spread onto
+ * its router `<Link>`. The card supplies the overlay `className` and an auto-wired
+ * `aria-labelledby` pointing at the card's title; the consumer adds `to`/`params`.
+ */
+export interface ContentCardLinkProps {
+    className: string;
+    'aria-labelledby'?: string;
+}
 export type ContentCardTone = Tone;
 export type ContentCardVariant = 'warning' | 'danger';
 export interface ContentCardProps {
@@ -35,14 +46,37 @@ export interface ContentCardProps {
     accentPlacement?: AccentPlacement;
     topStripeFollowsGauge?: boolean;
     variant?: ContentCardVariant;
-    footer?: ContentCardFooter;
-    lower?: ReactNode;
+    /**
+     * Footer slot: either a freeform `ReactNode` or a structured `{ lines, badges }`
+     * (meta lines on the left, badges on the right).
+     */
+    footer?: ReactNode | ContentCardFooter;
     watermark?: string;
     size?: ContentCardSize;
+    /**
+     * Proportion of the card. Default `'standard'` (`height = width / φ`); `'landscape'` is the
+     * shorter-wider `height = width / φ²` — for light cards (no footer, small content) where the
+     * standard height reads too tall.
+     */
+    shape?: ContentCardShape;
     onClick?: () => void;
     hoverable?: boolean;
     dragHandle?: boolean | ReactNode;
     dragHandleProps?: React.HTMLAttributes<HTMLButtonElement>;
+    /**
+     * Interactive-root seam. The consumer renders its own router `<Link>` here, spreading the
+     * supplied props, and the card mounts it as a **full-bleed block-link overlay** so the whole
+     * tile is a real, keyboard-activatable anchor — while the card root stays a `<div>` that owns
+     * its hover/border/focus states. The shell imports no router; `to`/`params` type-safety lives
+     * at the call site:
+     *
+     * ```tsx
+     * renderLink={(p) => <Link {...p} to="/doc/$id" params={{ id }} />}
+     * ```
+     *
+     * Mutually exclusive with `dragHandle` — throws in dev.
+     */
+    renderLink?: (linkProps: ContentCardLinkProps) => ReactNode;
     className?: string;
     style?: CSSProperties;
 }

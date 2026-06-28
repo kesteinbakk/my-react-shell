@@ -1,8 +1,20 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
-import { forwardRef } from 'react';
+import { forwardRef, isValidElement, useId } from 'react';
 import { cn } from './cn';
 import { resolveAccentColor } from './accent';
 import { TONE_COLOR } from './tone';
+/**
+ * Discriminate the structured `{ lines, badges }` footer from a freeform `ReactNode`.
+ * A React element, array, or primitive is freeform; a plain object carrying `lines`/`badges`
+ * is structured.
+ */
+function isStructuredFooter(footer) {
+    return (typeof footer === 'object' &&
+        footer !== null &&
+        !isValidElement(footer) &&
+        !Array.isArray(footer) &&
+        ('lines' in footer || 'badges' in footer));
+}
 const SIZE_WIDTH_PX = {
     sm: 240,
     md: 312,
@@ -84,13 +96,17 @@ const DEFAULT_DRAG_HANDLE = (_jsxs("svg", { width: "64", height: "12", viewBox: 
  * The accent stripe, medallion tint, and watermark are driven by `tone` (mapped to
  * semantic tokens) or overridden with a raw CSS `color` string.
  */
-export const StatCard = forwardRef(function StatCard({ title, subtitle, medallion, tone = 'neutral', color, accentPlacement = 'top', sideBarCompleteness, topStripeFollowsGauge = false, stats, variant, footer, lower, watermark, size = 'md', onClick, onMedallionPress, hoverable, dragHandle, dragHandleProps, className, style: styleProp, }, ref) {
+export const StatCard = forwardRef(function StatCard({ title, subtitle, medallion, tone = 'neutral', color, accentPlacement = 'top', sideBarCompleteness, topStripeFollowsGauge = false, stats, variant, footer, watermark, size = 'md', shape = 'standard', onClick, onMedallionPress, hoverable, dragHandle, dragHandleProps, renderLink, className, style: styleProp, }, ref) {
     // variant overrides tone to the same value; ⚠️ always used as the watermark.
     const effectiveTone = variant ?? tone;
     const effectiveWatermark = variant ? '⚠️' : watermark;
     const width = SIZE_WIDTH_PX[size];
-    const height = width / PHI;
+    // landscape = φ²:1 (shorter box at the same width); standard = φ:1.
+    const height = shape === 'landscape' ? width / (PHI * PHI) : width / PHI;
     const isHoverable = hoverable ?? !!onClick;
+    // Auto-wire the overlay anchor's accessible name from the (required) card title.
+    const titleId = useId();
+    const structuredFooter = isStructuredFooter(footer) ? footer : null;
     // `undefined` → no gauge; `0` → gauge with an empty fill. Checked, never
     // truthy-tested, so `0` is rendered rather than swallowed.
     const hasGauge = sideBarCompleteness !== undefined;
@@ -120,8 +136,8 @@ export const StatCard = forwardRef(function StatCard({ title, subtitle, medallio
     const showVariantLeftStripe = !!variant && !hasGauge;
     // Dev guards
     if (process.env.NODE_ENV !== 'production') {
-        if (footer && lower != null) {
-            throw new Error('StatCard: provide either `footer` or `lower`, not both.');
+        if (dragHandle && renderLink) {
+            throw new Error('StatCard: `dragHandle` and `renderLink` are mutually exclusive — a navigable tile cannot also be drag-reordered.');
         }
         if (hasGauge && accentPlacement === 'left') {
             throw new Error("StatCard: `sideBarCompleteness` can't combine with `accentPlacement='left'` — both occupy the left edge. Keep the default `accentPlacement='top'` (or omit it) alongside the gauge.");
@@ -143,13 +159,14 @@ export const StatCard = forwardRef(function StatCard({ title, subtitle, medallio
             }
         }
     }
-    const hasFooter = (footer && ((footer.lines?.length ?? 0) > 0 || (footer.badges?.length ?? 0) > 0)) ||
-        lower != null;
+    const hasFooter = structuredFooter
+        ? (structuredFooter.lines?.length ?? 0) > 0 || (structuredFooter.badges?.length ?? 0) > 0
+        : footer != null;
     // Footer renderer (shared JSX structure + CSS classes with ContentCard)
     let footerNode = null;
-    if (footer) {
-        const lines = footer.lines ?? [];
-        const badges = footer.badges ?? [];
+    if (structuredFooter) {
+        const lines = structuredFooter.lines ?? [];
+        const badges = structuredFooter.badges ?? [];
         const rowCount = Math.max(lines.length, badges.length);
         footerNode = (_jsx("div", { className: "mrs-phi-card__footer", children: Array.from({ length: rowCount }, (_, i) => {
                 const line = lines[i];
@@ -211,14 +228,16 @@ export const StatCard = forwardRef(function StatCard({ title, subtitle, medallio
             medallionNode = (_jsxs(MedallionTag, { className: cn('mrs-stat-card__medallion', medallion.size === 'sm' && 'mrs-stat-card__medallion--sm', isPressable && 'mrs-stat-card__medallion--pressable'), ...medallionProps, children: [_jsx("span", { className: "mrs-stat-card__medallion-value", "data-len": valueStr.length, children: displayValue }), medallion.size !== 'sm' && medallion.label ? _jsx("span", { className: "mrs-stat-card__medallion-label", "data-len": medallion.label.length, children: medallion.label }) : null] }));
         }
     }
-    return (_jsxs("div", { ref: ref, className: cn('mrs-stat-card', !accentSuppressed && `mrs-stat-card--accent-${effectiveAccentPlacement}`, hasGauge && 'mrs-stat-card--gauge', variant && 'mrs-stat-card--variant', isHoverable && 'mrs-stat-card--hoverable', effectiveWatermark && 'mrs-stat-card--watermark', dragHandle && 'mrs-stat-card--draggable', className), style: style, "data-watermark": effectiveWatermark, "data-has-medallion": medallion != null ? "true" : undefined, "data-medallion-size": medallion?.size ?? 'lg', onClick: onClick, children: [dragHandle ? (_jsx("button", { type: "button", className: "mrs-stat-card__drag-handle", "aria-label": "Drag to reorder", ...dragHandleProps, onClick: (e) => {
+    return (_jsxs("div", { ref: ref, className: cn('mrs-stat-card', !accentSuppressed && `mrs-stat-card--accent-${effectiveAccentPlacement}`, hasGauge && 'mrs-stat-card--gauge', variant && 'mrs-stat-card--variant', isHoverable && 'mrs-stat-card--hoverable', effectiveWatermark && 'mrs-stat-card--watermark', dragHandle && 'mrs-stat-card--draggable', shape === 'landscape' && 'mrs-stat-card--landscape', renderLink && 'mrs-stat-card--linked', className), style: style, "data-watermark": effectiveWatermark, "data-has-medallion": medallion != null ? "true" : undefined, "data-medallion-size": medallion?.size ?? 'lg', onClick: onClick, children: [renderLink
+                ? renderLink({ className: 'mrs-stat-card__link-overlay', 'aria-labelledby': titleId })
+                : null, dragHandle ? (_jsx("button", { type: "button", className: "mrs-stat-card__drag-handle", "aria-label": "Drag to reorder", ...dragHandleProps, onClick: (e) => {
                     e.stopPropagation();
                     dragHandleProps?.onClick?.(e);
-                }, children: dragHandle === true ? DEFAULT_DRAG_HANDLE : dragHandle })) : null, showVariantLeftStripe ? (_jsx("div", { className: "mrs-stat-card__variant-stripe", "aria-hidden": "true" })) : null, hasGauge ? (_jsx("div", { className: "mrs-stat-card__gauge", role: "meter", "aria-valuemin": 0, "aria-valuemax": 100, "aria-valuenow": gaugePct, "aria-label": `${gaugePct}%`, children: _jsx("div", { className: "mrs-stat-card__gauge-fill", style: { height: `${gaugeFraction * 100}%`, background: completenessFill(gaugeFraction) } }) })) : null, _jsxs("div", { className: "mrs-stat-card__inner", children: [_jsxs("div", { className: "mrs-stat-card__header", children: [_jsxs("div", { className: "mrs-stat-card__head-text", children: [_jsx("p", { className: "mrs-stat-card__title", "data-fit": titleFitStep(title) || undefined, children: title }), subtitle ? _jsx("p", { className: "mrs-stat-card__subtitle", children: subtitle }) : null] }), medallionNode] }), stats && stats.length > 0 ? (_jsx("dl", { className: "mrs-stat-card__stats", children: stats.map((item, i) => {
+                }, children: dragHandle === true ? DEFAULT_DRAG_HANDLE : dragHandle })) : null, showVariantLeftStripe ? (_jsx("div", { className: "mrs-stat-card__variant-stripe", "aria-hidden": "true" })) : null, hasGauge ? (_jsx("div", { className: "mrs-stat-card__gauge", role: "meter", "aria-valuemin": 0, "aria-valuemax": 100, "aria-valuenow": gaugePct, "aria-label": `${gaugePct}%`, children: _jsx("div", { className: "mrs-stat-card__gauge-fill", style: { height: `${gaugeFraction * 100}%`, background: completenessFill(gaugeFraction) } }) })) : null, _jsxs("div", { className: "mrs-stat-card__inner", children: [_jsxs("div", { className: "mrs-stat-card__header", children: [_jsxs("div", { className: "mrs-stat-card__head-text", children: [_jsx("p", { className: "mrs-stat-card__title", id: titleId, "data-fit": titleFitStep(title) || undefined, children: title }), subtitle ? _jsx("p", { className: "mrs-stat-card__subtitle", children: subtitle }) : null] }), medallionNode] }), stats && stats.length > 0 ? (_jsx("dl", { className: "mrs-stat-card__stats", children: stats.map((item, i) => {
                             if (item.max != null) {
                                 // Arc-ring stat
                                 return (_jsx("div", { className: "mrs-stat-card__stat mrs-stat-card__stat--arc", children: _jsx(ArcRing, { value: item.value, max: item.max }) }, i));
                             }
                             return (_jsxs("div", { className: "mrs-stat-card__stat", children: [item.label ? (_jsx("dt", { className: "mrs-stat-card__stat-label", children: item.label })) : null, _jsx("dd", { className: "mrs-stat-card__stat-value", children: item.value })] }, i));
-                        }) })) : null, hasFooter ? (_jsx("div", { className: "mrs-stat-card__lower", children: footer ? footerNode : lower })) : null] })] }));
+                        }) })) : null, hasFooter ? (_jsx("div", { className: "mrs-stat-card__lower", children: structuredFooter ? footerNode : footer })) : null] })] }));
 });

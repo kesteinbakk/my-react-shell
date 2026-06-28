@@ -39,6 +39,11 @@ preset sets the pixel width and the height follows `height = width / φ`.
   and golden-ratio constant. Their `size` widths are `sm` 240 · `md` 312 · `lg` 400 · `xl` 520 px (default `md`).
 - `PhiCard` keeps its own scale (`sm` 180 · `md` 240 · `lg` 320 · `xl` 480 px).
 
+`StatCard` and `ContentCard` also have a **`shape`** proportion axis: `'standard'` (φ:1, default)
+or `'landscape'` (φ²:1 — `height = width / φ²`, a shorter box at the same `size` width). Use
+landscape for light cards (no footer, small content) where the standard height reads too tall;
+a full stats row + footer can overflow the shorter box — the consumer's call when to use it.
+
 ---
 
 ## 2. `DynamicCardGrid` + `DynamicGridCard` — the fluid grid

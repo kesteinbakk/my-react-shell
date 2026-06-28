@@ -18,6 +18,17 @@ export interface StatCardFooter {
     lines?: StatCardFooterLine[];
     badges?: ReactNode[];
 }
+/** Proportion of the card: `'standard'` is φ:1 (`height = width / φ`); `'landscape'` is the shorter-wider φ²:1 (`height = width / φ²`). */
+export type StatCardShape = 'standard' | 'landscape';
+/**
+ * Props the card hands the consumer's {@link StatCardProps.renderLink} callback to spread onto
+ * its router `<Link>`. The card supplies the overlay `className` and an auto-wired
+ * `aria-labelledby` pointing at the card's title; the consumer adds `to`/`params`.
+ */
+export interface StatCardLinkProps {
+    className: string;
+    'aria-labelledby'?: string;
+}
 /** Semantic accent hue — the kit's canonical {@link Tone}, shared with `PhiCard`. */
 export type StatCardTone = Tone;
 /** Structural alert variant — overrides `tone` to the same value and forces the ⚠️ watermark. */
@@ -107,15 +118,10 @@ export interface StatCardProps {
      */
     variant?: StatCardVariant;
     /**
-     * Structured footer: meta lines on the left, badges on the right.
-     * Throws in dev if given alongside `lower`.
+     * Footer slot: either a freeform `ReactNode` (e.g. a CTA pill) or a structured
+     * `{ lines, badges }` (meta lines on the left, badges on the right).
      */
-    footer?: StatCardFooter;
-    /**
-     * Freeform footer node — e.g. a CTA pill.
-     * Throws in dev if given alongside `footer`.
-     */
-    lower?: ReactNode;
+    footer?: ReactNode | StatCardFooter;
     /**
      * Emoji or text rendered as a faint background watermark. E.g. `'🏆'`.
      * Ignored when `variant` is set — the variant always shows `⚠️`.
@@ -123,6 +129,12 @@ export interface StatCardProps {
     watermark?: string;
     /** Size preset — fixed-width golden-ratio card. Default: `'md'` (≈312px). */
     size?: StatCardSize;
+    /**
+     * Proportion of the card. Default `'standard'` (`height = width / φ`); `'landscape'` is the
+     * shorter-wider `height = width / φ²` — for light cards (no footer, small content) where the
+     * standard height reads too tall. A full stats row + footer can overflow the shorter box.
+     */
+    shape?: StatCardShape;
     /** Click handler; makes the whole card interactive. */
     onClick?: () => void;
     /** Hover lift effect. Defaults to `true` when `onClick` is set. */
@@ -139,6 +151,21 @@ export interface StatCardProps {
      * spread onto the drag handle element.
      */
     dragHandleProps?: React.HTMLAttributes<HTMLButtonElement>;
+    /**
+     * Interactive-root seam. The consumer renders its own router `<Link>` here, spreading the
+     * supplied props, and the card mounts it as a **full-bleed block-link overlay** so the whole
+     * tile is a real, keyboard-activatable anchor — while the card root stays a `<div>` that owns
+     * its hover/border/focus states. Nested controls (the medallion button, drag handle) stay
+     * clickable above the overlay. The shell imports no router; `to`/`params` type-safety lives
+     * at the call site:
+     *
+     * ```tsx
+     * renderLink={(p) => <Link {...p} to="/entity/$id" params={{ id }} />}
+     * ```
+     *
+     * Mutually exclusive with `dragHandle` (a nav tile isn't drag-reorderable) — throws in dev.
+     */
+    renderLink?: (linkProps: StatCardLinkProps) => ReactNode;
     /** Extra classes on the outer card element. */
     className?: string;
     /** Optional style override. */

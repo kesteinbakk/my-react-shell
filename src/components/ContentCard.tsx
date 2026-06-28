@@ -1,4 +1,4 @@
-import { forwardRef, type CSSProperties, type ReactNode } from 'react'
+import { forwardRef, isValidElement, useId, type CSSProperties, type ReactNode } from 'react'
 import DOMPurify from 'isomorphic-dompurify'
 import { cn } from './cn'
 import { resolveAccentColor } from './accent'
@@ -26,6 +26,34 @@ export interface ContentCardFooterLine {
 export interface ContentCardFooter {
   lines?: ContentCardFooterLine[]
   badges?: ReactNode[]
+}
+
+/** Proportion of the card: `'standard'` is φ:1 (`height = width / φ`); `'landscape'` is the shorter-wider φ²:1 (`height = width / φ²`). */
+export type ContentCardShape = 'standard' | 'landscape'
+
+/**
+ * Props the card hands the consumer's {@link ContentCardProps.renderLink} callback to spread onto
+ * its router `<Link>`. The card supplies the overlay `className` and an auto-wired
+ * `aria-labelledby` pointing at the card's title; the consumer adds `to`/`params`.
+ */
+export interface ContentCardLinkProps {
+  className: string
+  'aria-labelledby'?: string
+}
+
+/**
+ * Discriminate the structured `{ lines, badges }` footer from a freeform `ReactNode`.
+ * A React element, array, or primitive is freeform; a plain object carrying `lines`/`badges`
+ * is structured.
+ */
+function isStructuredFooter(footer: ReactNode | ContentCardFooter): footer is ContentCardFooter {
+  return (
+    typeof footer === 'object' &&
+    footer !== null &&
+    !isValidElement(footer) &&
+    !Array.isArray(footer) &&
+    ('lines' in footer || 'badges' in footer)
+  )
 }
 
 const SIZE_WIDTH_PX: Record<ContentCardSize, number> = {
@@ -74,17 +102,40 @@ export interface ContentCardProps {
   
   topStripeFollowsGauge?: boolean
   variant?: ContentCardVariant
-  
-  footer?: ContentCardFooter
-  lower?: ReactNode
-  
+
+  /**
+   * Footer slot: either a freeform `ReactNode` or a structured `{ lines, badges }`
+   * (meta lines on the left, badges on the right).
+   */
+  footer?: ReactNode | ContentCardFooter
+
   watermark?: string
   size?: ContentCardSize
+  /**
+   * Proportion of the card. Default `'standard'` (`height = width / φ`); `'landscape'` is the
+   * shorter-wider `height = width / φ²` — for light cards (no footer, small content) where the
+   * standard height reads too tall.
+   */
+  shape?: ContentCardShape
   onClick?: () => void
   hoverable?: boolean
-  
+
   dragHandle?: boolean | ReactNode
   dragHandleProps?: React.HTMLAttributes<HTMLButtonElement>
+  /**
+   * Interactive-root seam. The consumer renders its own router `<Link>` here, spreading the
+   * supplied props, and the card mounts it as a **full-bleed block-link overlay** so the whole
+   * tile is a real, keyboard-activatable anchor — while the card root stays a `<div>` that owns
+   * its hover/border/focus states. The shell imports no router; `to`/`params` type-safety lives
+   * at the call site:
+   *
+   * ```tsx
+   * renderLink={(p) => <Link {...p} to="/doc/$id" params={{ id }} />}
+   * ```
+   *
+   * Mutually exclusive with `dragHandle` — throws in dev.
+   */
+  renderLink?: (linkProps: ContentCardLinkProps) => ReactNode
   className?: string
   style?: CSSProperties
 }
@@ -137,14 +188,15 @@ export const ContentCard = forwardRef<HTMLDivElement, ContentCardProps>(function
     topStripeFollowsGauge = false,
     variant,
     footer,
-    lower,
     maxLines,
     watermark,
     size = 'md',
+    shape = 'standard',
     onClick,
     hoverable,
     dragHandle,
     dragHandleProps,
+    renderLink,
     className,
     style: styleProp,
   },
@@ -152,12 +204,21 @@ export const ContentCard = forwardRef<HTMLDivElement, ContentCardProps>(function
 ) {
   const effectiveTone: ContentCardTone = variant ?? tone
   const effectiveWatermark = variant ? '⚠️' : watermark
- 
+
   const width = SIZE_WIDTH_PX[size]
-  const height = width / PHI
+  // landscape = φ²:1 (shorter box at the same width); standard = φ:1.
+  const height = shape === 'landscape' ? width / (PHI * PHI) : width / PHI
   const isHoverable = hoverable ?? !!onClick
 
-  const defaultMaxLines = (!subtitle && !footer && !lower) ? 5 : ((subtitle && (footer || lower)) ? 3 : 4)
+  // Auto-wire the overlay anchor's accessible name from the (required) card title.
+  const titleId = useId()
+
+  const structuredFooter = isStructuredFooter(footer) ? footer : null
+  const hasFooter = structuredFooter
+    ? (structuredFooter.lines?.length ?? 0) > 0 || (structuredFooter.badges?.length ?? 0) > 0
+    : footer != null
+
+  const defaultMaxLines = (!subtitle && !hasFooter) ? 5 : ((subtitle && hasFooter) ? 3 : 4)
   const effectiveMaxLines = maxLines ?? defaultMaxLines
  
   const hasGauge = value !== undefined && maxValue !== undefined
@@ -180,8 +241,8 @@ export const ContentCard = forwardRef<HTMLDivElement, ContentCardProps>(function
   const showVariantLeftStripe = !!variant && !hasGauge
  
   if (process.env.NODE_ENV !== 'production') {
-    if (footer && lower != null) {
-      throw new Error('ContentCard: provide either `footer` or `lower`, not both.')
+    if (dragHandle && renderLink) {
+      throw new Error('ContentCard: `dragHandle` and `renderLink` are mutually exclusive — a navigable tile cannot also be drag-reordered.')
     }
     if (hasGauge && accentPlacement === 'left') {
       throw new Error(
@@ -195,14 +256,10 @@ export const ContentCard = forwardRef<HTMLDivElement, ContentCardProps>(function
     }
   }
  
-  const hasFooter =
-    (footer && ((footer.lines?.length ?? 0) > 0 || (footer.badges?.length ?? 0) > 0)) ||
-    lower != null
- 
   let footerNode: ReactNode = null
-  if (footer) {
-    const lines = footer.lines ?? []
-    const badges = footer.badges ?? []
+  if (structuredFooter) {
+    const lines = structuredFooter.lines ?? []
+    const badges = structuredFooter.badges ?? []
     const rowCount = Math.max(lines.length, badges.length)
     footerNode = (
       <div className="mrs-phi-card__footer">
@@ -265,12 +322,17 @@ export const ContentCard = forwardRef<HTMLDivElement, ContentCardProps>(function
         isHoverable && 'mrs-content-card--hoverable',
         effectiveWatermark && 'mrs-content-card--watermark',
         dragHandle && 'mrs-content-card--draggable',
+        shape === 'landscape' && 'mrs-content-card--landscape',
+        renderLink && 'mrs-content-card--linked',
         className,
       )}
       style={style}
       data-watermark={effectiveWatermark}
       onClick={onClick}
     >
+      {renderLink
+        ? renderLink({ className: 'mrs-content-card__link-overlay', 'aria-labelledby': titleId })
+        : null}
       {dragHandle ? (
         <button
           type="button"
@@ -306,7 +368,7 @@ export const ContentCard = forwardRef<HTMLDivElement, ContentCardProps>(function
       <div className="mrs-content-card__inner">
         <div className="mrs-content-card__header">
           <div className="mrs-content-card__head-text">
-            <p className="mrs-content-card__title" data-fit={titleFitStep(title) || undefined}>{title}</p>
+            <p className="mrs-content-card__title" id={titleId} data-fit={titleFitStep(title) || undefined}>{title}</p>
             {subtitle ? <p className="mrs-content-card__subtitle">{subtitle}</p> : null}
           </div>
         </div>
@@ -321,7 +383,7 @@ export const ContentCard = forwardRef<HTMLDivElement, ContentCardProps>(function
  
         {hasFooter ? (
           <div className="mrs-content-card__lower">
-            {footer ? footerNode : lower}
+            {structuredFooter ? footerNode : (footer as ReactNode)}
           </div>
         ) : null}
       </div>

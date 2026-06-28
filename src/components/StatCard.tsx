@@ -1,4 +1,4 @@
-import { forwardRef, type CSSProperties, type ReactNode } from 'react'
+import { forwardRef, isValidElement, useId, type CSSProperties, type ReactNode } from 'react'
 import { cn } from './cn'
 import { resolveAccentColor } from './accent'
 import type { AccentPlacement } from './accent'
@@ -25,6 +25,34 @@ export interface StatCardFooterLine {
 export interface StatCardFooter {
   lines?: StatCardFooterLine[]
   badges?: ReactNode[]
+}
+
+/** Proportion of the card: `'standard'` is φ:1 (`height = width / φ`); `'landscape'` is the shorter-wider φ²:1 (`height = width / φ²`). */
+export type StatCardShape = 'standard' | 'landscape'
+
+/**
+ * Props the card hands the consumer's {@link StatCardProps.renderLink} callback to spread onto
+ * its router `<Link>`. The card supplies the overlay `className` and an auto-wired
+ * `aria-labelledby` pointing at the card's title; the consumer adds `to`/`params`.
+ */
+export interface StatCardLinkProps {
+  className: string
+  'aria-labelledby'?: string
+}
+
+/**
+ * Discriminate the structured `{ lines, badges }` footer from a freeform `ReactNode`.
+ * A React element, array, or primitive is freeform; a plain object carrying `lines`/`badges`
+ * is structured.
+ */
+function isStructuredFooter(footer: ReactNode | StatCardFooter): footer is StatCardFooter {
+  return (
+    typeof footer === 'object' &&
+    footer !== null &&
+    !isValidElement(footer) &&
+    !Array.isArray(footer) &&
+    ('lines' in footer || 'badges' in footer)
+  )
 }
 
 const SIZE_WIDTH_PX: Record<StatCardSize, number> = {
@@ -143,15 +171,10 @@ export interface StatCardProps {
    */
   variant?: StatCardVariant
   /**
-   * Structured footer: meta lines on the left, badges on the right.
-   * Throws in dev if given alongside `lower`.
+   * Footer slot: either a freeform `ReactNode` (e.g. a CTA pill) or a structured
+   * `{ lines, badges }` (meta lines on the left, badges on the right).
    */
-  footer?: StatCardFooter
-  /**
-   * Freeform footer node — e.g. a CTA pill.
-   * Throws in dev if given alongside `footer`.
-   */
-  lower?: ReactNode
+  footer?: ReactNode | StatCardFooter
   /**
    * Emoji or text rendered as a faint background watermark. E.g. `'🏆'`.
    * Ignored when `variant` is set — the variant always shows `⚠️`.
@@ -159,6 +182,12 @@ export interface StatCardProps {
   watermark?: string
   /** Size preset — fixed-width golden-ratio card. Default: `'md'` (≈312px). */
   size?: StatCardSize
+  /**
+   * Proportion of the card. Default `'standard'` (`height = width / φ`); `'landscape'` is the
+   * shorter-wider `height = width / φ²` — for light cards (no footer, small content) where the
+   * standard height reads too tall. A full stats row + footer can overflow the shorter box.
+   */
+  shape?: StatCardShape
   /** Click handler; makes the whole card interactive. */
   onClick?: () => void
   /** Hover lift effect. Defaults to `true` when `onClick` is set. */
@@ -175,6 +204,21 @@ export interface StatCardProps {
    * spread onto the drag handle element.
    */
   dragHandleProps?: React.HTMLAttributes<HTMLButtonElement>
+  /**
+   * Interactive-root seam. The consumer renders its own router `<Link>` here, spreading the
+   * supplied props, and the card mounts it as a **full-bleed block-link overlay** so the whole
+   * tile is a real, keyboard-activatable anchor — while the card root stays a `<div>` that owns
+   * its hover/border/focus states. Nested controls (the medallion button, drag handle) stay
+   * clickable above the overlay. The shell imports no router; `to`/`params` type-safety lives
+   * at the call site:
+   *
+   * ```tsx
+   * renderLink={(p) => <Link {...p} to="/entity/$id" params={{ id }} />}
+   * ```
+   *
+   * Mutually exclusive with `dragHandle` (a nav tile isn't drag-reorderable) — throws in dev.
+   */
+  renderLink?: (linkProps: StatCardLinkProps) => ReactNode
   /** Extra classes on the outer card element. */
   className?: string
   /** Optional style override. */
@@ -345,14 +389,15 @@ export const StatCard = forwardRef<HTMLDivElement, StatCardProps>(function StatC
     stats,
     variant,
     footer,
-    lower,
     watermark,
     size = 'md',
+    shape = 'standard',
     onClick,
     onMedallionPress,
     hoverable,
     dragHandle,
     dragHandleProps,
+    renderLink,
     className,
     style: styleProp,
   },
@@ -361,10 +406,16 @@ export const StatCard = forwardRef<HTMLDivElement, StatCardProps>(function StatC
   // variant overrides tone to the same value; ⚠️ always used as the watermark.
   const effectiveTone: StatCardTone = variant ?? tone
   const effectiveWatermark = variant ? '⚠️' : watermark
- 
+
   const width = SIZE_WIDTH_PX[size]
-  const height = width / PHI
+  // landscape = φ²:1 (shorter box at the same width); standard = φ:1.
+  const height = shape === 'landscape' ? width / (PHI * PHI) : width / PHI
   const isHoverable = hoverable ?? !!onClick
+
+  // Auto-wire the overlay anchor's accessible name from the (required) card title.
+  const titleId = useId()
+
+  const structuredFooter = isStructuredFooter(footer) ? footer : null
  
   // `undefined` → no gauge; `0` → gauge with an empty fill. Checked, never
   // truthy-tested, so `0` is rendered rather than swallowed.
@@ -403,8 +454,8 @@ export const StatCard = forwardRef<HTMLDivElement, StatCardProps>(function StatC
  
   // Dev guards
   if (process.env.NODE_ENV !== 'production') {
-    if (footer && lower != null) {
-      throw new Error('StatCard: provide either `footer` or `lower`, not both.')
+    if (dragHandle && renderLink) {
+      throw new Error('StatCard: `dragHandle` and `renderLink` are mutually exclusive — a navigable tile cannot also be drag-reordered.')
     }
     if (hasGauge && accentPlacement === 'left') {
       throw new Error(
@@ -437,15 +488,15 @@ export const StatCard = forwardRef<HTMLDivElement, StatCardProps>(function StatC
     }
   }
  
-  const hasFooter =
-    (footer && ((footer.lines?.length ?? 0) > 0 || (footer.badges?.length ?? 0) > 0)) ||
-    lower != null
- 
+  const hasFooter = structuredFooter
+    ? (structuredFooter.lines?.length ?? 0) > 0 || (structuredFooter.badges?.length ?? 0) > 0
+    : footer != null
+
   // Footer renderer (shared JSX structure + CSS classes with ContentCard)
   let footerNode: ReactNode = null
-  if (footer) {
-    const lines = footer.lines ?? []
-    const badges = footer.badges ?? []
+  if (structuredFooter) {
+    const lines = structuredFooter.lines ?? []
+    const badges = structuredFooter.badges ?? []
     const rowCount = Math.max(lines.length, badges.length)
     footerNode = (
       <div className="mrs-phi-card__footer">
@@ -575,6 +626,8 @@ export const StatCard = forwardRef<HTMLDivElement, StatCardProps>(function StatC
         isHoverable && 'mrs-stat-card--hoverable',
         effectiveWatermark && 'mrs-stat-card--watermark',
         dragHandle && 'mrs-stat-card--draggable',
+        shape === 'landscape' && 'mrs-stat-card--landscape',
+        renderLink && 'mrs-stat-card--linked',
         className,
       )}
       style={style}
@@ -583,6 +636,9 @@ export const StatCard = forwardRef<HTMLDivElement, StatCardProps>(function StatC
       data-medallion-size={medallion?.size ?? 'lg'}
       onClick={onClick}
     >
+      {renderLink
+        ? renderLink({ className: 'mrs-stat-card__link-overlay', 'aria-labelledby': titleId })
+        : null}
       {dragHandle ? (
         <button
           type="button"
@@ -619,7 +675,7 @@ export const StatCard = forwardRef<HTMLDivElement, StatCardProps>(function StatC
         {/* Header: title block + medallion */}
         <div className="mrs-stat-card__header">
           <div className="mrs-stat-card__head-text">
-            <p className="mrs-stat-card__title" data-fit={titleFitStep(title) || undefined}>{title}</p>
+            <p className="mrs-stat-card__title" id={titleId} data-fit={titleFitStep(title) || undefined}>{title}</p>
             {subtitle ? <p className="mrs-stat-card__subtitle">{subtitle}</p> : null}
           </div>
           {medallionNode}
@@ -649,10 +705,10 @@ export const StatCard = forwardRef<HTMLDivElement, StatCardProps>(function StatC
           </dl>
         ) : null}
 
-        {/* Footer / lower */}
+        {/* Footer — structured lines/badges or a freeform node */}
         {hasFooter ? (
           <div className="mrs-stat-card__lower">
-            {footer ? footerNode : lower}
+            {structuredFooter ? footerNode : (footer as ReactNode)}
           </div>
         ) : null}
       </div>

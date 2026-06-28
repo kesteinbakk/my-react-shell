@@ -134,6 +134,8 @@ export type {
   StatCardFooter,
   StatCardFooterLine,
   StatCardFooterLineType,
+  StatCardShape,
+  StatCardLinkProps,
 } from './StatCard'
 
 export { ContentCard } from './ContentCard'
@@ -145,6 +147,8 @@ export type {
   ContentCardFooter,
   ContentCardFooterLine,
   ContentCardFooterLineType,
+  ContentCardShape,
+  ContentCardLinkProps,
 } from './ContentCard'
 
 export { InputField } from './InputField'
