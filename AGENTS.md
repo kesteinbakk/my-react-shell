@@ -51,6 +51,7 @@ Each module is self-contained and independently importable.
 
 ### Documentation Rules
 - **API Reference is mandatory:** Any change touching the public API (exports, props, signatures, defaults, CSS) MUST update the API reference in the same change.
+  - **Planning:** You should also mention updating `api/components` documentation. This should be present as a separate item in all plans in this project if relevant.
 - **Guides:** Update a module's guide if a change affects its behavior, constraints, or contract.
 
 ### Dev Servers & Releases

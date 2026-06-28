@@ -1,0 +1,201 @@
+import { useCallback, useEffect, useRef, useState } from 'react'
+import * as RadixDialog from '@radix-ui/react-dialog'
+import { Document, Page, pdfjs } from 'react-pdf'
+import { cn } from './cn'
+import { Button } from './Button'
+
+// Setup pdf.js worker.
+pdfjs.GlobalWorkerOptions.workerSrc = new URL(
+  'pdfjs-dist/build/pdf.worker.min.mjs',
+  import.meta.url,
+).toString()
+
+const DEFAULT_ASPECT = 1.414 // A4 Portrait
+
+export interface PreviewProps {
+  /** Controlled open state. */
+  open: boolean
+  /** Open-state change handler. */
+  onOpenChange: (open: boolean) => void
+  /** Dialog heading. */
+  title: string
+  /** The source URL, Blob, or File for the PDF. */
+  file: string | Blob | File | null
+  /** Optional content to render in the header, like a select menu. */
+  headerContent?: React.ReactNode
+  /** Classes applied to the content container. */
+  className?: string
+}
+
+/**
+ * A modal PDF Preview component styled like a piece of paper.
+ * It takes the full viewport height and adjusts width dynamically.
+ * Renders pages using `react-pdf`.
+ */
+export function Preview({
+  open,
+  onOpenChange,
+  title,
+  file,
+  headerContent,
+  className,
+}: PreviewProps) {
+  const containerRef = useRef<HTMLDivElement | null>(null)
+  const [width, setWidth] = useState<number | null>(null)
+  const [numPages, setNumPages] = useState<number>(0)
+  const [aspect, setAspect] = useState(DEFAULT_ASPECT)
+  const [visiblePages, setVisiblePages] = useState<Set<number>>(() => new Set([1]))
+  const observerRef = useRef<IntersectionObserver | null>(null)
+
+  // Track the container width to fit the pages.
+  useEffect(() => {
+    if (!open) return
+    const el = containerRef.current
+    if (!el) return
+    const update = () => setWidth(el.clientWidth)
+    // Delay first measurement to let modal animate/render
+    const timer = setTimeout(update, 50)
+    const ro = new ResizeObserver(update)
+    ro.observe(el)
+    return () => {
+      clearTimeout(timer)
+      ro.disconnect()
+    }
+  }, [open])
+
+  // IntersectionObserver for lazy loading pages.
+  useEffect(() => {
+    if (!open) return
+    const root = containerRef.current
+    if (!root) return
+    const io = new IntersectionObserver(
+      (entries) => {
+        const revealed: number[] = []
+        for (const e of entries) {
+          if (e.isIntersecting) {
+            const n = Number((e.target as HTMLElement).dataset.page)
+            if (n) revealed.push(n)
+          }
+        }
+        if (revealed.length) {
+          setVisiblePages((prev) => {
+            const next = new Set(prev)
+            for (const n of revealed) next.add(n)
+            return next
+          })
+        }
+      },
+      { root, rootMargin: '600px 0px' },
+    )
+    observerRef.current = io
+    return () => io.disconnect()
+  }, [open])
+
+  const pageRef = useCallback((node: HTMLDivElement | null) => {
+    if (node) observerRef.current?.observe(node)
+  }, [])
+
+  const onLoadSuccess = useCallback(({ numPages }: { numPages: number }) => {
+    setNumPages(numPages)
+    // Reset visible pages when document changes.
+    setVisiblePages(new Set([1, 2]))
+  }, [])
+
+  const onFirstPageLoad = useCallback(
+    (page: { getViewport: (o: { scale: number }) => { width: number; height: number } }) => {
+      try {
+        const vp = page.getViewport({ scale: 1 })
+        if (vp.width > 0) setAspect(vp.height / vp.width)
+      } catch {
+        /* keep default */
+      }
+    },
+    [],
+  )
+
+  const handlePrint = useCallback(() => {
+    window.print()
+  }, [])
+
+  const reservedHeight = width ? Math.round(width * aspect) : undefined
+
+  return (
+    <RadixDialog.Root open={open} onOpenChange={onOpenChange}>
+      <RadixDialog.Portal>
+        <RadixDialog.Overlay className="mrs-preview__overlay" />
+        <RadixDialog.Content
+          className={cn('mrs-preview', className)}
+          onPointerDownOutside={() => onOpenChange(false)}
+          onEscapeKeyDown={() => onOpenChange(false)}
+          // Set to handle print properly
+          aria-modal="true"
+        >
+          <div className="mrs-preview__header print:hidden">
+            <RadixDialog.Title className="mrs-preview__title">{title}</RadixDialog.Title>
+            
+            <div className="mrs-preview__header-actions">
+              {headerContent}
+              <Button tone="neutral" onClick={handlePrint} size="sm">
+                Skriv ut
+              </Button>
+              <RadixDialog.Close className="mrs-dialog__close" aria-label="Lukk">
+                <svg
+                  width={16}
+                  height={16}
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M18 6 6 18" />
+                  <path d="m6 6 12 12" />
+                </svg>
+              </RadixDialog.Close>
+            </div>
+          </div>
+          
+          <div className="mrs-preview__body" ref={containerRef}>
+            {!file ? (
+              <div className="mrs-preview__msg">Ingen dokument er valgt.</div>
+            ) : (
+              <Document
+                file={file}
+                onLoadSuccess={onLoadSuccess}
+                loading={<div className="mrs-preview__msg">Laster dokument...</div>}
+                error={<div className="mrs-preview__msg">Kunne ikke laste dokumentet.</div>}
+                noData={<div className="mrs-preview__msg">Dokumentet er tomt.</div>}
+              >
+                {Array.from({ length: numPages }, (_, i) => {
+                  const pageNumber = i + 1
+                  return (
+                    <div
+                      className="mrs-preview__page-slot"
+                      key={pageNumber}
+                      data-page={pageNumber}
+                      ref={pageRef}
+                      style={reservedHeight ? { minHeight: reservedHeight } : undefined}
+                    >
+                      {visiblePages.has(pageNumber) && width ? (
+                        <Page
+                          pageNumber={pageNumber}
+                          width={width}
+                          onLoadSuccess={pageNumber === 1 ? onFirstPageLoad : undefined}
+                          renderTextLayer={false}
+                          renderAnnotationLayer={false}
+                          className="mrs-preview__page"
+                        />
+                      ) : null}
+                    </div>
+                  )
+                })}
+              </Document>
+            )}
+          </div>
+        </RadixDialog.Content>
+      </RadixDialog.Portal>
+    </RadixDialog.Root>
+  )
+}

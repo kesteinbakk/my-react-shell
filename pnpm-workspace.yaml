@@ -7,6 +7,7 @@
 # by Vite and Convex) — approve it so `pnpm install` doesn't exit 1 on an
 # unapproved build.
 allowBuilds:
+  canvas: true
   esbuild: true
 onlyBuiltDependencies:
   - esbuild
