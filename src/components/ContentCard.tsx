@@ -195,17 +195,9 @@ export const ContentCard = forwardRef<HTMLDivElement, ContentCardProps>(function
     }
   }
  
-  const hasFooterProp =
+  const hasFooter =
     (footer && ((footer.lines?.length ?? 0) > 0 || (footer.badges?.length ?? 0) > 0)) ||
     lower != null
-
-  if (size === 'sm' && hasFooterProp) {
-    if (process.env.NODE_ENV !== 'production') {
-      console.warn(`ContentCard: the footer/lower slot is not supported on 'sm' size cards. It will be ignored.`)
-    }
-  }
-
-  const hasFooter = size !== 'sm' && hasFooterProp
  
   let footerNode: ReactNode = null
   if (footer) {

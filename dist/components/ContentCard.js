@@ -67,14 +67,8 @@ export const ContentCard = forwardRef(function ContentCard({ title, subtitle, co
             throw new Error("ContentCard: `topStripeFollowsGauge` drives the top stripe — it can't combine with `accentPlacement='left'`. Keep the default `accentPlacement='top'` (or omit it).");
         }
     }
-    const hasFooterProp = (footer && ((footer.lines?.length ?? 0) > 0 || (footer.badges?.length ?? 0) > 0)) ||
+    const hasFooter = (footer && ((footer.lines?.length ?? 0) > 0 || (footer.badges?.length ?? 0) > 0)) ||
         lower != null;
-    if (size === 'sm' && hasFooterProp) {
-        if (process.env.NODE_ENV !== 'production') {
-            console.warn(`ContentCard: the footer/lower slot is not supported on 'sm' size cards. It will be ignored.`);
-        }
-    }
-    const hasFooter = size !== 'sm' && hasFooterProp;
     let footerNode = null;
     if (footer) {
         const lines = footer.lines ?? [];

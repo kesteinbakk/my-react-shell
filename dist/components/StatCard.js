@@ -143,14 +143,8 @@ export const StatCard = forwardRef(function StatCard({ title, subtitle, medallio
             }
         }
     }
-    const hasFooterProp = (footer && ((footer.lines?.length ?? 0) > 0 || (footer.badges?.length ?? 0) > 0)) ||
+    const hasFooter = (footer && ((footer.lines?.length ?? 0) > 0 || (footer.badges?.length ?? 0) > 0)) ||
         lower != null;
-    if (size === 'sm' && hasFooterProp) {
-        if (process.env.NODE_ENV !== 'production') {
-            console.warn(`StatCard: the footer/lower slot is not supported on 'sm' size cards. It will be ignored.`);
-        }
-    }
-    const hasFooter = size !== 'sm' && hasFooterProp;
     // Footer renderer (shared JSX structure + CSS classes with ContentCard)
     let footerNode = null;
     if (footer) {
