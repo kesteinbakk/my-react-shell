@@ -87,6 +87,12 @@ export interface DynamicGridCardProps extends Omit<HTMLAttributes<HTMLDivElement
      */
     dragHandleProps?: React.HTMLAttributes<HTMLButtonElement>;
     /**
+     * Accessible label for the drag handle. **Required when `dragHandle` is set** (no
+     * default — pass a translated string, or supply `aria-label` via `dragHandleProps`);
+     * throws in dev otherwise.
+     */
+    dragHandleLabel?: string;
+    /**
      * Semantic tone — drives an optional accent stripe. Default **none** (no accent).
      * Ignored when `color` is set. Same accent vocabulary as `StatCard`/`PaperCard`.
      */

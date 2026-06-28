@@ -99,6 +99,12 @@ export interface DynamicGridCardProps extends Omit<HTMLAttributes<HTMLDivElement
    */
   dragHandleProps?: React.HTMLAttributes<HTMLButtonElement>
   /**
+   * Accessible label for the drag handle. **Required when `dragHandle` is set** (no
+   * default — pass a translated string, or supply `aria-label` via `dragHandleProps`);
+   * throws in dev otherwise.
+   */
+  dragHandleLabel?: string
+  /**
    * Semantic tone — drives an optional accent stripe. Default **none** (no accent).
    * Ignored when `color` is set. Same accent vocabulary as `StatCard`/`PaperCard`.
    */
@@ -123,9 +129,9 @@ export const DYNAMIC_GRID_CARD_MAX_WIDTH: Record<DynamicGridCardSize, number> = 
 
 /** Default grip glyph — vertical stripes, for the right-edge centred drag handle. */
 const DEFAULT_DRAG_HANDLE = (
-  <svg width="12" height="28" viewBox="0 0 12 28" fill="currentColor" aria-hidden="true" opacity="0.4">
-    <rect x="1" y="0" width="3" height="28" rx="1.5" />
-    <rect x="8" y="0" width="3" height="28" rx="1.5" />
+  <svg width="15" height="36" viewBox="0 0 15 36" fill="currentColor" aria-hidden="true" opacity="0.4">
+    <rect x="1" y="0" width="4" height="36" rx="2" />
+    <rect x="10" y="0" width="4" height="36" rx="2" />
   </svg>
 )
 
@@ -202,11 +208,14 @@ function StructuredFooter({ footer }: { footer: DynamicGridCardFooter }) {
  * overlay, with `corner` controls raised above it so they stay independently clickable.
  */
 export const DynamicGridCard = forwardRef<HTMLDivElement, DynamicGridCardProps>(function DynamicGridCard(
-  { size, shape = 'standard', title, subtitle, figure, hoverable, lift = true, watermark, corner, footer, renderLink, dragHandle, dragHandleProps, tone, color, accentPlacement = 'top', className, style, children, ...props },
+  { size, shape = 'standard', title, subtitle, figure, hoverable, lift = true, watermark, corner, footer, renderLink, dragHandle, dragHandleProps, dragHandleLabel, tone, color, accentPlacement = 'top', className, style, children, ...props },
   ref,
 ) {
   if (dragHandle && renderLink) {
     throw new Error('DynamicGridCard: `dragHandle` and `renderLink` are mutually exclusive — a navigable tile cannot also be drag-reordered.')
+  }
+  if (dragHandle && dragHandleLabel == null && dragHandleProps?.['aria-label'] == null) {
+    throw new Error('DynamicGridCard: `dragHandleLabel` is required when `dragHandle` is set — pass a translated accessible label (or supply `aria-label` via `dragHandleProps`).')
   }
 
   const minWidth = size ? DYNAMIC_GRID_CARD_MIN_WIDTH[size] : undefined
@@ -273,7 +282,7 @@ export const DynamicGridCard = forwardRef<HTMLDivElement, DynamicGridCardProps>(
         <button
           type="button"
           className="mrs-dynamic-grid-card__drag-handle"
-          aria-label="Drag to reorder"
+          aria-label={dragHandleLabel}
           {...dragHandleProps}
           onClick={(e) => {
             e.stopPropagation()

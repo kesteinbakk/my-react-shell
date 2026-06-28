@@ -695,7 +695,7 @@ import { DynamicCardGrid, DynamicGridCard } from 'my-react-shell/components'
 | `color` | — | Raw CSS color for the accent stripe; overrides `tone`. E.g. `'#7c3aed'` or `'var(--color-primary)'`. |
 | `accentPlacement` | `'top'` | Where the accent reads when `tone`/`color` is set: a `'top'` stripe or a `'left'` bar. |
 | `renderLink` | — | Interactive-root seam. `(linkProps) => ReactNode` — the consumer renders its router `<Link>` spreading `linkProps` (`className` + auto-wired `aria-labelledby` from the title), adding `to`/`params`. The card mounts it as a **full-bleed block-link overlay** so the whole tile is a real, keyboard-activatable anchor while the root `<div>` owns its hover/border/focus states. The shell imports no router; `to`/`params` type-safety lives at the call site. |
-| `dragHandle` / `dragHandleProps` | — | Drag-reorder grip — `true` renders a built-in **vertical-stripes** handle pinned to the **right edge, vertically centred** (or pass a custom `ReactNode`); spread your DND library's listeners via `dragHandleProps`. **Mutually exclusive with `renderLink`** — throws in dev. Same seam as `StatCard`/`ContentCard`/`PaperCard`. |
+| `dragHandle` / `dragHandleProps` / `dragHandleLabel` | — | Drag-reorder grip — `true` renders a built-in **vertical-stripes** handle pinned to the **right edge, vertically centred** (or pass a custom `ReactNode`); spread your DND library's listeners via `dragHandleProps`. `dragHandleLabel` is **required** when `dragHandle` is set (no default — pass a translated accessible label, or supply `aria-label` via `dragHandleProps`); throws in dev. **Mutually exclusive with `renderLink`** — throws in dev. Same seam as `StatCard`/`ContentCard`/`PaperCard`. |
 
 ```tsx
 import { Link } from '@tanstack/react-router'

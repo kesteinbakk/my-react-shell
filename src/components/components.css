@@ -1932,12 +1932,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 8px 4px;
+  padding: 10px 7px;
   background: transparent;
   border: none;
   color: var(--color-text-tertiary);
   cursor: grab !important;
-  border-radius: 4px;
+  border-radius: 6px;
   transition: background-color 120ms ease, color 120ms ease;
 }
 .mrs-dynamic-grid-card__drag-handle:hover {
@@ -1958,7 +1958,7 @@
 }
 /* Inset the content off the right-edge grip so the two never overlap. */
 .mrs-dynamic-grid-card--draggable {
-  padding-right: calc(1rem + 16px);
+  padding-right: calc(1rem + 24px);
 }
 
 /* ── PhiCard ─────────────────────────────────────────────────────────────── */
