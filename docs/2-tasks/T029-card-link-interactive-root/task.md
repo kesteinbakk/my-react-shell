@@ -286,6 +286,29 @@ standard golden-ratio (φ:1) height reads too tall/empty.
   Browser-verified in the live app: setup tiles are real anchors with correct routes; the
   group cards navigate and their corner menu opens without navigating.
 
+### Phase 3b — grid-container sweep (done)
+
+The broader intent of the consumer cleanup was **not** just retiring wrapper cards — it was
+making every card/grid pairing correct. A follow-up sweep fixed the **grid containers**: several
+sites rendered **fixed-size** cards (`StatCard`/`EntityCard`, inline `width`) inside the **fluid**
+`DynamicCardGrid`, whose `1fr` columns are narrower than the card width — so each card overflowed
+its column and **overlapped** the next (visible bug on the tenant projects landing). Fixed by
+switching the fixed-card lists to the static **`CardGrid`** (flex-wrap, no stretch, cards keep
+their own width):
+
+- `ProjectsView`, `HomePage`, `TenantsPage`, `ProjectHome`, `TilbudRootView` —
+  `DynamicCardGrid items/renderCard` → `CardGrid` + `.map()`.
+- `TilbudView`, `CriteriaView` — replaced a hand-rolled `div.mrs-card-grid__cards` (an
+  **undefined** class — the static grid is `.mrs-card-grid`, so those cards had *no* grid layout)
+  with the `CardGrid` component. `CriteriaView`'s dnd-kit `SortableStatCard` wrapper dropped
+  `w-full h-full` so cards size to content in the flex grid.
+
+The `DynamicGridCard` nav sites (`SetupHome`, `DocumentsHome`, `TenantTemplatesPage`,
+`TenantAdminHome`, `AccessGroupsView`) correctly **keep** `DynamicCardGrid` — a size-less card in
+the fluid grid is the right pairing. Rule: fixed-size cards (`StatCard`/`ContentCard`/`EntityCard`)
+→ `CardGrid`; size-less `DynamicGridCard` → `DynamicCardGrid`. Browser-verified: the overlap is
+gone and CriteriaView's draggable cards lay out cleanly.
+
 ### Carved out — EntityCard full deletion + per-call-site link conversion
 
 The task's Phase 3 also called for **deleting `EntityCard`** and converting its `onOpen`
