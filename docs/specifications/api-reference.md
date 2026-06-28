@@ -277,7 +277,8 @@ import 'my-react-shell/components/styles.css' // REQUIRED (plain prebuilt CSS; a
 | `PhiCard`, `PHI` | component + const | Golden-ratio card (W:H = φ:1): a figure (`icon`/`image`) fills its column, a centered text body (`upper` + `content`), and a structured `footer` (meta lines + stacked badges, per-size caps) or freeform `lower`. Collapses when there's no footer. Top-right ⋮ menu via `actions` or a `corner` slot. Uses the `@radix-ui/react-dropdown-menu` optional peer. |
 | `StatCard` | component | Self-contained φ-framed KPI/status card — a fixed-width golden-ratio card (`height = width / φ`); `size` default `md` ≈312px, four to a `wide` (1440px) row. Title + subtitle, an optional accent medallion circle (plain number+label **or** SVG arc-ring when `medallion.max` is set), a stats row, and a structured `footer` or freeform `lower`. Accent stripe (`accentPlacement` top/left) + medallion tint driven by `tone` (semantic tokens) or a raw CSS `color`. `variant` (`'warning'`·`'danger'`) overrides tone, forces ⚠️ watermark. Optional left-edge completion gauge (`sideBarCompleteness`, red→amber→green) that coexists with the top stripe, or drives the whole accent's color via `topStripeFollowsGauge`. Optional emoji `watermark`. Hover-lift via `onClick`/`hoverable`. |
 | `ContentCard` | component | Self-contained freeform text counterpart to `StatCard` — same fixed-width golden-ratio sizing (`size` default `md` ≈312px). Title + subtitle, a freeform `content` string (supports `html` prop, safely sanitized internally via DOMPurify), and a structured `footer` or freeform `lower`. Text aligns via `contentAlignX`/`contentAlignY`. Instead of a medallion, accepts `value` and `maxValue` to render a left-side completion gauge. Same `tone`, `color`, `variant`, and `watermark` properties as `StatCard`. |
-| `CardGrid` | component | **Static** card grid: fixed-size cards flow left-to-right and **wrap** when a row is full, separated by a fixed `gap`. Cards are **not** stretched (a larger gap may remain at the end of a row) and keep their own intrinsic width/height (`StatCard`/`ContentCard`/`PhiCard`). `align` (`start`·`center`, default `start`), `gap` (CSS length override; default `1.5rem`, sized so four ≈312px cards fit a `wide` row). Children-based. |
+| `PaperCard` | component | Small **preview / thumbnail** card styled as a dog-eared sheet of paper at **A4 portrait** proportions (`height = width × √2`). Fixed-width size scale (`sm` 168 · `md` 210 · `lg` 264 · `xl` 320 px, **default `sm`**); the folded top-right corner is cut from the sheet with `clip-path`, and the drop shadow rides a wrapper (`filter: drop-shadow()`) so it follows the dog-eared silhouette. Title + optional subtitle / `content` (+ `contentAlignX/Y`, `maxLines`), shared `{ lines, badges }` `footer`, **opt-in** `tone`/`color` top/left accent (none by default), `watermark`, hover-lift, `dragHandle`, and the `renderLink` block-link overlay. Fixed-size → drops into the static `CardGrid`. |
+| `CardGrid` | component | **Static** card grid: fixed-size cards flow left-to-right and **wrap** when a row is full, separated by a fixed `gap`. Cards are **not** stretched (a larger gap may remain at the end of a row) and keep their own intrinsic width/height (`StatCard`/`ContentCard`/`PhiCard`/`PaperCard`). `align` (`start`·`center`, default `start`), `gap` (CSS length override; default `1.5rem`, sized so four ≈312px cards fit a `wide` row). Children-based. |
 | `DynamicCardGrid` | component | **Fluid** card grid with a built-in search / filter / sort toolbar. Cards stretch to fill uniform `1fr` columns sized by `cardSize` (`sm`·`md`·`lg`) or a raw `minColumnWidth`. Data-driven via `items` / `renderCard` / `getKey`; `filters`, `sortOptions`, `searchFields`/`searchFn`, `loading`, empty + no-results states. Pair with `DynamicGridCard`. |
 | `DynamicGridCard` | component | Fluid card for `DynamicCardGrid`: stretches to `width:100%` of its column, inherits the grid's max-width cap, keeps the golden-ratio shape via `aspect-ratio`. Optional `title` / `subtitle` / `figure` / `footer` slots, primary content as `children`. `size` (`sm`·`md`·`lg`), `shape` (`standard` = φ:1 · `landscape` = φ²:1). Acts as a **whole-card navigation link** via `renderLink` (consumer supplies its router `<Link>`, rendered as a full-bleed block-link overlay), with `hoverable` lift and a raised `corner` action slot. |
 | `InputField` | component | Full field: label + input + helper + error, a11y-wired (`htmlFor`/`aria-invalid`/`aria-describedby`). Spreads native input props; pass `error` to switch on error styling. `inputSize` (`sm`·`md`·`lg`, default `md`) matches the `Input` height/padding scale. `onDebouncedChange(value)` (fires `debounceMs` after the user stops typing; default 500 ms), `saveStatus` (visual status `'idle'`·`'pending'`·`'saving'`·`'saved'`·`'error'`). |
@@ -321,6 +322,7 @@ Every component has a matching `…Props` type export (e.g. `ButtonProps`, `Butt
 `StatCardFooter`, `StatCardFooterLine`, `StatCardFooterLineType`,
 `ContentCardProps`, `ContentCardSize`, `ContentCardTone`, `ContentCardVariant`,
 `ContentCardFooter`, `ContentCardFooterLine`, `ContentCardFooterLineType`,
+`PaperCardProps`, `PaperCardSize`, `PaperCardTone`, `PaperCardFooter`, `PaperCardFooterLine`, `PaperCardFooterLineType`, `PaperCardLinkProps`,
 `CardGridProps`, `DynamicCardGridProps`, `ToggleFilter`, `SortOption`,
 `DynamicGridCardProps`, `DynamicGridCardSize`, `DynamicGridCardShape`, `DynamicGridCardFooter`, `DynamicGridCardFooterLine`, `DynamicGridCardFooterLineType`, `DynamicGridCardLinkProps`, `ColorPickerProps`,
 `ColorFormat`, `CollapsibleProps`, `CollapsibleVariant`, `CollapsibleSize`,
@@ -856,6 +858,60 @@ Self-contained freeform text counterpart to `StatCard`. It carries the same fixe
   content="3 items require your attention"
   lower={<button className="mrs-stat-card__cta" onClick={open}>Review now →</button>}
 />
+```
+
+### `PaperCard`
+
+A small **preview / thumbnail** card styled as a dog-eared sheet of paper at **A4 portrait** proportions (`height = width × √2`). The folded top-right corner is genuinely cut out of the sheet with `clip-path`; the drop shadow lives on a wrapper via `filter: drop-shadow()` so it follows the dog-eared silhouette (an ordinary `box-shadow` would be clipped away). Default size is **`sm`** — it's a thumbnail, not a full page. Shares the card-family footer, watermark, hover-lift, drag-handle, and `renderLink` block-link seams; an accent stripe is **opt-in** (none by default — a paper card reads from its proportion, fold, and shadow alone), and the folded corner stays a neutral surface tint even when an accent is set.
+
+| Prop | Default | Meaning |
+|---|---|---|
+| `title` | — | Card title. **Required.** Wraps to two lines, then clips; a long title steps its font size down (by character count). |
+| `subtitle` | — | Optional subtitle / meta line below the title (single line, ellipsised). |
+| `content` | — | Optional freeform body text. A thumbnail can carry just a title; when present, the text clamps to `maxLines`. |
+| `contentAlignX` | `'left'` | Horizontal alignment (`'left'` · `'center'` · `'right'`). |
+| `contentAlignY` | `'top'` | Vertical alignment (`'top'` · `'center'` · `'bottom'`). |
+| `maxLines` | *dynamic* | Lines to clamp `content`. Defaults to `7` if neither subtitle nor footer is present, `5` if either is present, `4` if both are. |
+| `tone` | — | `'primary'`·`'info'`·`'success'`·`'warning'`·`'danger'`·`'neutral'` — **opt-in** accent stripe (default none). Maps to semantic `--color-*` tokens. |
+| `color` | — | Raw CSS color for the accent stripe (overrides `tone`). |
+| `accentPlacement` | `'top'` | Where the accent reads when set: a `'top'` stripe or a `'left'` bar. |
+| `footer` | — | Footer slot: a freeform `ReactNode` **or** a structured `{ lines?, badges? }` — same unified slot as `StatCard`/`ContentCard` (discriminated automatically). |
+| `watermark` | — | Faint oversized background emoji. E.g. `'📄'`. |
+| `size` | `'sm'` | `sm`·`md`·`lg`·`xl` = 168/210/264/320px wide; height = width × √2. `md` is literally A4's mm figures (210×297). |
+| `onClick` | — | Click handler; also enables hover lift. |
+| `hoverable` | `!!onClick` | Hover lift (translateY + heavier shadow). |
+| `dragHandle` / `dragHandleProps` | — | Drag-reorder grip (built-in or custom node). **Mutually exclusive with `renderLink`** — throws in dev. |
+| `renderLink` | — | Interactive-root seam — same block-link-overlay mechanism as `StatCard`/`ContentCard` (`(linkProps) => ReactNode`; the whole tile becomes the consumer's router `<Link>`, root owns its states, no router dep in the shell). |
+| `className` / `style` | — | Extra classes / style on the outer card. |
+
+```tsx
+import { PaperCard, CardGrid } from 'my-react-shell/components'
+
+// Plain thumbnail — title + meta only:
+<PaperCard title="Errand list" subtitle="Personal" />
+
+// With body text + a structured footer:
+<PaperCard
+  size="md"
+  title="Quarterly report"
+  subtitle="Q2 · Finance"
+  content="Revenue up 12% QoQ; margins holding. Full breakdown attached."
+  footer={{ lines: [{ type: 'date', text: '14 Jun 2026' }], badges: [<Badge tone="neutral">Draft</Badge>] }}
+/>
+
+// Opt-in accent + whole-card navigation link:
+<PaperCard
+  title="Proposal" subtitle="Acme · Sent" tone="primary"
+  content="Two attachments. Awaiting countersignature."
+  footer={{ badges: [<Badge tone="success">Active</Badge>] }}
+  renderLink={(p) => <Link {...p} to="/doc/$id" params={{ id }} />}
+/>
+
+// Fixed-size, so it drops into the static CardGrid:
+<CardGrid>
+  <PaperCard title="Meeting notes" subtitle="Standup" content="…" />
+  <PaperCard title="To-do" content="…" />
+</CardGrid>
 ```
 
 ### `UserPreferences`

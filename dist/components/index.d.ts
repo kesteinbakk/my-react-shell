@@ -55,6 +55,8 @@ export { StatCard } from './StatCard';
 export type { StatCardProps, StatCardSize, StatCardMedallion, StatItem, StatCardTone, StatCardVariant, StatCardFooter, StatCardFooterLine, StatCardFooterLineType, StatCardShape, StatCardLinkProps, } from './StatCard';
 export { ContentCard } from './ContentCard';
 export type { ContentCardProps, ContentCardSize, ContentCardTone, ContentCardVariant, ContentCardFooter, ContentCardFooterLine, ContentCardFooterLineType, ContentCardShape, ContentCardLinkProps, } from './ContentCard';
+export { PaperCard } from './PaperCard';
+export type { PaperCardProps, PaperCardSize, PaperCardTone, PaperCardFooter, PaperCardFooterLine, PaperCardFooterLineType, PaperCardLinkProps, } from './PaperCard';
 export { InputField } from './InputField';
 export type { InputFieldProps } from './InputField';
 export { SearchInput } from './SearchInput';

@@ -152,7 +152,7 @@ export const StatCard = forwardRef(function StatCard({ title, subtitle, medallio
         });
         if (medallion?.label) {
             if (medallion.label.length > 8) {
-                throw new Error(`StatCard: medallion.label cannot exceed 8 characters. (Got "${medallion.label}")`);
+                console.warn(`StatCard: medallion.label exceeds 8 characters — the card may not render correctly. (Got "${medallion.label}")`);
             }
             if (/\s/.test(medallion.label.trim())) {
                 throw new Error(`StatCard: medallion.label must be a single word without spaces. (Got "${medallion.label}")`);

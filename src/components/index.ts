@@ -151,6 +151,17 @@ export type {
   ContentCardLinkProps,
 } from './ContentCard'
 
+export { PaperCard } from './PaperCard'
+export type {
+  PaperCardProps,
+  PaperCardSize,
+  PaperCardTone,
+  PaperCardFooter,
+  PaperCardFooterLine,
+  PaperCardFooterLineType,
+  PaperCardLinkProps,
+} from './PaperCard'
+
 export { InputField } from './InputField'
 export type { InputFieldProps } from './InputField'
 

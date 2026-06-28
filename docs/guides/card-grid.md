@@ -5,7 +5,7 @@ whether the cards you are placing have an intrinsic, fixed size.
 
 | Layout | Cards | Behaviour |
 | :--- | :--- | :--- |
-| **`CardGrid`** (static) | Fixed-size (`StatCard`, `ContentCard`, `PhiCard`) | Cards flow left-to-right and **wrap**; a fixed gap between them; **no stretching** — a larger gap may remain at the end of a row. Every card keeps its own width/height. |
+| **`CardGrid`** (static) | Fixed-size (`StatCard`, `ContentCard`, `PhiCard`, `PaperCard`) | Cards flow left-to-right and **wrap**; a fixed gap between them; **no stretching** — a larger gap may remain at the end of a row. Every card keeps its own width/height. |
 | **`DynamicCardGrid`** + **`DynamicGridCard`** (fluid) | Size-less | Cards **stretch** to fill uniform `1fr` columns; a built-in search / filter / sort toolbar. |
 
 ---
@@ -43,6 +43,12 @@ preset sets the pixel width and the height follows `height = width / φ`.
 or `'landscape'` (φ²:1 — `height = width / φ²`, a shorter box at the same `size` width). Use
 landscape for light cards (no footer, small content) where the standard height reads too tall;
 a full stats row + footer can overflow the shorter box — the consumer's call when to use it.
+
+`PaperCard` is the odd one out: a fixed-size card that is **portrait, not golden-ratio** — a
+small preview/thumbnail styled as a dog-eared sheet of paper at **A4 proportions**
+(`height = width × √2`, so it's *taller* than wide). Its own `size` scale is `sm` 168 · `md`
+210 · `lg` 264 · `xl` 320 px (default `sm`; `md` is literally A4's mm figures). It drops into
+`CardGrid` like the others — just expect a taller row.
 
 ---
 
