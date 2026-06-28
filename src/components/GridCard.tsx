@@ -10,7 +10,6 @@ export interface GridCardProps extends Omit<HTMLAttributes<HTMLDivElement>, 'tit
   variant?: GridCardVariant
   title?: ReactNode
   subtitle?: ReactNode
-  footer?: ReactNode
 }
 
 export const GRID_CARD_MIN_WIDTH: Record<GridCardSize, number> = {
@@ -30,7 +29,7 @@ export const GRID_CARD_MAX_WIDTH: Record<GridCardSize, number> = {
  * Accepts optional named slots (title, subtitle, footer) while preserving children for main body.
  */
 export const GridCard = forwardRef<HTMLDivElement, GridCardProps>(function GridCard(
-  { size, variant = 'standard', title, subtitle, footer, className, style, children, ...props },
+  { size, variant = 'standard', title, subtitle, className, style, children, ...props },
   ref,
 ) {
   const minWidth = size ? GRID_CARD_MIN_WIDTH[size] : undefined
@@ -38,7 +37,6 @@ export const GridCard = forwardRef<HTMLDivElement, GridCardProps>(function GridC
   const aspectRatio = variant === 'landscape' ? `${PHI * PHI} / 1` : `${PHI} / 1`
 
   const hasHeader = title != null || subtitle != null
-  const hasFooter = footer != null
 
   const cssVars = {
     '--mrs-grid-card-aspect-ratio': aspectRatio,
@@ -65,12 +63,6 @@ export const GridCard = forwardRef<HTMLDivElement, GridCardProps>(function GridC
       <div className="mrs-grid-card__body">
         {children}
       </div>
-
-      {hasFooter ? (
-        <div className="mrs-grid-card__footer">
-          {footer}
-        </div>
-      ) : null}
     </div>
   )
 })

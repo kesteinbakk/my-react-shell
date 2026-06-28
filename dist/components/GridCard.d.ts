@@ -6,7 +6,6 @@ export interface GridCardProps extends Omit<HTMLAttributes<HTMLDivElement>, 'tit
     variant?: GridCardVariant;
     title?: ReactNode;
     subtitle?: ReactNode;
-    footer?: ReactNode;
 }
 export declare const GRID_CARD_MIN_WIDTH: Record<GridCardSize, number>;
 export declare const GRID_CARD_MAX_WIDTH: Record<GridCardSize, number>;
