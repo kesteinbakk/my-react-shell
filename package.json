@@ -100,7 +100,8 @@
     "react-day-picker": "^10.0.1",
     "react-dom": "^19.0.0",
     "react-pdf": "^9.1.1",
-    "tailwind-merge": "^3.6.0"
+    "tailwind-merge": "^3.6.0",
+    "tw-animate-css": "^1.4.0"
   },
   "peerDependenciesMeta": {
     "convex": {
@@ -182,6 +183,9 @@
       "optional": true
     },
     "tailwind-merge": {
+      "optional": true
+    },
+    "tw-animate-css": {
       "optional": true
     }
   },

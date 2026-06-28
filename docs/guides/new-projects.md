@@ -5,6 +5,24 @@ When creating a new consumer application (or test harness) that consumes `my-rea
 ## Dependency Management
 - **Package Manager**: Use `pnpm`. Make sure your new project runs on pnpm to stay consistent with the ecosystem.
 - **Git Dependency**: The shell is installed as a git dependency pointing to the pinned release tag. For local development, this is often redirected via `pnpm link --dir ../my-react-shell` (or `"my-react-shell": "link:../my-react-shell"` in `package.json`).
+- **`tw-animate-css`**: Must be installed as a direct dependency. `my-react-shell/styles.css` is raw Tailwind v4 source that `@import`s `tw-animate-css`; without it the consumer's Tailwind pipeline fails at build time.
+
+## CSS Setup
+
+Import the shell stylesheets in a single CSS entry file (e.g. `src/index.css`) that your Tailwind pipeline processes, rather than spreading them across JS files:
+
+```css
+@import 'my-react-shell/styles.css';           /* Tailwind v4 source — token contract + palettes + tw-animate-css */
+@import 'my-react-shell/app-shell/styles.css'; /* Prebuilt — app-shell chrome */
+```
+
+Then in your app entry (e.g. `src/main.tsx`) import the prebuilt component stylesheet separately, since it is plain CSS and does not go through Tailwind:
+
+```ts
+import 'my-react-shell/components/styles.css'
+```
+
+`my-react-shell/styles.css` is the only file that requires Tailwind v4 and `tw-animate-css` — the `components/styles.css` and `app-shell/styles.css` files are already compiled and have no build-time dependencies.
 
 ## Vite Configuration (`vite.config.ts`)
 

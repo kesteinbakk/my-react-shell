@@ -1054,7 +1054,7 @@ export const shellConfig = defineShellConfig({
 
 | Import | What it is | How to use |
 |---|---|---|
-| `my-react-shell/styles.css` | **Raw Tailwind v4 source** — the `--color-*` token contract + the 5 palettes. **Not precompiled.** | Your build **must run Tailwind v4** (PostCSS or `@tailwindcss/vite`) and have **`tw-animate-css`** installed. Don't `@import 'tailwindcss'` again — this file does. |
+| `my-react-shell/styles.css` | **Raw Tailwind v4 source** — the `--color-*` token contract + the 5 palettes. **Not precompiled.** | Your build **must run Tailwind v4** (PostCSS or `@tailwindcss/vite`). **`tw-animate-css`** is a declared optional peer — install it in your consumer project. Don't `@import 'tailwindcss'` again — this file does. |
 | `my-react-shell/components/styles.css` | Plain prebuilt CSS (`mrs-`-prefixed classes on the theme tokens). | Import once. No Tailwind config needed. Requires the theme tokens (above) to be present for theming. |
 | `my-react-shell/app-shell/styles.css` | Plain prebuilt CSS for the shell chrome. | Import once when you use the app-shell. |
 
