@@ -75,6 +75,13 @@ export interface DynamicGridCardProps extends Omit<HTMLAttributes<HTMLDivElement
    * ```
    */
   renderLink?: (linkProps: DynamicGridCardLinkProps) => ReactNode
+  /**
+   * Raw CSS color string mixed *faintly* into the card's surface as a background tint.
+   * Dark-mode-safe: it `color-mix`es against the surface token (not white), so the tint
+   * reads correctly in both themes. Omit ⇒ no tint (today's behavior). Independent of the
+   * existing `tone`/`color` accent — a card can carry both an accent stripe and a tint.
+   */
+  tint?: string
 }
 
 export const DYNAMIC_GRID_CARD_MIN_WIDTH: Record<DynamicGridCardSize, number> = {
@@ -162,7 +169,7 @@ function StructuredFooter({ footer }: { footer: DynamicGridCardFooter }) {
  * overlay, with `corner` controls raised above it so they stay independently clickable.
  */
 export const DynamicGridCard = forwardRef<HTMLDivElement, DynamicGridCardProps>(function DynamicGridCard(
-  { size, shape = 'standard', title, subtitle, figure, hoverable, watermark, corner, footer, renderLink, className, style, children, ...props },
+  { size, shape = 'standard', title, subtitle, figure, hoverable, watermark, corner, footer, renderLink, tint, className, style, children, ...props },
   ref,
 ) {
   const minWidth = size ? DYNAMIC_GRID_CARD_MIN_WIDTH[size] : undefined
@@ -188,6 +195,7 @@ export const DynamicGridCard = forwardRef<HTMLDivElement, DynamicGridCardProps>(
     '--mrs-dynamic-grid-card-aspect-ratio': aspectRatio,
     ...(minWidth != null ? { '--mrs-dynamic-grid-card-min-width': `${minWidth}px` } : {}),
     ...(maxWidth != null ? { '--mrs-dynamic-grid-card-max-width': `${maxWidth}px` } : {}),
+    ...(tint != null ? { '--mrs-card-tint': tint } : {}),
     ...style,
   } as React.CSSProperties
 
@@ -200,6 +208,7 @@ export const DynamicGridCard = forwardRef<HTMLDivElement, DynamicGridCardProps>(
         renderLink && 'mrs-dynamic-grid-card--linked',
         hasWatermark && 'mrs-dynamic-grid-card--watermark',
         hasArtWatermark && 'mrs-reveal-host',
+        tint != null && 'mrs-dynamic-grid-card--tinted',
         className,
       )}
       style={cssVars}

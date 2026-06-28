@@ -62,7 +62,7 @@ function titleFitStep(text) {
  * Optional `tone`/`color` adds an accent stripe (none by default). Shares the card-family
  * footer, watermark, hover-lift, drag-handle, and `renderLink` block-link seams.
  */
-export const PaperCard = forwardRef(function PaperCard({ title, subtitle, content, contentAlignX = 'left', contentAlignY = 'top', maxLines, tone, color, accentPlacement = 'top', footer, watermark, size = 'md', onClick, hoverable, dragHandle, dragHandleProps, renderLink, className, style: styleProp, }, ref) {
+export const PaperCard = forwardRef(function PaperCard({ title, subtitle, content, contentAlignX = 'left', contentAlignY = 'top', maxLines, tone, color, accentPlacement = 'top', footer, watermark, size = 'md', onClick, hoverable, dragHandle, dragHandleProps, renderLink, tint, className, style: styleProp, }, ref) {
     const width = SIZE_WIDTH_PX[size];
     const height = width * SQRT2;
     const fold = SIZE_FOLD_PX[size];
@@ -101,6 +101,7 @@ export const PaperCard = forwardRef(function PaperCard({ title, subtitle, conten
         fontSize: `${SIZE_FONT_REM[size]}rem`,
         '--mrs-paper-fold': `${fold}px`,
         ...(hasAccent ? { '--mrs-stat-accent': accentColor } : {}),
+        ...(tint != null ? { '--mrs-card-tint': tint } : {}),
     };
     const contentStyle = {
         display: '-webkit-box',
@@ -110,7 +111,7 @@ export const PaperCard = forwardRef(function PaperCard({ title, subtitle, conten
         textOverflow: 'ellipsis',
         maxWidth: '100%',
     };
-    return (_jsxs("div", { ref: ref, className: cn('mrs-paper-card', hasAccent && `mrs-paper-card--accent-${accentPlacement}`, isHoverable && 'mrs-paper-card--hoverable', watermark && 'mrs-paper-card--watermark', dragHandle && 'mrs-paper-card--draggable', renderLink && 'mrs-paper-card--linked', className), style: style, onClick: onClick, children: [renderLink
+    return (_jsxs("div", { ref: ref, className: cn('mrs-paper-card', hasAccent && `mrs-paper-card--accent-${accentPlacement}`, isHoverable && 'mrs-paper-card--hoverable', watermark && 'mrs-paper-card--watermark', dragHandle && 'mrs-paper-card--draggable', renderLink && 'mrs-paper-card--linked', tint != null && 'mrs-paper-card--tinted', className), style: style, onClick: onClick, children: [renderLink
                 ? renderLink({ className: 'mrs-paper-card__link-overlay', 'aria-labelledby': titleId })
                 : null, dragHandle ? (_jsx("button", { type: "button", className: "mrs-paper-card__drag-handle", "aria-label": "Drag to reorder", ...dragHandleProps, onClick: (e) => {
                     e.stopPropagation();

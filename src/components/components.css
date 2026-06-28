@@ -1749,6 +1749,11 @@
   flex-direction: column;
 }
 
+/* Faint background tint mixed against the surface token (dark-mode-safe). */
+.mrs-dynamic-grid-card--tinted {
+  background: color-mix(in srgb, var(--mrs-card-tint) 14%, var(--color-surface-primary));
+}
+
 .mrs-dynamic-grid-card__header {
   flex-shrink: 0;
   margin-bottom: 0.5rem;
@@ -5461,6 +5466,11 @@
     100% 100%,
     0 100%
   );
+}
+
+/* Faint background tint mixed against the surface token (dark-mode-safe). */
+.mrs-paper-card--tinted .mrs-paper-card__sheet {
+  background: color-mix(in srgb, var(--mrs-card-tint) 14%, var(--color-surface-raised));
 }
 
 /* The folded-down corner flap, sitting in the notch. Its box-shadow falls toward

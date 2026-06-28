@@ -177,6 +177,13 @@ export interface PaperCardProps {
    * Mutually exclusive with `dragHandle` — throws in dev.
    */
   renderLink?: (linkProps: PaperCardLinkProps) => ReactNode
+  /**
+   * Raw CSS color string mixed *faintly* into the sheet's surface as a background tint.
+   * Dark-mode-safe: it `color-mix`es against the surface token (not white), so the tint
+   * reads correctly in both themes. Omit ⇒ no tint (today's behavior). Independent of the
+   * existing `tone`/`color` accent — a sheet can carry both an accent stripe and a tint.
+   */
+  tint?: string
   className?: string
   style?: CSSProperties
 }
@@ -210,6 +217,7 @@ export const PaperCard = forwardRef<HTMLDivElement, PaperCardProps>(function Pap
     dragHandle,
     dragHandleProps,
     renderLink,
+    tint,
     className,
     style: styleProp,
   },
@@ -276,6 +284,7 @@ export const PaperCard = forwardRef<HTMLDivElement, PaperCardProps>(function Pap
     fontSize: `${SIZE_FONT_REM[size]}rem`,
     '--mrs-paper-fold': `${fold}px`,
     ...(hasAccent ? { '--mrs-stat-accent': accentColor } : {}),
+    ...(tint != null ? { '--mrs-card-tint': tint } : {}),
   } as unknown as CSSProperties
 
   const contentStyle = {
@@ -297,6 +306,7 @@ export const PaperCard = forwardRef<HTMLDivElement, PaperCardProps>(function Pap
         watermark && 'mrs-paper-card--watermark',
         dragHandle && 'mrs-paper-card--draggable',
         renderLink && 'mrs-paper-card--linked',
+        tint != null && 'mrs-paper-card--tinted',
         className,
       )}
       style={style}

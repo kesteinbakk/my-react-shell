@@ -690,6 +690,7 @@ import { DynamicCardGrid, DynamicGridCard } from 'my-react-shell/components'
 | `hoverable` | `false` | Cursor + hover-lift + `:focus-visible` ring on the card root. |
 | `watermark` | — | Faint background watermark — centred horizontally, dropped a little below centre. A **`string`** is an oversized emoji (e.g. `'🚀'`); a **`ReactNode`** (e.g. a `DrawerMark`) renders in an art layer behind the content and makes the card root a `mrs-reveal-host` (so a hover-reveal mark opens on card hover). |
 | `corner` | — | Top-corner action slot (e.g. a `DropdownMenu` trigger). Rendered **above** the link overlay (`z-index`) as a sibling of the anchor, so it stays independently clickable — never nested in the link. |
+| `tint` | — | Raw CSS color string mixed **faintly** (14%) into the card surface as a background tint. Dark-mode-safe: it `color-mix`es against the surface token (not white), so it reads correctly in both themes. Omit ⇒ no tint. Independent of any `tone`/`color` accent. |
 | `renderLink` | — | Interactive-root seam. `(linkProps) => ReactNode` — the consumer renders its router `<Link>` spreading `linkProps` (`className` + auto-wired `aria-labelledby` from the title), adding `to`/`params`. The card mounts it as a **full-bleed block-link overlay** so the whole tile is a real, keyboard-activatable anchor while the root `<div>` owns its hover/border/focus states. The shell imports no router; `to`/`params` type-safety lives at the call site. |
 
 ```tsx
@@ -790,6 +791,7 @@ mechanics + examples: [card guide → PaperCard](../guides/card-grid.md#papercar
 | `tone` | — | `'primary'`·`'info'`·`'success'`·`'warning'`·`'danger'`·`'neutral'` — **opt-in** accent stripe (default none). Maps to semantic `--color-*` tokens. |
 | `color` | — | Raw CSS color for the accent stripe (overrides `tone`). |
 | `accentPlacement` | `'top'` | Where the accent reads when set: a `'top'` stripe or a `'left'` bar. |
+| `tint` | — | Raw CSS color string mixed **faintly** (14%) into the sheet surface as a background tint. Dark-mode-safe: it `color-mix`es against the surface token (not white), so it reads correctly in both themes. Omit ⇒ no tint. Independent of the `tone`/`color` accent. |
 | `footer` | — | Footer slot: a freeform `ReactNode` **or** a structured `{ lines?, badges? }` — same unified slot as `StatCard`/`ContentCard` (discriminated automatically). |
 | `watermark` | — | Faint oversized background emoji. E.g. `'📄'`. |
 | `size` | `'md'` | `sm`·`md`·`lg`·`xl`·`xxl` = 134/168/210/264/320px wide; height = width × √2. `lg` is literally A4's mm figures (210×297). |

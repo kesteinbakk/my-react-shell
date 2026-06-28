@@ -64,6 +64,13 @@ export interface DynamicGridCardProps extends Omit<HTMLAttributes<HTMLDivElement
      * ```
      */
     renderLink?: (linkProps: DynamicGridCardLinkProps) => ReactNode;
+    /**
+     * Raw CSS color string mixed *faintly* into the card's surface as a background tint.
+     * Dark-mode-safe: it `color-mix`es against the surface token (not white), so the tint
+     * reads correctly in both themes. Omit ⇒ no tint (today's behavior). Independent of the
+     * existing `tone`/`color` accent — a card can carry both an accent stripe and a tint.
+     */
+    tint?: string;
 }
 export declare const DYNAMIC_GRID_CARD_MIN_WIDTH: Record<DynamicGridCardSize, number>;
 export declare const DYNAMIC_GRID_CARD_MAX_WIDTH: Record<DynamicGridCardSize, number>;
