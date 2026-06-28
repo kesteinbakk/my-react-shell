@@ -77,28 +77,8 @@ export interface StatCardProps {
     /**
      * Data stat items displayed below the header.
      * Each item has a `value` with either a `label` OR a `max` — not both (throws in dev).
-     * Suppressed (not rendered) when `body` is set.
      */
     stats?: StatItem[];
-    /**
-     * Freeform center slot — sits between the header and `lower`/`footer`, vertically
-     * centered. When set, `stats` are not rendered.
-     */
-    body?: ReactNode;
-    /**
-     * Horizontal alignment of the freeform body slot.
-     * Default: `'center'`
-     *
-     * Note: Centering or right-aligning text will not work as expected when a
-     * medallion is present. The body container narrows to prevent overlapping
-     * the medallion, making the text visually off-center or inset from the right.
-     */
-    bodyAlignX?: 'left' | 'center' | 'right';
-    /**
-     * Vertical alignment of the freeform body slot.
-     * Default: `'center'`
-     */
-    bodyAlignY?: 'top' | 'center' | 'bottom';
     /**
      * Structural variant — overrides `tone` to the same value (so the accent stripe,
      * badge tint, and body text all reflect the variant hue) and forces `⚠️` as the

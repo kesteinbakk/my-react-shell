@@ -53,6 +53,8 @@ export { PhiCard, PHI } from './PhiCard';
 export type { PhiCardProps, PhiCardSize, PhiCardAction, PhiCardFooter, PhiCardFooterLine, PhiCardFooterLineType, } from './PhiCard';
 export { StatCard } from './StatCard';
 export type { StatCardProps, StatCardMedallion, StatItem, StatCardTone, StatCardFooter, StatCardFooterLine, StatCardFooterLineType, } from './StatCard';
+export { ContentCard } from './ContentCard';
+export type { ContentCardProps, ContentCardTone, ContentCardVariant, ContentCardFooter, ContentCardFooterLine, ContentCardFooterLineType, } from './ContentCard';
 export { InputField } from './InputField';
 export type { InputFieldProps } from './InputField';
 export { SearchInput } from './SearchInput';

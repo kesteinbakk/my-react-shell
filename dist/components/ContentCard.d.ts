@@ -1,0 +1,34 @@
+import { type CSSProperties, type ReactNode } from 'react';
+import type { AccentPlacement } from './accent';
+import type { Tone } from './tone';
+import type { PhiCardFooter, PhiCardFooterLine, PhiCardFooterLineType, PhiCardSize } from './PhiCard';
+export type { PhiCardFooter as ContentCardFooter, PhiCardFooterLine as ContentCardFooterLine, PhiCardFooterLineType as ContentCardFooterLineType };
+export type ContentCardTone = Tone;
+export type ContentCardVariant = 'warning' | 'danger';
+export interface ContentCardProps {
+    title: string;
+    subtitle?: string;
+    content: string;
+    html?: boolean;
+    contentAlignX?: 'left' | 'center' | 'right';
+    contentAlignY?: 'top' | 'center' | 'bottom';
+    value?: number;
+    maxValue?: number;
+    maxLines?: number;
+    tone?: ContentCardTone;
+    color?: string;
+    accentPlacement?: AccentPlacement;
+    topStripeFollowsGauge?: boolean;
+    variant?: ContentCardVariant;
+    footer?: PhiCardFooter;
+    lower?: ReactNode;
+    watermark?: string;
+    size?: PhiCardSize;
+    onClick?: () => void;
+    hoverable?: boolean;
+    dragHandle?: boolean | ReactNode;
+    dragHandleProps?: React.HTMLAttributes<HTMLButtonElement>;
+    className?: string;
+    style?: CSSProperties;
+}
+export declare const ContentCard: import("react").ForwardRefExoticComponent<ContentCardProps & import("react").RefAttributes<HTMLDivElement>>;

@@ -112,28 +112,8 @@ export interface StatCardProps {
   /**
    * Data stat items displayed below the header.
    * Each item has a `value` with either a `label` OR a `max` — not both (throws in dev).
-   * Suppressed (not rendered) when `body` is set.
    */
   stats?: StatItem[]
-  /**
-   * Freeform center slot — sits between the header and `lower`/`footer`, vertically
-   * centered. When set, `stats` are not rendered.
-   */
-  body?: ReactNode
-  /**
-   * Horizontal alignment of the freeform body slot.
-   * Default: `'center'`
-   *
-   * Note: Centering or right-aligning text will not work as expected when a
-   * medallion is present. The body container narrows to prevent overlapping
-   * the medallion, making the text visually off-center or inset from the right.
-   */
-  bodyAlignX?: 'left' | 'center' | 'right'
-  /**
-   * Vertical alignment of the freeform body slot.
-   * Default: `'center'`
-   */
-  bodyAlignY?: 'top' | 'center' | 'bottom'
   /**
    * Structural variant — overrides `tone` to the same value (so the accent stripe,
    * badge tint, and body text all reflect the variant hue) and forces `⚠️` as the
@@ -341,9 +321,6 @@ export const StatCard = forwardRef<HTMLDivElement, StatCardProps>(function StatC
     sideBarCompleteness,
     topStripeFollowsGauge = false,
     stats,
-    body,
-    bodyAlignX = 'center',
-    bodyAlignY = 'center',
     variant,
     footer,
     lower,
@@ -426,9 +403,17 @@ export const StatCard = forwardRef<HTMLDivElement, StatCardProps>(function StatC
     })
   }
  
-  const hasFooter =
+  const hasFooterProp =
     (footer && ((footer.lines?.length ?? 0) > 0 || (footer.badges?.length ?? 0) > 0)) ||
     lower != null
+
+  if (size === 'sm' && hasFooterProp) {
+    if (process.env.NODE_ENV !== 'production') {
+      console.warn(`StatCard: the footer/lower slot is not supported on 'sm' size cards. It will be ignored.`)
+    }
+  }
+
+  const hasFooter = size !== 'sm' && hasFooterProp
  
   // PhiCard footer renderer reused (same JSX structure, same CSS classes)
   let footerNode: ReactNode = null
@@ -570,18 +555,8 @@ export const StatCard = forwardRef<HTMLDivElement, StatCardProps>(function StatC
           {medallionNode}
         </div>
  
-        {/* Body (freeform center) — suppresses stats when set */}
-        {body != null ? (
-          <div
-            className={cn('mrs-stat-card__body', variant && 'mrs-stat-card__body--variant')}
-            data-align-x={bodyAlignX}
-            data-align-y={bodyAlignY}
-          >
-            <div className="mrs-stat-card__body-content">
-              {body}
-            </div>
-          </div>
-        ) : stats && stats.length > 0 ? (
+        {/* Stats grid */}
+        {stats && stats.length > 0 ? (
           <dl className="mrs-stat-card__stats">
             {stats.map((item, i) => {
               if (item.max != null) {

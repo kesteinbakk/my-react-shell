@@ -38,6 +38,7 @@ export { Avatar, AvatarGroup } from './Avatar';
 export { Table } from './Table';
 export { PhiCard, PHI } from './PhiCard';
 export { StatCard } from './StatCard';
+export { ContentCard } from './ContentCard';
 export { InputField } from './InputField';
 export { SearchInput } from './SearchInput';
 export { SegmentedControl } from './SegmentedControl';
