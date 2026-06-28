@@ -48,6 +48,7 @@ module, never mandated.
 - What this is + boundary: [docs/concept.md](docs/concept.md)
 - **Public API (every export + usage):** [docs/specifications/api-reference.md](docs/specifications/api-reference.md) — the single source of truth; it **ships inside the package** (`package.json` → `files`), so consumer agents read the version-matched copy at `node_modules/my-react-shell/…` via the `my-react-shell` skill
 - **Demo & verification surface (where agents test changes + reproduce reported bugs):** [docs/demo.md](docs/demo.md)
+- **`CardGrid` / card components — read first:** [docs/guides/card-grid.md](docs/guides/card-grid.md) is mandatory reading whenever you build, change, or port a card component.
 - Framework decision / from-scratch consumer guide: the `react-framework` skill ([.claude/skills/react-framework/react-framework-notes.md](.claude/skills/react-framework/react-framework-notes.md))
 - Task & decision history: the per-month index in `docs/2-tasks/_index/` and the individual `docs/2-tasks/TXXX-*/task.md` writeups
 
@@ -215,8 +216,21 @@ foundation source and match it; don't reconstruct from memory or the happy path.
   The consumer passes translated strings via its own i18n seam. A hardcoded
   English default is never acceptable, even temporarily.
 - **Semantic tokens only** — no hardcoded colors/shadows; render in light *and* dark.
+  **Never invent token names** (no `--color-base-root`, `--radius-lg`, `--shadow-xl`
+  and the like) — the token set is strictly defined; confirm the exact supported
+  name (`--color-surface-raised`, `--color-overlay`, `--mrs-elevation-popover`, …)
+  against [docs/guides/theme.md](docs/guides/theme.md) and the API reference before using it.
 - **No silent defaults for absent values** (root `CLAUDE.md`) — check, don't
   default; throw on required-but-absent (e.g. `VITE_CONVEX_URL`).
+- **Input auto-save UX.** Settings/config inputs save themselves; they do **not**
+  carry manual Save buttons. Use a debounced auto-save and surface progress through
+  the `saveStatus` prop (`'idle' | 'pending' | 'saving' | 'saved' | 'error'`): on
+  `'saved'` the border fades green (~1000ms), and editing clears it back to `'idle'`
+  (~120ms). When several inputs share one `useDebouncedAutoSave` hook, track
+  `lastModifiedField` and bind `saveStatus={lastModifiedField === fieldKey ? state :
+  'idle'}` so they don't all flash green at once. Failures raise an error toast;
+  **never** show a success toast for an auto-save. Exception: transactional
+  entity-creation dialogs (e.g. "Create Project") keep their explicit Submit button.
 - **The API reference is mandatory and ALWAYS kept current.** Any change that touches
   the public API surface — a new/removed/renamed export, a changed prop, signature,
   default, import path, or peer; new CSS; a new component or module — **must** update

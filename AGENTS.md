@@ -54,8 +54,8 @@ Each module is self-contained and independently importable.
 - **Pre-commit hook:** Auto-builds `dist/` and stages it when library source changes. If `dist/` sweeps other uncommitted library source, just commit the batch.
 
 ### Documentation Rules
-- **API Reference is mandatory:** Any change touching the public API (exports, props, signatures, defaults, CSS) MUST update the API reference in the same change.
-  - **Planning:** You should also mention updating `api/components` documentation. This should be present as a separate item in all plans in this project if relevant.
+- **API Reference is mandatory:** Any change touching the public API (exports, props, signatures, defaults, CSS) MUST update the API reference (`docs/specifications/api-reference.md`) in the same change.
+  - **Planning:** Make the api-reference update its own explicit line item in any plan that touches the public surface.
 - **Guides:** Update a module's guide if a change affects its behavior, constraints, or contract.
 
 ### Dev Servers & Releases
