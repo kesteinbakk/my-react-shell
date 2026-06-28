@@ -91,7 +91,7 @@ route (e.g. `/dashboard`, `/data`).
 | Field | Values | Default | Effect |
 |---|---|---|---|
 | `appNameRender` | `() => ReactNode` | the `appName` text | Custom wordmark/brand node for the header brand area, in place of the plain app-name text. |
-| `pageContainer.defaultMaxWidth` | `narrow` (1024px) · `medium` (1280px) · `wide` (1440px - exactly fits four 320px cards) · `x-wide` (1600px) · `full` | `x-wide` | Max width of the centered page-content container (`full` = edge-to-edge). |
+| `pageContainer.defaultMaxWidth` | `narrow` (1024px) · `medium` (1280px) · `wide` (1440px - exactly fits four 312px cards) · `x-wide` (1600px) · `full` | `x-wide` | Max width of the centered page-content container (`full` = edge-to-edge). |
 | `tabs.variant` | `underline` · `pill` | `underline` | Visual style of `PageTabs` and the `PageSections` tab strip. |
 | `shellPageHeader.border` | `boolean` | `true` | Whether the header band draws a bottom border. |
 | `shellPageHeader.documentTitle` | `composed` · `leaf` · `app` | `composed` | Project-wide browser-tab title mode — see [Document title](#document-title-browser-tab). |
