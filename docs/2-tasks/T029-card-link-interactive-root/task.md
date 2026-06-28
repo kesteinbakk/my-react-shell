@@ -1,7 +1,7 @@
 # T029 — Card link / interactive-root pattern (nav cards first)
 
-**Status:** finished
-**Filed:** 2026-06-28
+**Status:** archived
+**Filed:** 2026-06-28 · **Archived:** 2026-06-28
 
 ## Goal
 
@@ -308,6 +308,28 @@ The `DynamicGridCard` nav sites (`SetupHome`, `DocumentsHome`, `TenantTemplatesP
 the fluid grid is the right pairing. Rule: fixed-size cards (`StatCard`/`ContentCard`/`EntityCard`)
 → `CardGrid`; size-less `DynamicGridCard` → `DynamicCardGrid`. Browser-verified: the overlap is
 gone and CriteriaView's draggable cards lay out cleanly.
+
+### Docs sweep — card surface made consumer-easy (done)
+
+Closing pass over every card-referencing doc so the shipped state reads consistently and the
+card surface is easy to consume:
+
+- **`docs/guides/card-grid.md`** (the read-first card guide): retitled *Card & Card-Grid
+  Guide*; added a **"Which card component?"** picker table (StatCard / ContentCard / PaperCard
+  / DynamicGridCard / legacy PhiCard) and a **"Which grid?"** table; promoted `renderLink`
+  to a standalone **§3 Navigation links (any card)** covering all four link-capable cards
+  (was buried under the dynamic-grid section and omitted PaperCard), with the
+  `dragHandle`×`renderLink` throw and the fixed-card overlay note; added the
+  fixed-card-in-fluid-grid **overlap warning** (the Phase 3b bug class); marked PhiCard legacy.
+- **`docs/specifications/api-reference.md`**: legacy banner on the `PhiCard` deep section + its
+  table row (steer to StatCard/ContentCard; note it has no `renderLink` seam); added the
+  overlap caveat + a pointer to the read-first guide on the grid section; PaperCard listed in
+  the static-grid card set.
+- **Consumer `offansk-ev`** — fixed staleness the deletions left behind: two dangling JSDoc
+  `{@link NavCard}` comments (`TenantAdminHome.tsx`, `SetupHome.tsx`) now describe
+  `DynamicGridCard` + `renderLink`; `docs/guides/app-shell-structure.md` told module authors to
+  return an `EntityCard` — updated to `StatCard` in a static `CardGrid` (matching `ProjectHome`).
+  `component-reuse.md` was already correct.
 
 ### Phase 3c — EntityCard deleted (done)
 
