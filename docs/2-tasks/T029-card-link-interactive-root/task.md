@@ -264,7 +264,7 @@ standard golden-ratio (φ:1) height reads too tall/empty.
   api-reference, and `docs/guides/card-grid.md` (the fixed-size cards now have a proportion
   axis).
 
-## Status — implemented (Phases 1–3 core)
+## Status — implemented (all phases done)
 
 - **Phase 1 (done).** `DynamicGridCard` gained `figure` / `hoverable` / `corner` /
   `renderLink` + the block-link overlay, a unified `footer` slot (freeform node or
