@@ -788,7 +788,7 @@ mechanics + examples: [card guide → PaperCard](../guides/card-grid.md#papercar
 
 | Prop | Default | Meaning |
 |---|---|---|
-| `title` | — | Card title. **Required.** Wraps to two lines, then clips; a long title steps its font size down (by character count). |
+| `title` | — | Card title. **Required.** Wraps to three lines at a fixed size, then clips (no font-size auto-fit). |
 | `subtitle` | — | Optional subtitle / meta line below the title (single line, ellipsised). |
 | `content` | — | Optional freeform body text. A thumbnail can carry just a title; when present, the text clamps to `maxLines`. |
 | `contentAlignX` | `'left'` | Horizontal alignment (`'left'` · `'center'` · `'right'`). |

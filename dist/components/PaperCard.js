@@ -46,25 +46,6 @@ const FOOTER_GLYPHS = {
     check: (_jsx("svg", { viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", "aria-hidden": "true", children: _jsx("path", { d: "M20 6 9 17l-5-5" }) })),
 };
 /**
- * Steps a long title's font size down (up to five steps) so it stays within ~two lines
- * without changing the sheet geometry; the deeper steps let a much longer title fit before
- * it ellipsizes. Shared ladder with `StatCard`/`ContentCard`. Returns `0` (no reduction) → `5`.
- */
-function titleFitStep(title) {
-    const n = title.length;
-    if (n > 116)
-        return 5;
-    if (n > 90)
-        return 4;
-    if (n > 68)
-        return 3;
-    if (n > 48)
-        return 2;
-    if (n > 32)
-        return 1;
-    return 0;
-}
-/**
  * Paper card — a small **preview / thumbnail** card styled as a dog-eared sheet of paper at
  * A4 portrait proportions (`height = width × √2`). The folded top-right corner is genuinely
  * cut out of the sheet (`clip-path`) with a folded triangle sitting in the notch; the drop
@@ -127,5 +108,5 @@ export const PaperCard = forwardRef(function PaperCard({ title, subtitle, conten
                 : null, dragHandle ? (_jsx("button", { type: "button", className: "mrs-paper-card__drag-handle", "aria-label": "Drag to reorder", ...dragHandleProps, onClick: (e) => {
                     e.stopPropagation();
                     dragHandleProps?.onClick?.(e);
-                }, children: dragHandle === true ? DEFAULT_DRAG_HANDLE : dragHandle })) : null, _jsxs("div", { className: "mrs-paper-card__sheet", "data-watermark": watermark, children: [_jsx("span", { className: "mrs-paper-card__fold", "aria-hidden": "true" }), _jsxs("div", { className: "mrs-paper-card__inner", children: [_jsx("div", { className: "mrs-paper-card__header", children: _jsxs("div", { className: "mrs-paper-card__head-text", children: [_jsx("p", { className: "mrs-paper-card__title", id: titleId, "data-fit": titleFitStep(title) || undefined, children: title }), subtitle ? _jsx("p", { className: "mrs-paper-card__subtitle", children: subtitle }) : null] }) }), content != null ? (_jsx("div", { className: "mrs-paper-card__body", "data-align-x": contentAlignX, "data-align-y": contentAlignY, children: _jsx("div", { className: "mrs-paper-card__content", style: contentStyle, children: content }) })) : null, hasFooter ? (_jsx("div", { className: "mrs-paper-card__lower", children: structuredFooter ? footerNode : footer })) : null] })] })] }));
+                }, children: dragHandle === true ? DEFAULT_DRAG_HANDLE : dragHandle })) : null, _jsxs("div", { className: "mrs-paper-card__sheet", "data-watermark": watermark, children: [_jsx("span", { className: "mrs-paper-card__fold", "aria-hidden": "true" }), _jsxs("div", { className: "mrs-paper-card__inner", children: [_jsx("div", { className: "mrs-paper-card__header", children: _jsxs("div", { className: "mrs-paper-card__head-text", children: [_jsx("p", { className: "mrs-paper-card__title", id: titleId, children: title }), subtitle ? _jsx("p", { className: "mrs-paper-card__subtitle", children: subtitle }) : null] }) }), content != null ? (_jsx("div", { className: "mrs-paper-card__body", "data-align-x": contentAlignX, "data-align-y": contentAlignY, children: _jsx("div", { className: "mrs-paper-card__content", style: contentStyle, children: content }) })) : null, hasFooter ? (_jsx("div", { className: "mrs-paper-card__lower", children: structuredFooter ? footerNode : footer })) : null] })] })] }));
 });

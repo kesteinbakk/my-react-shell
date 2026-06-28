@@ -110,21 +110,6 @@ const FOOTER_GLYPHS: Record<NonNullable<PaperCardFooterLine['type']>, ReactNode>
   ),
 }
 
-/**
- * Steps a long title's font size down (up to five steps) so it stays within ~two lines
- * without changing the sheet geometry; the deeper steps let a much longer title fit before
- * it ellipsizes. Shared ladder with `StatCard`/`ContentCard`. Returns `0` (no reduction) → `5`.
- */
-function titleFitStep(title: string): 0 | 1 | 2 | 3 | 4 | 5 {
-  const n = title.length
-  if (n > 116) return 5
-  if (n > 90) return 4
-  if (n > 68) return 3
-  if (n > 48) return 2
-  if (n > 32) return 1
-  return 0
-}
-
 export interface PaperCardProps {
   /** Card title. */
   title: string
@@ -334,7 +319,7 @@ export const PaperCard = forwardRef<HTMLDivElement, PaperCardProps>(function Pap
         <div className="mrs-paper-card__inner">
           <div className="mrs-paper-card__header">
             <div className="mrs-paper-card__head-text">
-              <p className="mrs-paper-card__title" id={titleId} data-fit={titleFitStep(title) || undefined}>{title}</p>
+              <p className="mrs-paper-card__title" id={titleId}>{title}</p>
               {subtitle ? <p className="mrs-paper-card__subtitle">{subtitle}</p> : null}
             </div>
           </div>
