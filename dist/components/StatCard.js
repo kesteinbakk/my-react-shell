@@ -185,7 +185,14 @@ export const StatCard = forwardRef(function StatCard({ title, subtitle, medallio
             }
             : {};
         if (medallion.max != null) {
-            medallionNode = (_jsx(MedallionTag, { className: cn('mrs-stat-card__medallion mrs-stat-card__medallion--arc', medallion.size === 'sm' && 'mrs-stat-card__medallion--sm', isPressable && 'mrs-stat-card__medallion--pressable'), ...medallionProps, children: _jsx(ArcRing, { value: medallion.value, max: medallion.max }) }));
+            const numVal = typeof medallion.value === 'number' ? medallion.value : parseFloat(String(medallion.value));
+            const pct = Math.min(1, Math.max(0, isNaN(numVal) ? 0 : numVal / medallion.max));
+            if (pct >= 1) {
+                medallionNode = (_jsx(MedallionTag, { className: cn('mrs-stat-card__medallion', medallion.size === 'sm' && 'mrs-stat-card__medallion--sm', isPressable && 'mrs-stat-card__medallion--pressable'), ...medallionProps, children: _jsx("svg", { viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "3.5", strokeLinecap: "round", strokeLinejoin: "round", "aria-hidden": "true", style: { width: '1.8em', height: '1.8em' }, children: _jsx("path", { d: "M20 6 9 17l-5-5" }) }) }));
+            }
+            else {
+                medallionNode = (_jsx(MedallionTag, { className: cn('mrs-stat-card__medallion mrs-stat-card__medallion--arc', medallion.size === 'sm' && 'mrs-stat-card__medallion--sm', isPressable && 'mrs-stat-card__medallion--pressable'), ...medallionProps, children: _jsx(ArcRing, { value: medallion.value, max: medallion.max }) }));
+            }
         }
         else {
             let displayValue = medallion.value;
