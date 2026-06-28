@@ -1,8 +1,23 @@
 import { type CSSProperties, type ReactNode } from 'react';
 import type { AccentPlacement } from './accent';
 import type { Tone } from './tone';
-import type { PhiCardFooter, PhiCardFooterLine, PhiCardFooterLineType, PhiCardSize } from './PhiCard';
-export type { PhiCardFooter as StatCardFooter, PhiCardFooterLine as StatCardFooterLine, PhiCardFooterLineType as StatCardFooterLineType };
+/**
+ * Size preset — a fixed-width golden-ratio card (`height = width / φ`). `md` (≈312px,
+ * four to a `wide` 1440px row) is the default. Self-contained — no longer derived from `PhiCard`.
+ */
+export type StatCardSize = 'sm' | 'md' | 'lg' | 'xl';
+/** Leading glyph kind for a footer meta line. */
+export type StatCardFooterLineType = 'date' | 'time' | 'check';
+/** One left-side footer line: text with an optional kit-shipped leading glyph. */
+export interface StatCardFooterLine {
+    text: ReactNode;
+    type?: StatCardFooterLineType;
+}
+/** Structured footer: meta lines on the left, badges stacked on the right. */
+export interface StatCardFooter {
+    lines?: StatCardFooterLine[];
+    badges?: ReactNode[];
+}
 /** Semantic accent hue — the kit's canonical {@link Tone}, shared with `PhiCard`. */
 export type StatCardTone = Tone;
 /** Structural alert variant — overrides `tone` to the same value and forces the ⚠️ watermark. */
@@ -92,10 +107,10 @@ export interface StatCardProps {
      */
     variant?: StatCardVariant;
     /**
-     * Structured footer (same shape as PhiCard): meta lines on the left, badges on the right.
+     * Structured footer: meta lines on the left, badges on the right.
      * Throws in dev if given alongside `lower`.
      */
-    footer?: PhiCardFooter;
+    footer?: StatCardFooter;
     /**
      * Freeform footer node — e.g. a CTA pill.
      * Throws in dev if given alongside `footer`.
@@ -106,8 +121,8 @@ export interface StatCardProps {
      * Ignored when `variant` is set — the variant always shows `⚠️`.
      */
     watermark?: string;
-    /** Size preset — same widths as `PhiCard`. Default: `'md'`. */
-    size?: PhiCardSize;
+    /** Size preset — fixed-width golden-ratio card. Default: `'md'` (≈312px). */
+    size?: StatCardSize;
     /** Click handler; makes the whole card interactive. */
     onClick?: () => void;
     /** Hover lift effect. Defaults to `true` when `onClick` is set. */
@@ -132,7 +147,7 @@ export interface StatCardProps {
 /**
  * Stat card — a φ-framed KPI/status card with a title, an optional accent
  * medallion circle (plain number or arc-ring progress), a row of data stats, and an
- * optional footer or freeform lower slot. Shares the same size system as PhiCard.
+ * optional footer or freeform lower slot.
  *
  * The accent stripe, medallion tint, and watermark are driven by `tone` (mapped to
  * semantic tokens) or overridden with a raw CSS `color` string.

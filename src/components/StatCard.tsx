@@ -4,28 +4,44 @@ import { resolveAccentColor } from './accent'
 import type { AccentPlacement } from './accent'
 import { TONE_COLOR } from './tone'
 import type { Tone } from './tone'
-import type { PhiCardFooter, PhiCardFooterLine, PhiCardFooterLineType, PhiCardSize } from './PhiCard'
-
-// Re-export the footer types (same shape as PhiCard) so consumers import from one place.
-export type { PhiCardFooter as StatCardFooter, PhiCardFooterLine as StatCardFooterLine, PhiCardFooterLineType as StatCardFooterLineType }
-
 declare const process: { env: { NODE_ENV?: string } }
 
-const SIZE_WIDTH_PX: Record<PhiCardSize, number> = {
-  sm: 180,
-  md: 240,
-  lg: 320,
-  xl: 480,
+/**
+ * Size preset — a fixed-width golden-ratio card (`height = width / φ`). `md` (≈312px,
+ * four to a `wide` 1440px row) is the default. Self-contained — no longer derived from `PhiCard`.
+ */
+export type StatCardSize = 'sm' | 'md' | 'lg' | 'xl'
+
+/** Leading glyph kind for a footer meta line. */
+export type StatCardFooterLineType = 'date' | 'time' | 'check'
+
+/** One left-side footer line: text with an optional kit-shipped leading glyph. */
+export interface StatCardFooterLine {
+  text: ReactNode
+  type?: StatCardFooterLineType
 }
 
-const SIZE_FONT_REM: Record<PhiCardSize, number> = {
+/** Structured footer: meta lines on the left, badges stacked on the right. */
+export interface StatCardFooter {
+  lines?: StatCardFooterLine[]
+  badges?: ReactNode[]
+}
+
+const SIZE_WIDTH_PX: Record<StatCardSize, number> = {
+  sm: 240,
+  md: 312,
+  lg: 400,
+  xl: 520,
+}
+
+const SIZE_FONT_REM: Record<StatCardSize, number> = {
   sm: 0.75,
   md: 0.875,
   lg: 1.125,
   xl: 1.375,
 }
 
-// The golden ratio — height = width / PHI (same constant as PhiCard).
+// The golden ratio — a card's rendered height is width / PHI.
 const PHI = 1.6180339887
 
 /** Semantic accent hue — the kit's canonical {@link Tone}, shared with `PhiCard`. */
@@ -127,10 +143,10 @@ export interface StatCardProps {
    */
   variant?: StatCardVariant
   /**
-   * Structured footer (same shape as PhiCard): meta lines on the left, badges on the right.
+   * Structured footer: meta lines on the left, badges on the right.
    * Throws in dev if given alongside `lower`.
    */
-  footer?: PhiCardFooter
+  footer?: StatCardFooter
   /**
    * Freeform footer node — e.g. a CTA pill.
    * Throws in dev if given alongside `footer`.
@@ -141,8 +157,8 @@ export interface StatCardProps {
    * Ignored when `variant` is set — the variant always shows `⚠️`.
    */
   watermark?: string
-  /** Size preset — same widths as `PhiCard`. Default: `'md'`. */
-  size?: PhiCardSize
+  /** Size preset — fixed-width golden-ratio card. Default: `'md'` (≈312px). */
+  size?: StatCardSize
   /** Click handler; makes the whole card interactive. */
   onClick?: () => void
   /** Hover lift effect. Defaults to `true` when `onClick` is set. */
@@ -165,9 +181,9 @@ export interface StatCardProps {
   style?: CSSProperties
 }
 
-// ── Footer glyphs (same kit-shipped icons as PhiCard) ────────────────────────
+// ── Footer glyphs ───────────────────────────────────────────────────────────
 
-const FOOTER_GLYPHS: Record<NonNullable<PhiCardFooterLine['type']>, ReactNode> = {
+const FOOTER_GLYPHS: Record<NonNullable<StatCardFooterLine['type']>, ReactNode> = {
   date: (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
       <rect x="3" y="4" width="18" height="18" rx="2" />
@@ -311,7 +327,7 @@ const DEFAULT_DRAG_HANDLE = (
 /**
  * Stat card — a φ-framed KPI/status card with a title, an optional accent
  * medallion circle (plain number or arc-ring progress), a row of data stats, and an
- * optional footer or freeform lower slot. Shares the same size system as PhiCard.
+ * optional footer or freeform lower slot.
  *
  * The accent stripe, medallion tint, and watermark are driven by `tone` (mapped to
  * semantic tokens) or overridden with a raw CSS `color` string.
@@ -408,9 +424,9 @@ export const StatCard = forwardRef<HTMLDivElement, StatCardProps>(function StatC
       }
     })
     if (medallion?.label) {
-      if (medallion.label.length > 8 && process.env.NODE_ENV !== 'production') {
-        console.warn(
-          `StatCard: medallion.label "${medallion.label}" is ${medallion.label.length} characters — it may be too long for the card layout (the medallion is sized for ≤8). Consider a shorter label.`
+      if (medallion.label.length > 8) {
+        throw new Error(
+          `StatCard: medallion.label cannot exceed 8 characters. (Got "${medallion.label}")`
         )
       }
       if (/\s/.test(medallion.label.trim())) {
@@ -433,7 +449,7 @@ export const StatCard = forwardRef<HTMLDivElement, StatCardProps>(function StatC
 
   const hasFooter = size !== 'sm' && hasFooterProp
  
-  // PhiCard footer renderer reused (same JSX structure, same CSS classes)
+  // Footer renderer (shared JSX structure + CSS classes with ContentCard)
   let footerNode: ReactNode = null
   if (footer) {
     const lines = footer.lines ?? []
@@ -464,8 +480,8 @@ export const StatCard = forwardRef<HTMLDivElement, StatCardProps>(function StatC
  
   const style = {
     ...styleProp,
-    '--mrs-card-width': `${width}px`,
-    '--mrs-card-aspect-ratio': `${PHI} / 1`,
+    width: `${width}px`,
+    height: `${height}px`,
     fontSize: `${SIZE_FONT_REM[size]}rem`,
     '--mrs-stat-accent': accentColor,
   } as unknown as CSSProperties

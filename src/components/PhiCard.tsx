@@ -1,7 +1,6 @@
 import { forwardRef, type CSSProperties, type ReactNode } from 'react'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 import { cn } from './cn'
-import { BaseCard } from './BaseCard'
 import { resolveAccentColor } from './accent'
 import type { AccentPlacement } from './accent'
 import type { Tone } from './tone'
@@ -368,15 +367,15 @@ export const PhiCard = forwardRef<HTMLDivElement, PhiCardProps>(function PhiCard
 
   const style = {
     ...styleProp,
+    width: `${width}px`,
+    height: `${height}px`,
     fontSize: `${SIZE_FONT_REM[size]}rem`,
     ...(accent != null ? { '--mrs-phi-accent': accent } : {}),
   } as unknown as CSSProperties
 
   return (
-    <BaseCard
+    <div
       ref={ref}
-      size={size}
-      variant={hasBottom ? 'standard' : 'landscape'}
       className={cn(
         'mrs-phi-card',
         !hasBottom && 'mrs-phi-card--single',
@@ -419,6 +418,6 @@ export const PhiCard = forwardRef<HTMLDivElement, PhiCardProps>(function PhiCard
           {cornerNode}
         </div>
       ) : null}
-    </BaseCard>
+    </div>
   )
 })

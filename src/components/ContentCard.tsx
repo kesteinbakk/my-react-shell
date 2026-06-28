@@ -5,17 +5,34 @@ import { resolveAccentColor } from './accent'
 import type { AccentPlacement } from './accent'
 import { TONE_COLOR } from './tone'
 import type { Tone } from './tone'
-import type { PhiCardFooter, PhiCardFooterLine, PhiCardFooterLineType, PhiCardSize } from './PhiCard'
-
-export type { PhiCardFooter as ContentCardFooter, PhiCardFooterLine as ContentCardFooterLine, PhiCardFooterLineType as ContentCardFooterLineType }
-
 declare const process: { env: { NODE_ENV?: string } }
 
-const SIZE_WIDTH_PX: Record<PhiCardSize, number> = {
-  sm: 180,
-  md: 240,
-  lg: 320,
-  xl: 480,
+/**
+ * Size preset — a fixed-width golden-ratio card (`height = width / φ`). `md` (≈312px,
+ * four to a `wide` 1440px row) is the default. Self-contained — no longer derived from `PhiCard`.
+ */
+export type ContentCardSize = 'sm' | 'md' | 'lg' | 'xl'
+
+/** Leading glyph kind for a footer meta line. */
+export type ContentCardFooterLineType = 'date' | 'time' | 'check'
+
+/** One left-side footer line: text with an optional kit-shipped leading glyph. */
+export interface ContentCardFooterLine {
+  text: ReactNode
+  type?: ContentCardFooterLineType
+}
+
+/** Structured footer: meta lines on the left, badges stacked on the right. */
+export interface ContentCardFooter {
+  lines?: ContentCardFooterLine[]
+  badges?: ReactNode[]
+}
+
+const SIZE_WIDTH_PX: Record<ContentCardSize, number> = {
+  sm: 240,
+  md: 312,
+  lg: 400,
+  xl: 520,
 }
 
 const DEFAULT_DRAG_HANDLE = (
@@ -25,7 +42,7 @@ const DEFAULT_DRAG_HANDLE = (
   </svg>
 )
 
-const SIZE_FONT_REM: Record<PhiCardSize, number> = {
+const SIZE_FONT_REM: Record<ContentCardSize, number> = {
   sm: 0.75,
   md: 0.875,
   lg: 1.125,
@@ -58,11 +75,11 @@ export interface ContentCardProps {
   topStripeFollowsGauge?: boolean
   variant?: ContentCardVariant
   
-  footer?: PhiCardFooter
+  footer?: ContentCardFooter
   lower?: ReactNode
   
   watermark?: string
-  size?: PhiCardSize
+  size?: ContentCardSize
   onClick?: () => void
   hoverable?: boolean
   
@@ -72,7 +89,7 @@ export interface ContentCardProps {
   style?: CSSProperties
 }
 
-const FOOTER_GLYPHS: Record<NonNullable<PhiCardFooterLine['type']>, ReactNode> = {
+const FOOTER_GLYPHS: Record<NonNullable<ContentCardFooterLine['type']>, ReactNode> = {
   date: (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
       <rect x="3" y="4" width="18" height="18" rx="2" />

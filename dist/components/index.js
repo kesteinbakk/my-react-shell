@@ -62,7 +62,10 @@ export { DatePicker } from './DatePicker';
 export { EmojiPicker, EmojiEmpty, EMOJI_FREQUENT } from './EmojiPicker';
 export { EmojiBar } from './EmojiBar';
 export { cn } from './cn';
+// Static grid — fixed-size cards, fixed gap, flow + wrap, no stretching.
 export { CardGrid } from './CardGrid';
+// Dynamic grid — fluid cards that stretch to fill uniform `1fr` columns, with a
+// built-in search / filter / sort toolbar.
+export { DynamicCardGrid } from './DynamicCardGrid';
+export { DynamicGridCard } from './DynamicGridCard';
 export { Preview } from './Preview';
-export { BaseCard } from './BaseCard';
-export { GridCard } from './GridCard';

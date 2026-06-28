@@ -1,77 +1,90 @@
-# Card Grid Layout Guide & Refactoring Manual
+# Card Grid Layout Guide
 
-**Goal:** 
-We are moving from a legacy fixed-size card architecture to a modern, fluid CSS Grid architecture. Cards should have a fixed gap, wrap cleanly, and stretch uniformly across rows to fill available space without leaving large gaps at the end. 
+my-react-shell ships **two** card-grid layouts. They are not interchangeable — pick by
+whether the cards you are placing have an intrinsic, fixed size.
 
-This document serves as the guide for the new grid layout and the **active refactoring effort** to port legacy cards to this new paradigm.
-
-## 1. The Paradigm Shift (Old vs. New)
-
-### The Legacy Paradigm (`PhiCard`, `StatCard`, `ContentCard`)
-- **Rigid Dimensions:** The `size` prop (`sm`, `md`, `lg`, `xl`) was used to assign an absolute **fixed width** in pixels (e.g., `md` = 240px). 
-- **Fixed Height:** Height was strictly calculated via the Golden Ratio (`height = width / PHI`).
-- **No Stretching:** These cards did not stretch to fill containers, leading to awkward gaps.
-
-### The New Paradigm (`CardGrid`, `BaseCard`, `GridCard`)
-- **Fluid Grid:** The layout is driven by a CSS Grid container (`CardGrid`) using `1fr` columns.
-- **Dynamic Stretching:** Cards take `width: 100%` to effortlessly conform to their grid column.
-- **New Meaning of `size`:** A `size` prop on a card *no longer* sets a rigid pixel width. Instead, it applies a `max-width` limit to prevent the card from stretching into a grotesque shape if it ends up alone on a sparse row.
+| Layout | Cards | Behaviour |
+| :--- | :--- | :--- |
+| **`CardGrid`** (static) | Fixed-size (`StatCard`, `ContentCard`, `PhiCard`) | Cards flow left-to-right and **wrap**; a fixed gap between them; **no stretching** — a larger gap may remain at the end of a row. Every card keeps its own width/height. |
+| **`DynamicCardGrid`** + **`DynamicGridCard`** (fluid) | Size-less | Cards **stretch** to fill uniform `1fr` columns; a built-in search / filter / sort toolbar. |
 
 ---
 
-## 2. Using the New Grid System
+## 1. `CardGrid` — the static grid
 
-To achieve uniform stretching and clean wrapping, we use **CSS Grid** with a specific inheritance pattern. 
+For cards that already know their own size. The grid is a thin flex-wrap container: it lays
+the cards out left-to-right with a fixed gap and wraps when a row is full. Cards are never
+stretched, so the trailing space on a partial row simply stays empty.
 
-### The Container (`CardGrid`)
-The grid dictates the columns: `grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--mrs-card-grid-min)), 1fr))`. 
-By passing a `cardSize` prop to `CardGrid` (e.g., `<CardGrid cardSize="sm">`), it emits two CSS variables down the DOM tree:
-* `--mrs-card-grid-min`: Minimum column width (e.g., `180px`).
-* `--mrs-card-grid-item-max`: Maximum stretch limit for a card (e.g., `240px`).
+```tsx
+import { CardGrid, StatCard, ContentCard } from 'my-react-shell/components'
 
-### The Cards (`GridCard`, `BaseCard`)
-Cards take `width: 100%`. They inherit the grid's maximum stretch limit:
-`max-width: var(--mrs-grid-card-max-width, var(--mrs-card-grid-item-max, 100%));`
-If the grid column stretches wider than the card's maximum width, `margin: 0 auto` keeps the card centered within its lane.
+<CardGrid>
+  <StatCard title="Active" medallion={{ value: 27, label: 'LIVE' }} stats={[{ value: 18, label: 'Open' }]} />
+  <ContentCard title="Status" content="All systems operational" tone="success" />
+  {/* … more fixed-size cards */}
+</CardGrid>
+```
 
-> [!WARNING]
-> **Usage Rule for Agents:** 
-> Do **NOT** set the `size` prop directly on individual cards (e.g., `<GridCard size="sm">`) when placing them in a grid.
-> You must ALWAYS set the size on the parent container instead: `<CardGrid cardSize="sm">`. 
-> The cards will automatically inherit the correct grid boundaries and `max-width` limits.
+- **`align`** — `'start'` (default) packs from the left; `'center'` centers each row.
+- **`gap`** — any CSS length; default `1.5rem`. The default is sized so **four ≈312px cards
+  fit a `wide` (1440px) page-container row** (`StatCard`/`ContentCard` default `md` = 312px).
 
-### Supported Semantic Sizes
+### The fixed-size cards
 
-We currently support exactly **3 semantic card sizes**:
+`StatCard`, `ContentCard`, and `PhiCard` are **fixed-width golden-ratio** cards: a `size`
+preset sets the pixel width and the height follows `height = width / φ`.
 
-| Size | Minimum Column Width | Maximum Stretch Limit | Best For |
+- `StatCard` and `ContentCard` are **self-contained** — they carry their own `size` scale
+  and golden-ratio constant and no longer depend on `PhiCard` (which is being phased out).
+  Their `size` widths are `sm` 240 · `md` 312 · `lg` 400 · `xl` 520 px (default `md`).
+- `PhiCard` keeps its own scale (`sm` 180 · `md` 240 · `lg` 320 · `xl` 480 px).
+
+---
+
+## 2. `DynamicCardGrid` + `DynamicGridCard` — the fluid grid
+
+For cards that have no intrinsic size and should stretch to fill the available width
+uniformly, with no awkward gaps. This is a CSS-Grid layout with a search/filter/sort toolbar.
+
+### How it stretches uniformly
+
+The grid container uses
+`grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--mrs-dynamic-card-grid-min)), 1fr))`.
+Passing a `cardSize` to `DynamicCardGrid` emits two CSS variables down the tree:
+
+- `--mrs-dynamic-card-grid-min` — the minimum column width.
+- `--mrs-dynamic-card-grid-item-max` — the maximum width a card grows to.
+
+`DynamicGridCard` takes `width: 100%` to fill its column and inherits the grid's cap via
+`max-width: var(--mrs-dynamic-grid-card-max-width, var(--mrs-dynamic-card-grid-item-max, 100%))`,
+centering itself (`margin: 0 auto`) when its lane is wider than the cap. `1fr` columns keep
+every column uniform across all rows; the cap keeps a lone card on a sparse row from
+stretching grotesquely.
+
+```tsx
+import { DynamicCardGrid, DynamicGridCard } from 'my-react-shell/components'
+
+<DynamicCardGrid
+  items={items}
+  getKey={(it) => it.id}
+  cardSize="md"
+  renderCard={(it) => <DynamicGridCard title={it.title}>{it.body}</DynamicGridCard>}
+/>
+```
+
+### Sizes (fluid)
+
+`cardSize` on the grid drives the columns — **set the size on the grid, not on each card**:
+
+| Size | Min column width | Max stretch | Best for |
 | :--- | :--- | :--- | :--- |
-| **`sm`** (Small) | 180px | 210px | Dense data, small metrics, minimal list items. |
-| **`md`** (Medium) | 240px | 320px | Standard content, typical dashboard widgets. |
-| **`lg`** (Large) | 400px | 500px | Featured content, complex forms, wide charts. |
+| **`sm`** | 180px | 210px | Dense data, small metrics. |
+| **`md`** | 240px | 320px | Standard widgets. |
+| **`lg`** | 400px | 500px | Featured content, wide charts. |
 
-*(Note: There is no extra-large (`xl`) card size. If a layout requires a massive span, use specialized layout components.)*
+`DynamicGridCard` also has a `variant`: `'standard'` (φ:1, default) or `'landscape'` (φ²:1,
+shorter and wider).
 
----
-
-## 3. Porting Legacy Cards (Actionable Guide)
-
-> [!IMPORTANT]
-> **Active Refactoring Effort:** We are currently porting legacy cards (`StatCard`, `ContentCard`) to the new Grid Card concept.
-
-When you are tasked with porting a legacy card to the new architecture, follow these steps:
-
-1. **Remove Fixed Width/Height Calculations:**
-   Strip out any code that calculates `width` in absolute pixels or sets `height` strictly as `width / PHI`. The physical boundaries are now delegated to `BaseCard` or the new grid structure.
-
-2. **Re-map the `size` Prop:**
-   Change the `size` prop's type from `PhiCardSize` to `GridCardSize` (which drops the `xl` option). Pass this `size` prop down to the underlying `BaseCard` or `GridCard` so it acts as a `max-width` stretch cap, NOT a fixed width.
-
-3. **Use the New Base Components:**
-   Instead of reinventing the structural DOM, rebuild the card by composing it inside a `<BaseCard>`. `BaseCard` will automatically handle the stretching `width: 100%` and the `max-width` limit. 
-
-4. **Preserve Proportions (Variants):**
-   Rely on the `variant` prop (`standard` for `φ : 1` or `landscape` for `φ² : 1`) provided by `BaseCard` to maintain the Golden Ratio proportions dynamically, rather than hardcoding height calculations.
-
-5. **Demo Updates:**
-   If a component is fully ported, ensure the `my-react-shell-demo` consumes it via a `<CardGrid>` wrapper and removes any manual `size` props from the individual cards.
+> A `DynamicGridCard` used **outside** a `DynamicCardGrid` can set its own `size` to get the
+> same min/max cap; inside a grid, omit it and let `cardSize` drive the columns.

@@ -1,8 +1,23 @@
 import { type CSSProperties, type ReactNode } from 'react';
 import type { AccentPlacement } from './accent';
 import type { Tone } from './tone';
-import type { PhiCardFooter, PhiCardFooterLine, PhiCardFooterLineType, PhiCardSize } from './PhiCard';
-export type { PhiCardFooter as ContentCardFooter, PhiCardFooterLine as ContentCardFooterLine, PhiCardFooterLineType as ContentCardFooterLineType };
+/**
+ * Size preset — a fixed-width golden-ratio card (`height = width / φ`). `md` (≈312px,
+ * four to a `wide` 1440px row) is the default. Self-contained — no longer derived from `PhiCard`.
+ */
+export type ContentCardSize = 'sm' | 'md' | 'lg' | 'xl';
+/** Leading glyph kind for a footer meta line. */
+export type ContentCardFooterLineType = 'date' | 'time' | 'check';
+/** One left-side footer line: text with an optional kit-shipped leading glyph. */
+export interface ContentCardFooterLine {
+    text: ReactNode;
+    type?: ContentCardFooterLineType;
+}
+/** Structured footer: meta lines on the left, badges stacked on the right. */
+export interface ContentCardFooter {
+    lines?: ContentCardFooterLine[];
+    badges?: ReactNode[];
+}
 export type ContentCardTone = Tone;
 export type ContentCardVariant = 'warning' | 'danger';
 export interface ContentCardProps {
@@ -20,10 +35,10 @@ export interface ContentCardProps {
     accentPlacement?: AccentPlacement;
     topStripeFollowsGauge?: boolean;
     variant?: ContentCardVariant;
-    footer?: PhiCardFooter;
+    footer?: ContentCardFooter;
     lower?: ReactNode;
     watermark?: string;
-    size?: PhiCardSize;
+    size?: ContentCardSize;
     onClick?: () => void;
     hoverable?: boolean;
     dragHandle?: boolean | ReactNode;

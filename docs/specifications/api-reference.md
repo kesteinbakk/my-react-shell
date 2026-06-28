@@ -274,8 +274,11 @@ import 'my-react-shell/components/styles.css' // REQUIRED (plain prebuilt CSS; a
 | `Avatar`, `AvatarGroup` | component | Image + initials fallback (also on image error); falls back to a person icon/emoji when no `fallback` is set (`showEmoji` follows the icons↔emojis seam); group stacks with `+N` overflow. |
 | `Table` | component | Column-config data table: per-column sort, zebra, sticky header, empty state. Whole-row click (`onRowClick`, suppressed for clicks on in-cell controls/expand cells), an expandable per-row detail region (`renderExpanded`, kit-owned disclosure toggle + open state, full-width below the row; supply `renderDisclosure(row, isOpen, toggle)` to replace the kit's chevron with a consumer-styled control), per-cell expansion (`TableColumn.cellExpand(row)` — clicking cells in that column toggles a detail region keyed to that column, radio-style; one cell open at a time), per-row emphasis (`rowVariant`: `default`·`muted`·`selected`), and `frameless` to drop the wrapper border/radius when nesting inside a `Card`. `columns` is a plain array, so a dynamic column set can be built at render time. `TableColumn.align` sets the alignment for both the header and content cells equally (default `left`); `TableColumn.headerAlign` overrides alignment for just the header, leaving content at `align`. |
 | `PhiCard`, `PHI` | component + const | Golden-ratio card (W:H = φ:1): a figure (`icon`/`image`) fills its column, a centered text body (`upper` + `content`), and a structured `footer` (meta lines + stacked badges, per-size caps) or freeform `lower`. Collapses when there's no footer. Top-right ⋮ menu via `actions` or a `corner` slot. Uses the `@radix-ui/react-dropdown-menu` optional peer. |
-| `StatCard` | component | φ-framed KPI/status card (same size system as PhiCard). Title + subtitle, an optional accent medallion circle (plain number+label **or** SVG arc-ring when `medallion.max` is set), a stats row, and a structured `footer` or freeform `lower`. Accent stripe (`accentPlacement` top/left) + medallion tint driven by `tone` (semantic tokens) or a raw CSS `color`. `variant` (`'warning'`·`'danger'`) overrides tone, forces ⚠️ watermark. Optional left-edge completion gauge (`sideBarCompleteness`, red→amber→green) that coexists with the top stripe, or drives the whole accent's color via `topStripeFollowsGauge`. Optional emoji `watermark`. Hover-lift via `onClick`/`hoverable`. |
-| `ContentCard` | component | Freeform text counterpart to `StatCard`. Title + subtitle, a freeform `content` string (supports `html` prop, safely sanitized internally via DOMPurify), and a structured `footer` or freeform `lower`. Text aligns via `contentAlignX`/`contentAlignY`. Instead of a medallion, accepts `value` and `maxValue` to render a left-side completion gauge. Same `tone`, `color`, `variant`, and `watermark` properties as `StatCard`. |
+| `StatCard` | component | Self-contained φ-framed KPI/status card — a fixed-width golden-ratio card (`height = width / φ`); `size` default `md` ≈312px, four to a `wide` (1440px) row. Title + subtitle, an optional accent medallion circle (plain number+label **or** SVG arc-ring when `medallion.max` is set), a stats row, and a structured `footer` or freeform `lower`. Accent stripe (`accentPlacement` top/left) + medallion tint driven by `tone` (semantic tokens) or a raw CSS `color`. `variant` (`'warning'`·`'danger'`) overrides tone, forces ⚠️ watermark. Optional left-edge completion gauge (`sideBarCompleteness`, red→amber→green) that coexists with the top stripe, or drives the whole accent's color via `topStripeFollowsGauge`. Optional emoji `watermark`. Hover-lift via `onClick`/`hoverable`. |
+| `ContentCard` | component | Self-contained freeform text counterpart to `StatCard` — same fixed-width golden-ratio sizing (`size` default `md` ≈312px). Title + subtitle, a freeform `content` string (supports `html` prop, safely sanitized internally via DOMPurify), and a structured `footer` or freeform `lower`. Text aligns via `contentAlignX`/`contentAlignY`. Instead of a medallion, accepts `value` and `maxValue` to render a left-side completion gauge. Same `tone`, `color`, `variant`, and `watermark` properties as `StatCard`. |
+| `CardGrid` | component | **Static** card grid: fixed-size cards flow left-to-right and **wrap** when a row is full, separated by a fixed `gap`. Cards are **not** stretched (a larger gap may remain at the end of a row) and keep their own intrinsic width/height (`StatCard`/`ContentCard`/`PhiCard`). `align` (`start`·`center`, default `start`), `gap` (CSS length override; default `1.5rem`, sized so four ≈312px cards fit a `wide` row). Children-based. |
+| `DynamicCardGrid` | component | **Fluid** card grid with a built-in search / filter / sort toolbar. Cards stretch to fill uniform `1fr` columns sized by `cardSize` (`sm`·`md`·`lg`) or a raw `minColumnWidth`. Data-driven via `items` / `renderCard` / `getKey`; `filters`, `sortOptions`, `searchFields`/`searchFn`, `loading`, empty + no-results states. Pair with `DynamicGridCard`. |
+| `DynamicGridCard` | component | Fluid card for `DynamicCardGrid`: stretches to `width:100%` of its column, inherits the grid's max-width cap, keeps the golden-ratio shape via `aspect-ratio`. Optional `title` / `subtitle` slots, primary content as `children`. `size` (`sm`·`md`·`lg`), `variant` (`standard` = φ:1 · `landscape` = φ²:1). |
 | `InputField` | component | Full field: label + input + helper + error, a11y-wired (`htmlFor`/`aria-invalid`/`aria-describedby`). Spreads native input props; pass `error` to switch on error styling. `inputSize` (`sm`·`md`·`lg`, default `md`) matches the `Input` height/padding scale. `onDebouncedChange(value)` (fires `debounceMs` after the user stops typing; default 500 ms), `saveStatus` (visual status `'idle'`·`'pending'`·`'saving'`·`'saved'`·`'error'`). |
 | `SegmentedControl` | component | Single-select `radiogroup` on a track; controlled via `value`/`onChange`; generic over value type. |
 | `Select` | component | Opinionated select on Radix Select (keyboard nav, typeahead, portal); `options` list; controlled via `value`/`onValueChange`; `size` (`sm`·`md`·`lg`, default `md`) matches the `Input` height/padding scale; `saveStatus` (visual status `'idle'`·`'pending'`·`'saving'`·`'saved'`·`'error'`); optional `label` (renders above the select trigger); supports custom `className` and `style` on the trigger. |
@@ -313,8 +316,12 @@ Every component has a matching `…Props` type export (e.g. `ButtonProps`, `Butt
 `SelectOption`, `SelectSize`, `SegmentedOption`, `BadgeTone`, `CountPillProps`, `CountPillTone`, `AvatarSize`, `ActionType`,
 `ActionPreset`, `ActionButtonTone`/`Size`/`Layout`, `PhiCardProps`, `PhiCardAction`,
 `PhiCardSize`, `PhiCardFooter`, `PhiCardFooterLine`, `PhiCardFooterLineType`,
-`StatCardProps`, `StatCardMedallion`, `StatItem`, `StatCardTone`, `StatCardVariant`,
-`StatCardFooter`, `StatCardFooterLine`, `StatCardFooterLineType`, `ColorPickerProps`,
+`StatCardProps`, `StatCardSize`, `StatCardMedallion`, `StatItem`, `StatCardTone`, `StatCardVariant`,
+`StatCardFooter`, `StatCardFooterLine`, `StatCardFooterLineType`,
+`ContentCardProps`, `ContentCardSize`, `ContentCardTone`, `ContentCardVariant`,
+`ContentCardFooter`, `ContentCardFooterLine`, `ContentCardFooterLineType`,
+`CardGridProps`, `DynamicCardGridProps`, `ToggleFilter`, `SortOption`,
+`DynamicGridCardProps`, `DynamicGridCardSize`, `DynamicGridCardVariant`, `ColorPickerProps`,
 `ColorFormat`, `CollapsibleProps`, `CollapsibleVariant`, `CollapsibleSize`,
 `AccordionProps`, `AccordionItem`, `AccordionVariant`, `AccordionSize`,
 `CheckboxProps`, `SwitchProps`, `RadioGroupProps`, `RadioOption`,
@@ -650,7 +657,7 @@ pass translated labels. The corner never triggers a clickable card's `onClick`.
 
 ### `StatCard`
 
-φ-framed KPI card — same outer dimensions as `PhiCard` (same `size` system, same W:H = φ:1), with a different internal layout: title + subtitle header, an accent medallion circle, a data-stats row, and an optional footer or freeform lower slot. Accent stripe + medallion tint are driven by `tone` (semantic tokens) or a raw `color` CSS string. An optional left-edge completion gauge (`sideBarCompleteness`) reads independently of the accent, so a top stripe and a side gauge can show at once — or, with `topStripeFollowsGauge`, the whole accent takes the gauge's completeness color.
+Self-contained φ-framed KPI card — a fixed-width golden-ratio card (W:H = φ:1, so `height = width / φ`). It carries its own `size` width scale (no longer derived from `PhiCard`, which is being phased out): `sm` 240 · `md` 312 · `lg` 400 · `xl` 520 px, default `md` ≈312px so four sit on a `wide` (1440px) row. Internal layout: title + subtitle header, an accent medallion circle, a data-stats row, and an optional footer or freeform lower slot. Accent stripe + medallion tint are driven by `tone` (semantic tokens) or a raw `color` CSS string. An optional left-edge completion gauge (`sideBarCompleteness`) reads independently of the accent, so a top stripe and a side gauge can show at once — or, with `topStripeFollowsGauge`, the whole accent takes the gauge's completeness color.
 
 | Prop | Default | Meaning |
 |---|---|---|
@@ -668,7 +675,7 @@ pass translated labels. The corner never triggers a clickable card's `onClick`.
 | `footer` | — | `{ lines?, badges? }` — same structured shape as `PhiCard`. Throws if given with `lower`. Max-height enforced to prevent pushing into content. |
 | `lower` | — | Freeform footer node (e.g. a CTA pill via `.mrs-stat-card__cta`). Throws if given with `footer`. |
 | `watermark` | — | Emoji rendered as a faint oversized background watermark. E.g. `'🏆'`. Ignored when `variant` is set. |
-| `size` | `'md'` | `sm`·`md`·`lg`·`xl` — same widths as `PhiCard`; height = width / φ. |
+| `size` | `'md'` | `sm`·`md`·`lg`·`xl` = 240/312/400/520px wide; height = width / φ. Default `md` ≈312px → four to a `wide` (1440px) row. |
 | `onClick` | — | Click handler; also enables hover lift. |
 | `hoverable` | `!!onClick` | Hover lift (translateY + shadow). |
 | `className` | — | Extra classes. |
@@ -717,9 +724,71 @@ pass translated labels. The corner never triggers a clickable card's `onClick`.
 
 > **`.mrs-stat-card__cta`** is a pre-styled CTA pill class for the `lower` slot — brand background, rounded, inherits font-size. Style it yourself or use this shortcut.
 
+### Card grids — static vs dynamic
+
+Two distinct layouts ship for arranging cards. Pick by whether the cards have an intrinsic size:
+
+- **`CardGrid` (static)** — for **fixed-size** cards (`StatCard`, `ContentCard`, `PhiCard`). They flow left-to-right and **wrap**, separated by a fixed `gap`; they are **not** stretched, so a larger gap can remain at the end of a row, and every card keeps its own width/height. Children-based.
+- **`DynamicCardGrid` + `DynamicGridCard` (fluid)** — for **size-less** cards that should **stretch** to fill uniform `1fr` columns (with a search/filter/sort toolbar). The grid sets the column track; `DynamicGridCard` fills it and inherits a max-width cap.
+
+#### `CardGrid` (static)
+
+| Prop | Default | Meaning |
+|---|---|---|
+| `align` | `'start'` | Row alignment: `'start'` packs cards from the left (extra space becomes a larger gap at the row end); `'center'` centers each row. |
+| `gap` | `1.5rem` | Fixed gap between cards (any CSS length). The default fits four ≈312px cards on a `wide` (1440px) row. Sets `--mrs-card-grid-gap`. |
+| `children` | — | The cards. Each keeps its own intrinsic size. |
+
+```tsx
+import { CardGrid, StatCard, ContentCard } from 'my-react-shell/components'
+
+<CardGrid>
+  <StatCard title="Active" medallion={{ value: 27, label: 'LIVE' }} stats={[{ value: 18, label: 'Open' }]} />
+  <ContentCard title="Status" content="All systems operational" tone="success" />
+  {/* … more fixed-size cards; they wrap and never stretch */}
+</CardGrid>
+```
+
+#### `DynamicCardGrid`
+
+Fluid grid with a built-in toolbar. Data-driven — you pass `items` and render each via `renderCard`.
+
+| Prop | Default | Meaning |
+|---|---|---|
+| `items` / `renderCard` / `getKey` | — | **Required.** The data array, a render function per item, and a stable key extractor. |
+| `cardSize` | — | `sm`·`md`·`lg` — sets the column minimum + the card max-width cap (`180/240/400` min, `210/320/500` max px). |
+| `minColumnWidth` | — | Raw CSS length for the column minimum; overrides `cardSize`'s minimum. |
+| `align` | `'start'` | `'center'` centers a sparse last row. |
+| `searchFields` / `searchFn` | — | Enables the search box (built-in substring match over `searchFields`, or a custom `searchFn`). |
+| `filters` / `filterFn` | — | Toggle-filter chips (`{ key, label, defaultOn? }[]`) + a predicate. |
+| `sortOptions` / `defaultSort` / `sortFn` | — | Sort dropdown + direction toggle. |
+| `filterThreshold` | `6` | Hide the toolbar until at least this many items (use `0` to always show). |
+| `loading` / `emptyState` / `noResultsMessage` / `noResultsDescription` | — | Loading spinner, empty-data slot, and no-search-results copy. |
+
+```tsx
+import { DynamicCardGrid, DynamicGridCard } from 'my-react-shell/components'
+
+<DynamicCardGrid
+  items={items}
+  getKey={(it) => it.id}
+  cardSize="md"
+  renderCard={(it) => (
+    <DynamicGridCard title={it.title}>{it.body}</DynamicGridCard>
+  )}
+/>
+```
+
+#### `DynamicGridCard`
+
+| Prop | Default | Meaning |
+|---|---|---|
+| `title` / `subtitle` | — | Optional header slots. Primary content goes in `children`. |
+| `size` | — | `sm`·`md`·`lg` — a self-applied min/max-width cap for use **outside** a `DynamicCardGrid`. Inside one, omit it and let `cardSize` on the grid drive the columns. |
+| `variant` | `'standard'` | `'standard'` = φ:1 · `'landscape'` = φ²:1 (shorter/wider). |
+
 ### `ContentCard`
 
-Freeform text counterpart to `StatCard`. It shares the exact same physical dimensions, accent stripe logic, variants, watermark, and footer structure as `StatCard`, but replaces the medallion and stats grid with a `content` string slot that automatically clamps to 3 lines. Left-side completion gauges are supported via `value` and `maxValue` props (which replace the medallion).
+Self-contained freeform text counterpart to `StatCard`. It carries the same fixed-width golden-ratio sizing (`sm` 240 · `md` 312 · `lg` 400 · `xl` 520 px, default `md` ≈312px), accent stripe logic, variants, watermark, and footer structure as `StatCard`, but replaces the medallion and stats grid with a `content` string slot that automatically clamps to 3 lines. Left-side completion gauges are supported via `value` and `maxValue` props (which replace the medallion).
 
 | Prop | Default | Meaning |
 |---|---|---|
@@ -737,7 +806,7 @@ Freeform text counterpart to `StatCard`. It shares the exact same physical dimen
 | `variant` | — | `'warning'` · `'danger'`. Colors body text to match the alert hue. |
 | `footer` / `lower` | — | Same structured `footer` or freeform `lower` as `StatCard`. |
 | `watermark` | — | Faint background emoji. |
-| `size` | `'md'` | `sm`·`md`·`lg`·`xl`. |
+| `size` | `'md'` | `sm`·`md`·`lg`·`xl` = 240/312/400/520px wide; height = width / φ. Default `md` ≈312px → four to a `wide` (1440px) row. |
 
 ```tsx
 // Text content (centered):

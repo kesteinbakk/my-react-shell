@@ -1,37 +1,24 @@
-import { type ReactNode } from 'react';
-export interface ToggleFilter {
-    key: string;
-    label: string;
-    defaultOn?: boolean;
-}
-export interface SortOption {
-    key: string;
-    label?: string;
-    labelKey?: string;
-    dir?: 'asc' | 'desc';
-}
-export interface CardGridProps<T> {
-    items: T[];
-    renderCard: (item: T) => ReactNode;
-    getKey: (item: T) => string;
-    searchFields?: (keyof T)[];
-    searchFn?: (item: T, query: string) => boolean;
-    searchPlaceholder?: string;
-    filterThreshold?: number;
-    filters?: ToggleFilter[];
-    filterFn?: (item: T, activeFilters: Set<string>) => boolean;
-    sortOptions?: SortOption[];
-    defaultSort?: {
-        key: string;
-        dir: 'asc' | 'desc';
-    };
-    sortFn?: (a: T, b: T, key: string, dir: 'asc' | 'desc') => number;
+import { type HTMLAttributes, type ReactNode } from 'react';
+export interface CardGridProps extends HTMLAttributes<HTMLDivElement> {
+    /**
+     * Horizontal alignment of each row. `'start'` (default) packs cards from the
+     * left, leaving any extra space as a larger gap at the end of the row;
+     * `'center'` centers each row.
+     */
     align?: 'start' | 'center';
-    loading?: boolean;
-    emptyState?: ReactNode;
-    noResultsMessage?: string;
-    noResultsDescription?: string;
-    cardSize?: import('./GridCard').GridCardSize;
-    minColumnWidth?: string;
+    /**
+     * Fixed gap between cards, any CSS length. Defaults to `1.5rem` — sized so four
+     * ≈312px cards fit on a `wide` (1440px) container row.
+     */
+    gap?: string;
+    children?: ReactNode;
 }
-export declare function CardGrid<T>({ items, renderCard, getKey, searchFields, searchFn, searchPlaceholder, filterThreshold, filters, filterFn, sortOptions, defaultSort, sortFn, align, loading, emptyState, noResultsMessage, noResultsDescription, cardSize, minColumnWidth, }: CardGridProps<T>): import("react").JSX.Element;
+/**
+ * A static grid of fixed-size cards: they flow left-to-right and wrap when a row
+ * is full, separated by a fixed `gap`. Cards are **not** stretched, so a larger
+ * gap may remain at the end of a row, and every card keeps its own intrinsic
+ * width/height (e.g. {@link StatCard}, {@link ContentCard}, {@link PhiCard}).
+ *
+ * For fluid cards that stretch to fill uniform columns, use {@link DynamicCardGrid}.
+ */
+export declare const CardGrid: import("react").ForwardRefExoticComponent<CardGridProps & import("react").RefAttributes<HTMLDivElement>>;

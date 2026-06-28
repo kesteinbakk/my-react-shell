@@ -5,10 +5,10 @@ import { cn } from './cn';
 import { resolveAccentColor } from './accent';
 import { TONE_COLOR } from './tone';
 const SIZE_WIDTH_PX = {
-    sm: 180,
-    md: 240,
-    lg: 320,
-    xl: 480,
+    sm: 240,
+    md: 312,
+    lg: 400,
+    xl: 520,
 };
 const DEFAULT_DRAG_HANDLE = (_jsxs("svg", { width: "64", height: "12", viewBox: "0 0 64 12", fill: "currentColor", "aria-hidden": "true", opacity: "0.4", children: [_jsx("rect", { x: "0", y: "1", width: "64", height: "3", rx: "1.5" }), _jsx("rect", { x: "0", y: "8", width: "64", height: "3", rx: "1.5" })] }));
 const SIZE_FONT_REM = {

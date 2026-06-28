@@ -4,10 +4,10 @@ import { cn } from './cn';
 import { resolveAccentColor } from './accent';
 import { TONE_COLOR } from './tone';
 const SIZE_WIDTH_PX = {
-    sm: 180,
-    md: 240,
-    lg: 320,
-    xl: 480,
+    sm: 240,
+    md: 312,
+    lg: 400,
+    xl: 520,
 };
 const SIZE_FONT_REM = {
     sm: 0.75,
@@ -15,9 +15,9 @@ const SIZE_FONT_REM = {
     lg: 1.125,
     xl: 1.375,
 };
-// The golden ratio — height = width / PHI (same constant as PhiCard).
+// The golden ratio — a card's rendered height is width / PHI.
 const PHI = 1.6180339887;
-// ── Footer glyphs (same kit-shipped icons as PhiCard) ────────────────────────
+// ── Footer glyphs ───────────────────────────────────────────────────────────
 const FOOTER_GLYPHS = {
     date: (_jsxs("svg", { viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", "aria-hidden": "true", children: [_jsx("rect", { x: "3", y: "4", width: "18", height: "18", rx: "2" }), _jsx("path", { d: "M16 2v4M8 2v4M3 10h18" })] })),
     time: (_jsxs("svg", { viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", "aria-hidden": "true", children: [_jsx("circle", { cx: "12", cy: "12", r: "9" }), _jsx("path", { d: "M12 7v5l3 2" })] })),
@@ -79,7 +79,7 @@ const DEFAULT_DRAG_HANDLE = (_jsxs("svg", { width: "64", height: "12", viewBox: 
 /**
  * Stat card — a φ-framed KPI/status card with a title, an optional accent
  * medallion circle (plain number or arc-ring progress), a row of data stats, and an
- * optional footer or freeform lower slot. Shares the same size system as PhiCard.
+ * optional footer or freeform lower slot.
  *
  * The accent stripe, medallion tint, and watermark are driven by `tone` (mapped to
  * semantic tokens) or overridden with a raw CSS `color` string.
@@ -135,8 +135,8 @@ export const StatCard = forwardRef(function StatCard({ title, subtitle, medallio
             }
         });
         if (medallion?.label) {
-            if (medallion.label.length > 8 && process.env.NODE_ENV !== 'production') {
-                console.warn(`StatCard: medallion.label "${medallion.label}" is ${medallion.label.length} characters — it may be too long for the card layout (the medallion is sized for ≤8). Consider a shorter label.`);
+            if (medallion.label.length > 8) {
+                throw new Error(`StatCard: medallion.label cannot exceed 8 characters. (Got "${medallion.label}")`);
             }
             if (/\s/.test(medallion.label.trim())) {
                 throw new Error(`StatCard: medallion.label must be a single word without spaces. (Got "${medallion.label}")`);
@@ -151,7 +151,7 @@ export const StatCard = forwardRef(function StatCard({ title, subtitle, medallio
         }
     }
     const hasFooter = size !== 'sm' && hasFooterProp;
-    // PhiCard footer renderer reused (same JSX structure, same CSS classes)
+    // Footer renderer (shared JSX structure + CSS classes with ContentCard)
     let footerNode = null;
     if (footer) {
         const lines = footer.lines ?? [];
@@ -165,8 +165,8 @@ export const StatCard = forwardRef(function StatCard({ title, subtitle, medallio
     }
     const style = {
         ...styleProp,
-        '--mrs-card-width': `${width}px`,
-        '--mrs-card-aspect-ratio': `${PHI} / 1`,
+        width: `${width}px`,
+        height: `${height}px`,
         fontSize: `${SIZE_FONT_REM[size]}rem`,
         '--mrs-stat-accent': accentColor,
     };

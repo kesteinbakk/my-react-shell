@@ -43,13 +43,29 @@ the other:
    `DynamicGridCard`/`DynamicCardGrid` on the existing grid page. Register the new page's
    route + section icons (`shell-config.tsx`), per the demo lockstep rule.
 
-## Open questions (asked of user before execution)
+## Resolved decisions (user, 2026-06-28)
 
-- Name of the new static-grid component.
-- Whether to reuse the freed `CardGrid` name for the static grid or keep it retired.
-- Confirm the ~312px / 4-per-row target and whether the legacy `xl` size is kept or dropped.
-- Whether `PhiCard` also moves to the new page and renders in the static grid, or only
-  `StatCard`/`ContentCard`.
+1. **Static-grid name = `CardGrid`** — reuse the name freed by renaming the fluid grid to
+   `DynamicCardGrid`. So: dynamic system → `DynamicCardGrid` + `DynamicGridCard`; the new
+   static grid takes the plain `CardGrid` name. CSS classes/vars for the dynamic system are
+   renamed (`mrs-grid-card`→`mrs-dynamic-grid-card`, `mrs-card-grid`→`mrs-dynamic-card-grid`)
+   so the static `CardGrid` can own the `mrs-card-grid` class without collision.
+2. **Size target = default ≈312px → 4 per wide row.** Retune `StatCard`/`ContentCard`
+   `SIZE_WIDTH_PX` so the default (`md`) lands ~312px (height = 312/φ ≈ 193px); keep the
+   sm/md/lg/xl scale. Verify four fit on the `wide` (1440px) container in the demo.
+3. **PhiCard** is restored to working order but **stays on the `CardsOld` page** (it's being
+   phased out). Only `StatCard`/`ContentCard` move to the new `CardsGrid` page. Make
+   `StatCard`/`ContentCard` fully self-contained — own `Size`/`Footer` types + own `PHI`
+   constant, no type or runtime import from `PhiCard`, so PhiCard can be deleted later
+   without breaking them.
+
+## Code-review findings folded in (run on `ac14a83~1..HEAD`)
+
+- StatCard `--mrs-card-width` set but consumed by no CSS rule → width:100% (the ruin). Fixed by restore.
+- BaseCard `--mrs-base-card-min/max-width` consumed by no rule → PhiCard width:100% (the ruin). Fixed by restore.
+- `api-reference.md` not updated for new exports — update for the renamed/new surface.
+- Stray committed files `temp_diff.txt`, `test-card.html` at repo root → delete. Audit `AGENTS.md` change.
+- GridCard docstring claims a removed `footer` slot; `(cssVars as any)` casts; PHI duplicated 4× → clean up in the rename.
 
 ## Affected surface
 
