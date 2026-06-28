@@ -34,6 +34,11 @@ export interface DynamicGridCardProps extends Omit<HTMLAttributes<HTMLDivElement
     /** Cursor + hover-lift + `:focus-visible` ring on the card root. */
     hoverable?: boolean;
     /**
+     * Emoji or text rendered as a faint oversized background watermark, centred
+     * horizontally and dropped a little below the card's vertical centre. E.g. `'🚀'`.
+     */
+    watermark?: string;
+    /**
      * Top-corner action slot (e.g. a `DropdownMenu` trigger). Rendered above the link overlay
      * (`z-index`) so it stays independently clickable — a sibling of the anchor, never nested in it.
      */

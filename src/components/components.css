@@ -1827,6 +1827,29 @@
   outline-offset: 2px;
 }
 
+/* Faint oversized emoji watermark — centred horizontally, dropped a little below the
+   card's vertical centre (top 56%). Sits at z-index 0 behind the content, which is
+   raised to z-index 1 on watermarked cards. */
+.mrs-dynamic-grid-card--watermark::after {
+  content: attr(data-watermark);
+  position: absolute;
+  top: 56%;
+  left: 50%;
+  font-size: 5em;
+  line-height: 1;
+  opacity: 0.1;
+  pointer-events: none;
+  transform: translate(-50%, -50%) rotate(-8deg);
+  z-index: 0;
+  user-select: none;
+}
+.mrs-dynamic-grid-card--watermark .mrs-dynamic-grid-card__header,
+.mrs-dynamic-grid-card--watermark .mrs-dynamic-grid-card__body,
+.mrs-dynamic-grid-card--watermark .mrs-dynamic-grid-card__footer {
+  position: relative;
+  z-index: 1;
+}
+
 /* Corner action slot — raised above the link overlay so it stays independently clickable. */
 .mrs-dynamic-grid-card__corner {
   position: absolute;

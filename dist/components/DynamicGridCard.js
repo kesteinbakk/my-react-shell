@@ -51,7 +51,7 @@ function StructuredFooter({ footer }) {
  * pass `renderLink` and the card mounts the consumer's `<Link>` as a full-bleed block-link
  * overlay, with `corner` controls raised above it so they stay independently clickable.
  */
-export const DynamicGridCard = forwardRef(function DynamicGridCard({ size, shape = 'standard', title, subtitle, figure, hoverable, corner, footer, renderLink, className, style, children, ...props }, ref) {
+export const DynamicGridCard = forwardRef(function DynamicGridCard({ size, shape = 'standard', title, subtitle, figure, hoverable, watermark, corner, footer, renderLink, className, style, children, ...props }, ref) {
     const minWidth = size ? DYNAMIC_GRID_CARD_MIN_WIDTH[size] : undefined;
     const maxWidth = size ? DYNAMIC_GRID_CARD_MAX_WIDTH[size] : undefined;
     const aspectRatio = shape === 'landscape' ? `${PHI * PHI} / 1` : `${PHI} / 1`;
@@ -69,7 +69,7 @@ export const DynamicGridCard = forwardRef(function DynamicGridCard({ size, shape
         ...(maxWidth != null ? { '--mrs-dynamic-grid-card-max-width': `${maxWidth}px` } : {}),
         ...style,
     };
-    return (_jsxs("div", { ref: ref, className: cn('mrs-dynamic-grid-card', hoverable && 'mrs-dynamic-grid-card--hoverable', renderLink && 'mrs-dynamic-grid-card--linked', className), style: cssVars, ...props, children: [renderLink
+    return (_jsxs("div", { ref: ref, className: cn('mrs-dynamic-grid-card', hoverable && 'mrs-dynamic-grid-card--hoverable', renderLink && 'mrs-dynamic-grid-card--linked', watermark && 'mrs-dynamic-grid-card--watermark', className), style: cssVars, "data-watermark": watermark, ...props, children: [renderLink
                 ? renderLink({
                     className: 'mrs-dynamic-grid-card__link-overlay',
                     ...(hasTitle ? { 'aria-labelledby': titleId } : {}),

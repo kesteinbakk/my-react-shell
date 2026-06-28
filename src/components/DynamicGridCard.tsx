@@ -45,6 +45,11 @@ export interface DynamicGridCardProps extends Omit<HTMLAttributes<HTMLDivElement
   /** Cursor + hover-lift + `:focus-visible` ring on the card root. */
   hoverable?: boolean
   /**
+   * Emoji or text rendered as a faint oversized background watermark, centred
+   * horizontally and dropped a little below the card's vertical centre. E.g. `'🚀'`.
+   */
+  watermark?: string
+  /**
    * Top-corner action slot (e.g. a `DropdownMenu` trigger). Rendered above the link overlay
    * (`z-index`) so it stays independently clickable — a sibling of the anchor, never nested in it.
    */
@@ -153,7 +158,7 @@ function StructuredFooter({ footer }: { footer: DynamicGridCardFooter }) {
  * overlay, with `corner` controls raised above it so they stay independently clickable.
  */
 export const DynamicGridCard = forwardRef<HTMLDivElement, DynamicGridCardProps>(function DynamicGridCard(
-  { size, shape = 'standard', title, subtitle, figure, hoverable, corner, footer, renderLink, className, style, children, ...props },
+  { size, shape = 'standard', title, subtitle, figure, hoverable, watermark, corner, footer, renderLink, className, style, children, ...props },
   ref,
 ) {
   const minWidth = size ? DYNAMIC_GRID_CARD_MIN_WIDTH[size] : undefined
@@ -184,9 +189,11 @@ export const DynamicGridCard = forwardRef<HTMLDivElement, DynamicGridCardProps>(
         'mrs-dynamic-grid-card',
         hoverable && 'mrs-dynamic-grid-card--hoverable',
         renderLink && 'mrs-dynamic-grid-card--linked',
+        watermark && 'mrs-dynamic-grid-card--watermark',
         className,
       )}
       style={cssVars}
+      data-watermark={watermark}
       {...props}
     >
       {renderLink
