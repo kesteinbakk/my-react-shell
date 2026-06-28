@@ -1,6 +1,7 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import { forwardRef, isValidElement, useId } from 'react';
 import { cn } from './cn';
+import { resolveAccentColor } from './accent';
 /** φ — the golden ratio. The dynamic card's shape is `aspect-ratio: φ : 1` (or `φ² : 1` for landscape). */
 const PHI = 1.6180339887;
 export const DYNAMIC_GRID_CARD_MIN_WIDTH = {

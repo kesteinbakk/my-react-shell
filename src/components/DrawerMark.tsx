@@ -28,18 +28,18 @@ function ClosedDrawer() {
 function OpenDrawer() {
   return (
     <svg className="mrs-drawer-mark__art" viewBox="0 0 150 128" aria-hidden="true">
-      <polygon className="mrs-drawer-mark__top mrs-drawer-mark__edge" points="66,28 118,54 66,80 14,54" />
-      <polygon className="mrs-drawer-mark__side mrs-drawer-mark__edge" points="14,54 66,80 66,108 14,82" />
-      <polygon className="mrs-drawer-mark__slot" points="66,80 118,54 118,82 66,108" />
-      <polygon className="mrs-drawer-mark__wall mrs-drawer-mark__edge" points="68,80 116,56 116,65 68,89" />
-      <polygon className="mrs-drawer-mark__wall mrs-drawer-mark__edge" points="116,56 142,69 142,78 116,65" />
-      <polygon className="mrs-drawer-mark__floor mrs-drawer-mark__edge" points="68,89 116,65 142,78 94,102" />
-      <polygon className="mrs-drawer-mark__sheet mrs-drawer-mark__edge" points="82,87 112,72 128,80 98,95" />
-      <line className="mrs-drawer-mark__line" x1="96" y1="84" x2="114" y2="79" />
-      <line className="mrs-drawer-mark__line" x1="99" y1="88" x2="117" y2="83" />
-      <polygon className="mrs-drawer-mark__side mrs-drawer-mark__edge" points="94,93 68,80 68,107 94,120" />
-      <polygon className="mrs-drawer-mark__front mrs-drawer-mark__edge" points="94,93 142,69 142,96 94,120" />
-      <circle className="mrs-drawer-mark__knob" cx="118" cy="94" r="3" />
+      <polygon className="mrs-drawer-mark__top mrs-drawer-mark__edge" points="70,20 122,46 70,72 18,46" />
+      <polygon className="mrs-drawer-mark__side mrs-drawer-mark__edge" points="18,46 70,72 70,106 18,80" />
+      <polygon className="mrs-drawer-mark__slot" points="70,72 122,46 122,80 70,106" />
+      <polygon className="mrs-drawer-mark__wall mrs-drawer-mark__edge" points="72,72 120,48 120,57 72,81" />
+      <polygon className="mrs-drawer-mark__wall mrs-drawer-mark__edge" points="120,48 146,61 146,70 120,57" />
+      <polygon className="mrs-drawer-mark__floor mrs-drawer-mark__edge" points="72,81 120,57 146,70 98,94" />
+      <polygon className="mrs-drawer-mark__sheet mrs-drawer-mark__edge" points="86,79 116,64 132,72 102,87" />
+      <line className="mrs-drawer-mark__line" x1="100" y1="76" x2="118" y2="71" />
+      <line className="mrs-drawer-mark__line" x1="103" y1="80" x2="121" y2="75" />
+      <polygon className="mrs-drawer-mark__side mrs-drawer-mark__edge" points="98,85 72,72 72,99 98,112" />
+      <polygon className="mrs-drawer-mark__front mrs-drawer-mark__edge" points="98,85 146,61 146,88 98,112" />
+      <circle className="mrs-drawer-mark__knob" cx="122" cy="86" r="3" />
     </svg>
   )
 }
