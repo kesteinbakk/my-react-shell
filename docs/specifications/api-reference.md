@@ -278,7 +278,7 @@ import 'my-react-shell/components/styles.css' // REQUIRED (plain prebuilt CSS; a
 | `ContentCard` | component | Self-contained freeform text counterpart to `StatCard` — same fixed-width golden-ratio sizing (`size` default `md` ≈312px). Title + subtitle, a freeform `content` string (supports `html` prop, safely sanitized internally via DOMPurify), and a structured `footer` or freeform `lower`. Text aligns via `contentAlignX`/`contentAlignY`. Instead of a medallion, accepts `value` and `maxValue` to render a left-side completion gauge. Same `tone`, `color`, `variant`, and `watermark` properties as `StatCard`. |
 | `CardGrid` | component | **Static** card grid: fixed-size cards flow left-to-right and **wrap** when a row is full, separated by a fixed `gap`. Cards are **not** stretched (a larger gap may remain at the end of a row) and keep their own intrinsic width/height (`StatCard`/`ContentCard`/`PhiCard`). `align` (`start`·`center`, default `start`), `gap` (CSS length override; default `1.5rem`, sized so four ≈312px cards fit a `wide` row). Children-based. |
 | `DynamicCardGrid` | component | **Fluid** card grid with a built-in search / filter / sort toolbar. Cards stretch to fill uniform `1fr` columns sized by `cardSize` (`sm`·`md`·`lg`) or a raw `minColumnWidth`. Data-driven via `items` / `renderCard` / `getKey`; `filters`, `sortOptions`, `searchFields`/`searchFn`, `loading`, empty + no-results states. Pair with `DynamicGridCard`. |
-| `DynamicGridCard` | component | Fluid card for `DynamicCardGrid`: stretches to `width:100%` of its column, inherits the grid's max-width cap, keeps the golden-ratio shape via `aspect-ratio`. Optional `title` / `subtitle` slots, primary content as `children`. `size` (`sm`·`md`·`lg`), `variant` (`standard` = φ:1 · `landscape` = φ²:1). |
+| `DynamicGridCard` | component | Fluid card for `DynamicCardGrid`: stretches to `width:100%` of its column, inherits the grid's max-width cap, keeps the golden-ratio shape via `aspect-ratio`. Optional `title` / `subtitle` / `figure` / `footer` slots, primary content as `children`. `size` (`sm`·`md`·`lg`), `shape` (`standard` = φ:1 · `landscape` = φ²:1). Acts as a **whole-card navigation link** via `renderLink` (consumer supplies its router `<Link>`, rendered as a full-bleed block-link overlay), with `hoverable` lift and a raised `corner` action slot. |
 | `InputField` | component | Full field: label + input + helper + error, a11y-wired (`htmlFor`/`aria-invalid`/`aria-describedby`). Spreads native input props; pass `error` to switch on error styling. `inputSize` (`sm`·`md`·`lg`, default `md`) matches the `Input` height/padding scale. `onDebouncedChange(value)` (fires `debounceMs` after the user stops typing; default 500 ms), `saveStatus` (visual status `'idle'`·`'pending'`·`'saving'`·`'saved'`·`'error'`). |
 | `SegmentedControl` | component | Single-select `radiogroup` on a track; controlled via `value`/`onChange`; generic over value type. |
 | `Select` | component | Opinionated select on Radix Select (keyboard nav, typeahead, portal); `options` list; controlled via `value`/`onValueChange`; `size` (`sm`·`md`·`lg`, default `md`) matches the `Input` height/padding scale; `saveStatus` (visual status `'idle'`·`'pending'`·`'saving'`·`'saved'`·`'error'`); optional `label` (renders above the select trigger); supports custom `className` and `style` on the trigger. |
@@ -321,7 +321,7 @@ Every component has a matching `…Props` type export (e.g. `ButtonProps`, `Butt
 `ContentCardProps`, `ContentCardSize`, `ContentCardTone`, `ContentCardVariant`,
 `ContentCardFooter`, `ContentCardFooterLine`, `ContentCardFooterLineType`,
 `CardGridProps`, `DynamicCardGridProps`, `ToggleFilter`, `SortOption`,
-`DynamicGridCardProps`, `DynamicGridCardSize`, `DynamicGridCardVariant`, `ColorPickerProps`,
+`DynamicGridCardProps`, `DynamicGridCardSize`, `DynamicGridCardShape`, `DynamicGridCardFooter`, `DynamicGridCardFooterLine`, `DynamicGridCardFooterLineType`, `DynamicGridCardLinkProps`, `ColorPickerProps`,
 `ColorFormat`, `CollapsibleProps`, `CollapsibleVariant`, `CollapsibleSize`,
 `AccordionProps`, `AccordionItem`, `AccordionVariant`, `AccordionSize`,
 `CheckboxProps`, `SwitchProps`, `RadioGroupProps`, `RadioOption`,
@@ -783,8 +783,28 @@ import { DynamicCardGrid, DynamicGridCard } from 'my-react-shell/components'
 | Prop | Default | Meaning |
 |---|---|---|
 | `title` / `subtitle` | — | Optional header slots. Primary content goes in `children`. |
+| `figure` | — | Icon/emoji column rendered beside the title (a figure-split header). |
+| `footer` | — | Footer slot: a freeform `ReactNode`, or a structured `{ lines?: { text, type? }[]; badges?: ReactNode[] }` (meta lines left, badges right — same shape as `StatCard`/`ContentCard`). |
 | `size` | — | `sm`·`md`·`lg` — a self-applied min/max-width cap for use **outside** a `DynamicCardGrid`. Inside one, omit it and let `cardSize` on the grid drive the columns. |
-| `variant` | `'standard'` | `'standard'` = φ:1 · `'landscape'` = φ²:1 (shorter/wider). |
+| `shape` | `'standard'` | `'standard'` = φ:1 · `'landscape'` = φ²:1 (shorter/wider). |
+| `hoverable` | `false` | Cursor + hover-lift + `:focus-visible` ring on the card root. |
+| `corner` | — | Top-corner action slot (e.g. a `DropdownMenu` trigger). Rendered **above** the link overlay (`z-index`) as a sibling of the anchor, so it stays independently clickable — never nested in the link. |
+| `renderLink` | — | Interactive-root seam. `(linkProps) => ReactNode` — the consumer renders its router `<Link>` spreading `linkProps` (`className` + auto-wired `aria-labelledby` from the title), adding `to`/`params`. The card mounts it as a **full-bleed block-link overlay** so the whole tile is a real, keyboard-activatable anchor while the root `<div>` owns its hover/border/focus states. The shell imports no router; `to`/`params` type-safety lives at the call site. |
+
+```tsx
+import { Link } from '@tanstack/react-router'
+
+// Whole-card navigation link with a figure, a footer meta line, and a corner menu:
+<DynamicGridCard
+  figure="⚙️"
+  title="Setup"
+  subtitle="Configure the workspace"
+  hoverable
+  footer={{ lines: [{ text: '4 steps left', type: 'check' }] }}
+  corner={<DropdownMenu iconTrigger={<MoreVertical size={16} />} iconTriggerLabel="Card actions" items={[…]} />}
+  renderLink={(p) => <Link {...p} to="/setup/$id" params={{ id }} />}
+/>
+```
 
 ### `ContentCard`
 

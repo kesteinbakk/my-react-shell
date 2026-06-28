@@ -1,6 +1,6 @@
 # T029 — Card link / interactive-root pattern (nav cards first)
 
-**Status:** planning
+**Status:** in-progress
 **Filed:** 2026-06-28
 
 ## Goal

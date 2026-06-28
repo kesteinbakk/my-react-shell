@@ -105,6 +105,6 @@ export type { CardGridProps } from './CardGrid';
 export { DynamicCardGrid } from './DynamicCardGrid';
 export type { DynamicCardGridProps, ToggleFilter, SortOption } from './DynamicCardGrid';
 export { DynamicGridCard } from './DynamicGridCard';
-export type { DynamicGridCardProps, DynamicGridCardSize, DynamicGridCardVariant } from './DynamicGridCard';
+export type { DynamicGridCardProps, DynamicGridCardSize, DynamicGridCardShape, DynamicGridCardFooter, DynamicGridCardFooterLine, DynamicGridCardFooterLineType, DynamicGridCardLinkProps, } from './DynamicGridCard';
 export { Preview } from './Preview';
 export type { PreviewProps } from './Preview';

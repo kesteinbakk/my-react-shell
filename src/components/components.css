@@ -1732,6 +1732,7 @@
    grid column, capped by the grid's inherited max-width, centered when its lane
    is wider than the cap. Golden-ratio shape via aspect-ratio. */
 .mrs-dynamic-grid-card {
+  position: relative;
   width: 100%;
   max-width: var(--mrs-dynamic-grid-card-max-width, var(--mrs-dynamic-card-grid-item-max, 100%));
   margin: 0 auto;
@@ -1743,7 +1744,7 @@
   overflow: hidden;
   padding: 1rem;
   color: var(--color-text-primary);
-  transition: box-shadow 200ms ease;
+  transition: box-shadow 200ms ease, transform 200ms ease;
   display: flex;
   flex-direction: column;
 }
@@ -1751,6 +1752,25 @@
 .mrs-dynamic-grid-card__header {
   flex-shrink: 0;
   margin-bottom: 0.5rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.625rem;
+}
+
+/* Figure-split: an icon/emoji column beside the title block. */
+.mrs-dynamic-grid-card__figure {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  line-height: 1;
+  color: var(--color-text-secondary);
+}
+
+.mrs-dynamic-grid-card__heading {
+  flex: 1 1 auto;
+  min-width: 0;
 }
 
 .mrs-dynamic-grid-card__title {
@@ -1767,6 +1787,55 @@
   flex-grow: 1;
   display: grid;
   min-height: 0;
+}
+
+.mrs-dynamic-grid-card__footer {
+  flex-shrink: 0;
+  margin-top: 0.5rem;
+}
+
+/* Hover-lift — opt-in via `hoverable`. */
+.mrs-dynamic-grid-card--hoverable {
+  cursor: pointer;
+}
+.mrs-dynamic-grid-card--hoverable:hover {
+  box-shadow: var(--mrs-elevation-card-hover);
+  transform: translateY(-4px);
+}
+
+/* Interactive-root: the consumer's `<Link>` mounts as a full-bleed block-link overlay.
+   The anchor is the real interactive element; the root projects its focus ring (the
+   anchor's own outline is clipped by the card's `overflow: hidden`, so we surface it
+   on the root via `:has()`). Raised controls (`__corner`) sit above the overlay. */
+.mrs-dynamic-grid-card--linked {
+  cursor: pointer;
+}
+.mrs-dynamic-grid-card--linked:hover {
+  box-shadow: var(--mrs-elevation-card-hover);
+}
+.mrs-dynamic-grid-card__link-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+}
+.mrs-dynamic-grid-card__link-overlay:focus {
+  outline: none;
+}
+.mrs-dynamic-grid-card:has(> .mrs-dynamic-grid-card__link-overlay:focus-visible) {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+/* Corner action slot — raised above the link overlay so it stays independently clickable. */
+.mrs-dynamic-grid-card__corner {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
 }
 
 /* ── PhiCard ─────────────────────────────────────────────────────────────── */

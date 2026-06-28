@@ -82,8 +82,48 @@ import { DynamicCardGrid, DynamicGridCard } from 'my-react-shell/components'
 | **`md`** | 240px | 320px | Standard widgets. |
 | **`lg`** | 400px | 500px | Featured content, wide charts. |
 
-`DynamicGridCard` also has a `variant`: `'standard'` (φ:1, default) or `'landscape'` (φ²:1,
+`DynamicGridCard` also has a `shape`: `'standard'` (φ:1, default) or `'landscape'` (φ²:1,
 shorter and wider).
 
 > A `DynamicGridCard` used **outside** a `DynamicCardGrid` can set its own `size` to get the
 > same min/max cap; inside a grid, omit it and let `cardSize` drive the columns.
+
+### Navigation links (whole-card anchor)
+
+`DynamicGridCard` can act as a **whole-card navigation target** without the shell depending on
+any router. The consumer supplies its own router `<Link>` through the `renderLink` render-prop;
+the card mounts it as a **full-bleed block-link overlay** inside a `position: relative` root, so
+the entire tile is one real, keyboard-focusable, keyboard-activatable anchor — while the card
+root `<div>` keeps owning its hover / border / `:focus-visible` states.
+
+```tsx
+import { Link } from '@tanstack/react-router'
+
+renderCard={(it) => (
+  <DynamicGridCard
+    figure={it.icon}
+    title={it.title}
+    subtitle={it.subtitle}
+    hoverable
+    footer={{ lines: [{ text: it.meta }] }}
+    corner={<DropdownMenu iconTrigger={…} items={…} />}
+    renderLink={(p) => <Link {...p} to="/area/$id" params={{ id: it.id }} />}
+  />
+)}
+```
+
+- **Router-agnostic + type-safe.** The shell imports no router. Because the `<Link>` JSX is
+  written literally at the call site, TanStack Router's `to`/`params` type-checking is fully
+  preserved — write `renderLink` inline in each `renderCard`, not behind an indirection.
+- **Accessible name is auto-wired.** The card gives its `title` a `useId` id and passes
+  `aria-labelledby` to the overlay anchor, so the link is named from the title with zero
+  consumer burden. Override by putting `aria-label` on the `<Link>` you pass to `renderLink`
+  (only needed when there's no `title`).
+- **Interactive controls go in raised slots, never the link.** A `<button>`/`<a>` can't nest
+  inside an `<a>`. The `corner` slot (and, on `StatCard`, the medallion button and drag handle)
+  is a **sibling** of the overlay, raised above it with `z-index`, so it stays independently
+  clickable. The freeform `footer` is display-only text covered by the overlay — never put a
+  live control there; add a raised slot for it instead.
+
+The same `renderLink` + block-link-overlay seam is shared by `StatCard` and `ContentCard`, so a
+card used for navigation behaves identically across the whole card surface.
