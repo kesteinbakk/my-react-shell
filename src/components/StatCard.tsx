@@ -46,6 +46,12 @@ export interface StatCardMedallion {
    * The `label` prop is ignored in arc mode.
    */
   max?: number
+  /**
+   * Size of the medallion. `'lg'` is the standard size. `'sm'` is a smaller
+   * footprint with no label, a smaller font, and value clamped to 99.
+   * Default: `'lg'`.
+   */
+  size?: 'lg' | 'sm'
 }
 
 // ── Stat items ────────────────────────────────────────────────────────────────
@@ -484,6 +490,7 @@ export const StatCard = forwardRef<HTMLDivElement, StatCardProps>(function StatC
         <MedallionTag
           className={cn(
             'mrs-stat-card__medallion mrs-stat-card__medallion--arc',
+            medallion.size === 'sm' && 'mrs-stat-card__medallion--sm',
             isPressable && 'mrs-stat-card__medallion--pressable'
           )}
           {...medallionProps}
@@ -493,6 +500,13 @@ export const StatCard = forwardRef<HTMLDivElement, StatCardProps>(function StatC
       )
     } else {
       let displayValue = medallion.value
+      if (medallion.size === 'sm') {
+        const num = typeof displayValue === 'number' ? displayValue : Number(displayValue)
+        if (!isNaN(num) && num > 99) {
+          displayValue = 99
+        }
+      }
+
       if (typeof displayValue === 'number') {
         displayValue = Math.round(displayValue)
       } else if (typeof displayValue === 'string' && !isNaN(Number(displayValue)) && displayValue.trim() !== '') {
@@ -510,12 +524,13 @@ export const StatCard = forwardRef<HTMLDivElement, StatCardProps>(function StatC
         <MedallionTag
           className={cn(
             'mrs-stat-card__medallion',
+            medallion.size === 'sm' && 'mrs-stat-card__medallion--sm',
             isPressable && 'mrs-stat-card__medallion--pressable'
           )}
           {...medallionProps}
         >
           <span className="mrs-stat-card__medallion-value" data-len={valueStr.length}>{displayValue}</span>
-          {medallion.label ? <span className="mrs-stat-card__medallion-label" data-len={medallion.label.length}>{medallion.label}</span> : null}
+          {medallion.size !== 'sm' && medallion.label ? <span className="mrs-stat-card__medallion-label" data-len={medallion.label.length}>{medallion.label}</span> : null}
         </MedallionTag>
       )
     }
@@ -537,6 +552,7 @@ export const StatCard = forwardRef<HTMLDivElement, StatCardProps>(function StatC
       style={style}
       data-watermark={effectiveWatermark}
       data-has-medallion={medallion != null ? "true" : undefined}
+      data-medallion-size={medallion?.size ?? 'lg'}
       onClick={onClick}
     >
       {dragHandle ? (

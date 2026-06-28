@@ -185,10 +185,16 @@ export const StatCard = forwardRef(function StatCard({ title, subtitle, medallio
             }
             : {};
         if (medallion.max != null) {
-            medallionNode = (_jsx(MedallionTag, { className: cn('mrs-stat-card__medallion mrs-stat-card__medallion--arc', isPressable && 'mrs-stat-card__medallion--pressable'), ...medallionProps, children: _jsx(ArcRing, { value: medallion.value, max: medallion.max }) }));
+            medallionNode = (_jsx(MedallionTag, { className: cn('mrs-stat-card__medallion mrs-stat-card__medallion--arc', medallion.size === 'sm' && 'mrs-stat-card__medallion--sm', isPressable && 'mrs-stat-card__medallion--pressable'), ...medallionProps, children: _jsx(ArcRing, { value: medallion.value, max: medallion.max }) }));
         }
         else {
             let displayValue = medallion.value;
+            if (medallion.size === 'sm') {
+                const num = typeof displayValue === 'number' ? displayValue : Number(displayValue);
+                if (!isNaN(num) && num > 99) {
+                    displayValue = 99;
+                }
+            }
             if (typeof displayValue === 'number') {
                 displayValue = Math.round(displayValue);
             }
@@ -201,10 +207,10 @@ export const StatCard = forwardRef(function StatCard({ title, subtitle, medallio
                     throw new Error(`StatCard: medallion.value cannot exceed 4 characters (got "${valueStr}").`);
                 }
             }
-            medallionNode = (_jsxs(MedallionTag, { className: cn('mrs-stat-card__medallion', isPressable && 'mrs-stat-card__medallion--pressable'), ...medallionProps, children: [_jsx("span", { className: "mrs-stat-card__medallion-value", "data-len": valueStr.length, children: displayValue }), medallion.label ? _jsx("span", { className: "mrs-stat-card__medallion-label", "data-len": medallion.label.length, children: medallion.label }) : null] }));
+            medallionNode = (_jsxs(MedallionTag, { className: cn('mrs-stat-card__medallion', medallion.size === 'sm' && 'mrs-stat-card__medallion--sm', isPressable && 'mrs-stat-card__medallion--pressable'), ...medallionProps, children: [_jsx("span", { className: "mrs-stat-card__medallion-value", "data-len": valueStr.length, children: displayValue }), medallion.size !== 'sm' && medallion.label ? _jsx("span", { className: "mrs-stat-card__medallion-label", "data-len": medallion.label.length, children: medallion.label }) : null] }));
         }
     }
-    return (_jsxs("div", { ref: ref, className: cn('mrs-stat-card', !accentSuppressed && `mrs-stat-card--accent-${effectiveAccentPlacement}`, hasGauge && 'mrs-stat-card--gauge', variant && 'mrs-stat-card--variant', isHoverable && 'mrs-stat-card--hoverable', effectiveWatermark && 'mrs-stat-card--watermark', dragHandle && 'mrs-stat-card--draggable', className), style: style, "data-watermark": effectiveWatermark, "data-has-medallion": medallion != null ? "true" : undefined, onClick: onClick, children: [dragHandle ? (_jsx("button", { type: "button", className: "mrs-stat-card__drag-handle", "aria-label": "Drag to reorder", ...dragHandleProps, onClick: (e) => {
+    return (_jsxs("div", { ref: ref, className: cn('mrs-stat-card', !accentSuppressed && `mrs-stat-card--accent-${effectiveAccentPlacement}`, hasGauge && 'mrs-stat-card--gauge', variant && 'mrs-stat-card--variant', isHoverable && 'mrs-stat-card--hoverable', effectiveWatermark && 'mrs-stat-card--watermark', dragHandle && 'mrs-stat-card--draggable', className), style: style, "data-watermark": effectiveWatermark, "data-has-medallion": medallion != null ? "true" : undefined, "data-medallion-size": medallion?.size ?? 'lg', onClick: onClick, children: [dragHandle ? (_jsx("button", { type: "button", className: "mrs-stat-card__drag-handle", "aria-label": "Drag to reorder", ...dragHandleProps, onClick: (e) => {
                     e.stopPropagation();
                     dragHandleProps?.onClick?.(e);
                 }, children: dragHandle === true ? DEFAULT_DRAG_HANDLE : dragHandle })) : null, showVariantLeftStripe ? (_jsx("div", { className: "mrs-stat-card__variant-stripe", "aria-hidden": "true" })) : null, hasGauge ? (_jsx("div", { className: "mrs-stat-card__gauge", role: "meter", "aria-valuemin": 0, "aria-valuemax": 100, "aria-valuenow": gaugePct, "aria-label": `${gaugePct}%`, children: _jsx("div", { className: "mrs-stat-card__gauge-fill", style: { height: `${gaugeFraction * 100}%`, background: completenessFill(gaugeFraction) } }) })) : null, _jsxs("div", { className: "mrs-stat-card__inner", children: [_jsxs("div", { className: "mrs-stat-card__header", children: [_jsxs("div", { className: "mrs-stat-card__head-text", children: [_jsx("p", { className: "mrs-stat-card__title", "data-fit": titleFitStep(title) || undefined, children: title }), subtitle ? _jsx("p", { className: "mrs-stat-card__subtitle", children: subtitle }) : null] }), medallionNode] }), stats && stats.length > 0 ? (_jsx("dl", { className: "mrs-stat-card__stats", children: stats.map((item, i) => {

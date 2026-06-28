@@ -656,7 +656,7 @@ pass translated labels. The corner never triggers a clickable card's `onClick`.
 |---|---|---|
 | `title` | — | Card title. **Required.** Auto-fits: a very long title steps its font size down in up to three steps (by character count) so it stays within ~two lines without resizing the card. Short titles are unaffected. |
 | `subtitle` | — | Optional subtitle below the title. |
-| `medallion` | — | `{ value, label?, max? }` — the top-right circle. Plain circle (number + label) when `max` is absent; SVG arc-ring showing `value/max` progress when `max` is set. |
+| `medallion` | — | `{ value, label?, max?, size? }` — the top-right circle. Plain circle (number + label) when `max` is absent; SVG arc-ring showing `value/max` progress when `max` is set. `size` defaults to `'lg'`; when `'sm'`, the medallion renders with a smaller footprint, drops its label, and clamps numeric values to `99`. |
 | `onMedallionPress` | — | Optional callback triggered when the medallion is clicked. When set, the medallion renders as a `<button>` with a pressable hover/active lift effect. |
 | `tone` | `'neutral'` | `'primary'`·`'info'`·`'success'`·`'warning'`·`'danger'`·`'neutral'` — maps to semantic `--color-*` tokens for the accent stripe and medallion tint. |
 | `color` | — | Raw CSS color (overrides `tone`). E.g. `'var(--color-primary)'` or `'#7c3aed'`. |

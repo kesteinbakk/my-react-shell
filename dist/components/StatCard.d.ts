@@ -17,6 +17,12 @@ export interface StatCardMedallion {
      * The `label` prop is ignored in arc mode.
      */
     max?: number;
+    /**
+     * Size of the medallion. `'lg'` is the standard size. `'sm'` is a smaller
+     * footprint with no label, a smaller font, and value clamped to 99.
+     * Default: `'lg'`.
+     */
+    size?: 'lg' | 'sm';
 }
 export interface StatItem {
     value: number | string;

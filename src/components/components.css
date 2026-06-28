@@ -2314,6 +2314,11 @@
   padding-right: 4.5em; /* 3.75em width + 0.75em gap */
 }
 
+.mrs-stat-card[data-has-medallion="true"][data-medallion-size="sm"] .mrs-stat-card__head-text,
+.mrs-stat-card[data-has-medallion="true"][data-medallion-size="sm"] .mrs-stat-card__body {
+  padding-right: 3em; /* 2.25em width + 0.75em gap */
+}
+
 .mrs-stat-card__medallion--pressable {
   cursor: pointer;
   transition: transform 150ms cubic-bezier(0.2, 0, 0, 1), box-shadow 150ms cubic-bezier(0.2, 0, 0, 1), filter 150ms ease, color 150ms ease, border-color 150ms ease;
@@ -2396,6 +2401,23 @@
 .mrs-stat-card__medallion-label[data-len="7"],
 .mrs-stat-card__medallion-label[data-len="8"] {
   font-size: 0.4em;
+}
+
+/* Small medallion size overrides */
+.mrs-stat-card__medallion--sm {
+  width: 2.25em;
+  height: 2.25em;
+  gap: 0;
+}
+
+.mrs-stat-card__medallion--sm .mrs-stat-card__medallion-value[data-len="1"] {
+  font-size: 1.25em;
+}
+
+.mrs-stat-card__medallion--sm .mrs-stat-card__medallion-value[data-len="2"],
+.mrs-stat-card__medallion--sm .mrs-stat-card__medallion-value[data-len="3"],
+.mrs-stat-card__medallion--sm .mrs-stat-card__medallion-value[data-len="4"] {
+  font-size: 1.1em;
 }
 
 /* Arc ring SVG — fills its container (set by badge or stat-arc) */
