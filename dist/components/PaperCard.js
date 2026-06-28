@@ -30,7 +30,8 @@ const SIZE_FOLD_PX = {
     xxl: 40,
 };
 const SIZE_FONT_REM = {
-    sm: 0.625,
+    // `sm` shares `md`'s font-size — the smaller sheet keeps readable text, just less of it.
+    sm: 0.75,
     md: 0.75,
     lg: 0.875,
     xl: 1.0,

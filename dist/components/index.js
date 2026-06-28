@@ -40,6 +40,8 @@ export { PhiCard, PHI } from './PhiCard';
 export { StatCard } from './StatCard';
 export { ContentCard } from './ContentCard';
 export { PaperCard } from './PaperCard';
+export { RevealMark } from './RevealMark';
+export { DrawerMark } from './DrawerMark';
 export { InputField } from './InputField';
 export { SearchInput } from './SearchInput';
 export { SegmentedControl } from './SegmentedControl';

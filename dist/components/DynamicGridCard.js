@@ -59,6 +59,10 @@ export const DynamicGridCard = forwardRef(function DynamicGridCard({ size, shape
     const titleId = useId();
     const hasTitle = title != null;
     const hasHeader = title != null || subtitle != null || figure != null;
+    // A string watermark uses the emoji `::after` path; any other node renders in an art layer.
+    const watermarkIsString = typeof watermark === 'string';
+    const hasWatermark = watermarkIsString ? watermark.length > 0 : watermark != null;
+    const hasArtWatermark = hasWatermark && !watermarkIsString;
     const structuredFooter = isStructuredFooter(footer) ? footer : null;
     const hasFooter = structuredFooter
         ? (structuredFooter.lines?.length ?? 0) > 0 || (structuredFooter.badges?.length ?? 0) > 0
@@ -69,10 +73,10 @@ export const DynamicGridCard = forwardRef(function DynamicGridCard({ size, shape
         ...(maxWidth != null ? { '--mrs-dynamic-grid-card-max-width': `${maxWidth}px` } : {}),
         ...style,
     };
-    return (_jsxs("div", { ref: ref, className: cn('mrs-dynamic-grid-card', hoverable && 'mrs-dynamic-grid-card--hoverable', renderLink && 'mrs-dynamic-grid-card--linked', watermark && 'mrs-dynamic-grid-card--watermark', className), style: cssVars, "data-watermark": watermark, ...props, children: [renderLink
+    return (_jsxs("div", { ref: ref, className: cn('mrs-dynamic-grid-card', hoverable && 'mrs-dynamic-grid-card--hoverable', renderLink && 'mrs-dynamic-grid-card--linked', hasWatermark && 'mrs-dynamic-grid-card--watermark', hasArtWatermark && 'mrs-reveal-host', className), style: cssVars, "data-watermark": watermarkIsString ? watermark : undefined, ...props, children: [renderLink
                 ? renderLink({
                     className: 'mrs-dynamic-grid-card__link-overlay',
                     ...(hasTitle ? { 'aria-labelledby': titleId } : {}),
                 })
-                : null, corner != null ? _jsx("div", { className: "mrs-dynamic-grid-card__corner", children: corner }) : null, hasHeader ? (_jsxs("div", { className: "mrs-dynamic-grid-card__header", children: [figure != null ? _jsx("div", { className: "mrs-dynamic-grid-card__figure", children: figure }) : null, title != null || subtitle != null ? (_jsxs("div", { className: "mrs-dynamic-grid-card__heading", children: [title != null ? (_jsx("div", { className: "mrs-dynamic-grid-card__title", id: hasTitle ? titleId : undefined, children: title })) : null, subtitle != null ? _jsx("div", { className: "mrs-dynamic-grid-card__subtitle", children: subtitle }) : null] })) : null] })) : null, _jsx("div", { className: "mrs-dynamic-grid-card__body", children: children }), hasFooter ? (_jsx("div", { className: "mrs-dynamic-grid-card__footer", children: structuredFooter ? _jsx(StructuredFooter, { footer: structuredFooter }) : footer })) : null] }));
+                : null, hasArtWatermark ? (_jsx("div", { className: "mrs-dynamic-grid-card__watermark", "aria-hidden": "true", children: watermark })) : null, corner != null ? _jsx("div", { className: "mrs-dynamic-grid-card__corner", children: corner }) : null, hasHeader ? (_jsxs("div", { className: "mrs-dynamic-grid-card__header", children: [figure != null ? _jsx("div", { className: "mrs-dynamic-grid-card__figure", children: figure }) : null, title != null || subtitle != null ? (_jsxs("div", { className: "mrs-dynamic-grid-card__heading", children: [title != null ? (_jsx("div", { className: "mrs-dynamic-grid-card__title", id: hasTitle ? titleId : undefined, children: title })) : null, subtitle != null ? _jsx("div", { className: "mrs-dynamic-grid-card__subtitle", children: subtitle }) : null] })) : null] })) : null, _jsx("div", { className: "mrs-dynamic-grid-card__body", children: children }), hasFooter ? (_jsx("div", { className: "mrs-dynamic-grid-card__footer", children: structuredFooter ? _jsx(StructuredFooter, { footer: structuredFooter }) : footer })) : null] }));
 });

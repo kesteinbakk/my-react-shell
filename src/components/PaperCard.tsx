@@ -72,7 +72,8 @@ const SIZE_FOLD_PX: Record<PaperCardSize, number> = {
 }
 
 const SIZE_FONT_REM: Record<PaperCardSize, number> = {
-  sm: 0.625,
+  // `sm` shares `md`'s font-size — the smaller sheet keeps readable text, just less of it.
+  sm: 0.75,
   md: 0.75,
   lg: 0.875,
   xl: 1.0,
