@@ -7,8 +7,14 @@ export interface PreviewProps {
     title: string;
     /** The source URL, Blob, or File for the PDF. */
     file: string | Blob | File | null;
-    /** Optional content to render in the header, like a select menu. */
-    headerContent?: React.ReactNode;
+    /** Optional action buttons or content to render in the header. */
+    actions?: React.ReactNode;
+    /** Whether to show the print button. Defaults to true. */
+    showPrintButton?: boolean;
+    /** Label for the print button. */
+    printLabel: string;
+    /** Label for the close button. */
+    closeLabel: string;
     /** Classes applied to the content container. */
     className?: string;
 }
@@ -17,4 +23,4 @@ export interface PreviewProps {
  * It takes the full viewport height and adjusts width dynamically.
  * Renders pages using `react-pdf`.
  */
-export declare function Preview({ open, onOpenChange, title, file, headerContent, className, }: PreviewProps): import("react").JSX.Element;
+export declare function Preview({ open, onOpenChange, title, file, actions, showPrintButton, printLabel, closeLabel, className, }: PreviewProps): import("react").JSX.Element;

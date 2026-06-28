@@ -18,8 +18,14 @@ export interface PreviewProps {
   title: string
   /** The source URL, Blob, or File for the PDF. */
   file: string | Blob | File | null
-  /** Optional content to render in the header, like a select menu. */
-  headerContent?: React.ReactNode
+  /** Optional action buttons or content to render in the header. */
+  actions?: React.ReactNode
+  /** Whether to show the print button. Defaults to true. */
+  showPrintButton?: boolean
+  /** Label for the print button. */
+  printLabel: string
+  /** Label for the close button. */
+  closeLabel: string
   /** Classes applied to the content container. */
   className?: string
 }
@@ -34,7 +40,10 @@ export function Preview({
   onOpenChange,
   title,
   file,
-  headerContent,
+  actions,
+  showPrintButton = true,
+  printLabel,
+  closeLabel,
   className,
 }: PreviewProps) {
   const [containerEl, setContainerEl] = useState<HTMLDivElement | null>(null)
@@ -130,25 +139,16 @@ export function Preview({
             <RadixDialog.Title className="mrs-preview__title">{title}</RadixDialog.Title>
             
             <div className="mrs-preview__header-actions">
-              {headerContent}
-              <Button tone="neutral" onClick={handlePrint} size="sm">
-                Skriv ut
-              </Button>
-              <RadixDialog.Close className="mrs-dialog__close" aria-label="Lukk">
-                <svg
-                  width={16}
-                  height={16}
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth={2}
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  aria-hidden="true"
-                >
-                  <path d="M18 6 6 18" />
-                  <path d="m6 6 12 12" />
-                </svg>
+              {actions}
+              {showPrintButton && (
+                <Button tone="neutral" onClick={handlePrint} size="sm">
+                  {printLabel}
+                </Button>
+              )}
+              <RadixDialog.Close asChild>
+                <Button variant="outline" size="sm">
+                  {closeLabel}
+                </Button>
               </RadixDialog.Close>
             </div>
           </div>
