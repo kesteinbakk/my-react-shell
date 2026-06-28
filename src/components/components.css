@@ -4800,11 +4800,10 @@
   margin-top: 0.25rem;
 }
 .mrs-card-grid__cards {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--mrs-card-grid-min, 20rem)), 1fr));
   gap: 1rem;
   padding-bottom: 1rem;
-  justify-content: flex-start;
 }
 .mrs-card-grid__cards--center {
   justify-content: center;

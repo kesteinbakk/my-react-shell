@@ -82,13 +82,13 @@
   padding-inline: 0;
 }
 .mrs-shell[data-max-width='narrow'] .mrs-shell__container {
-  max-width: 1000px;
+  max-width: 1024px;
 }
 .mrs-shell[data-max-width='medium'] .mrs-shell__container {
-  max-width: 1200px;
+  max-width: 1280px;
 }
 .mrs-shell[data-max-width='wide'] .mrs-shell__container {
-  max-width: 1400px;
+  max-width: 1440px;
 }
 .mrs-shell[data-max-width='x-wide'] .mrs-shell__container {
   max-width: 1600px;
