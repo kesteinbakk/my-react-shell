@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.mrs-phi-card {
+  width: var(--mrs-card-width);
+  aspect-ratio: var(--mrs-card-aspect-ratio);
+  background: lightblue;
+  border: 1px solid blue;
+  /* simulating grid */
+  display: grid;
+  grid-template-rows: minmax(0, 1.618fr) minmax(0, 1fr);
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+  width: 800px;
+  background: #eee;
+}
+.grid .mrs-phi-card {
+  width: 100%; /* user overriding width to stretch */
+}
+</style>
+</head>
+<body>
+  <div class="grid">
+    <div class="mrs-phi-card" style="--mrs-card-width: 300px; --mrs-card-aspect-ratio: 1.618 / 1;">Upper<br>Lower</div>
+    <div class="mrs-phi-card" style="--mrs-card-width: 300px; --mrs-card-aspect-ratio: 1.618 / 1;">Upper<br>Lower</div>
+    <div class="mrs-phi-card" style="--mrs-card-width: 300px; --mrs-card-aspect-ratio: 1.618 / 1;">Upper<br>Lower</div>
+  </div>
+</body>
+</html>

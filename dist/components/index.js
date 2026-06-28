@@ -64,3 +64,4 @@ export { EmojiBar } from './EmojiBar';
 export { cn } from './cn';
 export { CardGrid } from './CardGrid';
 export { Preview } from './Preview';
+export { BaseCard } from './BaseCard';

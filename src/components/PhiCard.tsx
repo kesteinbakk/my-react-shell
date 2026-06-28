@@ -367,8 +367,8 @@ export const PhiCard = forwardRef<HTMLDivElement, PhiCardProps>(function PhiCard
 
   const style = {
     ...styleProp,
-    width: `${width}px`,
-    height: `${height}px`,
+    '--mrs-card-width': `${width}px`,
+    '--mrs-card-aspect-ratio': hasBottom ? `${PHI} / 1` : `${PHI * PHI} / 1`,
     fontSize: `${SIZE_FONT_REM[size]}rem`,
     ...(accent != null ? { '--mrs-phi-accent': accent } : {}),
   } as unknown as CSSProperties

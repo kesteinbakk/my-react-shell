@@ -7,7 +7,10 @@
 - **Stack:** React 19 + Vite SPA (TypeScript 6). No SSR. Built on Radix primitives (no shadcn) and TanStack Router (for dev-harness only).
 - **Backend:** Convex (`eu-west-1`, GDPR). 
 - **Package Manager:** `pnpm`.
-- **Distribution:** Tag-pinned GitHub git-dependency (`import { … } from 'my-react-shell'`). Ships a committed, precompiled `dist/` for zero-config install.
+- **Distribution & Consumption:** Tag-pinned GitHub git-dependency (`import { … } from 'my-react-shell'`). Ships a committed, precompiled `dist/` for zero-config install.
+  - **Production Consumers:** Fixed to version tags (e.g., `#v1.2.3`).
+  - **Dev Consumers:** Track `main` and receive updates as soon as commits (which include the updated `dist/`) are pushed.
+  - **Demo Page (`my-react-shell-demo`):** Consumes the shell locally via `link:../my-react-shell`. It receives updates exactly when `dist/` is rebuilt (instantly if the user runs a watch sidecar, or automatically at commit time via the pre-commit hook).
 - **Styling:** Semantic tokens only. Renders correctly in light + dark across all palettes.
 
 **Modules:**
@@ -71,6 +74,7 @@ Each module is self-contained and independently importable.
 - `docs/maintainers/release-runbook.md` — Read this EXACTLY when asked to perform a release. It contains all commands (`pnpm release <bump> --push`).
 - `docs/demo.md` — Documentation for the demo and verification surface.
 - `docs/guides/<module>.md` — Deep dives and contracts for specific modules.
+- `docs/guides/card-grid.md` — MUST READ when working with `CardGrid` or building/porting card components.
 - `.claude/skills/react-framework/react-framework-notes.md` — Framework decision and consumer guide.
 
 ### Relevant external projects:

@@ -464,8 +464,8 @@ export const StatCard = forwardRef<HTMLDivElement, StatCardProps>(function StatC
  
   const style = {
     ...styleProp,
-    width: `${width}px`,
-    height: `${height}px`,
+    '--mrs-card-width': `${width}px`,
+    '--mrs-card-aspect-ratio': `${PHI} / 1`,
     fontSize: `${SIZE_FONT_REM[size]}rem`,
     '--mrs-stat-accent': accentColor,
   } as unknown as CSSProperties

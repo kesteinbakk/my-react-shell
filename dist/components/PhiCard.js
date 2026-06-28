@@ -115,8 +115,8 @@ export const PhiCard = forwardRef(function PhiCard({ upper, content, image, imag
         (actions && actions.length > 0 ? (_jsx(PhiCardMenu, { actions: actions, icon: menuIcon, label: menuLabel })) : null);
     const style = {
         ...styleProp,
-        width: `${width}px`,
-        height: `${height}px`,
+        '--mrs-card-width': `${width}px`,
+        '--mrs-card-aspect-ratio': hasBottom ? `${PHI} / 1` : `${PHI * PHI} / 1`,
         fontSize: `${SIZE_FONT_REM[size]}rem`,
         ...(accent != null ? { '--mrs-phi-accent': accent } : {}),
     };

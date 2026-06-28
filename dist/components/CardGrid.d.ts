@@ -31,5 +31,6 @@ export interface CardGridProps<T> {
     emptyState?: ReactNode;
     noResultsMessage?: string;
     noResultsDescription?: string;
+    minColumnWidth?: string;
 }
-export declare function CardGrid<T>({ items, renderCard, getKey, searchFields, searchFn, searchPlaceholder, filterThreshold, filters, filterFn, sortOptions, defaultSort, sortFn, align, loading, emptyState, noResultsMessage, noResultsDescription, }: CardGridProps<T>): import("react").JSX.Element;
+export declare function CardGrid<T>({ items, renderCard, getKey, searchFields, searchFn, searchPlaceholder, filterThreshold, filters, filterFn, sortOptions, defaultSort, sortFn, align, loading, emptyState, noResultsMessage, noResultsDescription, minColumnWidth, }: CardGridProps<T>): import("react").JSX.Element;

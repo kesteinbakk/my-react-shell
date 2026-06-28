@@ -1727,12 +1727,28 @@
   align-items: stretch;
 }
 
+/* ── BaseCard ────────────────────────────────────────────────────────────── */
+.mrs-base-card {
+  width: 100%;
+  aspect-ratio: var(--mrs-base-card-aspect-ratio);
+  background: var(--color-surface-primary);
+  border: 1px solid var(--color-border-primary);
+  border-radius: 0.5rem;
+  box-shadow: var(--mrs-elevation-card);
+  overflow: hidden;
+  padding: 1rem;
+  color: var(--color-text-primary);
+  transition: box-shadow 200ms ease;
+}
+
 /* ── PhiCard ─────────────────────────────────────────────────────────────── */
 /* Golden-ratio card. Outer width:height = φ:1 (both set inline from PHI); the two
    sections split φ:1 via the `1.6180339887fr` literals (φ, kept in lockstep with PHI).
    `minmax(0, …)` keeps a tall figure or footer from blowing the φ tracks open. */
 .mrs-phi-card {
   position: relative;
+  width: 100%;
+  aspect-ratio: var(--mrs-card-aspect-ratio);
   display: grid;
   grid-template-rows: minmax(0, 1.6180339887fr) minmax(0, 1fr); /* upper : lower = φ : 1 */
   overflow: hidden;
@@ -2042,6 +2058,8 @@
 
 .mrs-stat-card {
   position: relative;
+  width: 100%;
+  aspect-ratio: var(--mrs-card-aspect-ratio);
   display: flex;
   flex-direction: column;
   overflow: hidden;

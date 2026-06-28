@@ -104,3 +104,5 @@ export { CardGrid } from './CardGrid';
 export type { CardGridProps, ToggleFilter, SortOption } from './CardGrid';
 export { Preview } from './Preview';
 export type { PreviewProps } from './Preview';
+export { BaseCard } from './BaseCard';
+export type { BaseCardProps, BaseCardSize } from './BaseCard';

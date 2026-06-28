@@ -1,4 +1,4 @@
-import { useState, useMemo, type ReactNode } from 'react'
+import { useState, useMemo, type ReactNode, Fragment } from 'react'
 import { useTranslation } from '../i18n'
 import { SearchInput } from './SearchInput'
 import { SectionSpinner } from './Spinner'
@@ -40,6 +40,7 @@ export interface CardGridProps<T> {
   emptyState?: ReactNode
   noResultsMessage?: string
   noResultsDescription?: string
+  minColumnWidth?: string
 }
 
 function defaultSortCompare<T>(a: T, b: T, key: string, dir: 'asc' | 'desc'): number {
@@ -85,6 +86,7 @@ export function CardGrid<T>({
   emptyState,
   noResultsMessage,
   noResultsDescription,
+  minColumnWidth,
 }: CardGridProps<T>) {
   const { t } = useTranslation()
 
@@ -270,11 +272,14 @@ export function CardGrid<T>({
             ) : null}
           </div>
         ) : (
-          <div className={cn('mrs-card-grid__cards', align === 'center' && 'mrs-card-grid__cards--center')}>
+          <div 
+            className={cn('mrs-card-grid__cards', align === 'center' && 'mrs-card-grid__cards--center')}
+            style={minColumnWidth ? { '--mrs-card-grid-min': minColumnWidth } as React.CSSProperties : undefined}
+          >
             {processedItems.map((item) => (
-              <div key={getKey(item)} className="mrs-card-grid__item">
+              <Fragment key={getKey(item)}>
                 {renderCard(item)}
-              </div>
+              </Fragment>
             ))}
           </div>
         )}

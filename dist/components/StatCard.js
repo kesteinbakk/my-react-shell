@@ -165,8 +165,8 @@ export const StatCard = forwardRef(function StatCard({ title, subtitle, medallio
     }
     const style = {
         ...styleProp,
-        width: `${width}px`,
-        height: `${height}px`,
+        '--mrs-card-width': `${width}px`,
+        '--mrs-card-aspect-ratio': `${PHI} / 1`,
         fontSize: `${SIZE_FONT_REM[size]}rem`,
         '--mrs-stat-accent': accentColor,
     };
