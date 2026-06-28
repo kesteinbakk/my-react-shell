@@ -141,6 +141,7 @@ export function SectionsListMode(props: ListModeProps): ReactNode {
             title={section.label()}
             icon={section.icon}
             actions={section.actions?.map((thunk) => thunk())}
+            type={section.type}
           >
             <LazyContent
               lazy={section.lazy}

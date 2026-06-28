@@ -94,7 +94,7 @@
   max-width: 1280px;
 }
 .mrs-shell[data-max-width='2xl'] .mrs-shell__container {
-  max-width: 1536px;
+  max-width: 1600px;
 }
 /* data-max-width="full" → no max-width. */
 
@@ -706,11 +706,28 @@ button.mrs-breadcrumbs__leaf {
   border-radius: 0.5rem;
   border: 1px solid var(--color-border-secondary);
 }
+.mrs-section__card .mrs-section__head {
+  padding: 0.625rem 1rem;
+}
+.mrs-section__card .mrs-section__body {
+  padding: 1rem;
+}
+
+.mrs-section__default {
+  background: transparent;
+  border: none;
+}
+.mrs-section__default .mrs-section__head {
+  padding: 0.625rem 0;
+}
+.mrs-section__default .mrs-section__body {
+  padding: 1rem 0;
+}
+
 .mrs-section__head {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.625rem 1rem;
   border-bottom: 1px solid var(--color-border-secondary);
 }
 .mrs-section__title {
@@ -722,9 +739,6 @@ button.mrs-breadcrumbs__leaf {
   margin-left: auto;
   display: flex;
   gap: 0.25rem;
-}
-.mrs-section__body {
-  padding: 1rem;
 }
 .mrs-section__placeholder {
   padding-block: 3rem;

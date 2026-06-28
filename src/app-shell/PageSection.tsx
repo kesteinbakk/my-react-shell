@@ -11,6 +11,8 @@ export interface PageSectionProps {
   actions?: ReactNode[]
   /** Custom CSS class name for the card container. */
   className?: string
+  /** The visual wrapper type. Default: 'card'. */
+  type?: 'default' | 'card'
   /** The main content area of the section. */
   children: ReactNode
 }
@@ -25,6 +27,7 @@ export function PageSection({
   icon,
   actions,
   className,
+  type = 'card',
   children,
 }: PageSectionProps) {
   const shell = useShellContextOptional()
@@ -33,8 +36,10 @@ export function PageSection({
   const resolvedIcon =
     typeof icon === 'string' && renderIcon ? renderIcon(icon as ShellIcon, 18) : icon
 
+  const wrapperClass = type === 'card' ? 'mrs-section__card' : 'mrs-section__default'
+
   return (
-    <div className={`mrs-section__card${className ? ` ${className}` : ''}`}>
+    <div className={`${wrapperClass}${className ? ` ${className}` : ''}`}>
       <div className="mrs-section__head">
         {resolvedIcon}
         {typeof title === 'string' ? (

@@ -9,6 +9,8 @@ export interface PageSectionProps {
     actions?: ReactNode[];
     /** Custom CSS class name for the card container. */
     className?: string;
+    /** The visual wrapper type. Default: 'card'. */
+    type?: 'default' | 'card';
     /** The main content area of the section. */
     children: ReactNode;
 }
@@ -17,4 +19,4 @@ export interface PageSectionProps {
  * PageSections card style. Hosts a header (optional icon + title + actions)
  * and a content body surface.
  */
-export declare function PageSection({ title, icon, actions, className, children, }: PageSectionProps): import("react").JSX.Element;
+export declare function PageSection({ title, icon, actions, className, type, children, }: PageSectionProps): import("react").JSX.Element;

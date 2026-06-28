@@ -74,7 +74,7 @@ export function SectionsListMode(props) {
             // `margin-right` (via .mrs-section): the card's rounded right edge
             // would otherwise butt against the scroll container's vertical
             // scrollbar — the gap keeps the rounded corner clear of the track.
-            className: "mrs-section", children: _jsx(PageSection, { title: section.label(), icon: section.icon, actions: section.actions?.map((thunk) => thunk()), children: _jsx(LazyContent, { lazy: section.lazy, forceMountAll: props.forceMountAll, scrollRoot: props.scrollRoot, children: section.children() }) }) }, section.id))) }));
+            className: "mrs-section", children: _jsx(PageSection, { title: section.label(), icon: section.icon, actions: section.actions?.map((thunk) => thunk()), type: section.type, children: _jsx(LazyContent, { lazy: section.lazy, forceMountAll: props.forceMountAll, scrollRoot: props.scrollRoot, children: section.children() }) }) }, section.id))) }));
 }
 export function SectionsSingleMode(props) {
     return (_jsx(_Fragment, { children: props.sections.map((section) => section.id === props.activeId ? _jsx("div", { className: "mrs-sections__single-section", children: section.children() }, section.id) : null) }));

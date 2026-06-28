@@ -49,6 +49,8 @@ export interface PageSection {
     actions?: Array<() => ReactNode>;
     /** Lazy load: mount children only when scrolled into view (list mode only). */
     lazy?: boolean;
+    /** The visual wrapper type. Default: 'card'. */
+    type?: 'default' | 'card';
 }
 export type PageSectionsMode = 'list' | 'single';
 export interface PageSectionsProps {
