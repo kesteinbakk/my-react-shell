@@ -2325,13 +2325,16 @@
   position: absolute;
   right: 15%;
   bottom: 8%;
-  font-size: 5.5em;
+  font-size: 7.5em;
   line-height: 1;
   opacity: 0.10;
   pointer-events: none;
   transform: rotate(-8deg);
   z-index: 0;
   user-select: none;
+}
+.mrs-stat-card--landscape.mrs-stat-card--watermark::after {
+  font-size: 5.5em;
 }
 
 /* Hover lift — translateY + deeper shadow */
