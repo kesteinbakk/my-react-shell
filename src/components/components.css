@@ -5480,7 +5480,7 @@
 .mrs-paper-card--watermark .mrs-paper-card__sheet::after {
   content: attr(data-watermark);
   position: absolute;
-  top: 62%;
+  top: 56%;
   left: 50%;
   font-size: 5em;
   line-height: 1;
