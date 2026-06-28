@@ -74,6 +74,19 @@ export interface DynamicGridCardProps extends Omit<HTMLAttributes<HTMLDivElement
      */
     renderLink?: (linkProps: DynamicGridCardLinkProps) => ReactNode;
     /**
+     * Enables the drag handler. If `true`, renders a built-in grip handle — vertical
+     * stripes pinned to the right edge, vertically centred. If a `ReactNode`, renders
+     * your custom handle.
+     *
+     * Mutually exclusive with `renderLink` (a nav tile isn't drag-reorderable) — throws in dev.
+     */
+    dragHandle?: boolean | ReactNode;
+    /**
+     * The event listeners and attributes from your DND library (e.g. `@dnd-kit`),
+     * spread onto the drag handle element.
+     */
+    dragHandleProps?: React.HTMLAttributes<HTMLButtonElement>;
+    /**
      * Semantic tone — drives an optional accent stripe. Default **none** (no accent).
      * Ignored when `color` is set. Same accent vocabulary as `StatCard`/`PaperCard`.
      */

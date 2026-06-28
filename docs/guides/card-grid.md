@@ -134,6 +134,36 @@ the same accent vocabulary as `StatCard`/`PaperCard`. It's independent of the fa
 > A `DynamicGridCard` used **outside** a `DynamicCardGrid` can set its own `size` to get the
 > same min/max cap; inside a grid, omit it and let `cardSize` drive the columns.
 
+### Drag-reorder handle
+
+`DynamicGridCard` carries the same `dragHandle` / `dragHandleProps` seam as `StatCard` /
+`ContentCard` / `PaperCard`. Pass `dragHandle` (`true` for the built-in grip, or a custom
+`ReactNode`) to render a handle, and spread your DND library's listeners (e.g. `@dnd-kit`'s
+`attributes` + `listeners`) onto it through `dragHandleProps`. Unlike the other cards — whose
+handle sits top-centre — the `DynamicGridCard` grip is **vertical stripes pinned to the right
+edge, vertically centred**, and the card reserves a little right padding so the grip never
+overlaps its content. It is **mutually exclusive with `renderLink`** (a nav tile isn't
+drag-reorderable) — passing both throws in dev.
+
+```tsx
+import { DynamicGridCard } from 'my-react-shell/components'
+import { useSortable } from '@dnd-kit/sortable'
+
+function SortableCard({ item }: { item: Item }) {
+  const { setNodeRef, attributes, listeners, transform, transition } = useSortable({ id: item.id })
+  return (
+    <DynamicGridCard
+      ref={setNodeRef}
+      title={item.title}
+      footer={{ lines: [{ text: item.meta }] }}
+      dragHandle
+      dragHandleProps={{ ...attributes, ...listeners }}
+      style={{ transform: CSS.Transform.toString(transform), transition }}
+    />
+  )
+}
+```
+
 ---
 
 ## 3. Navigation links (any card)

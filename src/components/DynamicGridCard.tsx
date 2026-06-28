@@ -86,6 +86,19 @@ export interface DynamicGridCardProps extends Omit<HTMLAttributes<HTMLDivElement
    */
   renderLink?: (linkProps: DynamicGridCardLinkProps) => ReactNode
   /**
+   * Enables the drag handler. If `true`, renders a built-in grip handle — vertical
+   * stripes pinned to the right edge, vertically centred. If a `ReactNode`, renders
+   * your custom handle.
+   *
+   * Mutually exclusive with `renderLink` (a nav tile isn't drag-reorderable) — throws in dev.
+   */
+  dragHandle?: boolean | ReactNode
+  /**
+   * The event listeners and attributes from your DND library (e.g. `@dnd-kit`),
+   * spread onto the drag handle element.
+   */
+  dragHandleProps?: React.HTMLAttributes<HTMLButtonElement>
+  /**
    * Semantic tone — drives an optional accent stripe. Default **none** (no accent).
    * Ignored when `color` is set. Same accent vocabulary as `StatCard`/`PaperCard`.
    */
@@ -107,6 +120,14 @@ export const DYNAMIC_GRID_CARD_MAX_WIDTH: Record<DynamicGridCardSize, number> = 
   md: 320,
   lg: 500,
 }
+
+/** Default grip glyph — vertical stripes, for the right-edge centred drag handle. */
+const DEFAULT_DRAG_HANDLE = (
+  <svg width="12" height="28" viewBox="0 0 12 28" fill="currentColor" aria-hidden="true" opacity="0.4">
+    <rect x="1" y="0" width="3" height="28" rx="1.5" />
+    <rect x="8" y="0" width="3" height="28" rx="1.5" />
+  </svg>
+)
 
 // ── Footer glyphs ───────────────────────────────────────────────────────────
 
@@ -181,9 +202,13 @@ function StructuredFooter({ footer }: { footer: DynamicGridCardFooter }) {
  * overlay, with `corner` controls raised above it so they stay independently clickable.
  */
 export const DynamicGridCard = forwardRef<HTMLDivElement, DynamicGridCardProps>(function DynamicGridCard(
-  { size, shape = 'standard', title, subtitle, figure, hoverable, lift = true, watermark, corner, footer, renderLink, tone, color, accentPlacement = 'top', className, style, children, ...props },
+  { size, shape = 'standard', title, subtitle, figure, hoverable, lift = true, watermark, corner, footer, renderLink, dragHandle, dragHandleProps, tone, color, accentPlacement = 'top', className, style, children, ...props },
   ref,
 ) {
+  if (dragHandle && renderLink) {
+    throw new Error('DynamicGridCard: `dragHandle` and `renderLink` are mutually exclusive — a navigable tile cannot also be drag-reordered.')
+  }
+
   const minWidth = size ? DYNAMIC_GRID_CARD_MIN_WIDTH[size] : undefined
   const maxWidth = size ? DYNAMIC_GRID_CARD_MAX_WIDTH[size] : undefined
   const aspectRatio = shape === 'landscape' ? `${PHI * PHI} / 1` : `${PHI} / 1`
@@ -224,6 +249,7 @@ export const DynamicGridCard = forwardRef<HTMLDivElement, DynamicGridCardProps>(
         hoverable && 'mrs-dynamic-grid-card--hoverable',
         hoverable && !lift && 'mrs-dynamic-grid-card--no-lift',
         renderLink && 'mrs-dynamic-grid-card--linked',
+        dragHandle && 'mrs-dynamic-grid-card--draggable',
         hasWatermark && 'mrs-dynamic-grid-card--watermark',
         hasArtWatermark && 'mrs-reveal-host',
         className,
@@ -241,6 +267,21 @@ export const DynamicGridCard = forwardRef<HTMLDivElement, DynamicGridCardProps>(
 
       {hasArtWatermark ? (
         <div className="mrs-dynamic-grid-card__watermark" aria-hidden="true">{watermark}</div>
+      ) : null}
+
+      {dragHandle ? (
+        <button
+          type="button"
+          className="mrs-dynamic-grid-card__drag-handle"
+          aria-label="Drag to reorder"
+          {...dragHandleProps}
+          onClick={(e) => {
+            e.stopPropagation()
+            dragHandleProps?.onClick?.(e as React.MouseEvent<HTMLButtonElement>)
+          }}
+        >
+          {dragHandle === true ? DEFAULT_DRAG_HANDLE : dragHandle}
+        </button>
       ) : null}
 
       {corner != null ? <div className="mrs-dynamic-grid-card__corner">{corner}</div> : null}

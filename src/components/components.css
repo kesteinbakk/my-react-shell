@@ -1920,6 +1920,47 @@
   gap: 0.25rem;
 }
 
+/* Drag handle — vertical-stripes grip pinned to the right edge, vertically centred.
+   Sits above the watermark and any raised slot. Reserve room on the right so the grip
+   never overlaps the card content (see `--draggable` padding below). */
+.mrs-dynamic-grid-card__drag-handle {
+  position: absolute;
+  top: 50%;
+  right: 6px;
+  transform: translateY(-50%);
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 4px;
+  background: transparent;
+  border: none;
+  color: var(--color-text-tertiary);
+  cursor: grab !important;
+  border-radius: 4px;
+  transition: background-color 120ms ease, color 120ms ease;
+}
+.mrs-dynamic-grid-card__drag-handle:hover {
+  background-color: var(--color-hover);
+  color: var(--color-text-primary);
+}
+.mrs-dynamic-grid-card__drag-handle:active {
+  cursor: grabbing !important;
+}
+/* Expand the clickable area beyond the visual bounds. */
+.mrs-dynamic-grid-card__drag-handle::after {
+  content: '';
+  position: absolute;
+  top: -12px;
+  right: -6px;
+  bottom: -12px;
+  left: -10px;
+}
+/* Inset the content off the right-edge grip so the two never overlap. */
+.mrs-dynamic-grid-card--draggable {
+  padding-right: calc(1rem + 16px);
+}
+
 /* ── PhiCard ─────────────────────────────────────────────────────────────── */
 /* Golden-ratio card. Outer width:height = φ:1 (both set inline from PHI); the two
    sections split φ:1 via the `1.6180339887fr` literals (φ, kept in lockstep with PHI).
