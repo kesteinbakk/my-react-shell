@@ -181,3 +181,204 @@ On the fixed-size cards the overlay sits *beneath* the content layer and the inn
 click-transparent, so `StatCard`'s medallion button (`onMedallionPress`) and any drag handle
 stay live above it. Type-safety, the auto-wired accessible name, and the raised-slot rule are
 identical to the example above on all four cards.
+
+---
+
+## 4. Per-card behaviour & examples
+
+The full prop tables live in the
+[API reference](../specifications/api-reference.md).
+This section carries the behaviour and the worked examples.
+
+### `StatCard`
+
+A self-contained φ-framed KPI / status card (`height = width / φ`). Internal layout: a
+title + subtitle header, an accent **medallion** circle, a data-stats row, and an optional
+footer slot.
+
+- **Medallion** — `{ value, label?, max?, size? }`. A plain circle (number + label) when
+  `max` is absent; an **SVG arc-ring** showing `value/max` progress when `max` is set.
+  `size` defaults to `'lg'`; `'sm'` renders a smaller footprint, drops its label, and clamps
+  numeric values to `99`. Set `onMedallionPress` to make it a pressable `<button>`.
+- **Accent** — the stripe + medallion tint are driven by `tone` (semantic tokens) or a raw
+  `color` CSS string; `accentPlacement` reads as a `'top'` stripe or a `'left'` bar.
+- **Side completion gauge** — `sideBarCompleteness` is a `0`–`1` fraction (clamped). The
+  fill rises from the bottom to `value × height`, interpolating **red → amber → green**
+  (`danger → warning → success`) over a faint track. It is independent of `accentPlacement`,
+  so a top stripe and a side gauge can show at once. **Checked, not defaulted:** `undefined`
+  → no gauge; `0` → an empty gauge. Combining with `accentPlacement='left'` throws in dev;
+  in prod the gauge wins and the left stripe is suppressed.
+- **`topStripeFollowsGauge`** — when `true`, the **whole accent** (top stripe + medallion
+  tint + stat numbers) takes the gauge's completeness colour instead of `tone`/`color`, so
+  the card reads as one coherent colour, and the stripe is forced to the top edge. Bound to
+  `sideBarCompleteness`: with no gauge present there is **no top stripe** (medallion + stats
+  fall back to `tone`/`color`).
+- **`variant`** (`'warning'`·`'danger'`) — a structural alert variant. Overrides `tone` to
+  the same value and forces `⚠️` as the watermark, ignoring `watermark`.
+- **`stats`** — `{ value, label?, max? }[]`. `label` → label above + number below; `max` →
+  compact arc-ring. **Cannot combine `label` and `max` on the same item** (throws in dev).
+- **Title auto-fit** — a very long title steps its font size down in up to three steps (by
+  character count) so it stays within ~two lines without resizing the card.
+
+> **`.mrs-stat-card__cta`** is a pre-styled CTA pill class for the freeform `footer`/`lower`
+> slot — brand background, rounded, inherits font-size. Style it yourself or use this shortcut.
+
+```tsx
+// Plain medallion circle:
+<StatCard
+  size="lg" tone="success" title="Vinnere" subtitle="Unike leverandører"
+  medallion={{ value: 27, label: 'LEV' }} watermark="🏆"
+  stats={[{ value: 18, label: 'Bredde' }, { value: 14, label: 'Spisset' }]}
+  lower={<button className="mrs-stat-card__cta" onClick={open}>🏆 Vis resultater →</button>}
+  onClick={open}
+/>
+
+// Arc-ring medallion (medallion.max):
+<StatCard
+  size="lg" tone="warning" title="Leveransemodell"
+  medallion={{ value: 10, max: 100 }} watermark="📊"
+  stats={[{ value: 10, label: 'Vurdert' }, { value: 100, label: 'Totalt' }]}
+/>
+
+// Structured footer ({ lines, badges } — same shape as the other cards):
+<StatCard size="xl" tone="info" title="Project Atlas"
+  medallion={{ value: 12, label: 'TASKS' }}
+  stats={[{ value: 8, label: 'Done' }, { value: 3, label: 'Open' }]}
+  footer={{ lines: [{ type: 'date', text: 'Jun 2026' }], badges: [<Badge tone="success">Live</Badge>] }}
+/>
+
+// Side completion gauge (red→amber→green) alongside the default top stripe:
+<StatCard
+  size="lg" tone="info" title="Onboarding" subtitle="Profile completeness"
+  medallion={{ value: 7, label: 'STEPS' }}
+  sideBarCompleteness={0.7}            // 0–1; `0` shows an empty gauge, `undefined` shows none
+  stats={[{ value: 7, label: 'Done' }, { value: 3, label: 'Left' }]}
+/>
+
+// One coherent colour — top stripe + medallion + stat numbers all follow the gauge:
+<StatCard
+  size="lg" title="Onboarding" subtitle="Profile completeness"
+  medallion={{ value: 7, label: 'STEPS' }}
+  sideBarCompleteness={0.85}
+  topStripeFollowsGauge          // tone/color ignored while a gauge is present
+  stats={[{ value: 6, label: 'Done' }, { value: 1, label: 'Left' }]}
+/>
+```
+
+### `ContentCard`
+
+The freeform-text counterpart to `StatCard` — same fixed-width golden-ratio sizing, accent
+logic, variants, watermark, and footer structure, but the medallion + stats row is replaced
+by a `content` string slot.
+
+- **`content`** clamps to `maxLines`, which is **dynamic** by default: `5` if neither
+  subtitle nor footer is present, `4` if either is, `3` if both are. Align it with
+  `contentAlignX` (`left`·`center`·`right`) / `contentAlignY` (`top`·`center`·`bottom`).
+- **`html`** — when `true`, `content` is parsed as HTML via `dangerouslySetInnerHTML` and
+  **automatically sanitized** internally with `isomorphic-dompurify`.
+- **Completion gauge** — `value` + `maxValue` render a left-side gauge (red→amber→green),
+  the `ContentCard` equivalent of `StatCard`'s `sideBarCompleteness`.
+
+```tsx
+// Text content (centered):
+<ContentCard size="md" tone="info" title="Status" content="All systems operational" />
+
+// Left-aligned HTML content with a completion gauge:
+<ContentCard
+  size="lg" tone="success" title="Milestone 3"
+  content="<b>Important:</b> Next phase begins early Q4. Ensure all deliverables are verified."
+  html={true}
+  contentAlignX="left"
+  value={45} maxValue={50}
+/>
+
+// Warning variant (body text matches amber accent):
+<ContentCard
+  size="md" variant="warning" title="Pending review"
+  content="3 items require your attention"
+  lower={<button className="mrs-stat-card__cta" onClick={open}>Review now →</button>}
+/>
+```
+
+### `PaperCard`
+
+A small **preview / thumbnail** card styled as a dog-eared sheet of paper at **A4 portrait**
+proportions (`height = width × √2`). The folded top-right corner is genuinely cut out of the
+sheet with `clip-path`; the drop shadow lives on a wrapper via `filter: drop-shadow()` so it
+follows the dog-eared silhouette (an ordinary `box-shadow` would be clipped away). Default
+size is **`sm`** — it's a thumbnail, not a full page.
+
+It shares the card-family `footer`, `watermark`, hover-lift, `dragHandle`, and `renderLink`
+seams. An accent stripe is **opt-in** (none by default — a paper card reads from its
+proportion, fold, and shadow alone), and the folded corner stays a neutral surface tint even
+when an accent is set. `content` clamps to `maxLines` (dynamic: `7` / `5` / `4`).
+
+```tsx
+import { PaperCard, CardGrid } from 'my-react-shell/components'
+
+// Plain thumbnail — title + meta only:
+<PaperCard title="Errand list" subtitle="Personal" />
+
+// With body text + a structured footer:
+<PaperCard
+  size="md"
+  title="Quarterly report"
+  subtitle="Q2 · Finance"
+  content="Revenue up 12% QoQ; margins holding. Full breakdown attached."
+  footer={{ lines: [{ type: 'date', text: '14 Jun 2026' }], badges: [<Badge tone="neutral">Draft</Badge>] }}
+/>
+
+// Opt-in accent + whole-card navigation link:
+<PaperCard
+  title="Proposal" subtitle="Acme · Sent" tone="primary"
+  content="Two attachments. Awaiting countersignature."
+  footer={{ badges: [<Badge tone="success">Active</Badge>] }}
+  renderLink={(p) => <Link {...p} to="/doc/$id" params={{ id }} />}
+/>
+
+// Fixed-size, so it drops into the static CardGrid:
+<CardGrid>
+  <PaperCard title="Meeting notes" subtitle="Standup" content="…" />
+  <PaperCard title="To-do" content="…" />
+</CardGrid>
+```
+
+### `PhiCard` *(legacy — being phased out)*
+
+Prefer `StatCard` / `ContentCard` (self-contained, and the cards that carry the `renderLink`
+navigation seam) for new work. `PhiCard` still ships so existing consumers keep building; it
+gains no new features and has no `renderLink` nav seam.
+
+A golden-ratio card: outer **W:H = φ:1**, the two sections split **φ:1**. A **figure**
+(`icon` / `image`) fills its column, centered so the border→figure gap equals the
+figure→content gap; the **text body** (`upper` + `content`) is vertically centered and
+flush-left at the φ split (or the edge padding when there's no figure). Pass **both `icon`
+and `upper`/`content`** → the original 1 : φ logo-and-title split; `iconFill` makes the icon
+fill its column. The **bottom collapses when there's no footer** (the card shrinks to the
+top band's height `W/φ²`). `size` also sets a base inherited `font-size`; `PHI`
+(`1.6180339887`) is exported.
+
+**Footer** — pass a structured `footer={{ lines, badges }}`: evenly-spread **rows**, each
+pairing line[i] (left, with an optional `date`/`time`/`check` glyph the kit ships) with
+badge[i] (right). Or use the freeform `lower` node. **Throws in dev** if both are given, or
+if the per-size caps are exceeded — lines: sm 1 · md 2 · lg 3 · xl 5; badges: sm/md 1 · lg 2
+· xl 4. Top-right **overflow menu**: pass `actions` for a ⋮ → Radix `DropdownMenu`; for
+anything else use the `corner` slot (replaces the menu). The corner never triggers a
+clickable card's `onClick`.
+
+```tsx
+<PhiCard
+  size="lg"
+  icon={<Hexagon />}
+  iconFill
+  upper={<><strong>Project Atlas</strong><span className="text-muted-foreground">Logo · title</span></>}
+  footer={{
+    lines: [{ type: 'date', text: '12 Jun 2026' }, { type: 'check', text: 'Reviewed' }],
+    badges: [<Badge key="a" tone="success" dot>Live</Badge>, <Badge key="b">v2</Badge>],
+  }}
+  actions={[{ icon: <Pencil size={16} />, label: 'Edit', onSelect: onEdit }]}
+/>
+
+// no footer → the card collapses to the top band's height (W/φ²):
+<PhiCard size="md" upper={<MyHeader />} />
+```

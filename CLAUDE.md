@@ -56,8 +56,9 @@ module, never mandated.
 > component modules have landed — documented in the single API reference
 > ([docs/specifications/api-reference.md](docs/specifications/api-reference.md)), with a
 > deeper guide in `docs/guides/` per module where there's more to say than the reference
-> (the `components` module has none — the reference is its canonical doc), plus the
-> module-authoring contract — distributed as a standard node module (a committed,
+> (the `components` module's depth lives in `docs/guides/components.md` for the involved
+> components + cross-cutting patterns, and `docs/guides/card-grid.md` for the cards), plus
+> the module-authoring contract — distributed as a standard node module (a committed,
 > precompiled `dist/`). The component module is being widened to the **complete surface**
 > — the un-opinionated primitives alongside the composites, built on Radix with no shadcn.
 > The theme tokens are **shared** with the SolidJS `zingularis/foundation` via the `themes`
@@ -248,7 +249,7 @@ foundation source and match it; don't reconstruct from memory or the happy path.
 - **Guides are for depth, not the export list — and must be kept current.** A module ships
   a `docs/guides/<module>.md` for the *why* + the contract to fill / how to bring your own
   — only when there's more to say than the API reference carries. A module whose guide would
-  only restate the reference ships none (e.g. `components`). **When a change affects a
+  only restate the reference ships none. **When a change affects a
   module's behavior, constraints, or contract — a new validation, a changed default, a
   new concept, a corrected example — the relevant guide must be updated in the same
   change.** Guides ship inside the package alongside the API reference (`package.json` →

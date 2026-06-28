@@ -5,7 +5,7 @@ summary: >
   with signatures and minimal usage. The fast index the per-module guides aren't.
 status: current
 area: all modules
-last_updated: 2026-06-24
+last_updated: 2026-06-28
 ---
 
 # my-react-shell — API reference
@@ -240,8 +240,11 @@ export const { useTranslation, useT, translateNow } = createTypedI18n<Key>()
 ## `my-react-shell/components` — component kit
 
 Components built on Radix + the theme tokens (rendered with `mrs-`-prefixed plain CSS),
-so a consumer needs **no shadcn**. This section is the **canonical reference** for the
-kit — there is no separate `docs/guides/` file for it.
+so a consumer needs **no shadcn**. This section is the lean **API reference** for the kit —
+every export, its props, and a minimal usage snippet. For the longer prose — shared
+conventions, the more involved components, and cross-cutting patterns — see the
+[components guide](../guides/components.md); for the cards and the two grids see the
+[card guide](../guides/card-grid.md).
 
 ```ts
 import { Alert, cn /* … */ } from 'my-react-shell/components'
@@ -333,12 +336,11 @@ Every component has a matching `…Props` type export (e.g. `ButtonProps`, `Butt
 `ToggleGroupSingleProps`, `ToggleGroupMultipleProps`, `SheetProps`, `SheetSide`,
 `SheetSize`, `CalendarProps`, `DatePickerProps`, `EmojiPickerProps`, `EmojiBarProps`, etc.).
 
-**Semantic colour is one shared vocabulary.** The kit exports a canonical **`Tone`**
-type (`primary`·`neutral`·`info`·`success`·`warning`·`danger`) and its **`TONE_COLOR`**
-`--color-*` map. Every `tone` prop uses `Tone` or a documented narrowing of it (`Alert`
-and `Toast` drop `primary`/`neutral` — a neutral note is `InfoBox`; `ConfirmDialog` is
-`neutral`/`danger`). **`variant`** is reserved for *structural* style only
-(`Collapsible`, `Accordion`).
+**Semantic colour is one shared vocabulary.** The kit exports a canonical **`Tone`** type
+(`primary`·`neutral`·`info`·`success`·`warning`·`danger`) and its **`TONE_COLOR`**
+`--color-*` map; **`tone`** carries semantic colour, **`variant`** structural style only.
+Full convention + the per-component narrowings:
+[components guide](../guides/components.md#semantic-colour-is-one-shared-vocabulary).
 
 ```tsx
 <Alert tone="warning" title="Heads up" onDismiss={() => {}}>Session expires soon.</Alert>
@@ -368,25 +370,12 @@ const columns: TableColumn<Row>[] = [{ key: 'name', header: 'Name', render: r =>
 </span>
 ```
 
-### Width & Styling Conventions
+### Width & styling
 
-All input and form components (`Input`, `Textarea`, `Select`, `Checkbox`, `Switch`, `RadioGroup`, `SegmentedControl`, `ColorPicker`, `DatePicker`, `Slider`) support custom layout sizing and styling out of the box using:
-
-- **`className` prop:** Allows setting classes (like Tailwind width utilities `w-64`, `w-80`, `w-full` or custom CSS classes) directly on the component's root or trigger element.
-- **`style` prop:** Accepts standard React inline styles (`style?: CSSProperties`) directly on the component's root or trigger element (e.g., `style={{ width: '300px' }}`).
-
-#### Examples
-
-```tsx
-// Using className (e.g., Tailwind CSS):
-<Select className="w-80" options={options} value={value} onValueChange={setValue} />
-<Input className="w-96" placeholder="Custom width input..." />
-
-// Using inline styles:
-<DatePicker style={{ width: '250px' }} value={date} onChange={setDate} />
-<Slider style={{ width: '200px' }} value={[volume]} onValueChange={([v]) => setVolume(v)} />
-<Textarea style={{ width: '400px', height: '150px' }} placeholder="Custom textarea size..." />
-```
+All input/form components (`Input`, `Textarea`, `Select`, `Checkbox`, `Switch`,
+`RadioGroup`, `SegmentedControl`, `ColorPicker`, `DatePicker`, `Slider`) accept `className`
+and `style` on their root / trigger element for custom sizing. Examples:
+[components guide → Width & styling](../guides/components.md#width--styling).
 
 **`Alert` props:** `tone` (`'info'`), `title`, `children`, `icon` (per-tone; `false`
 drops it), `onDismiss` (renders a dismiss button), `dismissLabel` (`'Dismiss'`),
@@ -420,12 +409,9 @@ All other native `<button>` attributes pass straight through to the `<button>`, 
 `ref` is forwarded to it — so an `ActionButton` works directly as a Radix `asChild`
 trigger (e.g. a `Popover` / `Tooltip` / `DropdownMenu` anchor) with no wrapper element.
 
-> **Header band forces inline.** The `vertical` default is for standalone toolbars and
-> action grids. An `ActionButton` placed in the page-header band's `actions` slot (via
-> `usePageHeader({ actions })`) always renders **inline** (glyph before label) regardless
-> of `layout` — the app-shell stylesheet overrides it, because a stacked label blows out
-> the header band's height. Pass `layout="inline"` there anyway for clarity; icon-only
-> actions are unaffected.
+> Placed in the page-header band's `actions` slot, an `ActionButton` always renders inline
+> (glyph before label) regardless of `layout`. See
+> [components guide](../guides/components.md#actionbutton--header-band-layout).
 
 ```tsx
 <ActionButtonGroup>
@@ -456,20 +442,10 @@ An opinionated search input component with built-in debouncing, left magnifier g
 
 ### `ColorPicker`
 
-A general, controlled color picker behind a compact popover trigger. Two behaviours,
-chosen by whether you constrain it:
-
-- **Free** (default) — a full hue/saturation range (the `react-colorful` optional peer;
-  install it when you use `ColorPicker`). `onChange` emits a CSS color string in `format`
-  (`hex` · `rgb` · `hsl`). The hex format also gets an editable hex field; rgb/hsl show the
-  current value read-only below the canvas.
-- **Constrained** — pass a `colors` set and the picker is **limited** to it, shown as a
-  `Tab`-navigable swatch grid (the same a11y model as `SegmentedControl`). Each entry may be
-  **any** CSS color string; `onChange` emits the picked entry verbatim. `format` is ignored.
-
-It is **controlled** and persists nothing: `value` / `onChange` is always a **directly-usable
-CSS color string** — drop it into a `style`/`background`. In free mode pass / read `value` in
-the same `format`.
+A controlled popover colour picker — **free** (full hue/saturation range, `react-colorful`
+peer) by default, or **constrained** to a swatch grid when you pass a `colors` set. `value`
+/ `onChange` is always a directly-usable CSS colour string. Free vs constrained behaviour:
+[components guide](../guides/components.md#colorpicker--free-vs-constrained).
 
 | Prop | Default | Meaning |
 |---|---|---|
@@ -483,26 +459,16 @@ the same `format`.
 | `disabled` / `aria-label` / `className` | — | Usual control props; `aria-label` falls back to a string `label`. |
 
 ```tsx
-// Free pick — hex (default):
 const [color, setColor] = useState('#3b82f6')
 <ColorPicker label="Any color" placeholder={t('color.pick')} value={color} onChange={setColor} />
-
-// Free pick — rgb / hsl output:
-<ColorPicker format="rgb" placeholder={t('color.pick')} value={rgb} onChange={setRgb} />
-<ColorPicker format="hsl" placeholder={t('color.pick')} value={hsl} onChange={setHsl} />
-
-// Constrained to a fixed set:
-<ColorPicker colors={['#ef4444', '#22c55e', '#3b82f6']} placeholder={t('color.pick')} value={color} onChange={setColor} />
 ```
 
 ### `Collapsible`
 
-A single disclosure — one trigger toggling one collapsible region — on Radix
-Collapsible (open-state management, `aria-expanded`/`aria-controls`, the
-`--radix-collapsible-content-height` var the height animation reads). Works
-**controlled** (`expanded` + `onExpandedChange`) or **uncontrolled**
-(`defaultExpanded`). For a set of disclosures with one-open-at-a-time /
-roving-focus behavior, use [`Accordion`](#accordion).
+A single disclosure — one trigger toggling one region — on Radix Collapsible.
+**Controlled** (`expanded`) or **uncontrolled** (`defaultExpanded`). For a set with
+one-open-at-a-time / roving focus use [`Accordion`](#accordion); when to use which +
+examples: [components guide](../guides/components.md#collapsible-vs-accordion).
 
 | Prop | Default | Meaning |
 |---|---|---|
@@ -523,26 +489,17 @@ roving-focus behavior, use [`Accordion`](#accordion).
 | `className` / `triggerClassName` / `contentClassName` / `arrowClassName` | — | Class overrides on root / trigger / content / chevron. |
 
 ```tsx
-// Uncontrolled, open by default:
 <Collapsible defaultExpanded trigger="Shipping & returns">
   <p>Free shipping over 500 kr…</p>
-</Collapsible>
-
-// Controlled, trigger reflects state:
-const [open, setOpen] = useState(false)
-<Collapsible variant="bordered" expanded={open} onExpandedChange={setOpen}
-  renderTrigger={(o) => <span>{o ? 'Hide details' : 'Show details'}</span>}>
-  <p>…</p>
 </Collapsible>
 ```
 
 ### `Accordion`
 
-A vertical set of disclosures with group behavior — roving arrow-key focus between
-headers, and single (one-open-at-a-time) or multiple-open mode — on Radix Accordion.
-**Data-driven** via `items`; the open set is **controlled** (`value` /
-`onValueChange`) or **uncontrolled** (`defaultValue`). For a lone trigger+region,
-use [`Collapsible`](#collapsible).
+A set of disclosures with group behaviour (roving focus, single or `multiple` open) on
+Radix Accordion. **Data-driven** via `items`; **controlled** (`value`) or **uncontrolled**
+(`defaultValue`). For a lone trigger+region use [`Collapsible`](#collapsible); when to use
+which + examples: [components guide](../guides/components.md#collapsible-vs-accordion).
 
 `AccordionItem`: `{ value: string; trigger: ReactNode; content: ReactNode; disabled?: boolean; actionsStart?: ReactNode; actionsEnd?: ReactNode }`.
 
@@ -565,35 +522,14 @@ const items = [
   { value: 'a', trigger: 'First', content: <p>…</p> },
   { value: 'b', trigger: 'Second', content: <p>…</p> },
 ]
-// Single (default) — opening one closes the rest:
 <Accordion variant="bordered" defaultValue="a" items={items} />
-
-// Multiple — independent:
-<Accordion type="multiple" variant="separated" defaultValue={['a', 'b']} items={items} />
 ```
 
 ### Surfaces & elevation
 
-Kit components render on the semantic surface ladder (full definition in the
-[theme guide](../guides/theme.md#the-surface-ladder)); each role maps to one token:
-
-- **`surface-primary`** — the default card / panel fill: `PhiCard`, `StatCard`, the
-  `InputField` / `Select` field, the `ColorPicker` trigger, the active
-  `SegmentedControl` item, the `Accordion` `bordered` / `separated` container.
-- **`surface-raised`** — floating chrome that lifts above the card: `ConfirmDialog`,
-  `UserPreferences`, the `Select` menu, the `ColorPicker` popover, the `PhiCard`
-  overflow menu.
-- **`surface-sunken`** — recessed inset regions (a well below the card): `InfoBox` /
-  neutral `Alert`, `Chip`, the `Table` header + zebra rows, the `SegmentedControl`
-  track, the `filled` `Collapsible` trigger.
-- **`surface-sunken-deep`** — a deeper recess, for filled neutral elements: neutral
-  `Badge`, `Avatar`.
-
-Cards and floating chrome also carry a real **elevation** — kit-local box-shadow
-geometry over the palette's `--color-shadow-*` shade, so depth tracks light/dark and
-a card reads as a lifted layer instead of sitting flat. A soft lift for cards
-(deeper on hover) and a stronger ambient for floating chrome (dialogs, menus,
-toasts). The geometry is kit-internal (`--mrs-elevation-*`), not a public token.
+Kit components render on the semantic surface ladder and carry a real elevation
+(light/dark aware). The per-component surface mapping and the elevation model:
+[components guide → Surfaces & elevation](../guides/components.md#surfaces--elevation).
 
 ### `PhiCard`
 
@@ -601,27 +537,11 @@ toasts). The geometry is kit-internal (`--mrs-elevation-*`), not a public token.
 > golden-ratio, and the cards that carry the `renderLink` navigation seam) for new work.
 > `PhiCard` still ships so existing consumers keep building; it gains no new features.
 
-A golden-ratio card: outer **W:H = φ:1**, the two sections split **φ:1**. The card owns its
-padding (`em`-scaled by `size`). A **figure** (`icon` / `image`) fills its column, centered
-so the border→figure gap equals the figure→content gap; the **text body** (`upper`
-title/subtitle + `content`) carries no padding of its own — it's vertically centered and
-flush-left at the φ split (or the edge padding when there's no figure). Pass **both `icon`
-and `upper`/`content`** → the original 1 : φ logo-and-title split; `iconFill` makes the icon
-fill its column. The **bottom collapses when there's no footer** (`footer`/`lower` absent →
-not rendered; the card shrinks to the top band's height `W/φ²`). `size` also sets a base
-inherited `font-size`; `PHI` (`1.6180339887`) is exported (height = width / φ).
-
-**Footer** — pass a structured `footer={{ lines, badges }}`: the footer is evenly-spread
-**rows**, each pairing the line at index `i` (left, with an optional `date`/`time`/`check`
-glyph the kit ships) with the badge at index `i` (right) — so an equal-count footer aligns
-line-to-badge. Or use the freeform `lower` node as an escape hatch. **Throws in dev** if both
-are given, or if the per-size caps are exceeded — lines: sm 1 · md 2 · lg 3 · xl 5; badges:
-sm/md 1 · lg 2 · xl 4. An inset separator divides the sections (only when there's a footer).
-
-Top-right **overflow menu**: pass `actions` and the card renders a ⋮ trigger → Radix
-`DropdownMenu` of those items. For anything else use the `corner` slot (replaces the menu).
-The kit ships no icon registry and never imports i18n — you bring action glyphs / badges and
-pass translated labels. The corner never triggers a clickable card's `onClick`.
+A golden-ratio card (W:H = φ:1, sections split φ:1) with a figure, a centered text body, a
+structured `footer` (`{ lines, badges }`, per-size caps, throws over) or freeform `lower`,
+and a top-right ⋮ overflow menu (`actions`) or `corner` slot. `PHI` (`1.6180339887`) is
+exported. Layout, footer-row pairing, and caps:
+[card guide → PhiCard](../guides/card-grid.md#phicard-legacy--being-phased-out).
 
 | Prop | Default | Meaning |
 |---|---|---|
@@ -657,14 +577,16 @@ pass translated labels. The corner never triggers a clickable card's `onClick`.
   }}
   actions={[{ icon: <Pencil size={16} />, label: 'Edit', onSelect: onEdit }]}
 />
-
-// no footer → the card collapses to the top band's height (W/φ²):
-<PhiCard size="md" upper={<MyHeader />} />
 ```
 
 ### `StatCard`
 
-Self-contained φ-framed KPI card — a fixed-width golden-ratio card (W:H = φ:1, so `height = width / φ`). It carries its own `size` width scale (no longer derived from `PhiCard`, which is being phased out): `sm` 240 · `md` 312 · `lg` 400 · `xl` 520 px, default `md` ≈312px so four sit on a `wide` (1440px) row. Internal layout: title + subtitle header, an accent medallion circle, a data-stats row, and an optional footer slot. Accent stripe + medallion tint are driven by `tone` (semantic tokens) or a raw `color` CSS string. An optional left-edge completion gauge (`sideBarCompleteness`) reads independently of the accent, so a top stripe and a side gauge can show at once — or, with `topStripeFollowsGauge`, the whole accent takes the gauge's completeness color. It can act as a **whole-card navigation link** via `renderLink` (a block-link overlay; the medallion button and drag handle stay clickable above it).
+Self-contained φ-framed KPI / status card (`height = width / φ`): title + subtitle, an accent
+**medallion** (number or arc-ring), a stats row, and a structured `footer` or freeform
+`lower`. `size` widths `sm` 240 · `md` 312 · `lg` 400 · `xl` 520 px (default `md`). Acts as a
+whole-card link via `renderLink`. Medallion, gauge (`sideBarCompleteness`,
+`topStripeFollowsGauge`), `variant`, and worked examples:
+[card guide → StatCard](../guides/card-grid.md#statcard).
 
 | Prop | Default | Meaning |
 |---|---|---|
@@ -690,55 +612,21 @@ Self-contained φ-framed KPI card — a fixed-width golden-ratio card (W:H = φ:
 | `className` | — | Extra classes. |
 
 ```tsx
-// Plain medallion circle:
 <StatCard
   size="lg" tone="success" title="Vinnere" subtitle="Unike leverandører"
   medallion={{ value: 27, label: 'LEV' }} watermark="🏆"
   stats={[{ value: 18, label: 'Bredde' }, { value: 14, label: 'Spisset' }]}
-  lower={<button className="mrs-stat-card__cta" onClick={open}>🏆 Vis resultater →</button>}
   onClick={open}
-/>
-
-// Arc-ring medallion (medallion.max):
-<StatCard
-  size="lg" tone="warning" title="Leveransemodell"
-  medallion={{ value: 10, max: 100 }} watermark="📊"
-  stats={[{ value: 10, label: 'Vurdert' }, { value: 100, label: 'Totalt' }]}
-/>
-
-// Structured footer (same as PhiCard):
-<StatCard size="xl" tone="info" title="Project Atlas"
-  medallion={{ value: 12, label: 'TASKS' }}
-  stats={[{ value: 8, label: 'Done' }, { value: 3, label: 'Open' }]}
-  footer={{ lines: [{ type: 'date', text: 'Jun 2026' }], badges: [<Badge tone="success">Live</Badge>] }}
-/>
-
-// Side completion gauge (red→amber→green) alongside the default top stripe:
-<StatCard
-  size="lg" tone="info" title="Onboarding" subtitle="Profile completeness"
-  medallion={{ value: 7, label: 'STEPS' }}
-  sideBarCompleteness={0.7}            // 0–1; `0` shows an empty gauge, `undefined` shows none
-  stats={[{ value: 7, label: 'Done' }, { value: 3, label: 'Left' }]}
-/>
-
-// One coherent color — top stripe + medallion + stat numbers all follow the gauge:
-<StatCard
-  size="lg" title="Onboarding" subtitle="Profile completeness"
-  medallion={{ value: 7, label: 'STEPS' }}
-  sideBarCompleteness={0.85}
-  topStripeFollowsGauge          // tone/color ignored while a gauge is present
-  stats={[{ value: 6, label: 'Done' }, { value: 1, label: 'Left' }]}
 />
 ```
 
-> **`.mrs-stat-card__cta`** is a pre-styled CTA pill class for the `lower` slot — brand background, rounded, inherits font-size. Style it yourself or use this shortcut.
-
 ### Card grids — static vs dynamic
 
-Two distinct layouts ship for arranging cards. Pick by whether the cards have an intrinsic size:
-
-- **`CardGrid` (static)** — for **fixed-size** cards (`StatCard`, `ContentCard`, `PaperCard`, legacy `PhiCard`). They flow left-to-right and **wrap**, separated by a fixed `gap`; they are **not** stretched, so a larger gap can remain at the end of a row, and every card keeps its own width/height. Children-based. (Don't put a fixed-size card in the fluid `DynamicCardGrid` — it overflows its narrower `1fr` column and overlaps its neighbour.) See the read-first card guide: `docs/guides/card-grid.md`.
-- **`DynamicCardGrid` + `DynamicGridCard` (fluid)** — for **size-less** cards that should **stretch** to fill uniform `1fr` columns (with a search/filter/sort toolbar). The grid sets the column track; `DynamicGridCard` fills it and inherits a max-width cap.
+Two layouts: **`CardGrid`** (static — fixed-size cards wrap, never stretch) and
+**`DynamicCardGrid`** + **`DynamicGridCard`** (fluid — size-less cards stretch to `1fr`
+columns, with a search/filter/sort toolbar). Pick by whether the card has an intrinsic size;
+don't mix them. Full rationale + the stretch mechanics:
+[card guide](../guides/card-grid.md).
 
 #### `CardGrid` (static)
 
@@ -818,7 +706,11 @@ import { Link } from '@tanstack/react-router'
 
 ### `ContentCard`
 
-Self-contained freeform text counterpart to `StatCard`. It carries the same fixed-width golden-ratio sizing (`sm` 240 · `md` 312 · `lg` 400 · `xl` 520 px, default `md` ≈312px), accent stripe logic, variants, watermark, and footer structure as `StatCard`, but replaces the medallion and stats grid with a `content` string slot that automatically clamps to 3 lines. Left-side completion gauges are supported via `value` and `maxValue` props (which replace the medallion).
+Self-contained freeform-text counterpart to `StatCard` — same fixed-width golden-ratio
+sizing, accent logic, variants, watermark, and footer, but a `content` string slot
+(`maxLines` clamp, optional sanitized `html`) and a `value`/`maxValue` completion gauge in
+place of the medallion. Behaviour + examples:
+[card guide → ContentCard](../guides/card-grid.md#contentcard).
 
 | Prop | Default | Meaning |
 |---|---|---|
@@ -842,32 +734,15 @@ Self-contained freeform text counterpart to `StatCard`. It carries the same fixe
 | `renderLink` | — | Interactive-root seam — same block-link-overlay mechanism as `StatCard` (`(linkProps) => ReactNode`; the whole tile becomes the consumer's router `<Link>`, root owns its states, no router dep in the shell). |
 
 ```tsx
-// Text content (centered):
-<ContentCard
-  size="md" tone="info" title="Status"
-  content="All systems operational"
-/>
-
-// Left-aligned HTML content with a completion gauge:
-<ContentCard
-  size="lg" tone="success" title="Milestone 3"
-  content="<b>Important:</b> Next phase begins early Q4. Ensure all deliverables are verified."
-  html={true}
-  contentAlignX="left"
-  value={45} maxValue={50}
-/>
-
-// Warning variant (body text matches amber accent):
-<ContentCard
-  size="md" variant="warning" title="Pending review"
-  content="3 items require your attention"
-  lower={<button className="mrs-stat-card__cta" onClick={open}>Review now →</button>}
-/>
+<ContentCard size="md" tone="info" title="Status" content="All systems operational" />
 ```
 
 ### `PaperCard`
 
-A small **preview / thumbnail** card styled as a dog-eared sheet of paper at **A4 portrait** proportions (`height = width × √2`). The folded top-right corner is genuinely cut out of the sheet with `clip-path`; the drop shadow lives on a wrapper via `filter: drop-shadow()` so it follows the dog-eared silhouette (an ordinary `box-shadow` would be clipped away). Default size is **`sm`** — it's a thumbnail, not a full page. Shares the card-family footer, watermark, hover-lift, drag-handle, and `renderLink` block-link seams; an accent stripe is **opt-in** (none by default — a paper card reads from its proportion, fold, and shadow alone), and the folded corner stays a neutral surface tint even when an accent is set.
+A small **preview / thumbnail** card styled as a dog-eared A4-portrait sheet
+(`height = width × √2`, default `size` `sm`). Shares the card-family `footer`, `watermark`,
+hover-lift, `dragHandle`, and `renderLink` seams; an accent stripe is **opt-in**. Fold/shadow
+mechanics + examples: [card guide → PaperCard](../guides/card-grid.md#papercard).
 
 | Prop | Default | Meaning |
 |---|---|---|
@@ -890,41 +765,15 @@ A small **preview / thumbnail** card styled as a dog-eared sheet of paper at **A
 | `className` / `style` | — | Extra classes / style on the outer card. |
 
 ```tsx
-import { PaperCard, CardGrid } from 'my-react-shell/components'
-
-// Plain thumbnail — title + meta only:
 <PaperCard title="Errand list" subtitle="Personal" />
-
-// With body text + a structured footer:
-<PaperCard
-  size="md"
-  title="Quarterly report"
-  subtitle="Q2 · Finance"
-  content="Revenue up 12% QoQ; margins holding. Full breakdown attached."
-  footer={{ lines: [{ type: 'date', text: '14 Jun 2026' }], badges: [<Badge tone="neutral">Draft</Badge>] }}
-/>
-
-// Opt-in accent + whole-card navigation link:
-<PaperCard
-  title="Proposal" subtitle="Acme · Sent" tone="primary"
-  content="Two attachments. Awaiting countersignature."
-  footer={{ badges: [<Badge tone="success">Active</Badge>] }}
-  renderLink={(p) => <Link {...p} to="/doc/$id" params={{ id }} />}
-/>
-
-// Fixed-size, so it drops into the static CardGrid:
-<CardGrid>
-  <PaperCard title="Meeting notes" subtitle="Standup" content="…" />
-  <PaperCard title="To-do" content="…" />
-</CardGrid>
 ```
 
 ### `UserPreferences`
 
-A fully **controlled** theme/display panel in a Radix dialog (palette + light/dark/system
-+ an optional icons↔emojis switch). It **persists nothing** — reads each value, emits
-`onChange` — so the consumer owns storage. Auth-free; surface sign-out/profile via the
-`accountActions` slot. All labels are English defaults; pass translated values via your `t()`.
+A fully **controlled** theme/display panel in a Radix dialog (palette + light/dark/system +
+an optional icons↔emojis switch). It **persists nothing** — emits `onChange`; the consumer
+owns storage. Auth-free (`accountActions` slot); labels are English defaults, pass translated
+strings. Notes: [components guide → UserPreferences](../guides/components.md#userpreferences).
 
 | Prop | Default | Meaning |
 |---|---|---|
@@ -945,11 +794,6 @@ A fully **controlled** theme/display panel in a Radix dialog (palette + light/da
   followSystem={isSystemMode} onFollowSystemChange={setSystemMode}
   iconMode={iconMode} onIconModeChange={setIconMode} />
 ```
-
-> The kit **never imports i18n or the icons module**: pass translated label text via
-> props, and wire the icons↔emojis swap yourself via `useIconMode().isEmoji`. All labels
-> have English defaults. Components are themed **only through the semantic tokens** — change
-> a token in your palette and the kit follows, no component edits.
 
 ### `EmojiPicker` / `EmojiBar`
 
@@ -981,30 +825,12 @@ without a language string or a character that could be mistaken for real emoji c
 Exported from `my-react-shell/components` for use as an initial value or to build a subset.
 
 ```tsx
-// Inline picker — embed directly in a form or chat UI:
-<EmojiPicker onSelect={(emoji) => setReaction(emoji)} />
-
-// Behind a Popover trigger — EmojiEmpty as the unset placeholder:
-const [open, setOpen] = useState(false)
-<Popover open={open} onOpenChange={setOpen}
-  trigger={
-    <Button variant="outline">
-      {reaction ? <span>{reaction}</span> : <EmojiEmpty />}
-    </Button>
-  }>
-  <EmojiPicker onSelect={(emoji) => { setReaction(emoji); setOpen(false) }} />
-</Popover>
-
-// Norwegian locale:
-<EmojiPicker locale="nb" onSelect={onSelect} />
-
-// EmojiBar — default frequent set:
-<EmojiBar onSelect={(emoji) => appendToMessage(emoji)} />
-
-// Custom set + subset:
-<EmojiBar emojis={['🎉', '🔥', '💯', '✅']} onSelect={onSelect} />
-<EmojiBar emojis={EMOJI_FREQUENT.slice(0, 6)} onSelect={onSelect} />
+<EmojiPicker onSelect={(emoji) => setReaction(emoji)} />   // inline
+<EmojiBar onSelect={(emoji) => appendToMessage(emoji)} />  // quick strip (default frequent set)
 ```
+
+More examples (Popover integration, locale, custom sets):
+[components guide → EmojiPicker / EmojiBar](../guides/components.md#emojipicker--emojibar).
 
 > Install `emojibase-data` (`pnpm add emojibase-data`) before using `EmojiPicker`.
 > `EmojiBar` and `EmojiEmpty` have no peer dependency.
@@ -1208,8 +1034,9 @@ inside your router, at the root route's layout — not here.
 
 - Per-module deep guides (rationale + contract beyond this reference): [theme](../guides/theme.md) ·
   [providers](../guides/providers.md) · [auth](../guides/auth.md) · [i18n](../guides/i18n.md) ·
-  [icons](../guides/icons.md) · [app-shell](../guides/app-shell.md). The **components** module
-  has no separate guide — this reference is its canonical doc.
+  [icons](../guides/icons.md) · [app-shell](../guides/app-shell.md) ·
+  [components](../guides/components.md) (shared conventions, the involved components, cross-cutting patterns) ·
+  [card-grid](../guides/card-grid.md) (the cards + the two grids).
 - [concept.md](https://github.com/kesteinbakk/my-react-shell/blob/main/docs/concept.md) — what this is and its boundary
 - [distribution-model.md](../guides/distribution-model.md) — install, tags, the local dev-loop
 - New React project from scratch: the `react-framework` skill
