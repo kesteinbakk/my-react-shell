@@ -7,7 +7,7 @@
 // *devDependency* here, and its CSS is copied ("vendored") into the shell's
 // committed `src/themes/` at release time — `src/index.css` imports those copies
 // relatively, and they ship via the `src/**/*.css` files glob. See
-// docs/guides/distribution-model.md and docs/guides/release-runbook.md.
+// docs/guides/distribution-model.md and docs/maintainers/release-runbook.md.
 //
 // Usage:
 //   node scripts/sync-themes.mjs           one-shot copy (used by `release` + the pre-commit guard)
@@ -41,7 +41,7 @@ These files are **copies** of the shared \`themes\` package, vendored into the
 shell so consumers depend on only \`my-react-shell\` (never the transitive
 \`themes\` git-dep). Edit colours in \`~/Developer/themes\`; they flow here via
 \`pnpm sync:themes\` (the dev watcher does it automatically — see
-docs/guides/release-runbook.md). A pre-commit guard keeps these in lockstep with
+docs/maintainers/release-runbook.md). A pre-commit guard keeps these in lockstep with
 the resolved \`themes\`.
 `
 
