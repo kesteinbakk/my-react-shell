@@ -1,6 +1,6 @@
 # T029 — Card link / interactive-root pattern (nav cards first)
 
-**Status:** in-progress
+**Status:** finished (EntityCard deletion carved out — see Status section)
 **Filed:** 2026-06-28
 
 ## Goal
@@ -263,6 +263,41 @@ standard golden-ratio (φ:1) height reads too tall/empty.
   `components.css` (landscape height + any inner-layout tune), `index.ts` types,
   api-reference, and `docs/guides/card-grid.md` (the fixed-size cards now have a proportion
   axis).
+
+## Status — implemented (Phases 1–3 core)
+
+- **Phase 1 (done).** `DynamicGridCard` gained `figure` / `hoverable` / `corner` /
+  `renderLink` + the block-link overlay, a unified `footer` slot (freeform node or
+  structured `{ lines, badges }`), and the `variant`→`shape` rename. Shell + demo
+  card-grid page + api-reference + `card-grid.md` updated. Browser-verified: the corner
+  menu opens without navigating; the link is auto-named from the title.
+- **Phase 2 (done).** `StatCard` / `ContentCard` ported to the same `renderLink` + overlay
+  seam (overlay beneath the content layer; `__inner` click-transparent so the medallion
+  button / drag handle stay live via `pointer-events`), unified `footer` (`lower` removed),
+  added the landscape `shape` (`height = width / φ²`) and the `dragHandle`×`renderLink` dev
+  throw. Shell + demo kit pages + docs updated. Browser-verified: clicking the medallion in
+  a linked card fires `onMedallionPress` and does **not** navigate.
+- **Phase 3 (NavCard retired — done).** Consumer `offansk-ev`: deleted `NavCard`; swapped
+  `SetupHome`, `DocumentsHome`, `TenantTemplatesPage`, `TenantAdminHome`, and
+  `AccessGroupsView` to `DynamicGridCard` + `renderLink` (AppIcon/emoji in `figure`,
+  AccessGroupsView's rename/delete menu in `corner`). Also repointed the freeform
+  `lower`→`footer` at the direct StatCard sites (`EntityCard`, `CriteriaView`,
+  `TilbudRootView`, `TilbudView`) — the unblock for the unified-footer change.
+  Browser-verified in the live app: setup tiles are real anchors with correct routes; the
+  group cards navigate and their corner menu opens without navigating.
+
+### Carved out — EntityCard full deletion + per-call-site link conversion
+
+The task's Phase 3 also called for **deleting `EntityCard`** and converting its `onOpen`
+(mouse-click) call sites to the `renderLink` overlay link. This is **deferred** because it
+collides with an **active, in-flight session** reworking the same surface — `offansk-ev`'s
+`T079` "unified drilldown system" (`src/components/drilldown/DrilldownCard.tsx` etc.) imports
+`EntityCard`, and `EntityCard` is used at ~10 sites (`TenantsPage`, `AdminPage`, `ProjectHome`,
+`ProjectsView`, `HomePage`, `CriterionCard`, …). Deleting it now would clobber another agent's
+uncommitted files. `EntityCard` was left functional (its freeform `body`→`footer` pass-through
+is fixed) and can adopt `renderLink` once T079 lands. Follow-up: once T079 settles, delete
+`EntityCard`, repoint its call sites to `StatCard` directly, and convert the navigable ones to
+`renderLink`.
 
 ## References
 
