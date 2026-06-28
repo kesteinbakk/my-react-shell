@@ -2,7 +2,7 @@ import { forwardRef, type HTMLAttributes, type ReactNode } from 'react'
 import { cn } from './cn'
 import { PHI } from './PhiCard'
 
-export type GridCardSize = 'sm' | 'md' | 'lg' | 'xl'
+export type GridCardSize = 'sm' | 'md' | 'lg'
 export type GridCardVariant = 'standard' | 'landscape'
 
 export interface GridCardProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title'> {
@@ -13,18 +13,16 @@ export interface GridCardProps extends Omit<HTMLAttributes<HTMLDivElement>, 'tit
   footer?: ReactNode
 }
 
-const SIZE_MIN_WIDTH: Record<GridCardSize, number> = {
+export const GRID_CARD_MIN_WIDTH: Record<GridCardSize, number> = {
   sm: 180,
   md: 240,
-  lg: 320,
-  xl: 480,
+  lg: 400,
 }
 
-const SIZE_MAX_WIDTH: Record<GridCardSize, number> = {
-  sm: 240,
+export const GRID_CARD_MAX_WIDTH: Record<GridCardSize, number> = {
+  sm: 210,
   md: 320,
-  lg: 480,
-  xl: 720,
+  lg: 500,
 }
 
 /**
@@ -32,26 +30,29 @@ const SIZE_MAX_WIDTH: Record<GridCardSize, number> = {
  * Accepts optional named slots (title, subtitle, footer) while preserving children for main body.
  */
 export const GridCard = forwardRef<HTMLDivElement, GridCardProps>(function GridCard(
-  { size = 'md', variant = 'standard', title, subtitle, footer, className, style, children, ...props },
+  { size, variant = 'standard', title, subtitle, footer, className, style, children, ...props },
   ref,
 ) {
-  const minWidth = SIZE_MIN_WIDTH[size]
-  const maxWidth = SIZE_MAX_WIDTH[size]
+  const minWidth = size ? GRID_CARD_MIN_WIDTH[size] : undefined
+  const maxWidth = size ? GRID_CARD_MAX_WIDTH[size] : undefined
   const aspectRatio = variant === 'landscape' ? `${PHI * PHI} / 1` : `${PHI} / 1`
 
   const hasHeader = title != null || subtitle != null
   const hasFooter = footer != null
 
+  const cssVars = {
+    '--mrs-grid-card-aspect-ratio': aspectRatio,
+    ...style,
+  } as React.CSSProperties
+
+  if (minWidth) (cssVars as any)['--mrs-grid-card-min-width'] = `${minWidth}px`
+  if (maxWidth) (cssVars as any)['--mrs-grid-card-max-width'] = `${maxWidth}px`
+
   return (
     <div
       ref={ref}
       className={cn('mrs-grid-card', className)}
-      style={{
-        '--mrs-grid-card-min-width': `${minWidth}px`,
-        '--mrs-grid-card-max-width': `${maxWidth}px`,
-        '--mrs-grid-card-aspect-ratio': aspectRatio,
-        ...style,
-      } as React.CSSProperties}
+      style={cssVars}
       {...props}
     >
       {hasHeader ? (

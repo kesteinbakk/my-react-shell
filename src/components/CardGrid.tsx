@@ -6,6 +6,7 @@ import { Select, type SelectOption } from './Select'
 import { Switch } from './Switch'
 import { Icon } from '../icons'
 import { cn } from './cn'
+import { GRID_CARD_MIN_WIDTH, GRID_CARD_MAX_WIDTH } from './GridCard'
 
 const FILTER_VISIBILITY_MIN_ITEMS = 6
 
@@ -40,6 +41,7 @@ export interface CardGridProps<T> {
   emptyState?: ReactNode
   noResultsMessage?: string
   noResultsDescription?: string
+  cardSize?: import('./GridCard').GridCardSize
   minColumnWidth?: string
 }
 
@@ -86,6 +88,7 @@ export function CardGrid<T>({
   emptyState,
   noResultsMessage,
   noResultsDescription,
+  cardSize,
   minColumnWidth,
 }: CardGridProps<T>) {
   const { t } = useTranslation()
@@ -274,7 +277,16 @@ export function CardGrid<T>({
         ) : (
           <div 
             className={cn('mrs-card-grid__cards', align === 'center' && 'mrs-card-grid__cards--center')}
-            style={minColumnWidth ? { '--mrs-card-grid-min': minColumnWidth } as React.CSSProperties : undefined}
+            style={(() => {
+              const vars: Record<string, string> = {}
+              if (minColumnWidth) {
+                vars['--mrs-card-grid-min'] = minColumnWidth
+              } else if (cardSize) {
+                vars['--mrs-card-grid-min'] = `${GRID_CARD_MIN_WIDTH[cardSize]}px`
+                vars['--mrs-card-grid-item-max'] = `${GRID_CARD_MAX_WIDTH[cardSize]}px`
+              }
+              return Object.keys(vars).length > 0 ? vars as React.CSSProperties : undefined
+            })()}
           >
             {processedItems.map((item) => (
               <Fragment key={getKey(item)}>
