@@ -2350,6 +2350,7 @@
 }
 
 .mrs-stat-card__medallion-label {
+  /* Default/fallback font size for longest string */
   font-size: 0.4em;
   font-weight: 700;
   text-transform: uppercase;
@@ -2357,6 +2358,24 @@
   color: var(--color-text-secondary);
   line-height: 1;
   white-space: nowrap;
+}
+
+/* Adjust font size based on length (1-8 chars) */
+.mrs-stat-card__medallion-label[data-len="1"],
+.mrs-stat-card__medallion-label[data-len="2"],
+.mrs-stat-card__medallion-label[data-len="3"] {
+  font-size: 0.55em;
+}
+
+.mrs-stat-card__medallion-label[data-len="4"],
+.mrs-stat-card__medallion-label[data-len="5"] {
+  font-size: 0.48em;
+}
+
+.mrs-stat-card__medallion-label[data-len="6"],
+.mrs-stat-card__medallion-label[data-len="7"],
+.mrs-stat-card__medallion-label[data-len="8"] {
+  font-size: 0.4em;
 }
 
 /* Arc ring SVG — fills its container (set by badge or stat-arc) */

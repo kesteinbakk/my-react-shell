@@ -134,6 +134,14 @@ export const StatCard = forwardRef(function StatCard({ title, subtitle, medallio
                 throw new Error(`StatCard: stats[${i}] cannot have both \`label\` and \`max\` — use one layout or the other.`);
             }
         });
+        if (medallion?.label) {
+            if (medallion.label.length > 8) {
+                throw new Error(`StatCard: medallion.label cannot exceed 8 characters. (Got "${medallion.label}")`);
+            }
+            if (/\s/.test(medallion.label.trim())) {
+                throw new Error(`StatCard: medallion.label must be a single word without spaces. (Got "${medallion.label}")`);
+            }
+        }
     }
     const hasFooterProp = (footer && ((footer.lines?.length ?? 0) > 0 || (footer.badges?.length ?? 0) > 0)) ||
         lower != null;
@@ -180,7 +188,7 @@ export const StatCard = forwardRef(function StatCard({ title, subtitle, medallio
             medallionNode = (_jsx(MedallionTag, { className: cn('mrs-stat-card__medallion mrs-stat-card__medallion--arc', isPressable && 'mrs-stat-card__medallion--pressable'), ...medallionProps, children: _jsx(ArcRing, { value: medallion.value, max: medallion.max }) }));
         }
         else {
-            medallionNode = (_jsxs(MedallionTag, { className: cn('mrs-stat-card__medallion', isPressable && 'mrs-stat-card__medallion--pressable'), ...medallionProps, children: [_jsx("span", { className: "mrs-stat-card__medallion-value", children: medallion.value }), medallion.label ? _jsx("span", { className: "mrs-stat-card__medallion-label", children: medallion.label }) : null] }));
+            medallionNode = (_jsxs(MedallionTag, { className: cn('mrs-stat-card__medallion', isPressable && 'mrs-stat-card__medallion--pressable'), ...medallionProps, children: [_jsx("span", { className: "mrs-stat-card__medallion-value", children: medallion.value }), medallion.label ? _jsx("span", { className: "mrs-stat-card__medallion-label", "data-len": medallion.label.length, children: medallion.label }) : null] }));
         }
     }
     return (_jsxs("div", { ref: ref, className: cn('mrs-stat-card', !accentSuppressed && `mrs-stat-card--accent-${effectiveAccentPlacement}`, hasGauge && 'mrs-stat-card--gauge', variant && 'mrs-stat-card--variant', isHoverable && 'mrs-stat-card--hoverable', effectiveWatermark && 'mrs-stat-card--watermark', dragHandle && 'mrs-stat-card--draggable', className), style: style, "data-watermark": effectiveWatermark, "data-has-medallion": medallion != null ? "true" : undefined, onClick: onClick, children: [dragHandle ? (_jsx("button", { type: "button", className: "mrs-stat-card__drag-handle", "aria-label": "Drag to reorder", ...dragHandleProps, onClick: (e) => {

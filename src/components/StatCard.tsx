@@ -401,6 +401,18 @@ export const StatCard = forwardRef<HTMLDivElement, StatCardProps>(function StatC
         )
       }
     })
+    if (medallion?.label) {
+      if (medallion.label.length > 8) {
+        throw new Error(
+          `StatCard: medallion.label cannot exceed 8 characters. (Got "${medallion.label}")`
+        )
+      }
+      if (/\s/.test(medallion.label.trim())) {
+        throw new Error(
+          `StatCard: medallion.label must be a single word without spaces. (Got "${medallion.label}")`
+        )
+      }
+    }
   }
  
   const hasFooterProp =
@@ -489,7 +501,7 @@ export const StatCard = forwardRef<HTMLDivElement, StatCardProps>(function StatC
           {...medallionProps}
         >
           <span className="mrs-stat-card__medallion-value">{medallion.value}</span>
-          {medallion.label ? <span className="mrs-stat-card__medallion-label">{medallion.label}</span> : null}
+          {medallion.label ? <span className="mrs-stat-card__medallion-label" data-len={medallion.label.length}>{medallion.label}</span> : null}
         </MedallionTag>
       )
     }
