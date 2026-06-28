@@ -408,9 +408,9 @@ export const StatCard = forwardRef<HTMLDivElement, StatCardProps>(function StatC
       }
     })
     if (medallion?.label) {
-      if (medallion.label.length > 8) {
-        throw new Error(
-          `StatCard: medallion.label cannot exceed 8 characters. (Got "${medallion.label}")`
+      if (medallion.label.length > 8 && process.env.NODE_ENV !== 'production') {
+        console.warn(
+          `StatCard: medallion.label "${medallion.label}" is ${medallion.label.length} characters — it may be too long for the card layout (the medallion is sized for ≤8). Consider a shorter label.`
         )
       }
       if (/\s/.test(medallion.label.trim())) {
