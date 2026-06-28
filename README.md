@@ -116,6 +116,7 @@ From `package.json` `peerDependencies`:
 | `clsx` | `^2.1.1` | `my-react-shell/components` |
 | `tailwind-merge` | `^3.6.0` | `my-react-shell/components` |
 | `react-colorful` | `^5.7.0` | `my-react-shell/components` (only `ColorPicker`) |
+| `react-pdf` | `^9.1.1` | `my-react-shell/components` (only `Preview`) |
 
 Only `react` / `react-dom` are required. **Everything else is declared `optional` in
 `peerDependenciesMeta`** — a **theme-only** consumer (importing just the barrel) needs
@@ -154,17 +155,12 @@ reinstall cycle:
 > hence the `build:lib` + `build:lib:watch` steps. (On commit, the pre-commit guard
 > rebuilds `dist/`, so the committed copy always matches `src/`.)
 
-> **Why step 4 — the `Invalid hook call` footgun.** A `link:` symlinks this
-> checkout, which carries its **own** `node_modules/react` (a devDependency, for the
-> dev-harness, build, and tests). The consumer's Vite dev pre-bundler then resolves
-> **two physically distinct React copies** — the app's, and the linked package's
-> reached through the symlink — which share no hook dispatcher. The first
-> my-react-shell component to call a hook throws `Invalid hook call` /
-> `Cannot read properties of null (reading 'useContext')` at first paint. The
-> `resolve.dedupe` collapses them to one copy. This bites the **`link:` loop only**;
-> a tag-pinned git-dep install resolves a single React through normal node
-> resolution and needs none of it. `vite build` and tests resolve React differently
-> than the dev pre-bundler, so neither catches this — only a live dev-server boot does.
+> **Why step 4 — the `Invalid hook call` footgun.** On the `link:` loop the symlinked
+> shell carries its own React copy, which collides with the app's; the first shell
+> component to call a hook throws `Invalid hook call` at first paint, and `resolve.dedupe`
+> is what collapses them to one copy. Full mechanics (why it bites `link:` only, and the
+> matching Vitest fix): see
+> [`docs/guides/distribution-model.md`](docs/guides/distribution-model.md).
 
 **Strip the link before committing.** A committed `link:` / `file:` specifier breaks
 every other clone and all Vercel/CI installs, because the path won't exist there.

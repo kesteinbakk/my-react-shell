@@ -28,7 +28,7 @@ contract of any module, follow the **Guide** link in its section.
 | `my-react-shell/providers` | **providers** (Convex client + `AppProviders`) | `convex` | — |
 | `my-react-shell/auth/convex` | **auth** Convex Auth default | `convex`, `@convex-dev/auth`, `@auth/core` | — |
 | `my-react-shell/i18n` | **i18n** (`t()` seam) | — (zero-dep) | — |
-| `my-react-shell/components` | **component kit** (UI components on Radix + the theme tokens) | `class-variance-authority`, `clsx`, `tailwind-merge`, `@radix-ui/react-{dialog,dropdown-menu,popover,select,accordion,collapsible,checkbox,switch,radio-group,tooltip,tabs,slider,progress,toggle,toggle-group}`, `react-colorful` (only for `ColorPicker`), `react-day-picker` + `date-fns` (only for `Calendar`/`DatePicker`), `emojibase-data` (only for `EmojiPicker`) | `my-react-shell/components/styles.css` |
+| `my-react-shell/components` | **component kit** (UI components on Radix + the theme tokens) | `class-variance-authority`, `clsx`, `tailwind-merge`, `@radix-ui/react-{dialog,dropdown-menu,popover,select,accordion,collapsible,checkbox,switch,radio-group,tooltip,tabs,slider,progress,toggle,toggle-group}`, `react-colorful` (only for `ColorPicker`), `react-day-picker` + `date-fns` (only for `Calendar`/`DatePicker`), `emojibase-data` (only for `EmojiPicker`), `react-pdf` (only for `Preview`) | `my-react-shell/components/styles.css` |
 | `my-react-shell/icons` | **icons↔emojis seam** | — (pure React) | — |
 | `my-react-shell/app-shell` | **app-shell** (chrome, page header, tabs) | `@tanstack/react-router`, `@radix-ui/react-dialog`, `@radix-ui/react-dropdown-menu` | `my-react-shell/app-shell/styles.css` |
 
@@ -174,7 +174,7 @@ Convex- and router-free. **Guide:** [i18n.md](../guides/i18n.md).
 
 ```ts
 import { I18nProvider, useTranslation, useI18n, translateNow, createTypedI18n,
-         mergeMessages, MissingTranslationsOverlay, missingKeyStore } from 'my-react-shell/i18n'
+         createProjectI18n, mergeMessages, MissingTranslationsOverlay, missingKeyStore } from 'my-react-shell/i18n'
 import type { TFunction, I18nContextValue, Locale, LocaleInfo, Messages, DotPaths,
               TranslateParams, UseTranslationResult, TypedI18n } from 'my-react-shell/i18n'
 ```
@@ -187,6 +187,7 @@ import type { TFunction, I18nContextValue, Locale, LocaleInfo, Messages, DotPath
 | `useI18nContext()` | hook | Raw context read; throws outside provider. |
 | `translateNow(key, params?)` | function | Imperative translate for non-render callers (event handlers, toasts). |
 | `createTypedI18n<K>()` | function | Returns typed `{ useTranslation, useT, translateNow }` bound to key union `K`. Pure typing sugar — no new runtime. |
+| `createProjectI18n(config)` | function | Batteries-included factory: merges a consumer's per-locale catalogs with the shell's built-in `common-*` catalog and returns `{ useTranslation, useT, translateNow, LanguageProvider }` — the `createTypedI18n` surface typed to the combined keys, plus a pre-wired `LanguageProvider` (an `I18nProvider` with `messages`/`defaultLocale`/`resolve` already supplied). `config`: `localMessages` (`Record<locale, nested catalog>`), `defaultLanguage` (must be a `localMessages` key), `interpolation` (`'single-brace'` `{name}` · `'double-brace'` `{{name}}`, default `'double-brace'`). |
 | `mergeMessages(base, override)` | function | Deep-merge catalogs (override wins) — compose a module's strings under a consumer catalog. |
 | `flattenMessages(msgs)` | function | Nested catalog → flat dotted map. |
 | `interpolate(str, params)` | function | Fill `{{param}}` placeholders. |
