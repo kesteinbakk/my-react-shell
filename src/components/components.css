@@ -2402,6 +2402,7 @@
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 0.4em 1.4em;
   margin: 0;
+  margin-top: -0.6em; /* Negate the 0.6em flex gap from __inner */
   align-items: flex-start;
   align-content: flex-start;
   min-width: 0;
