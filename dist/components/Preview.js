@@ -4,8 +4,8 @@ import * as RadixDialog from '@radix-ui/react-dialog';
 import { Document, Page, pdfjs } from 'react-pdf';
 import { cn } from './cn';
 import { Button } from './Button';
-// Setup pdf.js worker.
-pdfjs.GlobalWorkerOptions.workerSrc = new URL('pdfjs-dist/build/pdf.worker.min.mjs', import.meta.url).toString();
+// Setup pdf.js worker via unpkg to avoid bundler/URL resolution issues in consumer apps.
+pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 const DEFAULT_ASPECT = 1.414; // A4 Portrait
 /**
  * A modal PDF Preview component styled like a piece of paper.
