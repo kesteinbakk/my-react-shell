@@ -68,7 +68,8 @@
   },
   "dependencies": {
     "@fontsource-variable/geist": "^5.2.9",
-    "@fontsource-variable/inter": "^5.2.8"
+    "@fontsource-variable/inter": "^5.2.8",
+    "isomorphic-dompurify": "^3.18.0"
   },
   "peerDependencies": {
     "@auth/core": "^0.41.1",
@@ -93,8 +94,8 @@
     "clsx": "^2.1.1",
     "convex": "^1.41.0",
     "date-fns": "^4.4.0",
-    "react": "^19.0.0",
     "emojibase-data": "^17.0.0",
+    "react": "^19.0.0",
     "react-colorful": "^5.7.0",
     "react-day-picker": "^10.0.1",
     "react-dom": "^19.0.0",

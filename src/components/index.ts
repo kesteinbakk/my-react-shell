@@ -134,6 +134,16 @@ export type {
   StatCardFooterLineType,
 } from './StatCard'
 
+export { ContentCard } from './ContentCard'
+export type {
+  ContentCardProps,
+  ContentCardTone,
+  ContentCardVariant,
+  ContentCardFooter,
+  ContentCardFooterLine,
+  ContentCardFooterLineType,
+} from './ContentCard'
+
 export { InputField } from './InputField'
 export type { InputFieldProps } from './InputField'
 
