@@ -2361,8 +2361,14 @@
 }
 
 /* Adjust font size based on length (1-8 chars) */
-.mrs-stat-card__medallion-label[data-len="1"],
-.mrs-stat-card__medallion-label[data-len="2"],
+.mrs-stat-card__medallion-label[data-len="1"] {
+  font-size: 0.75em;
+}
+
+.mrs-stat-card__medallion-label[data-len="2"] {
+  font-size: 0.65em;
+}
+
 .mrs-stat-card__medallion-label[data-len="3"] {
   font-size: 0.55em;
 }
@@ -5034,3 +5040,111 @@
   gap: 0.5em;
   overflow: hidden;
 }
+
+/* --- Preview (PDF viewer) --- */
+.mrs-preview__overlay {
+  position: fixed;
+  inset: 0;
+  background-color: var(--color-base-dim);
+  z-index: 50;
+  animation: mrs-dialog-fade-in 0.15s ease-out;
+}
+
+.mrs-preview {
+  position: fixed;
+  inset: 1rem;
+  max-width: 60rem;
+  margin: 0 auto;
+  background-color: var(--color-base-root);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xl);
+  display: flex;
+  flex-direction: column;
+  z-index: 51;
+  animation: mrs-dialog-slide-up 0.2s ease-out;
+  overflow: hidden;
+}
+
+.mrs-preview__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  background-color: var(--color-base-surface);
+  border-bottom: 1px solid var(--color-border-subtle);
+  flex-shrink: 0;
+}
+
+.mrs-preview__title {
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--color-text-body);
+}
+
+.mrs-preview__header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.mrs-preview__body {
+  flex: 1;
+  overflow-y: auto;
+  background-color: var(--color-base-subtle);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.mrs-preview__msg {
+  color: var(--color-text-muted);
+  padding: 2rem;
+  text-align: center;
+}
+
+.mrs-preview__page-slot {
+  background-color: #fff;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  width: 100%;
+  max-width: 100%;
+}
+
+.mrs-preview__page {
+  display: block;
+}
+
+.mrs-preview__page canvas {
+  display: block;
+  max-width: 100%;
+  height: auto !important;
+}
+
+@media print {
+  .mrs-preview__overlay,
+  .mrs-preview__header {
+    display: none !important;
+  }
+  .mrs-preview {
+    position: static;
+    inset: auto;
+    max-width: none;
+    margin: 0;
+    box-shadow: none;
+    border-radius: 0;
+    display: block;
+  }
+  .mrs-preview__body {
+    padding: 0;
+    background-color: transparent;
+    display: block;
+    overflow: visible;
+  }
+  .mrs-preview__page-slot {
+    box-shadow: none;
+    margin: 0;
+    page-break-after: always;
+  }
+}
+
