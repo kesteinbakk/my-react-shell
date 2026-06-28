@@ -224,3 +224,7 @@ export type { EmojiBarProps } from './EmojiBar'
 export { cn } from './cn'
 export { CardGrid } from './CardGrid'
 export type { CardGridProps, ToggleFilter, SortOption } from './CardGrid'
+
+export { Preview } from './Preview'
+export type { PreviewProps } from './Preview'
+
