@@ -25,5 +25,4 @@ Both `BaseCard` and its expanded counterpart `GridCard` maintain the structural 
 
 ## Current Status
 - `GridCard` has been introduced as a semantic layout card that builds on `BaseCard`'s stretching behavior. It accepts optional `title`, `subtitle`, and `footer` props, with the primary content passed cleanly as idiomatic React `children`.
-- The `my-react-shell-demo` visual showcase now uses `GridCard` to demonstrate structural stretching.
-- `PhiCard` is currently parked for future refactoring and has not yet been deleted or ported to use `GridCard`.
+- The `my-react-shell-demo` visual showcase has been structurally reorganized into dedicated top-level pages. Pure un-opinionated containers are grouped under the "Surfaces" section, while grid behavior and layout scaling are demonstrated in a dedicated "Card Grids" section.

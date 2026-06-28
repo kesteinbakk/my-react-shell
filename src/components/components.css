@@ -1759,6 +1759,7 @@
 
 .mrs-grid-card__header {
   margin-bottom: 0.5rem;
+  flex-shrink: 0;
 }
 
 .mrs-grid-card__title {
@@ -1781,6 +1782,7 @@
   margin-top: 1rem;
   padding-top: 1rem;
   border-top: 1px solid var(--color-border-primary);
+  flex-shrink: 0;
 }
 
 /* ── PhiCard ─────────────────────────────────────────────────────────────── */
@@ -1791,7 +1793,7 @@
   position: relative;
   padding: 0;
   display: grid;
-  grid-template-rows: minmax(0, 1.6180339887fr) minmax(0, 1fr); /* upper : lower = φ : 1 */
+  grid-template-rows: minmax(0, 1.6180339887fr) auto; /* upper : lower = remaining : auto */
 }
 .mrs-phi-card--single {
   grid-template-rows: minmax(0, 1fr); /* no footer → single row; inline height already W/φ² */
