@@ -45,5 +45,20 @@ resolve: {
 ## Pre-commit Hooks
 - **Commit Guard**: Ensure you install the pre-commit hook that blocks committing the dev-loop `link:`/`file:` dependency. This prevents breaking CI or other developers' clones.
 
+## Page Width & Container Constraints
+**CRITICAL**: Do NOT wrap your main content pages in hardcoded Tailwind max-width classes (like `max-w-6xl` or `container`). 
+`AppShell` automatically wraps your page content in `.mrs-shell__container`, which provides centralized max-width, centering, and responsive padding.
+
+If you add your own max-width wrapper inside your pages, it will conflict with the shell and prevent elements (like card grids) from correctly expanding on large monitors.
+To configure the page width for your entire application, pass `pageContainer.defaultMaxWidth` to `defineShellConfig`:
+```ts
+export const shellConfig = defineShellConfig({
+  // ...
+  pageContainer: {
+    defaultMaxWidth: '2xl', // Options: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | 'full'
+  }
+})
+```
+
 ---
 *For a deeper dive into the architectural reasoning behind these requirements, refer to the [Distribution Model](distribution-model.md) guide.*
