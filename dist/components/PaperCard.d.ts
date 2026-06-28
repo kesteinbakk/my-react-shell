@@ -2,11 +2,11 @@ import { type CSSProperties, type ReactNode } from 'react';
 import type { AccentPlacement } from './accent';
 import type { Tone } from './tone';
 /**
- * Size preset — a fixed-width A4-portrait card (`height = width × √2`). `sm` (≈168px) is
- * the default: this is a small **preview / thumbnail** sheet, not a full page. `md` is
- * literally A4's millimetre figures (210 × 297).
+ * Size preset — a fixed-width A4-portrait card (`height = width × √2`). `md` (≈168px) is
+ * the default: a small **preview / thumbnail** sheet, not a full page. `sm` is a smaller,
+ * denser thumbnail; `lg` is literally A4's millimetre figures (210 × 297).
  */
-export type PaperCardSize = 'sm' | 'md' | 'lg' | 'xl';
+export type PaperCardSize = 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
 /** Leading glyph kind for a footer meta line (shared shape with `StatCard`/`ContentCard`). */
 export type PaperCardFooterLineType = 'date' | 'time' | 'check';
 /** One left-side footer line: text with an optional kit-shipped leading glyph. */
@@ -57,7 +57,7 @@ export interface PaperCardProps {
     footer?: ReactNode | PaperCardFooter;
     /** Emoji or text rendered as a faint background watermark. E.g. `'📄'`. */
     watermark?: string;
-    /** Size preset — fixed-width A4-portrait card. Default: `'sm'` (≈168px). */
+    /** Size preset — fixed-width A4-portrait card. Default: `'md'` (≈168px). */
     size?: PaperCardSize;
     /** Click handler; makes the whole card interactive. */
     onClick?: () => void;

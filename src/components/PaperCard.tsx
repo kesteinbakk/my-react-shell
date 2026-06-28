@@ -6,11 +6,11 @@ import type { Tone } from './tone'
 declare const process: { env: { NODE_ENV?: string } }
 
 /**
- * Size preset — a fixed-width A4-portrait card (`height = width × √2`). `sm` (≈168px) is
- * the default: this is a small **preview / thumbnail** sheet, not a full page. `md` is
- * literally A4's millimetre figures (210 × 297).
+ * Size preset — a fixed-width A4-portrait card (`height = width × √2`). `md` (≈168px) is
+ * the default: a small **preview / thumbnail** sheet, not a full page. `sm` is a smaller,
+ * denser thumbnail; `lg` is literally A4's millimetre figures (210 × 297).
  */
-export type PaperCardSize = 'sm' | 'md' | 'lg' | 'xl'
+export type PaperCardSize = 'sm' | 'md' | 'lg' | 'xl' | 'xxl'
 
 /** Leading glyph kind for a footer meta line (shared shape with `StatCard`/`ContentCard`). */
 export type PaperCardFooterLineType = 'date' | 'time' | 'check'
@@ -55,25 +55,28 @@ function isStructuredFooter(footer: ReactNode | PaperCardFooter): footer is Pape
 }
 
 const SIZE_WIDTH_PX: Record<PaperCardSize, number> = {
-  sm: 168,
-  md: 210,
-  lg: 264,
-  xl: 320,
+  sm: 134,
+  md: 168,
+  lg: 210,
+  xl: 264,
+  xxl: 320,
 }
 
 /** Folded-corner size per preset (px) — scales with the sheet so the dog-ear reads at every size. */
 const SIZE_FOLD_PX: Record<PaperCardSize, number> = {
-  sm: 26,
-  md: 30,
-  lg: 34,
-  xl: 40,
+  sm: 22,
+  md: 26,
+  lg: 30,
+  xl: 34,
+  xxl: 40,
 }
 
 const SIZE_FONT_REM: Record<PaperCardSize, number> = {
-  sm: 0.75,
-  md: 0.875,
-  lg: 1.0,
-  xl: 1.25,
+  sm: 0.625,
+  md: 0.75,
+  lg: 0.875,
+  xl: 1.0,
+  xxl: 1.25,
 }
 
 // A4 / ISO 216 portrait aspect: height = width × √2.
@@ -144,7 +147,7 @@ export interface PaperCardProps {
 
   /** Emoji or text rendered as a faint background watermark. E.g. `'📄'`. */
   watermark?: string
-  /** Size preset — fixed-width A4-portrait card. Default: `'sm'` (≈168px). */
+  /** Size preset — fixed-width A4-portrait card. Default: `'md'` (≈168px). */
   size?: PaperCardSize
 
   /** Click handler; makes the whole card interactive. */
@@ -200,7 +203,7 @@ export const PaperCard = forwardRef<HTMLDivElement, PaperCardProps>(function Pap
     accentPlacement = 'top',
     footer,
     watermark,
-    size = 'sm',
+    size = 'md',
     onClick,
     hoverable,
     dragHandle,

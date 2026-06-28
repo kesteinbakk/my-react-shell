@@ -76,8 +76,8 @@ a full stats row + footer can overflow the shorter box — the consumer's call w
 
 `PaperCard` is the odd one out: a fixed-size card that is **portrait, not golden-ratio** — a
 small preview/thumbnail styled as a dog-eared sheet of paper at **A4 proportions**
-(`height = width × √2`, so it's *taller* than wide). Its own `size` scale is `sm` 168 · `md`
-210 · `lg` 264 · `xl` 320 px (default `sm`; `md` is literally A4's mm figures). It drops into
+(`height = width × √2`, so it's *taller* than wide). Its own `size` scale is `sm` 134 · `md`
+168 · `lg` 210 · `xl` 264 · `xxl` 320 px (default `md`; `lg` is literally A4's mm figures). It drops into
 `CardGrid` like the others — just expect a taller row. It shares the card-family
 `footer` slot, hover-lift, drag-handle, and `renderLink` navigation seam ([§3](#3-navigation-links-any-card));
 an accent stripe is opt-in (none by default).
@@ -306,7 +306,8 @@ A small **preview / thumbnail** card styled as a dog-eared sheet of paper at **A
 proportions (`height = width × √2`). The folded top-right corner is genuinely cut out of the
 sheet with `clip-path`; the drop shadow lives on a wrapper via `filter: drop-shadow()` so it
 follows the dog-eared silhouette (an ordinary `box-shadow` would be clipped away). Default
-size is **`sm`** — it's a thumbnail, not a full page.
+size is **`md`** (≈168px) — it's a thumbnail, not a full page; `sm` is a smaller, denser
+thumbnail and `xxl` (320px) the largest preset.
 
 It shares the card-family `footer`, `watermark`, hover-lift, `dragHandle`, and `renderLink`
 seams. An accent stripe is **opt-in** (none by default — a paper card reads from its

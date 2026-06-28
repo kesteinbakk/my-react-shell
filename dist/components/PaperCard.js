@@ -15,23 +15,26 @@ function isStructuredFooter(footer) {
         ('lines' in footer || 'badges' in footer));
 }
 const SIZE_WIDTH_PX = {
-    sm: 168,
-    md: 210,
-    lg: 264,
-    xl: 320,
+    sm: 134,
+    md: 168,
+    lg: 210,
+    xl: 264,
+    xxl: 320,
 };
 /** Folded-corner size per preset (px) — scales with the sheet so the dog-ear reads at every size. */
 const SIZE_FOLD_PX = {
-    sm: 26,
-    md: 30,
-    lg: 34,
-    xl: 40,
+    sm: 22,
+    md: 26,
+    lg: 30,
+    xl: 34,
+    xxl: 40,
 };
 const SIZE_FONT_REM = {
-    sm: 0.75,
-    md: 0.875,
-    lg: 1.0,
-    xl: 1.25,
+    sm: 0.625,
+    md: 0.75,
+    lg: 0.875,
+    xl: 1.0,
+    xxl: 1.25,
 };
 // A4 / ISO 216 portrait aspect: height = width × √2.
 const SQRT2 = 1.4142135624;
@@ -58,7 +61,7 @@ function titleFitStep(text) {
  * Optional `tone`/`color` adds an accent stripe (none by default). Shares the card-family
  * footer, watermark, hover-lift, drag-handle, and `renderLink` block-link seams.
  */
-export const PaperCard = forwardRef(function PaperCard({ title, subtitle, content, contentAlignX = 'left', contentAlignY = 'top', maxLines, tone, color, accentPlacement = 'top', footer, watermark, size = 'sm', onClick, hoverable, dragHandle, dragHandleProps, renderLink, className, style: styleProp, }, ref) {
+export const PaperCard = forwardRef(function PaperCard({ title, subtitle, content, contentAlignX = 'left', contentAlignY = 'top', maxLines, tone, color, accentPlacement = 'top', footer, watermark, size = 'md', onClick, hoverable, dragHandle, dragHandleProps, renderLink, className, style: styleProp, }, ref) {
     const width = SIZE_WIDTH_PX[size];
     const height = width * SQRT2;
     const fold = SIZE_FOLD_PX[size];
