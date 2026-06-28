@@ -199,7 +199,7 @@ open-on-hover; pass `open` to keep it open for the active route.
 import { DynamicGridCard, DrawerMark } from 'my-react-shell/components'
 
 <DynamicGridCard title="Files" subtitle="Project documents"
-  footer={{ lines: [{ text: '8 items' }] }} hoverable
+  footer={{ lines: [{ text: '8 items' }] }} hoverable lift={false}
   watermark={<DrawerMark open={isActive} />}
   renderLink={(p) => <Link {...p} to="/files/$id" params={{ id }} />} />
 ```

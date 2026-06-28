@@ -688,6 +688,7 @@ import { DynamicCardGrid, DynamicGridCard } from 'my-react-shell/components'
 | `size` | — | `sm`·`md`·`lg` — a self-applied min/max-width cap for use **outside** a `DynamicCardGrid`. Inside one, omit it and let `cardSize` on the grid drive the columns. |
 | `shape` | `'standard'` | `'standard'` = φ:1 · `'landscape'` = φ²:1 (shorter/wider). |
 | `hoverable` | `false` | Cursor + hover-lift + `:focus-visible` ring on the card root. |
+| `lift` | `true` | Whether a `hoverable` card moves (`translateY`) on hover. `false` keeps the card interactive (cursor, `onClick`, subtle hover elevation) **without** the movement — e.g. when a `DrawerMark` watermark's own open-on-hover is the feedback. No effect unless `hoverable`. |
 | `watermark` | — | Faint background watermark — centred horizontally, dropped a little below centre. A **`string`** is an oversized emoji (e.g. `'🚀'`); a **`ReactNode`** (e.g. a `DrawerMark`) renders in an art layer behind the content and makes the card root a `mrs-reveal-host` (so a hover-reveal mark opens on card hover). |
 | `corner` | — | Top-corner action slot (e.g. a `DropdownMenu` trigger). Rendered **above** the link overlay (`z-index`) as a sibling of the anchor, so it stays independently clickable — never nested in the link. |
 | `tone` | — | Semantic accent hue → a stripe (see `accentPlacement`). **Opt-in** — no accent when unset. `primary`·`info`·`success`·`warning`·`danger`·`neutral`. `color` overrides it. Same accent vocabulary as `StatCard`/`PaperCard`. |
@@ -728,14 +729,17 @@ active route. Both are decorative (`aria-hidden`).
 ```tsx
 import { DynamicGridCard, DrawerMark } from 'my-react-shell/components'
 
-// Drawer watermark that opens on hover; force-open on the active route:
+// Drawer watermark that opens on hover; force-open on the active route.
+// `lift={false}` keeps the pointer + onClick but stops the card from moving, so the
+// drawer's own open-on-hover is the only motion:
 <DynamicGridCard
   title="Files"
   subtitle="Project documents"
   footer={{ lines: [{ text: '8 items' }] }}
   hoverable
+  lift={false}
+  onClick={openFiles}
   watermark={<DrawerMark open={isActive} />}
-  renderLink={(p) => <Link {...p} to="/files/$id" params={{ id }} />}
 />
 ```
 
