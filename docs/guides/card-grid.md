@@ -1,12 +1,41 @@
-# Card Grid Layout Guide
+# Card & Card-Grid Guide
+
+This is the **read-first** guide for every card in `my-react-shell/components` — the card
+components themselves *and* the two grids that lay them out. All cards are imported from
+`my-react-shell/components`.
+
+## Which card component?
+
+Pick the card by what it holds; pick the grid by whether the card has a fixed size.
+
+| Card | Use it for | Sizing |
+| :--- | :--- | :--- |
+| **`StatCard`** | A KPI / status tile: title, accent medallion (number or arc-ring), a stats row, optional gauge. | Fixed-width, golden-ratio (`height = width / φ`). |
+| **`ContentCard`** | A freeform-text tile: title + a `content` string (optional `html`), optional gauge. The text counterpart to `StatCard`. | Fixed-width, golden-ratio. |
+| **`PaperCard`** | A small preview / thumbnail styled as a dog-eared A4 sheet. | Fixed-width, A4 portrait (`height = width × √2`). |
+| **`DynamicGridCard`** | A size-less tile that should **stretch** to fill its grid column. The card to reach for inside a `DynamicCardGrid` (e.g. navigation tiles). | Fluid — fills its column, golden-ratio shape. |
+| **`PhiCard`** *(legacy)* | The original golden-ratio card. **Being phased out** — prefer `StatCard` / `ContentCard` for new work; it ships only so existing consumers keep building. | Fixed-width, golden-ratio. |
+
+> **Navigation — any card can be a real link.** `StatCard`, `ContentCard`, `PaperCard`, and
+> `DynamicGridCard` all accept a **`renderLink`** render-prop that turns the whole tile into a
+> consumer-supplied router `<Link>` (a block-link overlay), without the shell depending on any
+> router. See [§3 Navigation links](#3-navigation-links-any-card) — this is the one pattern for
+> all four, so a card used as a nav target behaves identically everywhere.
+
+## Which grid?
 
 my-react-shell ships **two** card-grid layouts. They are not interchangeable — pick by
 whether the cards you are placing have an intrinsic, fixed size.
 
 | Layout | Cards | Behaviour |
 | :--- | :--- | :--- |
-| **`CardGrid`** (static) | Fixed-size (`StatCard`, `ContentCard`, `PhiCard`, `PaperCard`) | Cards flow left-to-right and **wrap**; a fixed gap between them; **no stretching** — a larger gap may remain at the end of a row. Every card keeps its own width/height. |
+| **`CardGrid`** (static) | Fixed-size (`StatCard`, `ContentCard`, `PaperCard`, legacy `PhiCard`) | Cards flow left-to-right and **wrap**; a fixed gap between them; **no stretching** — a larger gap may remain at the end of a row. Every card keeps its own width/height. |
 | **`DynamicCardGrid`** + **`DynamicGridCard`** (fluid) | Size-less | Cards **stretch** to fill uniform `1fr` columns; a built-in search / filter / sort toolbar. |
+
+> **Match the card to the grid.** Fixed-size cards (`StatCard` / `ContentCard` / `PaperCard`)
+> go in `CardGrid`; a size-less `DynamicGridCard` goes in `DynamicCardGrid`. Putting a
+> fixed-size card in the fluid grid makes it overflow its narrower `1fr` column and overlap its
+> neighbour — a real bug, not a cosmetic one.
 
 ---
 
@@ -32,12 +61,13 @@ import { CardGrid, StatCard, ContentCard } from 'my-react-shell/components'
 
 ### The fixed-size cards
 
-`StatCard`, `ContentCard`, and `PhiCard` are **fixed-width golden-ratio** cards: a `size`
-preset sets the pixel width and the height follows `height = width / φ`.
+`StatCard`, `ContentCard`, and the legacy `PhiCard` are **fixed-width golden-ratio** cards: a
+`size` preset sets the pixel width and the height follows `height = width / φ`.
 
 - `StatCard` and `ContentCard` are **self-contained** — they carry their own `size` scale
   and golden-ratio constant. Their `size` widths are `sm` 240 · `md` 312 · `lg` 400 · `xl` 520 px (default `md`).
-- `PhiCard` keeps its own scale (`sm` 180 · `md` 240 · `lg` 320 · `xl` 480 px).
+- `PhiCard` *(legacy — being phased out; prefer `StatCard` / `ContentCard`)* keeps its own
+  scale (`sm` 180 · `md` 240 · `lg` 320 · `xl` 480 px).
 
 `StatCard` and `ContentCard` also have a **`shape`** proportion axis: `'standard'` (φ:1, default)
 or `'landscape'` (φ²:1 — `height = width / φ²`, a shorter box at the same `size` width). Use
@@ -48,7 +78,9 @@ a full stats row + footer can overflow the shorter box — the consumer's call w
 small preview/thumbnail styled as a dog-eared sheet of paper at **A4 proportions**
 (`height = width × √2`, so it's *taller* than wide). Its own `size` scale is `sm` 168 · `md`
 210 · `lg` 264 · `xl` 320 px (default `sm`; `md` is literally A4's mm figures). It drops into
-`CardGrid` like the others — just expect a taller row.
+`CardGrid` like the others — just expect a taller row. It shares the card-family
+`footer` slot, hover-lift, drag-handle, and `renderLink` navigation seam ([§3](#3-navigation-links-any-card));
+an accent stripe is opt-in (none by default).
 
 ---
 
@@ -99,13 +131,20 @@ shorter and wider).
 > A `DynamicGridCard` used **outside** a `DynamicCardGrid` can set its own `size` to get the
 > same min/max cap; inside a grid, omit it and let `cardSize` drive the columns.
 
-### Navigation links (whole-card anchor)
+---
 
-`DynamicGridCard` can act as a **whole-card navigation target** without the shell depending on
-any router. The consumer supplies its own router `<Link>` through the `renderLink` render-prop;
-the card mounts it as a **full-bleed block-link overlay** inside a `position: relative` root, so
-the entire tile is one real, keyboard-focusable, keyboard-activatable anchor — while the card
-root `<div>` keeps owning its hover / border / `:focus-visible` states.
+## 3. Navigation links (any card)
+
+`StatCard`, `ContentCard`, `PaperCard`, and `DynamicGridCard` can each act as a **whole-card
+navigation target** without the shell depending on any router. The consumer supplies its own
+router `<Link>` through the `renderLink` render-prop; the card mounts it as a **full-bleed
+block-link overlay** inside a `position: relative` root, so the entire tile is one real,
+keyboard-focusable, keyboard-activatable anchor — while the card root `<div>` keeps owning its
+hover / border / `:focus-visible` states. It is **one pattern across all four cards**, so a card
+used for navigation behaves identically wherever you use it.
+
+The example below uses `DynamicGridCard` inside a `DynamicCardGrid`; the same `renderLink` prop
+goes on a `StatCard` / `ContentCard` / `PaperCard` rendered through `CardGrid` + `.map()`.
 
 ```tsx
 import { Link } from '@tanstack/react-router'
@@ -135,6 +174,10 @@ renderCard={(it) => (
   is a **sibling** of the overlay, raised above it with `z-index`, so it stays independently
   clickable. The freeform `footer` is display-only text covered by the overlay — never put a
   live control there; add a raised slot for it instead.
+- **`dragHandle` × `renderLink` are mutually exclusive** — a nav tile is not drag-reorderable;
+  passing both throws in dev.
 
-The same `renderLink` + block-link-overlay seam is shared by `StatCard` and `ContentCard`, so a
-card used for navigation behaves identically across the whole card surface.
+On the fixed-size cards the overlay sits *beneath* the content layer and the inner wrapper is
+click-transparent, so `StatCard`'s medallion button (`onMedallionPress`) and any drag handle
+stay live above it. Type-safety, the auto-wired accessible name, and the raised-slot rule are
+identical to the example above on all four cards.
