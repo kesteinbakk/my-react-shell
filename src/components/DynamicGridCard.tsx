@@ -1,5 +1,8 @@
 import { forwardRef, isValidElement, useId, type HTMLAttributes, type ReactNode } from 'react'
 import { cn } from './cn'
+import { resolveAccentColor } from './accent'
+import type { AccentPlacement } from './accent'
+import type { Tone } from './tone'
 
 /** φ — the golden ratio. The dynamic card's shape is `aspect-ratio: φ : 1` (or `φ² : 1` for landscape). */
 const PHI = 1.6180339887
@@ -82,6 +85,15 @@ export interface DynamicGridCardProps extends Omit<HTMLAttributes<HTMLDivElement
    * existing `tone`/`color` accent — a card can carry both an accent stripe and a tint.
    */
   tint?: string
+  /**
+   * Semantic tone — drives an optional accent stripe. Default **none** (no accent).
+   * Ignored when `color` is set. Same accent vocabulary as `StatCard`/`PaperCard`.
+   */
+  tone?: Tone
+  /** Raw CSS color string for the accent stripe; overrides `tone`. */
+  color?: string
+  /** Where the accent reads when `tone`/`color` is set: a `'top'` stripe (default) or a `'left'` bar. */
+  accentPlacement?: AccentPlacement
 }
 
 export const DYNAMIC_GRID_CARD_MIN_WIDTH: Record<DynamicGridCardSize, number> = {
@@ -169,12 +181,16 @@ function StructuredFooter({ footer }: { footer: DynamicGridCardFooter }) {
  * overlay, with `corner` controls raised above it so they stay independently clickable.
  */
 export const DynamicGridCard = forwardRef<HTMLDivElement, DynamicGridCardProps>(function DynamicGridCard(
-  { size, shape = 'standard', title, subtitle, figure, hoverable, watermark, corner, footer, renderLink, tint, className, style, children, ...props },
+  { size, shape = 'standard', title, subtitle, figure, hoverable, watermark, corner, footer, renderLink, tint, tone, color, accentPlacement = 'top', className, style, children, ...props },
   ref,
 ) {
   const minWidth = size ? DYNAMIC_GRID_CARD_MIN_WIDTH[size] : undefined
   const maxWidth = size ? DYNAMIC_GRID_CARD_MAX_WIDTH[size] : undefined
   const aspectRatio = shape === 'landscape' ? `${PHI * PHI} / 1` : `${PHI} / 1`
+
+  // No accent unless tone/color is given.
+  const accentColor = resolveAccentColor(tone, color)
+  const hasAccent = accentColor != null
 
   // Auto-wire the overlay anchor's accessible name from the card title.
   const titleId = useId()
@@ -196,6 +212,7 @@ export const DynamicGridCard = forwardRef<HTMLDivElement, DynamicGridCardProps>(
     ...(minWidth != null ? { '--mrs-dynamic-grid-card-min-width': `${minWidth}px` } : {}),
     ...(maxWidth != null ? { '--mrs-dynamic-grid-card-max-width': `${maxWidth}px` } : {}),
     ...(tint != null ? { '--mrs-card-tint': tint } : {}),
+    ...(hasAccent ? { '--mrs-stat-accent': accentColor } : {}),
     ...style,
   } as React.CSSProperties
 
@@ -204,6 +221,7 @@ export const DynamicGridCard = forwardRef<HTMLDivElement, DynamicGridCardProps>(
       ref={ref}
       className={cn(
         'mrs-dynamic-grid-card',
+        hasAccent && `mrs-dynamic-grid-card--accent-${accentPlacement}`,
         hoverable && 'mrs-dynamic-grid-card--hoverable',
         renderLink && 'mrs-dynamic-grid-card--linked',
         hasWatermark && 'mrs-dynamic-grid-card--watermark',

@@ -1,4 +1,6 @@
 import { type HTMLAttributes, type ReactNode } from 'react';
+import type { AccentPlacement } from './accent';
+import type { Tone } from './tone';
 export type DynamicGridCardSize = 'sm' | 'md' | 'lg';
 /** Proportion of the card: `'standard'` is φ:1; `'landscape'` is the shorter-wider φ²:1. */
 export type DynamicGridCardShape = 'standard' | 'landscape';
@@ -71,6 +73,15 @@ export interface DynamicGridCardProps extends Omit<HTMLAttributes<HTMLDivElement
      * existing `tone`/`color` accent — a card can carry both an accent stripe and a tint.
      */
     tint?: string;
+    /**
+     * Semantic tone — drives an optional accent stripe. Default **none** (no accent).
+     * Ignored when `color` is set. Same accent vocabulary as `StatCard`/`PaperCard`.
+     */
+    tone?: Tone;
+    /** Raw CSS color string for the accent stripe; overrides `tone`. */
+    color?: string;
+    /** Where the accent reads when `tone`/`color` is set: a `'top'` stripe (default) or a `'left'` bar. */
+    accentPlacement?: AccentPlacement;
 }
 export declare const DYNAMIC_GRID_CARD_MIN_WIDTH: Record<DynamicGridCardSize, number>;
 export declare const DYNAMIC_GRID_CARD_MAX_WIDTH: Record<DynamicGridCardSize, number>;

@@ -126,7 +126,10 @@ import { DynamicCardGrid, DynamicGridCard } from 'my-react-shell/components'
 | **`lg`** | 400px | 500px | Featured content, wide charts. |
 
 `DynamicGridCard` also has a `shape`: `'standard'` (φ:1, default) or `'landscape'` (φ²:1,
-shorter and wider).
+shorter and wider). An **accent stripe** is opt-in via `tone` (semantic tokens) or a raw
+`color`, with `accentPlacement` reading as a `'top'` stripe (default) or a `'left'` bar —
+the same accent vocabulary as `StatCard`/`PaperCard`. It's independent of the faint surface
+`tint`, so a card can carry both.
 
 > A `DynamicGridCard` used **outside** a `DynamicCardGrid` can set its own `size` to get the
 > same min/max cap; inside a grid, omit it and let `cardSize` drive the columns.

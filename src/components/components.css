@@ -1754,6 +1754,47 @@
   background: color-mix(in srgb, var(--mrs-card-tint) 14%, var(--color-surface-primary));
 }
 
+/* Optional 4px accent stripe (none unless `tone`/`color` is set) — along the top
+   edge (default) or the left edge, per the `accentPlacement` modifier class. The
+   gradient fades to transparent away from the origin edge; colour comes from
+   `--mrs-stat-accent` (set inline). Clipped by the root's `overflow: hidden`. */
+.mrs-dynamic-grid-card--accent-top::before,
+.mrs-dynamic-grid-card--accent-left::before {
+  content: '';
+  position: absolute;
+  z-index: 2;
+  pointer-events: none;
+}
+.mrs-dynamic-grid-card--accent-top::before {
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(
+    90deg,
+    var(--mrs-stat-accent, var(--color-primary)),
+    color-mix(in srgb, var(--mrs-stat-accent, var(--color-primary)) 35%, transparent)
+  );
+}
+.mrs-dynamic-grid-card--accent-left::before {
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 4px;
+  background: linear-gradient(
+    180deg,
+    var(--mrs-stat-accent, var(--color-primary)),
+    color-mix(in srgb, var(--mrs-stat-accent, var(--color-primary)) 35%, transparent)
+  );
+}
+/* Inset the content off the stripe so the two never overlap. */
+.mrs-dynamic-grid-card--accent-top {
+  padding-top: calc(1rem + 4px);
+}
+.mrs-dynamic-grid-card--accent-left {
+  padding-left: calc(1rem + 4px);
+}
+
 .mrs-dynamic-grid-card__header {
   flex-shrink: 0;
   margin-bottom: 0.5rem;
