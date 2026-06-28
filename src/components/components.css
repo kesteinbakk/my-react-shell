@@ -1749,11 +1749,6 @@
   flex-direction: column;
 }
 
-/* Faint background tint mixed against the surface token (dark-mode-safe). */
-.mrs-dynamic-grid-card--tinted {
-  background: color-mix(in srgb, var(--mrs-card-tint) 14%, var(--color-surface-primary));
-}
-
 /* Optional 4px accent stripe (none unless `tone`/`color` is set) — along the top
    edge (default) or the left edge, per the `accentPlacement` modifier class. The
    gradient fades to transparent away from the origin edge; colour comes from
@@ -1847,6 +1842,10 @@
 .mrs-dynamic-grid-card--hoverable:hover {
   box-shadow: var(--mrs-elevation-card-hover);
   transform: translateY(-4px);
+}
+/* `lift={false}` — keep the cursor + hover elevation, drop the movement. */
+.mrs-dynamic-grid-card--hoverable.mrs-dynamic-grid-card--no-lift:hover {
+  transform: none;
 }
 
 /* Interactive-root: the consumer's `<Link>` mounts as a full-bleed block-link overlay.
@@ -5512,11 +5511,6 @@
     100% 100%,
     0 100%
   );
-}
-
-/* Faint background tint mixed against the surface token (dark-mode-safe). */
-.mrs-paper-card--tinted .mrs-paper-card__sheet {
-  background: color-mix(in srgb, var(--mrs-card-tint) 14%, var(--color-surface-raised));
 }
 
 /* The folded-down corner flap, sitting in the notch. Its box-shadow falls toward

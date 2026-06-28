@@ -48,6 +48,13 @@ export interface DynamicGridCardProps extends Omit<HTMLAttributes<HTMLDivElement
   /** Cursor + hover-lift + `:focus-visible` ring on the card root. */
   hoverable?: boolean
   /**
+   * Whether the `hoverable` card lifts (`translateY`) on hover. Defaults to `true`. Set `false`
+   * to keep the card interactive — cursor, `onClick`, and a subtle hover elevation — **without**
+   * the movement (e.g. when the card carries a `DrawerMark` whose own open-on-hover is the
+   * feedback). No effect unless `hoverable` is set.
+   */
+  lift?: boolean
+  /**
    * Faint background watermark behind the card content, centred horizontally and dropped a
    * little below the card's vertical centre.
    *
@@ -78,13 +85,6 @@ export interface DynamicGridCardProps extends Omit<HTMLAttributes<HTMLDivElement
    * ```
    */
   renderLink?: (linkProps: DynamicGridCardLinkProps) => ReactNode
-  /**
-   * Raw CSS color string mixed *faintly* into the card's surface as a background tint.
-   * Dark-mode-safe: it `color-mix`es against the surface token (not white), so the tint
-   * reads correctly in both themes. Omit ⇒ no tint (today's behavior). Independent of the
-   * existing `tone`/`color` accent — a card can carry both an accent stripe and a tint.
-   */
-  tint?: string
   /**
    * Semantic tone — drives an optional accent stripe. Default **none** (no accent).
    * Ignored when `color` is set. Same accent vocabulary as `StatCard`/`PaperCard`.
@@ -181,7 +181,7 @@ function StructuredFooter({ footer }: { footer: DynamicGridCardFooter }) {
  * overlay, with `corner` controls raised above it so they stay independently clickable.
  */
 export const DynamicGridCard = forwardRef<HTMLDivElement, DynamicGridCardProps>(function DynamicGridCard(
-  { size, shape = 'standard', title, subtitle, figure, hoverable, watermark, corner, footer, renderLink, tint, tone, color, accentPlacement = 'top', className, style, children, ...props },
+  { size, shape = 'standard', title, subtitle, figure, hoverable, lift = true, watermark, corner, footer, renderLink, tone, color, accentPlacement = 'top', className, style, children, ...props },
   ref,
 ) {
   const minWidth = size ? DYNAMIC_GRID_CARD_MIN_WIDTH[size] : undefined
@@ -211,7 +211,6 @@ export const DynamicGridCard = forwardRef<HTMLDivElement, DynamicGridCardProps>(
     '--mrs-dynamic-grid-card-aspect-ratio': aspectRatio,
     ...(minWidth != null ? { '--mrs-dynamic-grid-card-min-width': `${minWidth}px` } : {}),
     ...(maxWidth != null ? { '--mrs-dynamic-grid-card-max-width': `${maxWidth}px` } : {}),
-    ...(tint != null ? { '--mrs-card-tint': tint } : {}),
     ...(hasAccent ? { '--mrs-stat-accent': accentColor } : {}),
     ...style,
   } as React.CSSProperties
@@ -223,10 +222,10 @@ export const DynamicGridCard = forwardRef<HTMLDivElement, DynamicGridCardProps>(
         'mrs-dynamic-grid-card',
         hasAccent && `mrs-dynamic-grid-card--accent-${accentPlacement}`,
         hoverable && 'mrs-dynamic-grid-card--hoverable',
+        hoverable && !lift && 'mrs-dynamic-grid-card--no-lift',
         renderLink && 'mrs-dynamic-grid-card--linked',
         hasWatermark && 'mrs-dynamic-grid-card--watermark',
         hasArtWatermark && 'mrs-reveal-host',
-        tint != null && 'mrs-dynamic-grid-card--tinted',
         className,
       )}
       style={cssVars}

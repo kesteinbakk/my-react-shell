@@ -84,13 +84,6 @@ export interface PaperCardProps {
      * Mutually exclusive with `dragHandle` — throws in dev.
      */
     renderLink?: (linkProps: PaperCardLinkProps) => ReactNode;
-    /**
-     * Raw CSS color string mixed *faintly* into the sheet's surface as a background tint.
-     * Dark-mode-safe: it `color-mix`es against the surface token (not white), so the tint
-     * reads correctly in both themes. Omit ⇒ no tint (today's behavior). Independent of the
-     * existing `tone`/`color` accent — a sheet can carry both an accent stripe and a tint.
-     */
-    tint?: string;
     className?: string;
     style?: CSSProperties;
 }
