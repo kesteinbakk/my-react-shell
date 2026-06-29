@@ -22,10 +22,10 @@ const SIZE_WIDTH_PX = {
     xl: 520,
 };
 const SIZE_FONT_REM = {
-    sm: 0.75,
-    md: 0.875,
-    lg: 1.125,
-    xl: 1.375,
+    sm: 1.0,
+    md: 1.1375,
+    lg: 1.40625,
+    xl: 1.48958,
 };
 // The golden ratio — a card's rendered height is width / PHI.
 const PHI = 1.6180339887;
