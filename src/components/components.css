@@ -4911,6 +4911,9 @@
   transition: box-shadow 0.15s ease;
 }
 
+.mrs-search-input:hover:not(:focus) {
+  box-shadow: 0 0 0 1px var(--color-border-primary);
+}
 .mrs-search-input:focus {
   outline: none;
   box-shadow: 0 0 0 2px var(--color-focus-ring);
