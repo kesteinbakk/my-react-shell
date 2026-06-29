@@ -1,6 +1,6 @@
 {
   "name": "my-react-shell",
-  "version": "0.10.0",
+  "version": "0.10.1",
   "private": true,
   "type": "module",
   "description": "Modular React foundation — optional, versioned drop-in modules (theme, providers, auth seam, i18n) for Vite + Convex SPAs. Consumed as a GitHub git-dependency.",
