@@ -62,47 +62,52 @@ const PRESET_ICONS = {
     more: (px) => (_jsxs("svg", { width: px, height: px, ...svgBase, children: [_jsx("circle", { cx: "12", cy: "12", r: "1" }), _jsx("circle", { cx: "19", cy: "12", r: "1" }), _jsx("circle", { cx: "5", cy: "12", r: "1" })] })),
 };
 /**
- * The shipped action presets: the "correct" glyph (SVG + emoji), colour, and
- * default label for each common action. Override any of them per call.
+ * The shipped action presets: the "correct" glyph (SVG + emoji) and colour for each
+ * common action. Override any of them per call. Presets carry **no text** — the kit
+ * never renders a hardcoded language; pass a translated `label` (visible) and/or
+ * `aria-label`/`hint` (accessible name) via your i18n seam.
  */
 export const actionPresets = {
-    add: { tone: 'success', emoji: '➕', label: 'Add' },
-    edit: { tone: 'info', emoji: '✏️', label: 'Edit' },
-    delete: { tone: 'danger', emoji: '🗑️', label: 'Delete' },
-    copy: { tone: 'neutral', emoji: '📋', label: 'Copy' },
-    share: { tone: 'info', emoji: '🔗', label: 'Share' },
-    download: { tone: 'neutral', emoji: '⬇️', label: 'Download' },
-    upload: { tone: 'neutral', emoji: '⬆️', label: 'Upload' },
-    save: { tone: 'primary', emoji: '💾', label: 'Save' },
-    search: { tone: 'neutral', emoji: '🔍', label: 'Search' },
-    refresh: { tone: 'neutral', emoji: '🔄', label: 'Refresh' },
-    settings: { tone: 'neutral', emoji: '⚙️', label: 'Settings' },
-    star: { tone: 'warning', emoji: '⭐', label: 'Favorite' },
-    close: { tone: 'neutral', emoji: '✖️', label: 'Close' },
-    more: { tone: 'neutral', emoji: '⋯', label: 'More' },
+    add: { tone: 'success', emoji: '➕' },
+    edit: { tone: 'info', emoji: '✏️' },
+    delete: { tone: 'danger', emoji: '🗑️' },
+    copy: { tone: 'neutral', emoji: '📋' },
+    share: { tone: 'info', emoji: '🔗' },
+    download: { tone: 'neutral', emoji: '⬇️' },
+    upload: { tone: 'neutral', emoji: '⬆️' },
+    save: { tone: 'primary', emoji: '💾' },
+    search: { tone: 'neutral', emoji: '🔍' },
+    refresh: { tone: 'neutral', emoji: '🔄' },
+    settings: { tone: 'neutral', emoji: '⚙️' },
+    star: { tone: 'warning', emoji: '⭐' },
+    close: { tone: 'neutral', emoji: '✖️' },
+    more: { tone: 'neutral', emoji: '⋯' },
 };
 /* ── Component ────────────────────────────────────────────────────────────── */
 /**
  * An opinionated icon/emoji + label action button on the semantic theme tokens.
  *
  * Use a **preset** for the common actions — each ships the correct glyph (SVG +
- * emoji), colour, and default label:
+ * emoji) and colour. Presets carry **no text**; pass a translated `label` (visible)
+ * and/or `aria-label`/`hint` (accessible name) yourself:
  * ```tsx
- * <ActionButton action="delete" onClick={onDelete} />
- * <ActionButton action="add" showLabel onClick={onAdd} />
- * <ActionButton action="star" active={fav} onClick={toggleFav} />
+ * <ActionButton action="delete" aria-label={t('action.delete')} onClick={onDelete} />
+ * <ActionButton action="add" label={t('action.add')} onClick={onAdd} />
+ * <ActionButton action="star" active={fav} aria-label={t('action.favorite')} onClick={toggleFav} />
  * ```
  *
  * Or bring a **custom** glyph for anything else:
  * ```tsx
- * <ActionButton icon={<Download />} label="Export" tone="info" onClick={onExport} />
+ * <ActionButton icon={<Download />} label={t('action.export')} tone="info" onClick={onExport} />
  * ```
  *
- * It never imports the i18n or icons modules: pass translated text via `label`,
- * and wire `showEmoji={useIconMode().isEmoji}` to follow the icons↔emojis seam.
+ * It never imports the i18n or icons modules: pass translated text via `label` /
+ * `aria-label`, and wire `showEmoji={useIconMode().isEmoji}` to follow the
+ * icons↔emojis seam. With no `label`/`aria-label`/`hint` the button is icon-only and
+ * has **no accessible name** — supply one for any non-decorative action.
  */
 export const ActionButton = forwardRef(function ActionButton(props, ref) {
-    const { action, icon, emoji, active, onClick, label, showLabel = false, showEmoji = false, hint, tone: toneProp, size = 'sm', layout = 'vertical', coloredLabel = false, disabled = false, type = 'button', 'aria-label': ariaLabelProp, className, ...rest } = props;
+    const { action, icon, emoji, active, onClick, label, showEmoji = false, hint, tone: toneProp, size = 'sm', layout = 'vertical', coloredLabel = false, disabled = false, type = 'button', 'aria-label': ariaLabelProp, className, ...rest } = props;
     const isStar = action === 'star';
     const preset = action != null ? actionPresets[action] : undefined;
     // Tone: explicit > preset > neutral. Star is special: amber when active,
@@ -128,8 +133,8 @@ export const ActionButton = forwardRef(function ActionButton(props, ref) {
     else if (resolvedEmoji != null) {
         glyph = (_jsx("span", { className: "mrs-action-btn__emoji", style: { fontSize: px }, children: resolvedEmoji }));
     }
-    const visibleLabel = label ?? (showLabel ? preset?.label : undefined);
-    const ariaLabel = ariaLabelProp ?? (visibleLabel != null ? undefined : hint ?? preset?.label);
+    const visibleLabel = label;
+    const ariaLabel = ariaLabelProp ?? (visibleLabel != null ? undefined : hint);
     return (_jsxs("button", { ref: ref, type: type, onClick: onClick, disabled: disabled, title: hint, "aria-label": ariaLabel, "aria-pressed": isStar ? !!active : undefined, className: cn(actionButtonVariants({ tone, size, layout, coloredLabel: coloredLabel || undefined }), isStar && !active && 'mrs-action-btn--star-hover', className), ...rest, children: [glyph != null && (_jsx("span", { className: "mrs-action-btn__glyph", "aria-hidden": "true", children: glyph })), visibleLabel != null && _jsx("span", { className: "mrs-action-btn__label", children: visibleLabel })] }));
 });
 /** A flex container for a set of `ActionButton`s — a toolbar row (or column). */

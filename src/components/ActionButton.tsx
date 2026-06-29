@@ -182,29 +182,29 @@ export interface ActionPreset {
   tone: ActionButtonTone
   /** Default emoji, shown in emoji mode (`showEmoji`) or as a fallback glyph. */
   emoji: string
-  /** Default English label — the accessible name, and the visible text when `showLabel`. */
-  label: string
 }
 
 /**
- * The shipped action presets: the "correct" glyph (SVG + emoji), colour, and
- * default label for each common action. Override any of them per call.
+ * The shipped action presets: the "correct" glyph (SVG + emoji) and colour for each
+ * common action. Override any of them per call. Presets carry **no text** — the kit
+ * never renders a hardcoded language; pass a translated `label` (visible) and/or
+ * `aria-label`/`hint` (accessible name) via your i18n seam.
  */
 export const actionPresets: Record<ActionType, ActionPreset> = {
-  add: { tone: 'success', emoji: '➕', label: 'Add' },
-  edit: { tone: 'info', emoji: '✏️', label: 'Edit' },
-  delete: { tone: 'danger', emoji: '🗑️', label: 'Delete' },
-  copy: { tone: 'neutral', emoji: '📋', label: 'Copy' },
-  share: { tone: 'info', emoji: '🔗', label: 'Share' },
-  download: { tone: 'neutral', emoji: '⬇️', label: 'Download' },
-  upload: { tone: 'neutral', emoji: '⬆️', label: 'Upload' },
-  save: { tone: 'primary', emoji: '💾', label: 'Save' },
-  search: { tone: 'neutral', emoji: '🔍', label: 'Search' },
-  refresh: { tone: 'neutral', emoji: '🔄', label: 'Refresh' },
-  settings: { tone: 'neutral', emoji: '⚙️', label: 'Settings' },
-  star: { tone: 'warning', emoji: '⭐', label: 'Favorite' },
-  close: { tone: 'neutral', emoji: '✖️', label: 'Close' },
-  more: { tone: 'neutral', emoji: '⋯', label: 'More' },
+  add: { tone: 'success', emoji: '➕' },
+  edit: { tone: 'info', emoji: '✏️' },
+  delete: { tone: 'danger', emoji: '🗑️' },
+  copy: { tone: 'neutral', emoji: '📋' },
+  share: { tone: 'info', emoji: '🔗' },
+  download: { tone: 'neutral', emoji: '⬇️' },
+  upload: { tone: 'neutral', emoji: '⬆️' },
+  save: { tone: 'primary', emoji: '💾' },
+  search: { tone: 'neutral', emoji: '🔍' },
+  refresh: { tone: 'neutral', emoji: '🔄' },
+  settings: { tone: 'neutral', emoji: '⚙️' },
+  star: { tone: 'warning', emoji: '⭐' },
+  close: { tone: 'neutral', emoji: '✖️' },
+  more: { tone: 'neutral', emoji: '⋯' },
 }
 
 /* ── Props ────────────────────────────────────────────────────────────────── */
@@ -213,10 +213,8 @@ interface ActionButtonBaseProps
   extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'> {
   /** Click handler. */
   onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void
-  /** Visible label text (vertical: below the glyph; inline: after it). Overrides the preset label. */
+  /** Visible label text (vertical: below the glyph; inline: after it). No default — pass a translated string; absent → icon only. */
   label?: string
-  /** Show the preset's default label as visible text without retyping it. Ignored if `label` is set. */
-  showLabel?: boolean
   /** Render the emoji instead of the SVG icon. Wire to `useIconMode().isEmoji` for the icons↔emojis seam. */
   showEmoji?: boolean
   /** Native tooltip shown on hover (the `title` attribute). */
@@ -238,7 +236,7 @@ interface ActionButtonBaseProps
   disabled?: boolean
   /** Button `type` attribute. Defaults to `button`. */
   type?: 'button' | 'submit' | 'reset'
-  /** Accessible name. Falls back to the visible label, then `hint`, then the preset label. */
+  /** Accessible name. Falls back to the visible `label`, then `hint`. No language default — absent → unnamed (icon only). */
   'aria-label'?: string
   /** Extra classes, merged via `cn()`. */
   className?: string
@@ -271,20 +269,23 @@ export type ActionButtonProps = ActionButtonPresetProps | ActionButtonIconProps
  * An opinionated icon/emoji + label action button on the semantic theme tokens.
  *
  * Use a **preset** for the common actions — each ships the correct glyph (SVG +
- * emoji), colour, and default label:
+ * emoji) and colour. Presets carry **no text**; pass a translated `label` (visible)
+ * and/or `aria-label`/`hint` (accessible name) yourself:
  * ```tsx
- * <ActionButton action="delete" onClick={onDelete} />
- * <ActionButton action="add" showLabel onClick={onAdd} />
- * <ActionButton action="star" active={fav} onClick={toggleFav} />
+ * <ActionButton action="delete" aria-label={t('action.delete')} onClick={onDelete} />
+ * <ActionButton action="add" label={t('action.add')} onClick={onAdd} />
+ * <ActionButton action="star" active={fav} aria-label={t('action.favorite')} onClick={toggleFav} />
  * ```
  *
  * Or bring a **custom** glyph for anything else:
  * ```tsx
- * <ActionButton icon={<Download />} label="Export" tone="info" onClick={onExport} />
+ * <ActionButton icon={<Download />} label={t('action.export')} tone="info" onClick={onExport} />
  * ```
  *
- * It never imports the i18n or icons modules: pass translated text via `label`,
- * and wire `showEmoji={useIconMode().isEmoji}` to follow the icons↔emojis seam.
+ * It never imports the i18n or icons modules: pass translated text via `label` /
+ * `aria-label`, and wire `showEmoji={useIconMode().isEmoji}` to follow the
+ * icons↔emojis seam. With no `label`/`aria-label`/`hint` the button is icon-only and
+ * has **no accessible name** — supply one for any non-decorative action.
  */
 export const ActionButton = forwardRef<HTMLButtonElement, ActionButtonProps>(
   function ActionButton(props, ref) {
@@ -295,7 +296,6 @@ export const ActionButton = forwardRef<HTMLButtonElement, ActionButtonProps>(
       active,
       onClick,
       label,
-      showLabel = false,
       showEmoji = false,
       hint,
       tone: toneProp,
@@ -343,9 +343,8 @@ export const ActionButton = forwardRef<HTMLButtonElement, ActionButtonProps>(
       )
     }
 
-    const visibleLabel = label ?? (showLabel ? preset?.label : undefined)
-    const ariaLabel =
-      ariaLabelProp ?? (visibleLabel != null ? undefined : hint ?? preset?.label)
+    const visibleLabel = label
+    const ariaLabel = ariaLabelProp ?? (visibleLabel != null ? undefined : hint)
 
     return (
       <button

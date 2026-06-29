@@ -141,8 +141,8 @@ the same accent vocabulary as `StatCard`/`PaperCard`. It's independent of the fa
 custom `ReactNode`) to render a handle, and spread your DND library's listeners (e.g. `@dnd-kit`'s
 `attributes` + `listeners`) onto it through `dragHandleProps`. `dragHandleLabel` is **required**
 when `dragHandle` is set — pass a translated accessible label (or supply `aria-label` via
-`dragHandleProps`); omitting it throws in dev. Unlike the other cards (PaperCard/PhiCard/ContentCard) — whose handle sits
-top-centre — the `StatCard` and `DynamicGridCard` grip is **vertical stripes pinned to the right edge, vertically
+`dragHandleProps`); omitting it throws in dev. Unlike the other cards (PaperCard/PhiCard) — whose handle sits
+top-centre — the `StatCard`, `ContentCard`, and `DynamicGridCard` grip is **vertical stripes pinned to the right edge, vertically
 centred**, and the card reserves a little right padding so the grip never overlaps its content. It
 is **mutually exclusive with `renderLink`** (a nav tile isn't drag-reorderable) — passing both
 throws in dev.

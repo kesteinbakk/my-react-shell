@@ -269,9 +269,9 @@ import 'my-react-shell/components/styles.css' // REQUIRED (plain prebuilt CSS; a
 | `InfoBox` | component | Neutral, tone-free contextual note (icon + title + body). Use `Alert` when the message carries a semantic tone. |
 | `EmptyState` | component | Centered zero-state: optional icon, required `title`, `description`, action slot. |
 | `Spinner`, `PageSpinner`, `SectionSpinner` | component | Rotating indicator on the current text color; block variants center it for page/section loading. |
-| `ConfirmDialog` | component | Controlled confirm dialog on Radix Dialog (overlay, focus trap, Esc/backdrop close). `tone="danger"` for destructive; renders its own cancel/confirm buttons. Supports configuring buttons via `useCancel` and `useConfirm` (accepting a string label or `DialogButtonConfig` configuration object). |
-| `ToastProvider`, `useToast` | component + hook | Mount provider once; fire toasts via `useToast()` (`.success`/`.error`/…). Each renders as an `Alert`; auto-dismiss (3s; `duration:0` sticky). |
-| `ActionButton`, `ActionButtonGroup`, `actionPresets` | component + const | Icon/emoji + label action button with presets (table below). `actionPresets` is the `{ tone, emoji, label }` map. |
+| `ConfirmDialog` | component | Controlled confirm dialog on Radix Dialog (overlay, focus trap, Esc/backdrop close). `tone="danger"` for destructive; renders its own cancel/confirm buttons. `confirmLabel` and `cancelLabel` are **required** — pass translated strings (no English default). Buttons can also be configured via `useCancel`/`useConfirm` (a string label or `DialogButtonConfig`). |
+| `ToastProvider`, `useToast` | component + hook | Mount provider once; fire toasts via `useToast()` (`.success`/`.error`/…). Each renders as an `Alert`; auto-dismiss (3s; `duration:0` sticky). `dismissLabel` is **required** on `ToastProvider` — the accessible name for a dismissible toast's ✕ (no default). |
+| `ActionButton`, `ActionButtonGroup`, `actionPresets` | component + const | Icon/emoji + label action button with presets (table below). `actionPresets` is the `{ tone, emoji }` map — presets carry **no text**; pass a translated `label` (visible) and/or `aria-label`/`hint` (accessible name). With none, the button is icon-only and **unnamed**. |
 | `Badge` | component | Status/category badge; tones `primary`·`neutral`·`success`·`warning`·`danger`·`info` (`primary` is a solid pill); optional status `dot`. Forwards standard `<span>` attributes (`title`, `aria-*`, `data-*`, `id`, events) to the root. |
 | `CountPill` | component | Small solid-fill numeric count pill (unread counts, tab counts, a bell overlay). `count`; tones `primary`·`secondary`·`success`·`warning`·`danger`·`info`; clamps at `max` (default `99` → `99+`), `tabular-nums`. Caller gates visibility and positions any overlay via `className`. Forwards standard `<span>` attributes. |
 | `Chip`, `ChipGroup` | component | Tag: plain / toggleable (`selected`+`onClick`) / removable (`onRemove`). `ChipGroup` wraps. |
@@ -292,8 +292,8 @@ import 'my-react-shell/components/styles.css' // REQUIRED (plain prebuilt CSS; a
 | `Checkbox` | component | Un-opinionated checkbox on Radix Checkbox; tri-state (`checked` · unchecked · `'indeterminate'`); hand-rolled check/dash glyph; checked box fills `--color-primary`. Controlled (`checked`/`onCheckedChange`) or uncontrolled (`defaultChecked`); form-aware (`name`/`value`/`required`). Uses the `@radix-ui/react-checkbox` optional peer. Supports custom `className` and `style` on the root. |
 | `Switch` | component | Un-opinionated toggle on Radix Switch; track + sliding thumb (checked track `--color-primary`). Controlled (`checked`/`onCheckedChange`) or uncontrolled (`defaultChecked`); form-aware (`name`/`value`). Optional `label`, `labelPlacement` (`left`·`right`, default `right`), and `fullWidth` (places label and toggle on opposite sides without stretching the track). Uses the `@radix-ui/react-switch` optional peer. Supports custom `className` and `style` on the root/wrapper. |
 | `RadioGroup` | component | Single-select set on Radix RadioGroup with roving arrow-key focus; data-driven via `options`; selected dot fills `--color-primary`; `orientation` (`vertical`·`horizontal`). Controlled (`value`/`onValueChange`) or uncontrolled (`defaultValue`); form-aware (`name`). Uses the `@radix-ui/react-radio-group` optional peer. Supports custom `className` and `style` on the root. |
-| `ColorPicker` | component | General popover color picker. **Free** by default — a full hue/saturation range (via the `react-colorful` optional peer); `onChange` emits in `format` (`hex`·`rgb`·`hsl`). Pass a `colors` set to **constrain** it to a swatch grid. Controlled; `value` is a directly-usable CSS color string. `placeholder` is **required** — pass a translated string. See [below](#colorpicker). Supports custom `className` and `style` on the root. |
-| `UserPreferences` | component | Controlled theme/display settings panel (palette + light/dark/system + optional icons↔emojis). Persists nothing — emits `onChange`. Auth-free (`accountActions` slot). |
+| `ColorPicker` | component | General popover color picker. **Free** by default — a full hue/saturation range (via the `react-colorful` optional peer); `onChange` emits in `format` (`hex`·`rgb`·`hsl`). Pass a `colors` set to **constrain** it to a swatch grid. Controlled; `value` is a directly-usable CSS color string. `placeholder` and `hexLabel` are **required** — pass translated strings. See [below](#colorpicker). Supports custom `className` and `style` on the root. |
+| `UserPreferences` | component | Controlled theme/display settings panel (palette + light/dark/system + optional icons↔emojis). Persists nothing — emits `onChange`. Auth-free (`accountActions` slot). All label props are **required** — pass translated strings (no English defaults); only `description` is optional. |
 | `Collapsible` | component | Single disclosure on Radix Collapsible: one trigger toggles one region. Controlled (`expanded`) / uncontrolled (`defaultExpanded`); static `trigger` or `renderTrigger(expanded)`; rotating chevron; `variant` (`default`·`bordered`·`ghost`·`filled`), `size`, `inlineChevron`, `animationDuration`. Uses the `@radix-ui/react-collapsible` optional peer. See [below](#collapsible). |
 | `Accordion` | component | Grouped disclosures on Radix Accordion: roving arrow-key focus, single (one-open) or `multiple` open. Data-driven via `items`; controlled `value`/`onValueChange` or `defaultValue`; `variant` (`default`·`bordered`·`separated`), `size`. Uses the `@radix-ui/react-accordion` optional peer. See [below](#accordion). |
 | `Tabs` | component | General content tabs on Radix Tabs (roving arrow-key focus, `aria` wiring): a trigger list over swappable panels, active trigger marked with a `--color-primary` indicator. Data-driven via `tabs`; controlled (`value`/`onValueChange`) or uncontrolled (`defaultValue`, defaults to first); `orientation` (`horizontal`·`vertical`). Distinct from the app-shell page tabs. Uses the `@radix-ui/react-tabs` optional peer. |
@@ -305,7 +305,7 @@ import 'my-react-shell/components/styles.css' // REQUIRED (plain prebuilt CSS; a
 | `Sheet` | component | Overlay panel that slides in from any edge on Radix Dialog (focus trap, Esc/outside-click close, portal). `side` (`left`·`right`·`top`·`bottom`), `size` (`sm`·`md`·`lg`·`xl`·`full` — width for left/right, height for top/bottom). Optional `trigger`; built-in header (`title`/`header`/`description` + ✕ `showClose` + `headerActions` next to ✕) or `bare` (child owns the panel). `scrim={false}` + `modal={false}` for a non-blocking float over a still-interactive page. Controlled (`open`/`onOpenChange`) or uncontrolled (`defaultOpen`). Uses the `@radix-ui/react-dialog` optional peer. |
 | `Calendar` | component | Themed month-grid calendar on `react-day-picker`; single/multiple/range selection (`mode`/`selected`/`onSelect`), full keyboard nav + ARIA, rendered against the tokens via `mrs-` classes (no react-day-picker stylesheet needed). Forwards every react-day-picker prop (`disabled`, `startMonth`/`endMonth`, `numberOfMonths`, `captionLayout`, …). Uses the `react-day-picker` + `date-fns` optional peers. |
 | `DatePicker` | component | Single-date field — a trigger button (showing the picked date, `displayFormat` via date-fns) that opens a `Calendar` in a Radix Popover; closes on pick. `disabledDays` (a react-day-picker matcher), `startMonth`/`endMonth`. Controlled (`value`/`onChange`) or uncontrolled (`defaultValue`). Uses the `react-day-picker` + `date-fns` + `@radix-ui/react-popover` optional peers. Supports custom `className` and `style` on the trigger. |
-| `EmojiPicker` | component | Full emoji picker panel — search input, scrollable category tabs (with a frequently-used tab), and an 8-column emoji grid. Ships no popover or trigger; embed inline or drop into a `<Popover>`. `onSelect(emoji)` receives the emoji character string. `locale` (default `'en'`; `'nb'` also bundled, others fall back to `'en'`), `showSearch` (default `true`), `searchPlaceholder` (default `'🔍'`), `noResultsLabel` (default `'🤷'`) — both accept translated strings. Requires the `emojibase-data` optional peer. |
+| `EmojiPicker` | component | Full emoji picker panel — search input, scrollable category tabs (with a frequently-used tab), and an 8-column emoji grid. Ships no popover or trigger; embed inline or drop into a `<Popover>`. `onSelect(emoji)` receives the emoji character string. `locale` (default `'en'`; `'nb'` also bundled, others fall back to `'en'`), `showSearch` (default `true`), `searchPlaceholder` (default `'🔍'`), `noResultsLabel` (default `'🤷'`) — both optional with emoji defaults; `categoriesLabel` and `frequentLabel` (the tablist + frequently-used-tab accessible names) are **required** — pass translated strings. Requires the `emojibase-data` optional peer. |
 | `EmojiEmpty` | component | Muted rounded-box placeholder (`+`) sized to one emoji slot. Use as the unset-value display in any trigger or display that shows a selected emoji — visually distinct from real emoji content so the empty state is never mistaken for a selection. Optional `className`. |
 | `EmojiBar`, `EMOJI_FREQUENT` | component + const | Compact strip of quick-access emoji buttons — no search, no categories. `emojis` defaults to `EMOJI_FREQUENT` (the 12-emoji frequent set). `onSelect(emoji)` called on click. Pass a custom `emojis` array for any set. No peer dependency. |
 | `useDebounce(callback, delayMs)` | hook | Returns a stable debounced wrapper for `callback`. The wrapper schedules `callback` to fire `delayMs` ms after the last call; a new call within the window resets the timer. Pending timer cancelled on unmount. |
@@ -348,9 +348,10 @@ Full convention + the per-component narrowings:
 ```tsx
 <Alert tone="warning" title="Heads up" onDismiss={() => {}}>Session expires soon.</Alert>
 
-// ConfirmDialog — controlled:
+// ConfirmDialog — controlled (confirmLabel + cancelLabel required):
 <ConfirmDialog open={open} onOpenChange={setOpen} title="Delete this item?"
-  description="This cannot be undone." tone="danger" confirmLabel="Delete"
+  description="This cannot be undone." tone="danger"
+  confirmLabel={t('common.delete')} cancelLabel={t('common.cancel')}
   onConfirm={() => { setOpen(false) }} />
 
 // Toast — provider once, then imperative:
@@ -381,24 +382,26 @@ and `style` on their root / trigger element for custom sizing. Examples:
 [components guide → Width & styling](../guides/components.md#width--styling).
 
 **`Alert` props:** `tone` (`'info'`), `title`, `children`, `icon` (per-tone; `false`
-drops it), `onDismiss` (renders a dismiss button), `dismissLabel` (`'Dismiss'`),
-role (`'alert'` | `'status'`), className.
+drops it), `onDismiss` (renders a dismiss button), `dismissLabel` (**required when
+`onDismiss` is set** — a translated accessible name; no default), role (`'alert'` |
+`'status'`), className.
 
 ### `ActionButton`
 
 An opinionated icon/emoji + label action button. **Presets** (each carries the correct
-hand-rolled SVG **and** an emoji, a semantic color, and a default English label):
+hand-rolled SVG **and** an emoji + a semantic color — **no text**):
 `add` · `edit` · `delete` · `copy` · `share` · `download` · `upload` · `save` ·
 `search` · `refresh` · `settings` · `star` · `close` · `more`. For anything without a
 preset, pass a custom `icon` node (a lucide icon or an `<Icon>` from `my-react-shell/icons`).
+The kit never renders a hardcoded language: pass a translated `label` (visible) and/or
+`aria-label`/`hint` (accessible name). With none, the button is icon-only and **unnamed**.
 
 | Prop | Default | Meaning |
 |---|---|---|
-| `action` | — | A preset supplying glyph + emoji + color + default label. **Either `action` or `icon` is required.** |
+| `action` | — | A preset supplying glyph + emoji + color (no text). **Either `action` or `icon` is required.** |
 | `icon` | per-preset | Custom glyph node. Required when there's no `action`; overrides the preset glyph otherwise. |
 | `emoji` | per-preset | Override the preset emoji (shown when `showEmoji`). |
-| `label` | — | Visible label; overrides the preset label. |
-| `showLabel` | `false` | Show the preset's default label without retyping it (ignored when `label` is set). |
+| `label` | — | Visible label text. No default — pass a translated string; absent → icon only. |
 | `showEmoji` | `false` | Render the emoji instead of the SVG — wire to `useIconMode().isEmoji`. |
 | `tone` | preset / `neutral` | `primary`·`neutral`·`info`·`success`·`warning`·`danger`. |
 | `size` | `sm` | `xs`·`sm`·`md`·`lg`·`xl` — drives padding, glyph, and label size. |
@@ -406,7 +409,7 @@ preset, pass a custom `icon` node (a lucide icon or an `<Icon>` from `my-react-s
 | `active` | — | For `action="star"`: filled + `aria-pressed` when true. |
 | `coloredLabel` | `false` | Let the label take the variant color instead of staying neutral. |
 | `hint` | — | Native tooltip (`title` attribute). |
-| `disabled` / `type` / `onClick` / `aria-label` / `className` | — | Usual button props; `aria-label` falls back to the visible label, then `hint`, then the preset label. |
+| `disabled` / `type` / `onClick` / `aria-label` / `className` | — | Usual button props; `aria-label` falls back to the visible `label`, then `hint`. No language default — absent → unnamed. |
 
 All other native `<button>` attributes pass straight through to the `<button>`, and the
 `ref` is forwarded to it — so an `ActionButton` works directly as a Radix `asChild`
@@ -418,9 +421,9 @@ trigger (e.g. a `Popover` / `Tooltip` / `DropdownMenu` anchor) with no wrapper e
 
 ```tsx
 <ActionButtonGroup>
-  <ActionButton action="add" showLabel onClick={onAdd} />
-  <ActionButton action="delete" showEmoji={useIconMode().isEmoji} onClick={onDelete} />
-  <ActionButton action="star" active={isFavorite} onClick={toggleFavorite} />
+  <ActionButton action="add" label={t('action.add')} onClick={onAdd} />
+  <ActionButton action="delete" aria-label={t('action.delete')} showEmoji={useIconMode().isEmoji} onClick={onDelete} />
+  <ActionButton action="star" active={isFavorite} aria-label={t('action.favorite')} onClick={toggleFavorite} />
   <ActionButton icon={<Upload size={20} />} label="Import" tone="info" onClick={onImport} />
 </ActionButtonGroup>
 ```
@@ -459,11 +462,12 @@ peer) by default, or **constrained** to a swatch grid when you pass a `colors` s
 | `label` / `description` | — | Field label + helper text above the trigger. |
 | `align` | `'start'` | Popover alignment (`start`·`center`·`end`). |
 | `placeholder` | — | Trigger text when nothing is selected. **Required** — pass a translated string via your i18n seam. |
+| `hexLabel` | — | Accessible label for the hex input (free `hex` mode). **Required** — pass a translated string. |
 | `disabled` / `aria-label` / `className` | — | Usual control props; `aria-label` falls back to a string `label`. |
 
 ```tsx
 const [color, setColor] = useState('#3b82f6')
-<ColorPicker label="Any color" placeholder={t('color.pick')} value={color} onChange={setColor} />
+<ColorPicker label="Any color" placeholder={t('color.pick')} hexLabel={t('color.hex')} value={color} onChange={setColor} />
 ```
 
 ### `Collapsible`

@@ -64,9 +64,9 @@ const SIZE_WIDTH_PX: Record<ContentCardSize, number> = {
 }
 
 const DEFAULT_DRAG_HANDLE = (
-  <svg width="64" height="12" viewBox="0 0 64 12" fill="currentColor" aria-hidden="true" opacity="0.4">
-    <rect x="0" y="1" width="64" height="3" rx="1.5" />
-    <rect x="0" y="8" width="64" height="3" rx="1.5" />
+  <svg width="11" height="28" viewBox="0 0 11 28" fill="currentColor" aria-hidden="true" opacity="0.4">
+    <rect x="1" y="0" width="3" height="28" rx="1.5" />
+    <rect x="7" y="0" width="3" height="28" rx="1.5" />
   </svg>
 )
 

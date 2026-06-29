@@ -22,7 +22,7 @@ const SIZE_WIDTH_PX = {
     lg: 400,
     xl: 520,
 };
-const DEFAULT_DRAG_HANDLE = (_jsxs("svg", { width: "64", height: "12", viewBox: "0 0 64 12", fill: "currentColor", "aria-hidden": "true", opacity: "0.4", children: [_jsx("rect", { x: "0", y: "1", width: "64", height: "3", rx: "1.5" }), _jsx("rect", { x: "0", y: "8", width: "64", height: "3", rx: "1.5" })] }));
+const DEFAULT_DRAG_HANDLE = (_jsxs("svg", { width: "11", height: "28", viewBox: "0 0 11 28", fill: "currentColor", "aria-hidden": "true", opacity: "0.4", children: [_jsx("rect", { x: "1", y: "0", width: "3", height: "28", rx: "1.5" }), _jsx("rect", { x: "7", y: "0", width: "3", height: "28", rx: "1.5" })] }));
 const SIZE_FONT_REM = {
     sm: 0.75,
     md: 0.875,

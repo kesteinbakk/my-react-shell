@@ -193,7 +193,6 @@ export interface PageHeaderPresetAction {
   action: Exclude<ActionType, 'search'>
   onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void
   label?: string
-  showLabel?: boolean
   showEmoji?: boolean
   tone?: ActionButtonTone
   size?: ActionButtonSize

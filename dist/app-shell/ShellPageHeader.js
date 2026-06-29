@@ -94,7 +94,7 @@ export function ShellPageHeaderUI(props) {
                                     }
                                     if (actionItem.action) {
                                         const presetAction = actionItem;
-                                        return (_jsx("span", { children: _jsx(ActionButton, { action: presetAction.action, onClick: presetAction.onClick, label: presetAction.label, showLabel: presetAction.showLabel, showEmoji: presetAction.showEmoji, tone: presetAction.tone, size: presetAction.size, layout: presetAction.layout, disabled: presetAction.disabled, hint: presetAction.hint }) }, i));
+                                        return (_jsx("span", { children: _jsx(ActionButton, { action: presetAction.action, onClick: presetAction.onClick, label: presetAction.label, showEmoji: presetAction.showEmoji, tone: presetAction.tone, size: presetAction.size, layout: presetAction.layout, disabled: presetAction.disabled, hint: presetAction.hint }) }, i));
                                     }
                                 }
                                 return null;

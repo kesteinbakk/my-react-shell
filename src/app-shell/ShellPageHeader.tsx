@@ -193,7 +193,6 @@ export function ShellPageHeaderUI(props: ShellPageHeaderUIProps): ReactNode {
                         action={presetAction.action}
                         onClick={presetAction.onClick}
                         label={presetAction.label}
-                        showLabel={presetAction.showLabel}
                         showEmoji={presetAction.showEmoji}
                         tone={presetAction.tone}
                         size={presetAction.size}

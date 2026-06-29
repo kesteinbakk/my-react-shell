@@ -5217,14 +5217,14 @@
 
 .mrs-content-card__drag-handle {
   position: absolute;
-  top: 10px;
-  left: 50%;
-  transform: translateX(-50%);
+  top: 50%;
+  right: 3px;
+  transform: translateY(-50%);
   z-index: 10;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 4px 8px;
+  padding: 8px 5px;
   background: transparent;
   border: none;
   color: var(--color-text-tertiary);
@@ -5242,13 +5242,14 @@
   cursor: grabbing !important;
 }
 
+/* Expand the clickable area beyond the visual bounds */
 .mrs-content-card__drag-handle::after {
   content: '';
   position: absolute;
-  top: -8px;
-  right: -16px;
-  bottom: -8px;
-  left: -16px;
+  top: -12px;
+  right: -6px;
+  bottom: -12px;
+  left: -10px;
 }
 
 .mrs-content-card__inner {
@@ -5270,11 +5271,8 @@
 .mrs-content-card--accent-top .mrs-content-card__inner {
   padding-top: calc(1.1em + 4px);
 }
-.mrs-content-card--draggable.mrs-content-card--accent-top .mrs-content-card__inner {
-  padding-top: calc(1.6em + 4px);
-}
-.mrs-content-card--draggable:not(.mrs-content-card--accent-top) .mrs-content-card__inner {
-  padding-top: 1.6em;
+.mrs-content-card--draggable .mrs-content-card__inner {
+  padding-right: calc(1.1em + 20px);
 }
 .mrs-content-card--accent-left .mrs-content-card__inner {
   padding-left: calc(1.1em + 4px);
