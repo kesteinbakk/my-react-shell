@@ -16,18 +16,16 @@ function isStructuredFooter(footer) {
         ('lines' in footer || 'badges' in footer));
 }
 const SIZE_WIDTH_PX = {
-    sm: 180,
-    md: 240,
-    lg: 312,
-    xl: 400,
-    xxl: 520,
+    sm: 240,
+    md: 312,
+    lg: 400,
+    xl: 520,
 };
 const SIZE_FONT_REM = {
-    sm: 0.625,
-    md: 0.75,
-    lg: 0.875,
-    xl: 1.125,
-    xxl: 1.375,
+    sm: 0.75,
+    md: 0.875,
+    lg: 1.125,
+    xl: 1.375,
 };
 // The golden ratio — a card's rendered height is width / PHI.
 const PHI = 1.6180339887;
