@@ -10,7 +10,7 @@ declare const process: { env: { NODE_ENV?: string } }
  * Size preset — a fixed-width golden-ratio card (`height = width / φ`). `md` (≈312px,
  * four to a `wide` 1440px row) is the default. Self-contained — no longer derived from `PhiCard`.
  */
-export type StatCardSize = 'sm' | 'md' | 'lg' | 'xl'
+export type StatCardSize = 'sm' | 'md' | 'lg' | 'xl' | 'xxl'
 
 /** Leading glyph kind for a footer meta line. */
 export type StatCardFooterLineType = 'date' | 'time' | 'check'
@@ -56,17 +56,19 @@ function isStructuredFooter(footer: ReactNode | StatCardFooter): footer is StatC
 }
 
 const SIZE_WIDTH_PX: Record<StatCardSize, number> = {
-  sm: 240,
-  md: 312,
-  lg: 400,
-  xl: 520,
+  sm: 180,
+  md: 240,
+  lg: 312,
+  xl: 400,
+  xxl: 520,
 }
 
 const SIZE_FONT_REM: Record<StatCardSize, number> = {
-  sm: 0.75,
-  md: 0.875,
-  lg: 1.125,
-  xl: 1.375,
+  sm: 0.625,
+  md: 0.75,
+  lg: 0.875,
+  xl: 1.125,
+  xxl: 1.375,
 }
 
 // The golden ratio — a card's rendered height is width / PHI.

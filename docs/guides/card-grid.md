@@ -57,7 +57,7 @@ import { CardGrid, StatCard, ContentCard } from 'my-react-shell/components'
 
 - **`align`** — `'start'` (default) packs from the left; `'center'` centers each row.
 - **`gap`** — any CSS length; default `1.5rem`. The default is sized so **four ≈312px cards
-  fit a `wide` (1440px) page-container row** (`StatCard`/`ContentCard` default `md` = 312px).
+  fit a `wide` (1440px) page-container row** (ContentCard default `md` = 312px, StatCard default `md` = 240px).
 
 ### The fixed-size cards
 
@@ -65,7 +65,7 @@ import { CardGrid, StatCard, ContentCard } from 'my-react-shell/components'
 `size` preset sets the pixel width and the height follows `height = width / φ`.
 
 - `StatCard` and `ContentCard` are **self-contained** — they carry their own `size` scale
-  and golden-ratio constant. Their `size` widths are `sm` 240 · `md` 312 · `lg` 400 · `xl` 520 px (default `md`).
+  and golden-ratio constant. `ContentCard` size widths are `sm` 240 · `md` 312 · `lg` 400 · `xl` 520 px (default `md`). `StatCard` size widths are `sm` 180 · `md` 240 · `lg` 312 · `xl` 400 · `xxl` 520 px (default `md`).
 - `PhiCard` *(legacy — being phased out; prefer `StatCard` / `ContentCard`)* keeps its own
   scale (`sm` 180 · `md` 240 · `lg` 320 · `xl` 480 px).
 

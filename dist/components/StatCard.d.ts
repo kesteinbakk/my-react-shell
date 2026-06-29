@@ -5,7 +5,7 @@ import type { Tone } from './tone';
  * Size preset — a fixed-width golden-ratio card (`height = width / φ`). `md` (≈312px,
  * four to a `wide` 1440px row) is the default. Self-contained — no longer derived from `PhiCard`.
  */
-export type StatCardSize = 'sm' | 'md' | 'lg' | 'xl';
+export type StatCardSize = 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
 /** Leading glyph kind for a footer meta line. */
 export type StatCardFooterLineType = 'date' | 'time' | 'check';
 /** One left-side footer line: text with an optional kit-shipped leading glyph. */

@@ -586,7 +586,7 @@ exported. Layout, footer-row pairing, and caps:
 
 Self-contained φ-framed KPI / status card (`height = width / φ`): title + subtitle, an accent
 **medallion** (number or arc-ring), a stats row, and a structured `footer` or freeform
-`lower`. `size` widths `sm` 240 · `md` 312 · `lg` 400 · `xl` 520 px (default `md`). Acts as a
+`lower`. `size` widths `sm` 180 · `md` 240 · `lg` 312 · `xl` 400 · `xxl` 520 px (default `md`). Acts as a
 whole-card link via `renderLink`. Medallion, gauge (`sideBarCompleteness`,
 `topStripeFollowsGauge`), `variant`, and worked examples:
 [card guide → StatCard](../guides/card-grid.md#statcard).
@@ -606,7 +606,7 @@ whole-card link via `renderLink`. Medallion, gauge (`sideBarCompleteness`,
 | `variant` | — | `'warning'` · `'danger'` — structural alert variant. Overrides `tone` to the same value (accent stripe, medallion tint, and stat numbers all reflect the variant hue) and forces `⚠️` as the watermark background emoji, ignoring the `watermark` prop. |
 | `footer` | — | Footer slot: a freeform `ReactNode` (e.g. a CTA pill via `.mrs-stat-card__cta`) **or** a structured `{ lines?, badges? }` (meta lines left, badges right — same shape as `ContentCard`). The two are discriminated automatically. |
 | `watermark` | — | Emoji rendered as a faint oversized background watermark. E.g. `'🏆'`. Ignored when `variant` is set. |
-| `size` | `'md'` | `sm`·`md`·`lg`·`xl` = 240/312/400/520px wide; height = width / φ. Default `md` ≈312px → four to a `wide` (1440px) row. |
+| `size` | `'md'` | `sm`·`md`·`lg`·`xl`·`xxl` = 180/240/312/400/520px wide; height = width / φ. Default `md` ≈240px. |
 | `shape` | `'standard'` | `'standard'` = φ:1 · `'landscape'` = φ²:1 (`height = width / φ²`, shorter box). For light cards (no footer, small content) where the standard height reads too tall; a full stats row + footer can overflow the shorter box. |
 | `onClick` | — | Click handler; also enables hover lift. |
 | `hoverable` | `!!onClick` | Hover lift (translateY + shadow). |
