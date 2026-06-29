@@ -373,9 +373,9 @@ function titleFitStep(title: string): 0 | 1 | 2 | 3 | 4 | 5 {
 // ── Component ─────────────────────────────────────────────────────────────────
 
 const DEFAULT_DRAG_HANDLE = (
-  <svg width="15" height="36" viewBox="0 0 15 36" fill="currentColor" aria-hidden="true" opacity="0.4">
-    <rect x="1" y="0" width="4" height="36" rx="2" />
-    <rect x="10" y="0" width="4" height="36" rx="2" />
+  <svg width="11" height="28" viewBox="0 0 11 28" fill="currentColor" aria-hidden="true" opacity="0.4">
+    <rect x="1" y="0" width="3" height="28" rx="1.5" />
+    <rect x="7" y="0" width="3" height="28" rx="1.5" />
   </svg>
 )
 
