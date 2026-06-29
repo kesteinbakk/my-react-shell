@@ -60,6 +60,32 @@ resolve: {
 ```
 *(For a full list of modules that need deduping depending on what you import, see the `Local dev-loop` section in `distribution-model.md`.)*
 
+### 3. `beforeunload` dialog on every HMR reload
+
+When using `@convex-dev/auth`, you will see a "Vil du laste inn nettstedet på nytt?" (or equivalent) Chrome dialog on every Vite HMR full-page reload during development.
+
+**Why this happens:** `@convex-dev/auth` registers a `window` `beforeunload` listener while `isRefreshingToken` is `true`. Convex server restarts (e.g. from schema pushes) retrigger token refreshes, and Vite HMR fires during that window — so the dialog appears constantly.
+
+**The fix:** Override `window.addEventListener` in dev to swallow `beforeunload` registrations. Add this to your app entry file (`src/main.tsx`) **before** `createRoot().render()`:
+
+```ts
+// Dev: suppress @convex-dev/auth's beforeunload listener (fires on every HMR
+// reload during a Convex server restart / token refresh window).
+if (import.meta.env.DEV) {
+  const _add = window.addEventListener.bind(window)
+  ;(window as unknown as Record<string, unknown>).addEventListener = (
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | AddEventListenerOptions,
+  ) => {
+    if (type === 'beforeunload') return
+    return _add(type, listener, options as AddEventListenerOptions)
+  }
+}
+```
+
+This is safe: the app uses debounced autosave, so no real unsaved-change scenario relies on the dialog.
+
 ## Pre-commit Hooks
 - **Commit Guard**: Ensure you install the pre-commit hook that blocks committing the dev-loop `link:`/`file:` dependency. This prevents breaking CI or other developers' clones.
 
