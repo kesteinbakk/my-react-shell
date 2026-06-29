@@ -85,7 +85,13 @@ export function PageTabs(props: PageTabsProps): ReactNode {
   const activeTabId = findActiveTabId(pathname, props.tabs, match)
 
   return (
-    <ScrollableTabRow role="tablist" variant={variant} className={props.className}>
+    <ScrollableTabRow
+      role="tablist"
+      variant={variant}
+      className={props.className}
+      scrollLeftLabel={shell?.config.labels?.scrollTabsLeft?.()}
+      scrollRightLabel={shell?.config.labels?.scrollTabsRight?.()}
+    >
       {props.tabs.map((tab) => {
         const active = activeTabId === tab.id
         return (

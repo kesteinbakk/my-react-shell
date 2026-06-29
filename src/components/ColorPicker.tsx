@@ -166,7 +166,7 @@ export function ColorPicker({
               <div
                 className="mrs-color-picker__swatches"
                 role="radiogroup"
-                aria-label={ariaLabel ?? 'Colors'}
+                aria-label={ariaLabel}
               >
                 {colors!.map((color, i) => {
                   const selected = !isEmpty && value!.trim() === color.trim()

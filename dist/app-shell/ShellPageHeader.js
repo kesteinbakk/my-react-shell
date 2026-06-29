@@ -133,9 +133,9 @@ function buildCrumbSlots(chain, collapse) {
 function Breadcrumbs(props) {
     const { chain, shell, spec, leafMatchesPath, showMenuButton, onOpenMenu } = props;
     const config = shell.config;
-    const homeLabel = config.labels?.home?.() ?? 'Home';
-    const navLabel = config.labels?.breadcrumb?.() ?? 'Breadcrumb';
-    const openMenuLabel = config.labels?.openMenu?.() ?? 'Open menu';
+    const homeLabel = config.labels?.home?.();
+    const navLabel = config.labels?.breadcrumb?.();
+    const openMenuLabel = config.labels?.openMenu?.();
     // Drop access-hidden ancestor levels (`PageEntry.hideCrumb()` returns true). The
     // leaf (current page) is never hidden, so the rendered trail can't go empty; the
     // hidden level stays in the chain for descent, so its descendants stay navigable.
@@ -169,7 +169,7 @@ function Breadcrumbs(props) {
 function OverflowCrumb(props) {
     const { shell, hidden } = props;
     const navigate = useNavigate();
-    const moreLabel = shell.config.labels?.more?.() ?? 'More';
+    const moreLabel = shell.config.labels?.more?.();
     return (_jsxs(DropdownMenu.Root, { children: [_jsx(DropdownMenu.Trigger, { asChild: true, children: _jsx("button", { type: "button", className: "mrs-breadcrumbs__overflow", "aria-label": moreLabel, children: "\u2026" }) }), _jsx(DropdownMenu.Portal, { children: _jsx(DropdownMenu.Content, { className: "mrs-breadcrumbs__menu", children: hidden.map(level => (_jsxs(DropdownMenu.Item, { className: "mrs-breadcrumbs__menu-item", disabled: level.entry.disableCrumbLink?.() === true, onSelect: () => navigate({ to: level.entry.route }), children: [shell.config.renderIcon(level.entry.icon, 16), level.entry.label()] }, level.entry.id))) }) })] }));
 }
 function LeafDropdown(props) {

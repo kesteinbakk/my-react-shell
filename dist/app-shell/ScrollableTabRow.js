@@ -94,7 +94,7 @@ export function useScrollOverflow(ref) {
  * view via the browser's default focus handling.
  */
 export function ScrollOverflowAffordance(props) {
-    return (_jsxs(_Fragment, { children: [props.canLeft ? (_jsxs(_Fragment, { children: [_jsx("div", { className: "mrs-tab-fade mrs-tab-fade--left", "aria-hidden": "true" }), _jsx("button", { type: "button", "aria-label": "Scroll left", tabIndex: -1, onClick: props.onScrollLeft, className: "mrs-tab-scroll-btn mrs-tab-scroll-btn--left", children: _jsx(Chevron, { dir: "left" }) })] })) : null, props.canRight ? (_jsxs(_Fragment, { children: [_jsx("div", { className: "mrs-tab-fade mrs-tab-fade--right", "aria-hidden": "true" }), _jsx("button", { type: "button", "aria-label": "Scroll right", tabIndex: -1, onClick: props.onScrollRight, className: "mrs-tab-scroll-btn mrs-tab-scroll-btn--right", children: _jsx(Chevron, { dir: "right" }) })] })) : null] }));
+    return (_jsxs(_Fragment, { children: [props.canLeft ? (_jsxs(_Fragment, { children: [_jsx("div", { className: "mrs-tab-fade mrs-tab-fade--left", "aria-hidden": "true" }), _jsx("button", { type: "button", "aria-label": props.scrollLeftLabel, tabIndex: -1, onClick: props.onScrollLeft, className: "mrs-tab-scroll-btn mrs-tab-scroll-btn--left", children: _jsx(Chevron, { dir: "left" }) })] })) : null, props.canRight ? (_jsxs(_Fragment, { children: [_jsx("div", { className: "mrs-tab-fade mrs-tab-fade--right", "aria-hidden": "true" }), _jsx("button", { type: "button", "aria-label": props.scrollRightLabel, tabIndex: -1, onClick: props.onScrollRight, className: "mrs-tab-scroll-btn mrs-tab-scroll-btn--right", children: _jsx(Chevron, { dir: "right" }) })] })) : null] }));
 }
 /**
  * Self-contained chevron glyph. The app-shell ships no icon dependency, and the
@@ -108,5 +108,5 @@ function Chevron({ dir }) {
 export function ScrollableTabRow(props) {
     const scrollRef = useRef(null);
     const overflow = useScrollOverflow(scrollRef);
-    return (_jsxs("div", { className: "mrs-tab-scroller", children: [_jsx("div", { ref: scrollRef, role: props.role, "data-variant": props.variant, className: `mrs-tab-row scrollbar-hidden${props.className ? ` ${props.className}` : ''}`, children: props.children }), _jsx(ScrollOverflowAffordance, { canLeft: overflow.canLeft, canRight: overflow.canRight, onScrollLeft: () => overflow.scrollByDir(-1), onScrollRight: () => overflow.scrollByDir(1) })] }));
+    return (_jsxs("div", { className: "mrs-tab-scroller", children: [_jsx("div", { ref: scrollRef, role: props.role, "data-variant": props.variant, className: `mrs-tab-row scrollbar-hidden${props.className ? ` ${props.className}` : ''}`, children: props.children }), _jsx(ScrollOverflowAffordance, { canLeft: overflow.canLeft, canRight: overflow.canRight, onScrollLeft: () => overflow.scrollByDir(-1), onScrollRight: () => overflow.scrollByDir(1), scrollLeftLabel: props.scrollLeftLabel, scrollRightLabel: props.scrollRightLabel })] }));
 }

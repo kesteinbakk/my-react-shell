@@ -57,6 +57,21 @@
   user-select: none;
 }
 
+/* Element (art) watermark — a faint illustration layer behind the content (e.g. a `DrawerMark`),
+   framed like the emoji watermark: centred horizontally, dropped a little below centre. */
+.mrs-content-card__watermark {
+  position: absolute;
+  left: 54%;
+  top: 60%;
+  width: 62%;
+  transform: translate(-50%, -50%);
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.16;
+  user-select: none;
+}
+
+
 .mrs-content-card--hoverable {
   cursor: pointer;
 }

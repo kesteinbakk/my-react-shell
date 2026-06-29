@@ -123,10 +123,16 @@ export interface StatCardProps {
      */
     footer?: ReactNode | StatCardFooter;
     /**
-     * Emoji or text rendered as a faint background watermark. E.g. `'🏆'`.
+     * Faint background watermark behind the card content, centred horizontally and dropped a
+     * little below the card's vertical centre.
+     *
+     * - A **string** is an emoji/text watermark (e.g. `'🏆'`), drawn oversized via a pseudo-element.
+     * - A **`ReactNode`** (e.g. a `DrawerMark`) is rendered in a faint art layer; the card
+     *   root becomes a `mrs-reveal-host`, so a hover-reveal mark dropped here opens on card hover.
+     *
      * Ignored when `variant` is set — the variant always shows `⚠️`.
      */
-    watermark?: string;
+    watermark?: ReactNode;
     /** Size preset — fixed-width golden-ratio card. Default: `'md'` (≈312px). */
     size?: StatCardSize;
     /**

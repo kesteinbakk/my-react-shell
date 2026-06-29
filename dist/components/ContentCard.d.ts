@@ -49,7 +49,17 @@ export interface ContentCardBaseProps {
      * (meta lines on the left, badges on the right).
      */
     footer?: ReactNode | ContentCardFooter;
-    watermark?: string;
+    /**
+     * Faint background watermark behind the card content, centred horizontally and dropped a
+     * little below the card's vertical centre.
+     *
+     * - A **string** is an emoji/text watermark (e.g. `'🏆'`), drawn oversized via a pseudo-element.
+     * - A **`ReactNode`** (e.g. a `DrawerMark`) is rendered in a faint art layer; the card
+     *   root becomes a `mrs-reveal-host`, so a hover-reveal mark dropped here opens on card hover.
+     *
+     * Ignored when `variant` is set — the variant always shows `⚠️`.
+     */
+    watermark?: ReactNode;
     size?: ContentCardSize;
     /**
      * Proportion of the card. Default `'standard'` (`height = width / φ`); `'landscape'` is the

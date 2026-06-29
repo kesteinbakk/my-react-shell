@@ -176,10 +176,16 @@ export interface StatCardProps {
    */
   footer?: ReactNode | StatCardFooter
   /**
-   * Emoji or text rendered as a faint background watermark. E.g. `'🏆'`.
+   * Faint background watermark behind the card content, centred horizontally and dropped a
+   * little below the card's vertical centre.
+   *
+   * - A **string** is an emoji/text watermark (e.g. `'🏆'`), drawn oversized via a pseudo-element.
+   * - A **`ReactNode`** (e.g. a `DrawerMark`) is rendered in a faint art layer; the card
+   *   root becomes a `mrs-reveal-host`, so a hover-reveal mark dropped here opens on card hover.
+   *
    * Ignored when `variant` is set — the variant always shows `⚠️`.
    */
-  watermark?: string
+  watermark?: ReactNode
   /** Size preset — fixed-width golden-ratio card. Default: `'md'` (≈312px). */
   size?: StatCardSize
   /**
@@ -418,6 +424,9 @@ export const StatCard = forwardRef<HTMLDivElement, StatCardProps>(function StatC
   // variant overrides tone to the same value; ⚠️ always used as the watermark.
   const effectiveTone: StatCardTone = variant ?? tone
   const effectiveWatermark = variant ? '⚠️' : watermark
+  const watermarkIsString = typeof effectiveWatermark === 'string'
+  const hasWatermark = watermarkIsString ? effectiveWatermark.length > 0 : effectiveWatermark != null
+  const hasArtWatermark = hasWatermark && !watermarkIsString
 
   const width = SIZE_WIDTH_PX[size]
   // landscape = φ²:1 (shorter box at the same width); standard = φ:1.
@@ -636,14 +645,15 @@ export const StatCard = forwardRef<HTMLDivElement, StatCardProps>(function StatC
         hasGauge && 'mrs-stat-card--gauge',
         variant && 'mrs-stat-card--variant',
         isHoverable && 'mrs-stat-card--hoverable',
-        effectiveWatermark && 'mrs-stat-card--watermark',
+        hasWatermark && 'mrs-stat-card--watermark',
+        hasArtWatermark && 'mrs-reveal-host',
         dragHandle && 'mrs-stat-card--draggable',
         shape === 'landscape' && 'mrs-stat-card--landscape',
         renderLink && 'mrs-stat-card--linked',
         className,
       )}
       style={style}
-      data-watermark={effectiveWatermark}
+      data-watermark={watermarkIsString ? effectiveWatermark : undefined}
       data-has-medallion={medallion != null ? "true" : undefined}
       data-medallion-size={medallion?.size ?? 'lg'}
       onClick={onClick}
@@ -651,6 +661,9 @@ export const StatCard = forwardRef<HTMLDivElement, StatCardProps>(function StatC
       {renderLink
         ? renderLink({ className: 'mrs-stat-card__link-overlay', 'aria-labelledby': titleId })
         : null}
+      {hasArtWatermark ? (
+        <div className="mrs-stat-card__watermark" aria-hidden="true">{effectiveWatermark}</div>
+      ) : null}
       {dragHandle ? (
         <button
           type="button"

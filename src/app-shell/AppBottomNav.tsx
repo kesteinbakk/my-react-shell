@@ -81,7 +81,7 @@ export function AppBottomNav(props: AppBottomNavProps): ReactNode {
     }
   }, [barPages.length])
 
-  const moreLabel = config.labels?.more?.() ?? 'More'
+  const moreLabel = config.labels?.more?.()
   const className = props.className
     ? `mrs-bottom-nav ${props.className}`
     : 'mrs-bottom-nav'

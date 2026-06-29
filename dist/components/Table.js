@@ -12,7 +12,7 @@ const INTERACTIVE_SELECTOR = 'button, a, input, select, textarea, label, [role="
  * expansion (`TableColumn.cellExpand`), per-row emphasis (`rowVariant`), and a
  * `frameless` mode for nesting inside a `Card` without a double border.
  */
-export function Table({ columns, data, rowKey, striped = true, empty = 'No data', onRowClick, renderExpanded, renderDisclosure, rowVariant, frameless = false, className, }) {
+export function Table({ columns, data, rowKey, striped = true, empty, onRowClick, renderExpanded, renderDisclosure, rowVariant, frameless = false, className, }) {
     const [sort, setSort] = useState(null);
     const [openRows, setOpenRows] = useState(() => new Set());
     const [openCell, setOpenCell] = useState(null);

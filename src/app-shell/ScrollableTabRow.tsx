@@ -116,6 +116,10 @@ export interface ScrollOverflowAffordanceProps {
   canRight: boolean
   onScrollLeft: () => void
   onScrollRight: () => void
+  /** Accessible name for the left arrow. No default — absent → the chevron stands alone. */
+  scrollLeftLabel?: string
+  /** Accessible name for the right arrow. No default — absent → the chevron stands alone. */
+  scrollRightLabel?: string
 }
 
 /**
@@ -135,7 +139,7 @@ export function ScrollOverflowAffordance(props: ScrollOverflowAffordanceProps): 
           <div className="mrs-tab-fade mrs-tab-fade--left" aria-hidden="true" />
           <button
             type="button"
-            aria-label="Scroll left"
+            aria-label={props.scrollLeftLabel}
             tabIndex={-1}
             onClick={props.onScrollLeft}
             className="mrs-tab-scroll-btn mrs-tab-scroll-btn--left"
@@ -150,7 +154,7 @@ export function ScrollOverflowAffordance(props: ScrollOverflowAffordanceProps): 
           <div className="mrs-tab-fade mrs-tab-fade--right" aria-hidden="true" />
           <button
             type="button"
-            aria-label="Scroll right"
+            aria-label={props.scrollRightLabel}
             tabIndex={-1}
             onClick={props.onScrollRight}
             className="mrs-tab-scroll-btn mrs-tab-scroll-btn--right"
@@ -200,6 +204,10 @@ export interface ScrollableTabRowProps {
   variant?: ShellTabsVariant
   /** Additional classes on the inner scroll container. */
   className?: string
+  /** Accessible name for the left scroll arrow. No default — absent → the chevron stands alone. */
+  scrollLeftLabel?: string
+  /** Accessible name for the right scroll arrow. No default — absent → the chevron stands alone. */
+  scrollRightLabel?: string
 }
 
 export function ScrollableTabRow(props: ScrollableTabRowProps): ReactNode {
@@ -221,6 +229,8 @@ export function ScrollableTabRow(props: ScrollableTabRowProps): ReactNode {
         canRight={overflow.canRight}
         onScrollLeft={() => overflow.scrollByDir(-1)}
         onScrollRight={() => overflow.scrollByDir(1)}
+        scrollLeftLabel={props.scrollLeftLabel}
+        scrollRightLabel={props.scrollRightLabel}
       />
     </div>
   )

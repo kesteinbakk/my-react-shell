@@ -36,7 +36,7 @@ export function AppBottomNav(props) {
                 'Mark top-level pages with `tabBar: true` in shell config.');
         }
     }, [barPages.length]);
-    const moreLabel = config.labels?.more?.() ?? 'More';
+    const moreLabel = config.labels?.more?.();
     const className = props.className
         ? `mrs-bottom-nav ${props.className}`
         : 'mrs-bottom-nav';

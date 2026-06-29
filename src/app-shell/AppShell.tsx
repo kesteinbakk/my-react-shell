@@ -66,7 +66,8 @@ interface MobileMenuDrawerProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   side: 'left' | 'right'
-  title: string
+  /** Visually-hidden accessible name for the drawer. No language default — absent → unnamed (consumer omitted `labels.mainNavigation`). */
+  title?: string
   children: ReactNode
 }
 
@@ -276,8 +277,8 @@ export function AppShell({
   const showBand = activeChain.length > 0 || hasPageChrome
 
   const brand = (): ReactNode => (config.appNameRender ? config.appNameRender() : config.appName)
-  const openMenuLabel = config.labels?.openMenu?.() ?? 'Open menu'
-  const navLabel = config.labels?.mainNavigation?.() ?? 'Main navigation'
+  const openMenuLabel = config.labels?.openMenu?.()
+  const navLabel = config.labels?.mainNavigation?.()
 
   const menu = (
     <AppMenu actions={actions} subtitle={subtitle} titleAdornment={titleAdornment} />

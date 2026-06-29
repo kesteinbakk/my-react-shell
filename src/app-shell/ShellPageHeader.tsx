@@ -286,9 +286,9 @@ function Breadcrumbs(props: BreadcrumbsProps): ReactNode {
     props
   const config = shell.config
 
-  const homeLabel = config.labels?.home?.() ?? 'Home'
-  const navLabel = config.labels?.breadcrumb?.() ?? 'Breadcrumb'
-  const openMenuLabel = config.labels?.openMenu?.() ?? 'Open menu'
+  const homeLabel = config.labels?.home?.()
+  const navLabel = config.labels?.breadcrumb?.()
+  const openMenuLabel = config.labels?.openMenu?.()
 
   // Drop access-hidden ancestor levels (`PageEntry.hideCrumb()` returns true). The
   // leaf (current page) is never hidden, so the rendered trail can't go empty; the
@@ -401,7 +401,7 @@ interface OverflowCrumbProps {
 function OverflowCrumb(props: OverflowCrumbProps): ReactNode {
   const { shell, hidden } = props
   const navigate = useNavigate()
-  const moreLabel = shell.config.labels?.more?.() ?? 'More'
+  const moreLabel = shell.config.labels?.more?.()
 
   return (
     <DropdownMenu.Root>

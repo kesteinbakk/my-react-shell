@@ -49,6 +49,10 @@ export interface ScrollOverflowAffordanceProps {
     canRight: boolean;
     onScrollLeft: () => void;
     onScrollRight: () => void;
+    /** Accessible name for the left arrow. No default — absent → the chevron stands alone. */
+    scrollLeftLabel?: string;
+    /** Accessible name for the right arrow. No default — absent → the chevron stands alone. */
+    scrollRightLabel?: string;
 }
 /**
  * Renders the fade gradient + arrow button on each side that has hidden
@@ -69,5 +73,9 @@ export interface ScrollableTabRowProps {
     variant?: ShellTabsVariant;
     /** Additional classes on the inner scroll container. */
     className?: string;
+    /** Accessible name for the left scroll arrow. No default — absent → the chevron stands alone. */
+    scrollLeftLabel?: string;
+    /** Accessible name for the right scroll arrow. No default — absent → the chevron stands alone. */
+    scrollRightLabel?: string;
 }
 export declare function ScrollableTabRow(props: ScrollableTabRowProps): ReactNode;

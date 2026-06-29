@@ -34,7 +34,7 @@ export interface TableProps<Row> {
   rowKey: (row: Row, index: number) => string | number
   /** Zebra striping. Defaults to `true`. */
   striped?: boolean
-  /** Shown in place of rows when `data` is empty. Defaults to `"No data"`. */
+  /** Shown in place of rows when `data` is empty. No default — pass a translated node; absent → a blank empty row (no language). */
   empty?: ReactNode
   /**
    * Whole-row click. The row shows a pointer affordance + hover state. Clicks that
@@ -89,7 +89,7 @@ export function Table<Row>({
   data,
   rowKey,
   striped = true,
-  empty = 'No data',
+  empty,
   onRowClick,
   renderExpanded,
   renderDisclosure,

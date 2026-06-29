@@ -96,7 +96,7 @@ route (e.g. `/dashboard`, `/data`).
 | `shellPageHeader.border` | `boolean` | `true` | Whether the header band draws a bottom border. |
 | `shellPageHeader.documentTitle` | `composed` · `leaf` · `app` | `composed` | Project-wide browser-tab title mode — see [Document title](#document-title-browser-tab). |
 | `shellPageHeader.breadcrumbCollapse` | `{ leading?, trailing? }` · `false` | `{ leading: 1, trailing: 2 }` | Breadcrumb middle-collapse — see [Overflow](#overflow-the-trail-never-breaks). |
-| `labels` | aria-label thunks: `home`, `breadcrumb`, `openMenu`, `mainNavigation`, `more` | English fallbacks | Translated accessible names for the chrome. |
+| `labels` | aria-label thunks: `home`, `breadcrumb`, `openMenu`, `mainNavigation`, `more`, `scrollTabsLeft`, `scrollTabsRight` | none (no language default) | Translated accessible names for the chrome. Each is optional with **no default** — omit one and that control is unnamed (an icon / landmark with no language), never an English fallback. Pass them for accessible chrome. |
 
 #### Optional per-`PageEntry` fields
 

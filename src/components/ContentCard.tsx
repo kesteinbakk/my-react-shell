@@ -107,7 +107,17 @@ export interface ContentCardBaseProps {
    */
   footer?: ReactNode | ContentCardFooter
 
-  watermark?: string
+  /**
+   * Faint background watermark behind the card content, centred horizontally and dropped a
+   * little below the card's vertical centre.
+   *
+   * - A **string** is an emoji/text watermark (e.g. `'🏆'`), drawn oversized via a pseudo-element.
+   * - A **`ReactNode`** (e.g. a `DrawerMark`) is rendered in a faint art layer; the card
+   *   root becomes a `mrs-reveal-host`, so a hover-reveal mark dropped here opens on card hover.
+   *
+   * Ignored when `variant` is set — the variant always shows `⚠️`.
+   */
+  watermark?: ReactNode
   size?: ContentCardSize
   /**
    * Proportion of the card. Default `'standard'` (`height = width / φ`); `'landscape'` is the
@@ -232,6 +242,9 @@ export const ContentCard = forwardRef<HTMLDivElement, ContentCardProps>(function
 ) {
   const effectiveTone: ContentCardTone = variant ?? tone
   const effectiveWatermark = variant ? '⚠️' : watermark
+  const watermarkIsString = typeof effectiveWatermark === 'string'
+  const hasWatermark = watermarkIsString ? effectiveWatermark.length > 0 : effectiveWatermark != null
+  const hasArtWatermark = hasWatermark && !watermarkIsString
 
   const width = SIZE_WIDTH_PX[size]
   // landscape = φ²:1 (shorter box at the same width); standard = φ:1.
@@ -363,19 +376,23 @@ export const ContentCard = forwardRef<HTMLDivElement, ContentCardProps>(function
         hasGauge && 'mrs-content-card--gauge',
         variant && 'mrs-content-card--variant',
         isHoverable && 'mrs-content-card--hoverable',
-        effectiveWatermark && 'mrs-content-card--watermark',
+        hasWatermark && 'mrs-content-card--watermark',
+        hasArtWatermark && 'mrs-reveal-host',
         dragHandle && 'mrs-content-card--draggable',
         shape === 'landscape' && 'mrs-content-card--landscape',
         renderLink && 'mrs-content-card--linked',
         className,
       )}
       style={style}
-      data-watermark={effectiveWatermark}
+      data-watermark={watermarkIsString ? effectiveWatermark : undefined}
       onClick={onClick}
     >
       {renderLink
         ? renderLink({ className: 'mrs-content-card__link-overlay', 'aria-labelledby': titleId })
         : null}
+      {hasArtWatermark ? (
+        <div className="mrs-content-card__watermark" aria-hidden="true">{effectiveWatermark}</div>
+      ) : null}
       {dragHandle ? (
         <button
           type="button"
