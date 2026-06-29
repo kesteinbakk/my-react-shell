@@ -2171,8 +2171,10 @@
   align-items: center;
   gap: 0.4em;
   min-width: 0;
-  font-size: 0.85em;
+  font-size: 0.78em;
   color: var(--color-text-secondary);
+  font-family: var(--font-footer);
+  font-variant-numeric: tabular-nums;
 }
 .mrs-phi-card__footer-icon {
   display: inline-flex;

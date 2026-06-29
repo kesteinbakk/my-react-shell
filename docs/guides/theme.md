@@ -109,12 +109,14 @@ no network call) and points `--font-sans` at that face; importing it after
 set the token yourself:
 
 ```css
-:root { --font-sans: 'Your Font', ui-sans-serif, system-ui, sans-serif; }
+:root {
+  --font-sans: 'Your Font', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'Your Mono Font', ui-monospace, monospace;
+  --font-footer: var(--font-mono); /* Force monospace footers globally */
+}
 ```
 
-`--font-sans` is the single source of truth for the sans family. There is **no font
-*scale* token** yet — sizes are the consumer's Tailwind utilities and the kit's own
-`rem` sizing.
+`--font-sans` is the single source of truth for the sans family, and `--font-mono` is the single source of truth for monospace text (code blocks, stats, metrics). `--font-footer` controls the font family of structured card footers, defaulting to `inherit`. There is **no font *scale* token** yet — sizes are the consumer's Tailwind utilities and the kit's own `rem` sizing.
 
 ## Wire it
 

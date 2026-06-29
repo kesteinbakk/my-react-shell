@@ -84,9 +84,10 @@ const { theme, isDark, themes, setTheme, toggleMode } = useTheme()
 > Custom palette? Ship a `.theme-<name>-{light,dark}` CSS class pair and list it in
 > `themes` (see the guide).
 
-**Typography (fonts).** The shell applies an overridable `--font-sans` token to
-`body` (a system stack by default). Import **one** bundled, self-hosted face **after**
-`my-react-shell/styles.css` to switch — or neither, and set `--font-sans` yourself:
+**Typography (fonts).** The shell applies overridable typography tokens (a system stack by default):
+- `--font-sans`: Applied to `body`. Import **one** bundled, self-hosted face **after** `my-react-shell/styles.css` to switch — or neither, and set `--font-sans` yourself.
+- `--font-mono`: A clean system monospace stack for code, stats, and metadata.
+- `--font-footer`: Controls the font family of structured card footers. Defaults to `inherit` (inheriting from the card's font size/family which derives from `--font-sans`).
 
 | CSS import | Face |
 |---|---|
