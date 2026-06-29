@@ -24,10 +24,10 @@ const SIZE_WIDTH_PX = {
 };
 const DEFAULT_DRAG_HANDLE = (_jsxs("svg", { width: "11", height: "28", viewBox: "0 0 11 28", fill: "currentColor", "aria-hidden": "true", opacity: "0.4", children: [_jsx("rect", { x: "1", y: "0", width: "3", height: "28", rx: "1.5" }), _jsx("rect", { x: "7", y: "0", width: "3", height: "28", rx: "1.5" })] }));
 const SIZE_FONT_REM = {
-    sm: 0.75,
-    md: 0.875,
-    lg: 1.125,
-    xl: 1.375,
+    sm: 1.0,
+    md: 1.1375,
+    lg: 1.40625,
+    xl: 1.48958,
 };
 const PHI = 1.6180339887;
 const FOOTER_GLYPHS = {
@@ -52,7 +52,11 @@ function titleFitStep(title) {
         return 2;
     if (n > 32)
         return 1;
-    return 0;
+    if (n > 22)
+        return 0;
+    if (n > 12)
+        return -1;
+    return -2;
 }
 function completenessFill(fraction) {
     if (fraction < 0.33)

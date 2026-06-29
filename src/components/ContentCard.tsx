@@ -71,10 +71,10 @@ const DEFAULT_DRAG_HANDLE = (
 )
 
 const SIZE_FONT_REM: Record<ContentCardSize, number> = {
-  sm: 0.75,
-  md: 0.875,
-  lg: 1.125,
-  xl: 1.375,
+  sm: 1.0,
+  md: 1.1375,
+  lg: 1.40625,
+  xl: 1.48958,
 }
 
 const PHI = 1.6180339887
@@ -180,14 +180,16 @@ const FOOTER_GLYPHS: Record<NonNullable<ContentCardFooterLine['type']>, ReactNod
  * without changing the card geometry; the deeper steps let a much longer title fit before
  * it ellipsizes. Shared ladder with `StatCard`/`PaperCard`. Returns `0` (no reduction) → `5`.
  */
-function titleFitStep(title: string): 0 | 1 | 2 | 3 | 4 | 5 {
+function titleFitStep(title: string): -2 | -1 | 0 | 1 | 2 | 3 | 4 | 5 {
   const n = title.length
   if (n > 116) return 5
   if (n > 90) return 4
   if (n > 68) return 3
   if (n > 48) return 2
   if (n > 32) return 1
-  return 0
+  if (n > 22) return 0
+  if (n > 12) return -1
+  return -2
 }
 
 function completenessFill(fraction: number): string {

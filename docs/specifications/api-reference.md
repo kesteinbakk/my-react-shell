@@ -264,7 +264,7 @@ import 'my-react-shell/components/styles.css' // REQUIRED (plain prebuilt CSS; a
 | `Dialog` | component | General controlled dialog on Radix Dialog (overlay, focus trap, portal). `title`/`description`, `children` body, `footer` actions, `showClose` ✕, `headerActions` (icon buttons rendered next to close ✕). Supports optional default footer buttons via `useCancel` and `usePrimary` (accepting a string label or `DialogButtonConfig` configuration object), which can be combined with the custom `footer` content (rendered sequentially as Cancel -> custom footer -> Primary); `size` (`sm`·`md`·`lg`·`xl`·`full`); the body scrolls within a viewport-capped card. `titleActions` puts a control on the heading row; `bleed` drops the kit chrome for a full-bleed / custom-layout dialog; `closeOnBackdrop`/`closeOnEsc` (default `true`) guard dismissal. |
 | `Preview` | component | Controlled modal PDF viewer styled like a piece of paper on Radix Dialog. Uses full viewport height and auto width. Rendered using `react-pdf`. `open`/`onOpenChange`, `title`, `file` (string url, `File`, or `Blob`), `actions`, `showPrintButton`, `printLabel`, and `closeLabel`. Provides native print functionality. Requires `react-pdf` as a peer dependency. |
 | `Popover` | component | Simple, opinionated floating panel on Radix Popover (focus management, outside-click / Esc close, portal). `trigger` anchor + `children` panel; controlled (`open`/`onOpenChange`) or uncontrolled (`defaultOpen`); `side`/`align`/`sideOffset` placement. Uses the `@radix-ui/react-popover` optional peer. |
-| `DropdownMenu` | component | Data-driven menu on Radix DropdownMenu (keyboard nav, outside-click / Esc close, portal). Anchor via `trigger` (any node, `asChild`) **or** `iconTrigger` (an icon element; the kit renders its own square ghost button, accessible via `iconTriggerLabel`). `onOpenChange(open)` fires on open/close. `items` — a discriminated union of `item` (plain action, closes on select; carries `icon`/`disabled`/`danger`) · `separator` · `label` · `checkbox` (independent toggle, controlled `checked`/`onCheckedChange`) · `radio-group` (one-of-a-group, controlled `value`/`onValueChange` + `options`) · `submenu` (nested `items`, arbitrary depth). Checkbox/radio rows keep the menu open by default (per-item `closeOnSelect` to close); selected/checked state is fully consumer-controlled. `side`/`align`/`sideOffset` placement. Uses the `@radix-ui/react-dropdown-menu` optional peer. |
+| `DropdownMenu` | component | Data-driven menu on Radix DropdownMenu (keyboard nav, outside-click / Esc close, portal). Anchor via `trigger` (any node, `asChild`) **or** `iconTrigger` (an icon element; the kit renders its own square ghost button — `iconTriggerLabel`, its accessible name, is **required** when `iconTrigger` is used; no default). `onOpenChange(open)` fires on open/close. `items` — a discriminated union of `item` (plain action, closes on select; carries `icon`/`disabled`/`danger`) · `separator` · `label` · `checkbox` (independent toggle, controlled `checked`/`onCheckedChange`) · `radio-group` (one-of-a-group, controlled `value`/`onValueChange` + `options`) · `submenu` (nested `items`, arbitrary depth). Checkbox/radio rows keep the menu open by default (per-item `closeOnSelect` to close); selected/checked state is fully consumer-controlled. `side`/`align`/`sideOffset` placement. Uses the `@radix-ui/react-dropdown-menu` optional peer. |
 | `Alert` | component | Inline alert/callout. `tone`: `info`·`success`·`warning`·`danger`; `title`, `icon`, `onDismiss`, `role`. |
 | `InfoBox` | component | Neutral, tone-free contextual note (icon + title + body). Use `Alert` when the message carries a semantic tone. |
 | `EmptyState` | component | Centered zero-state: optional icon, required `title`, `description`, action slot. |
@@ -563,7 +563,7 @@ exported. Layout, footer-row pairing, and caps:
 | `size` | `'md'` | `sm`·`md`·`lg`·`xl` = 180/240/320/480px wide (height = width / φ); also sets a base inherited `font-size`. |
 | `actions` | — | Items for the built-in ⋮ menu: `{ icon?, label, onSelect, destructive?, disabled? }[]`. Ignored when `corner` is set. |
 | `menuIcon` | ⋮ | Override the menu trigger glyph. |
-| `menuLabel` | `'Actions'` | Accessible name for the menu trigger. |
+| `menuLabel` | — | Accessible name for the ⋮ menu trigger. No default — pass a translated string when `actions` are set; absent → the ⋮ glyph stands alone. |
 | `corner` | — | Bring-your-own top-right node (replaces the `actions` menu). |
 | `tone` | — | Semantic accent hue → a stripe (see `accentPlacement`). **Opt-in** — no accent when unset. `primary`·`info`·`success`·`warning`·`danger`·`neutral`. `color` overrides it. |
 | `color` | — | Raw CSS color for the accent stripe; overrides `tone`. E.g. `'#7c3aed'` or `'var(--color-primary)'`. |
@@ -614,7 +614,7 @@ whole-card link via `renderLink`. Medallion, gauge (`sideBarCompleteness`,
 | `shape` | `'standard'` | `'standard'` = φ:1 · `'landscape'` = φ²:1 (`height = width / φ²`, shorter box). For light cards (no footer, small content) where the standard height reads too tall; a full stats row + footer can overflow the shorter box. |
 | `onClick` | — | Click handler; also enables hover lift. |
 | `hoverable` | `!!onClick` | Hover lift (translateY + shadow). |
-| `dragHandle` / `dragHandleProps` | — | Drag-reorder grip (built-in or custom node). **Mutually exclusive with `renderLink`** — throws in dev. |
+| `dragHandle` / `dragHandleProps` / `dragHandleLabel` | — | Drag-reorder grip (built-in or custom node). `dragHandleLabel` is the handle's accessible name — **no default**; pass a translated string when `dragHandle` is set (or supply `aria-label` via `dragHandleProps`); absent → the grip glyph stands alone. **Mutually exclusive with `renderLink`** — throws in dev. |
 | `renderLink` | — | Interactive-root seam — `(linkProps) => ReactNode`. The consumer renders its router `<Link>` spreading `linkProps` (`className` + auto-wired `aria-labelledby` from the title), adding `to`/`params`. The card mounts it as a **full-bleed block-link overlay** so the whole tile is a real, keyboard-activatable anchor while the root owns its hover/border/focus states; the medallion button (`onMedallionPress`) and drag handle stay raised above it. The shell imports no router; `to`/`params` type-safety lives at the call site. |
 | `className` | — | Extra classes. |
 
@@ -699,7 +699,7 @@ import { DynamicCardGrid, DynamicGridCard } from 'my-react-shell/components'
 | `color` | — | Raw CSS color for the accent stripe; overrides `tone`. E.g. `'#7c3aed'` or `'var(--color-primary)'`. |
 | `accentPlacement` | `'top'` | Where the accent reads when `tone`/`color` is set: a `'top'` stripe or a `'left'` bar. |
 | `renderLink` | — | Interactive-root seam. `(linkProps) => ReactNode` — the consumer renders its router `<Link>` spreading `linkProps` (`className` + auto-wired `aria-labelledby` from the title), adding `to`/`params`. The card mounts it as a **full-bleed block-link overlay** so the whole tile is a real, keyboard-activatable anchor while the root `<div>` owns its hover/border/focus states. The shell imports no router; `to`/`params` type-safety lives at the call site. |
-| `dragHandle` / `dragHandleProps` / `dragHandleLabel` | — | Drag-reorder grip — `true` renders a built-in **vertical-stripes** handle pinned to the **right edge, vertically centred** (or pass a custom `ReactNode`); spread your DND library's listeners via `dragHandleProps`. `dragHandleLabel` is **required** when `dragHandle` is set (no default — pass a translated accessible label, or supply `aria-label` via `dragHandleProps`); throws in dev. **Mutually exclusive with `renderLink`** — throws in dev. Same seam as `StatCard`/`ContentCard`/`PaperCard`. |
+| `dragHandle` / `dragHandleProps` / `dragHandleLabel` | — | Drag-reorder grip — `true` renders a built-in **vertical-stripes** handle pinned to the **right edge, vertically centred** (or pass a custom `ReactNode`); spread your DND library's listeners via `dragHandleProps`. `dragHandleLabel` is the handle's accessible name — **no default**; pass a translated string when `dragHandle` is set (or supply `aria-label` via `dragHandleProps`); absent → the grip glyph stands alone. **Mutually exclusive with `renderLink`** — throws in dev. Same seam as `StatCard`/`ContentCard`/`PaperCard`. |
 
 ```tsx
 import { Link } from '@tanstack/react-router'
@@ -778,7 +778,7 @@ sizing, accent logic, variants, watermark, and footer, but accepts either a `con
 | `watermark` | — | Faint background emoji. |
 | `size` | `'md'` | `sm`·`md`·`lg`·`xl` = 240/312/400/520px wide; height = width / φ. Default `md` ≈312px → four to a `wide` (1440px) row. |
 | `shape` | `'standard'` | `'standard'` = φ:1 · `'landscape'` = φ²:1 (`height = width / φ²`, shorter box). |
-| `dragHandle` / `dragHandleProps` | — | Drag-reorder grip. **Mutually exclusive with `renderLink`** — throws in dev. |
+| `dragHandle` / `dragHandleProps` / `dragHandleLabel` | — | Drag-reorder grip. `dragHandleLabel` is the handle's accessible name — **no default**; pass a translated string when `dragHandle` is set (or supply `aria-label` via `dragHandleProps`); absent → the grip glyph stands alone. **Mutually exclusive with `renderLink`** — throws in dev. |
 | `renderLink` | — | Interactive-root seam — same block-link-overlay mechanism as `StatCard` (`(linkProps) => ReactNode`; the whole tile becomes the consumer's router `<Link>`, root owns its states, no router dep in the shell). |
 
 > [!WARNING]
@@ -822,7 +822,7 @@ mechanics + examples: [card guide → PaperCard](../guides/card-grid.md#papercar
 | `size` | `'md'` | `sm`·`md`·`lg`·`xl`·`xxl` = 134/168/210/264/320px wide; height = width × √2. `lg` is literally A4's mm figures (210×297). |
 | `onClick` | — | Click handler; also enables hover lift. |
 | `hoverable` | `!!onClick` | Hover lift (translateY + heavier shadow). |
-| `dragHandle` / `dragHandleProps` | — | Drag-reorder grip (built-in or custom node). **Mutually exclusive with `renderLink`** — throws in dev. |
+| `dragHandle` / `dragHandleProps` / `dragHandleLabel` | — | Drag-reorder grip (built-in or custom node). `dragHandleLabel` is the handle's accessible name — **no default**; pass a translated string when `dragHandle` is set (or supply `aria-label` via `dragHandleProps`); absent → the grip glyph stands alone. **Mutually exclusive with `renderLink`** — throws in dev. |
 | `renderLink` | — | Interactive-root seam — same block-link-overlay mechanism as `StatCard`/`ContentCard` (`(linkProps) => ReactNode`; the whole tile becomes the consumer's router `<Link>`, root owns its states, no router dep in the shell). |
 | `className` / `style` | — | Extra classes / style on the outer card. |
 
@@ -834,8 +834,8 @@ mechanics + examples: [card guide → PaperCard](../guides/card-grid.md#papercar
 
 A fully **controlled** theme/display panel in a Radix dialog (palette + light/dark/system +
 an optional icons↔emojis switch). It **persists nothing** — emits `onChange`; the consumer
-owns storage. Auth-free (`accountActions` slot); labels are English defaults, pass translated
-strings. Notes: [components guide → UserPreferences](../guides/components.md#userpreferences).
+owns storage. Auth-free (`accountActions` slot); every label is a **required, no-default**
+prop — pass translated strings. Notes: [components guide → UserPreferences](../guides/components.md#userpreferences).
 
 | Prop | Default | Meaning |
 |---|---|---|
@@ -846,15 +846,19 @@ strings. Notes: [components guide → UserPreferences](../guides/components.md#u
 | `accountActions` | — | Rows below a divider — e.g. a sign-out button. Keeps the kit auth-free. |
 | `trigger` | icon button | Override the dialog trigger. |
 | `open` / `onOpenChange` | self-managed | Control the open state if you need to. |
-| label props | English | `triggerLabel`, `title`, `description`, `themeHeading`, `modeHeading`, `displayHeading`, `lightLabel`, `darkLabel`, `systemLabel`, `iconsLabel`, `emojisLabel`, `closeLabel`. |
+| label props | — | **Required** (no default): `triggerLabel`, `title`, `themeHeading`, `modeHeading`, `displayHeading`, `lightLabel`, `darkLabel`, `systemLabel`, `iconsLabel`, `emojisLabel`, `closeLabel`. Only `description` is optional. Pass translated strings. |
 | `className` | — | Extra classes on the dialog, merged via `cn()`. |
 
 ```tsx
-// wire to useTheme() + useIconMode():
+// wire to useTheme() + useIconMode() — every label is required:
 <UserPreferences theme={theme} themes={themes} onThemeChange={setTheme}
   mode={mode} onModeChange={setMode}
   followSystem={isSystemMode} onFollowSystemChange={setSystemMode}
-  iconMode={iconMode} onIconModeChange={setIconMode} />
+  iconMode={iconMode} onIconModeChange={setIconMode}
+  triggerLabel={t('prefs.open')} title={t('prefs.title')}
+  themeHeading={t('prefs.theme')} modeHeading={t('prefs.appearance')} displayHeading={t('prefs.display')}
+  lightLabel={t('prefs.light')} darkLabel={t('prefs.dark')} systemLabel={t('prefs.system')}
+  iconsLabel={t('prefs.icons')} emojisLabel={t('prefs.emojis')} closeLabel={t('common.close')} />
 ```
 
 ### `EmojiPicker` / `EmojiBar`
@@ -867,8 +871,10 @@ embed it inline or nest it inside a `<Popover>`. Requires the `emojibase-data` o
 | `onSelect` | — | `(emoji: string) => void`. **Required.** Receives the emoji character on click. Clears the search query after selection. |
 | `locale` | `'en'` | Locale for emoji labels and search. `'en'` and `'nb'` are bundled; any other value falls back to `'en'`. |
 | `showSearch` | `true` | Show the search input at the top. |
-| `searchPlaceholder` | `'🔍'` | Placeholder for the search field. Pass a translated string via your i18n seam. |
-| `noResultsLabel` | `'🤷'` | Shown when a search returns no matches. Pass a translated string via your i18n seam. |
+| `searchPlaceholder` | `'🔍'` | Placeholder for the search field. Optional (emoji default); pass a translated string via your i18n seam. |
+| `noResultsLabel` | `'🤷'` | Shown when a search returns no matches. Optional (emoji default); pass a translated string. |
+| `categoriesLabel` | — | Accessible label for the category tablist. **Required** — pass a translated string. |
+| `frequentLabel` | — | Accessible label + tooltip for the frequently-used tab. **Required** — pass a translated string. |
 | `className` | — | Extra classes on the root element. |
 
 **`EmojiBar`** — a compact strip of quick-access emoji buttons; no search, no categories.
@@ -993,7 +999,7 @@ export const shellConfig = defineShellConfig({
 > **Band actions.** The `actions` slot in `usePageHeader` accepts thunks `(() => ReactNode)` or preset action items:
 > - Preset strings (e.g. `'add'`, `'edit'`, `'delete'`) which render a standard inline `ActionButton`.
 > - A `'search'` string which renders a default `SearchInput` component with magnifier icon and debouncing. This is meant to be used for filtering or lookups on the content on the current page.
-> - Custom preset objects: `{ action: Exclude<ActionType, 'search'>, onClick?, label?, showLabel?, showEmoji?, tone?, size?, layout?, disabled?, hint? }` to customize standard preset buttons.
+> - Custom preset objects: `{ action: Exclude<ActionType, 'search'>, onClick?, label?, showEmoji?, tone?, size?, layout?, disabled?, hint? }` to customize standard preset buttons. (`label` is the visible text; pass a translated string. There is no preset default label.)
 > - Custom search objects: `{ action: 'search', icon?, endIcon?, onDebounceSearch?, debounceMs?, value?, defaultValue?, loadedIconState? }` to customize the search input field.
 > - Any custom ReactNode thunk. An `ActionButton` mounted here always lays out inline (glyph before label). **Anti-pattern:** Action items in the header should NEVER be styled as normal buttons (e.g. `<Button>`). Action items must either be default supported strings (e.g. `'add'`), a custom label + icon via `ActionButton`, or an icon-only `ActionButton`.
 >
@@ -1055,7 +1061,7 @@ createRoot(document.getElementById('root')!).render(
   <AppProviders authProvider={ConvexAuthDefaultProvider} theme={{ defaultTheme: 'ocean' }}>
     <I18nProvider messages={messages} defaultLocale="en">
       <IconModeProvider>
-        <ToastProvider>
+        <ToastProvider dismissLabel={t('common.dismiss')}>
           <RouterProvider router={router} />
         </ToastProvider>
       </IconModeProvider>

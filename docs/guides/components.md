@@ -33,6 +33,43 @@ The kit exports a canonical **`Tone`** type
 Components are themed **only through the semantic tokens**: change a token in your palette
 and the whole kit follows, with no component edits. Never hardcode a colour.
 
+## No hardcoded user-facing text — every string is a consumer prop
+
+A shell component **never** renders a hardcoded language. It has no access to a consumer's
+i18n, so **every** visible or audible string it emits — button text, placeholders,
+empty-state labels, `aria-label`s, `title` tooltips — comes from the consumer as a prop,
+with **no language default and no language fallback**. If a string isn't supplied, the
+component shows **nothing, or an icon/emoji** — never an English word. This is why you saw
+`confirmLabel`/`cancelLabel`, `closeLabel`, `placeholder`, `dismissLabel` and friends become
+**props you must pass**. The rule, in three shapes:
+
+- **Visible reading text, and the accessible name of an always-rendered button** → a
+  **required** prop (TypeScript flags a missing one). Examples: `ConfirmDialog`'s
+  `confirmLabel`/`cancelLabel`, `Dialog`/`Sheet` `closeLabel`, `Select`/`DatePicker`
+  `placeholder`, every `UserPreferences` label, `ColorPicker` `hexLabel`, `EmojiPicker`
+  `categoriesLabel`/`frequentLabel`, `ToastProvider` `dismissLabel`, `Preview`
+  `printLabel`/`closeLabel`.
+- **The accessible name of an *opt-in* button** (rendered only when you enable a feature)
+  → **required only when that feature is on**, via a discriminated union — so you can't
+  enable the button without naming it, and you're never forced to name a button that isn't
+  there. Examples: `Chip` `removeLabel` (with `onRemove`), `Alert` `dismissLabel` (with
+  `onDismiss`), `DropdownMenu` `iconTriggerLabel` (with `iconTrigger`).
+- **A supplementary `aria-label` on a control whose meaning a visible icon already carries**
+  → an **optional** prop, no default; if you omit it the icon stands alone (no language).
+  Examples: the cards' `dragHandleLabel`, `PhiCard` `menuLabel`. Pass them anyway to keep
+  the control accessible.
+
+The **only** kind of default a component may carry is a non-language one: an **emoji or
+icon** (e.g. `EmojiPicker`'s `searchPlaceholder` defaults to `🔍`, `noResultsLabel` to `🤷`).
+Those props stay optional. A hardcoded English (or any-language) default is **never**
+acceptable — a missing translation must surface as a type error or a silent icon, never as
+the wrong language leaking through (e.g. an English "Cancel" under Norwegian copy).
+
+> **`ActionButton` carries no preset text.** The presets (`add`, `delete`, …) ship a glyph,
+> an emoji, and a colour — **no label**. Pass a translated `label` (visible) and/or
+> `aria-label`/`hint` (accessible name). With none, the button is icon-only and **unnamed** —
+> so always give a non-decorative action a name. (There is no `showLabel` prop.)
+
 ## Width & styling conventions
 
 All input and form components (`Input`, `Textarea`, `Select`, `Checkbox`, `Switch`,
@@ -93,10 +130,10 @@ anchor) with no wrapper element.
 
 ```tsx
 <ActionButtonGroup>
-  <ActionButton action="add" showLabel onClick={onAdd} />
-  <ActionButton action="delete" showEmoji={useIconMode().isEmoji} onClick={onDelete} />
-  <ActionButton action="star" active={isFavorite} onClick={toggleFavorite} />
-  <ActionButton icon={<Upload size={20} />} label="Import" tone="info" onClick={onImport} />
+  <ActionButton action="add" label={t('action.add')} onClick={onAdd} />
+  <ActionButton action="delete" aria-label={t('action.delete')} showEmoji={useIconMode().isEmoji} onClick={onDelete} />
+  <ActionButton action="star" active={isFavorite} aria-label={t('action.favorite')} onClick={toggleFavorite} />
+  <ActionButton icon={<Upload size={20} />} label={t('action.import')} tone="info" onClick={onImport} />
 </ActionButtonGroup>
 ```
 

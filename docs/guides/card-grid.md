@@ -139,9 +139,10 @@ the same accent vocabulary as `StatCard`/`PaperCard`. It's independent of the fa
 `DynamicGridCard` carries the same `dragHandle` / `dragHandleProps` / `dragHandleLabel` seam as
 `StatCard` / `ContentCard` / `PaperCard`. Pass `dragHandle` (`true` for the built-in grip, or a
 custom `ReactNode`) to render a handle, and spread your DND library's listeners (e.g. `@dnd-kit`'s
-`attributes` + `listeners`) onto it through `dragHandleProps`. `dragHandleLabel` is **required**
-when `dragHandle` is set — pass a translated accessible label (or supply `aria-label` via
-`dragHandleProps`); omitting it throws in dev. Unlike the other cards (PaperCard/PhiCard) — whose handle sits
+`attributes` + `listeners`) onto it through `dragHandleProps`. `dragHandleLabel` is the handle's
+accessible name — **no default**; pass a translated string when `dragHandle` is set (or supply
+`aria-label` via `dragHandleProps`). If you omit it the grip glyph stands alone with no accessible
+name, so pass it for any real reorder UI. Unlike the other cards (PaperCard/PhiCard) — whose handle sits
 top-centre — the `StatCard`, `ContentCard`, and `DynamicGridCard` grip is **vertical stripes pinned to the right edge, vertically
 centred**, and the card reserves a little right padding so the grip never overlaps its content. It
 is **mutually exclusive with `renderLink`** (a nav tile isn't drag-reorderable) — passing both

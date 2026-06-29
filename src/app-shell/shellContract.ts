@@ -150,6 +150,10 @@ export interface ShellChromeLabels {
   openMenu?: () => string
   mainNavigation?: () => string
   more?: () => string
+  /** Accessible name for the tab-strip "scroll left" arrow (a mouse-only affordance). No default — absent → the chevron stands alone. */
+  scrollTabsLeft?: () => string
+  /** Accessible name for the tab-strip "scroll right" arrow (a mouse-only affordance). No default — absent → the chevron stands alone. */
+  scrollTabsRight?: () => string
 }
 
 /** Author-facing config — passed to `defineShellConfig`. */
