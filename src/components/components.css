@@ -2395,19 +2395,19 @@
 
 .mrs-stat-card__drag-handle {
   position: absolute;
-  top: 10px;
-  left: 50%;
-  transform: translateX(-50%);
+  top: 50%;
+  right: 6px;
+  transform: translateY(-50%);
   z-index: 10;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 4px 8px;
+  padding: 10px 7px;
   background: transparent;
   border: none;
   color: var(--color-text-tertiary);
   cursor: grab !important;
-  border-radius: 4px;
+  border-radius: 6px;
   transition: background-color 120ms ease, color 120ms ease;
 }
 
@@ -2424,10 +2424,10 @@
 .mrs-stat-card__drag-handle::after {
   content: '';
   position: absolute;
-  top: -8px;
-  right: -16px;
-  bottom: -8px;
-  left: -16px;
+  top: -12px;
+  right: -6px;
+  bottom: -12px;
+  left: -10px;
 }
 
 /* Inner content — padded flex column, sits above the watermark */
@@ -2449,11 +2449,8 @@
 .mrs-stat-card--accent-top .mrs-stat-card__inner {
   padding-top: calc(1.1em + 4px);
 }
-.mrs-stat-card--draggable.mrs-stat-card--accent-top .mrs-stat-card__inner {
-  padding-top: calc(1.6em + 4px);
-}
-.mrs-stat-card--draggable:not(.mrs-stat-card--accent-top) .mrs-stat-card__inner {
-  padding-top: 1.6em;
+.mrs-stat-card--draggable .mrs-stat-card__inner {
+  padding-right: calc(1.1em + 20px);
 }
 .mrs-stat-card--accent-left .mrs-stat-card__inner {
   padding-left: calc(1.1em + 4px);

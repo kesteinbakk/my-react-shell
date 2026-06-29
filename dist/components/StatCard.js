@@ -95,7 +95,7 @@ function titleFitStep(title) {
     return 0;
 }
 // ── Component ─────────────────────────────────────────────────────────────────
-const DEFAULT_DRAG_HANDLE = (_jsxs("svg", { width: "64", height: "12", viewBox: "0 0 64 12", fill: "currentColor", "aria-hidden": "true", opacity: "0.4", children: [_jsx("rect", { x: "0", y: "1", width: "64", height: "3", rx: "1.5" }), _jsx("rect", { x: "0", y: "8", width: "64", height: "3", rx: "1.5" })] }));
+const DEFAULT_DRAG_HANDLE = (_jsxs("svg", { width: "15", height: "36", viewBox: "0 0 15 36", fill: "currentColor", "aria-hidden": "true", opacity: "0.4", children: [_jsx("rect", { x: "1", y: "0", width: "4", height: "36", rx: "2" }), _jsx("rect", { x: "10", y: "0", width: "4", height: "36", rx: "2" })] }));
 /**
  * Stat card — a φ-framed KPI/status card with a title, an optional accent
  * medallion circle (plain number or arc-ring progress), a row of data stats, and an

@@ -197,7 +197,7 @@ export interface StatCardProps {
   /** Click handler for the medallion. */
   onMedallionPress?: () => void
   /**
-   * Enables the drag handler. If `true`, renders a built-in top-center grip handle.
+   * Enables the drag handler. If `true`, renders a built-in right-edge vertically-centered grip handle.
    * If a `ReactNode`, renders your custom handle.
    */
   dragHandle?: boolean | ReactNode
@@ -373,9 +373,9 @@ function titleFitStep(title: string): 0 | 1 | 2 | 3 | 4 | 5 {
 // ── Component ─────────────────────────────────────────────────────────────────
 
 const DEFAULT_DRAG_HANDLE = (
-  <svg width="64" height="12" viewBox="0 0 64 12" fill="currentColor" aria-hidden="true" opacity="0.4">
-    <rect x="0" y="1" width="64" height="3" rx="1.5" />
-    <rect x="0" y="8" width="64" height="3" rx="1.5" />
+  <svg width="15" height="36" viewBox="0 0 15 36" fill="currentColor" aria-hidden="true" opacity="0.4">
+    <rect x="1" y="0" width="4" height="36" rx="2" />
+    <rect x="10" y="0" width="4" height="36" rx="2" />
   </svg>
 )
 

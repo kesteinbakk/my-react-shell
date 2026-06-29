@@ -142,7 +142,7 @@ export interface StatCardProps {
     /** Click handler for the medallion. */
     onMedallionPress?: () => void;
     /**
-     * Enables the drag handler. If `true`, renders a built-in top-center grip handle.
+     * Enables the drag handler. If `true`, renders a built-in right-edge vertically-centered grip handle.
      * If a `ReactNode`, renders your custom handle.
      */
     dragHandle?: boolean | ReactNode;
