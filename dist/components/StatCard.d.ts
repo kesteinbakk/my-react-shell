@@ -123,8 +123,7 @@ export interface StatCardProps {
      */
     footer?: ReactNode | StatCardFooter;
     /**
-     * Faint background watermark behind the card content, centred horizontally and dropped a
-     * little below the card's vertical centre.
+     * Faint background watermark behind the card content, centred horizontally and vertically.
      *
      * - A **string** is an emoji/text watermark (e.g. `'🏆'`), drawn oversized via a pseudo-element.
      * - A **`ReactNode`** (e.g. a `DrawerMark`) is rendered in a faint art layer; the card
@@ -140,7 +139,7 @@ export interface StatCardProps {
      *   centred horizontally, dropped a little below centre, scaled to the card.
      * - `'glyph'` — a keyed icon glyph (e.g. a lucide `<svg>` / emoji span from a consumer icon
      *   kit) scaled and positioned to **mirror the string-emoji watermark**: oversized, faint,
-     *   bottom-right, rotated `-8deg`. Use this when the watermark is a single icon rather than an
+     *   centred, without tilt. Use this when the watermark is a single icon rather than an
      *   illustration, so it reads at the same size as the `string` emoji watermark.
      */
     watermarkMode?: 'art' | 'glyph';
