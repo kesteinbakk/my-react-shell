@@ -2742,7 +2742,7 @@
 .mrs-stat-card__stats {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 0.4em 1.4em;
+  gap: 0.4em 0.8em;
   margin: 0;
   margin-top: -0.6em; /* Negate the 0.6em flex gap from __inner */
   align-items: flex-start;
@@ -2765,10 +2765,10 @@
 }
 
 .mrs-stat-card__stat-label {
-  font-size: 0.65em;
+  font-size: 0.58em;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.02em;
   color: var(--color-text-secondary);
   line-height: 1;
   white-space: nowrap;
