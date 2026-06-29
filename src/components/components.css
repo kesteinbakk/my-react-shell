@@ -2165,6 +2165,10 @@
 }
 .mrs-phi-card__footer-badge {
   flex-shrink: 0;
+  font-size: 0.70em;
+  color: var(--color-text-secondary);
+  font-family: var(--font-footer);
+  font-variant-numeric: tabular-nums;
 }
 .mrs-phi-card__footer-line {
   display: flex;
