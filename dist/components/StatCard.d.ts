@@ -79,6 +79,8 @@ type _StatCardInfoBase = {
     closeLabel: string;
     /** Which lower corner the info button appears in. Default `'right'`. */
     corner?: 'right' | 'left';
+    /** Whether to show numbered badges next to section headings when `content` is an array. Default `true`. */
+    numbered?: boolean;
 };
 /**
  * Configuration for the info button shown in a lower corner of the card.

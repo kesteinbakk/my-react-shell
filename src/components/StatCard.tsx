@@ -134,6 +134,8 @@ type _StatCardInfoBase = {
   closeLabel: string
   /** Which lower corner the info button appears in. Default `'right'`. */
   corner?: 'right' | 'left'
+  /** Whether to show numbered badges next to section headings when `content` is an array. Default `true`. */
+  numbered?: boolean
 }
 
 /**
@@ -842,7 +844,7 @@ export const StatCard = forwardRef<HTMLDivElement, StatCardProps>(function StatC
                 {info.content.map((section, i) => (
                   <div key={i} className="mrs-stat-card__info-section">
                     <div className="mrs-stat-card__info-section-header">
-                      <span className="mrs-stat-card__info-badge">{i + 1}</span>
+                      {info.numbered !== false ? <span className="mrs-stat-card__info-badge">{i + 1}</span> : null}
                       <strong className="mrs-stat-card__info-section-title">{section.title}</strong>
                     </div>
                     {section.description ? (

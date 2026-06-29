@@ -3015,9 +3015,14 @@
   line-height: 1.55;
 }
 .mrs-stat-card__info-sections {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.75rem;
+}
+@media (min-width: 560px) {
+  .mrs-stat-card__info-sections {
+    grid-template-columns: 1fr 1fr;
+  }
 }
 .mrs-stat-card__info-section {
   background: var(--color-surface-raised);
