@@ -34,7 +34,7 @@ Each module is self-contained and independently importable.
 - **No silent defaults for absent values:** Check, don't default. Throw on required-but-absent values.
 
 ### UI/UX Rules
-- **No hardcoded user-facing text:** Components cannot call `t()` directly. Every visible or audible string must be a prop with an emoji/icon-only default, or a mandatory consumer prop (no default). Never hardcode English strings.
+- **No hardcoded user-facing text in components (STRICT RULE):** Components cannot call `t()` directly. Every visible or audible string must be a prop with an emoji/icon-only default, or a mandatory consumer prop (no default). Never hardcode English, Norwegian, or other language strings. Any agent that comes across any hardcoded user-facing text MUST fix it immediately by removing it and introducing a required/mandatory prop. The component must add required/mandatory props for all user-facing content needed.
 - **Input Auto-Save UX Rule:**
   - **No manual Save buttons/indicators:** Use debounced auto-saves for settings/config screens instead of explicit "Save" buttons.
   - **Visual `saveStatus` feedback:** Bind inputs to the `saveStatus` prop (`'idle' | 'pending' | 'saving' | 'saved' | 'error'`). On success (`'saved'`), the border transitions to green (1000ms fade). On typing/editing, the status clears to `'idle'` (120ms transition).

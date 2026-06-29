@@ -48,7 +48,7 @@ component shows **nothing, or an icon/emoji** — never an English word. This is
   `confirmLabel`/`cancelLabel`, `Dialog`/`Sheet` `closeLabel`, `Select`/`DatePicker`
   `placeholder`, every `UserPreferences` label, `ColorPicker` `hexLabel`, `EmojiPicker`
   `categoriesLabel`/`frequentLabel`, `ToastProvider` `dismissLabel`, `Preview`
-  `printLabel`/`closeLabel`.
+  `printLabel`/`closeLabel`/`loadingLabel`/`errorLabel`/`noDataLabel`/`noFileLabel`.
 - **The accessible name of an *opt-in* button** (rendered only when you enable a feature)
   → **required only when that feature is on**, via a discriminated union — so you can't
   enable the button without naming it, and you're never forced to name a button that isn't

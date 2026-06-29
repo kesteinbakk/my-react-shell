@@ -5476,6 +5476,7 @@
 
 .mrs-preview__body {
   flex: 1;
+  min-height: 0;
   overflow-y: auto;
   background-color: var(--color-surface-sunken);
   padding: 1.5rem;

@@ -211,14 +211,15 @@ foundation source and match it; don't reconstruct from memory or the happy path.
   The barrel (`my-react-shell`) is the Convex-free theme core.
 - **i18n:** every user-facing string through the `t()` seam; central-key policy;
   missing-key dev surface. Code / comments / docs in English.
-- **No hardcoded user-facing text in components.** Shell components cannot call
+- **No hardcoded user-facing text in components (STRICT RULE).** Shell components cannot call
   `t()` — they have no access to a consumer's i18n instance. Therefore every
   visible or audible string a component emits (placeholder, empty-state label,
-  ARIA label, button title, …) must be either a **prop with an emoji or icon-only
-  default**, or a **mandatory consumer prop** (no default — the consumer must
-  supply a translated string). Never a hardcoded English (or any language) string.
-  The consumer passes translated strings via its own i18n seam. A hardcoded
-  English default is never acceptable, even temporarily.
+  status message, loading/error state, ARIA label, button title, …) must be either a
+  **prop with an emoji or icon-only default**, or a **mandatory consumer prop**
+  (no default — the consumer must supply a translated string).
+  * **Any agent that comes across any hardcoded user-facing text MUST fix it immediately** by removing the hardcoded string and introducing a mandatory prop.
+  * A hardcoded string in any language (English, Norwegian, etc.) is never acceptable, even temporarily.
+  * The component must add required/mandatory props for all user-facing content needed. The consumer passes translated strings via its own i18n seam.
 - **Semantic tokens only** — no hardcoded colors/shadows; render in light *and* dark.
   **Never invent token names** (no `--color-base-root`, `--radius-lg`, `--shadow-xl`
   and the like) — the token set is strictly defined; confirm the exact supported

@@ -15,6 +15,14 @@ export interface PreviewProps {
     printLabel: string;
     /** Label for the close button. */
     closeLabel: string;
+    /** Label shown when the document is loading. */
+    loadingLabel: string;
+    /** Label shown when document loading fails. */
+    errorLabel: string;
+    /** Label shown when the document has no data/pages. */
+    noDataLabel: string;
+    /** Label shown when no file is provided. */
+    noFileLabel: string;
     /** Classes applied to the content container. */
     className?: string;
 }
@@ -23,4 +31,4 @@ export interface PreviewProps {
  * It takes the full viewport height and adjusts width dynamically.
  * Renders pages using `react-pdf`.
  */
-export declare function Preview({ open, onOpenChange, title, file, actions, showPrintButton, printLabel, closeLabel, className, }: PreviewProps): import("react").JSX.Element;
+export declare function Preview({ open, onOpenChange, title, file, actions, showPrintButton, printLabel, closeLabel, loadingLabel, errorLabel, noDataLabel, noFileLabel, className, }: PreviewProps): import("react").JSX.Element;

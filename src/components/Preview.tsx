@@ -26,6 +26,14 @@ export interface PreviewProps {
   printLabel: string
   /** Label for the close button. */
   closeLabel: string
+  /** Label shown when the document is loading. */
+  loadingLabel: string
+  /** Label shown when document loading fails. */
+  errorLabel: string
+  /** Label shown when the document has no data/pages. */
+  noDataLabel: string
+  /** Label shown when no file is provided. */
+  noFileLabel: string
   /** Classes applied to the content container. */
   className?: string
 }
@@ -44,6 +52,10 @@ export function Preview({
   showPrintButton = true,
   printLabel,
   closeLabel,
+  loadingLabel,
+  errorLabel,
+  noDataLabel,
+  noFileLabel,
   className,
 }: PreviewProps) {
   const [containerEl, setContainerEl] = useState<HTMLDivElement | null>(null)
@@ -155,14 +167,14 @@ export function Preview({
           
           <div className="mrs-preview__body" ref={setContainerEl}>
             {!file ? (
-              <div className="mrs-preview__msg">Ingen dokument er valgt.</div>
+              <div className="mrs-preview__msg">{noFileLabel}</div>
             ) : (
               <Document
                 file={file}
                 onLoadSuccess={onLoadSuccess}
-                loading={<div className="mrs-preview__msg">Laster dokument...</div>}
-                error={<div className="mrs-preview__msg">Kunne ikke laste dokumentet.</div>}
-                noData={<div className="mrs-preview__msg">Dokumentet er tomt.</div>}
+                loading={<div className="mrs-preview__msg">{loadingLabel}</div>}
+                error={<div className="mrs-preview__msg">{errorLabel}</div>}
+                noData={<div className="mrs-preview__msg">{noDataLabel}</div>}
               >
                 {Array.from({ length: numPages }, (_, i) => {
                   const pageNumber = i + 1
