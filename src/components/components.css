@@ -3015,20 +3015,16 @@
   line-height: 1.55;
 }
 .mrs-stat-card__info-sections {
-  display: grid;
-  grid-template-columns: 1fr;
+  display: flex;
+  flex-direction: column;
   gap: 0.75rem;
 }
-@media (min-width: 560px) {
-  .mrs-stat-card__info-sections {
-    grid-template-columns: 1fr 1fr;
-  }
-}
 .mrs-stat-card__info-section {
-  background: var(--color-surface-raised);
+  background: var(--color-surface-primary);
   border: 1px solid var(--color-border-primary);
-  border-radius: 0.5rem;
-  padding: 0.75rem 1rem;
+  border-radius: 0.75rem;
+  padding: 1rem;
+  box-shadow: var(--shadow-sm);
 }
 .mrs-stat-card__info-section-header {
   display: flex;
