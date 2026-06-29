@@ -2532,7 +2532,7 @@
 
 .mrs-stat-card__title {
   margin: 0;
-  font-size: 1.05em;
+  font-size: 1.08em;
   font-weight: 700;
   line-height: 1.2;
   color: var(--color-text-primary);
@@ -2545,12 +2545,14 @@
 /* Auto-fit: very long titles step the font size down (up to five steps) so they
    stay within ~two lines without resizing the card. Driven by `data-fit` (set from
    the title's character count); the attribute is absent at step 0 (no reduction).
-   The deeper steps let the card swallow a much longer title before it ellipsizes. */
-.mrs-stat-card__title[data-fit='1'] { font-size: 0.95em; }
-.mrs-stat-card__title[data-fit='2'] { font-size: 0.85em; }
-.mrs-stat-card__title[data-fit='3'] { font-size: 0.78em; line-height: 1.25; }
-.mrs-stat-card__title[data-fit='4'] { font-size: 0.70em; line-height: 1.25; }
-.mrs-stat-card__title[data-fit='5'] { font-size: 0.62em; line-height: 1.3; }
+   Shorter titles step the font size up for better readability. */
+.mrs-stat-card__title[data-fit='-2'] { font-size: 1.25em; }
+.mrs-stat-card__title[data-fit='-1'] { font-size: 1.16em; }
+.mrs-stat-card__title[data-fit='1'] { font-size: 1.00em; }
+.mrs-stat-card__title[data-fit='2'] { font-size: 0.90em; }
+.mrs-stat-card__title[data-fit='3'] { font-size: 0.82em; line-height: 1.25; }
+.mrs-stat-card__title[data-fit='4'] { font-size: 0.74em; line-height: 1.25; }
+.mrs-stat-card__title[data-fit='5'] { font-size: 0.66em; line-height: 1.3; }
 
 .mrs-stat-card__subtitle {
   margin: 0;

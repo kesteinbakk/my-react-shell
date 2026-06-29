@@ -360,14 +360,16 @@ function completenessFill(value: number): string {
  * Returns `0` (no reduction) through `5` (smallest). Shared ladder across the
  * string-title cards (`StatCard`/`ContentCard`/`PaperCard`).
  */
-function titleFitStep(title: string): 0 | 1 | 2 | 3 | 4 | 5 {
+function titleFitStep(title: string): -2 | -1 | 0 | 1 | 2 | 3 | 4 | 5 {
   const n = title.length
   if (n > 116) return 5
   if (n > 90) return 4
   if (n > 68) return 3
   if (n > 48) return 2
   if (n > 32) return 1
-  return 0
+  if (n > 22) return 0
+  if (n > 12) return -1
+  return -2
 }
 
 // ── Component ─────────────────────────────────────────────────────────────────
