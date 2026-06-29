@@ -278,7 +278,7 @@ export const DynamicGridCard = forwardRef<HTMLDivElement, DynamicGridCardProps>(
         <div className="mrs-dynamic-grid-card__watermark" aria-hidden="true">{watermark}</div>
       ) : null}
 
-      {dragHandle && !dragWholeCard ? (
+      {dragHandle ? (
         <button
           type="button"
           className="mrs-dynamic-grid-card__drag-handle"

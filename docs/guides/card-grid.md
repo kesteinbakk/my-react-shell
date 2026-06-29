@@ -146,7 +146,7 @@ name, so pass it for any real reorder UI. Unlike the other cards (PaperCard/PhiC
 top-centre — the `StatCard`, `ContentCard`, and `DynamicGridCard` grip is **vertical stripes pinned to the right edge, vertically
 centred**, and the card reserves a little right padding so the grip never overlaps its content.
 
-Alternatively, you can make the **whole card surface** draggable by passing the opt-in **`dragWholeCard`** prop. When set to `true`, the card root shows a `grab`/`grabbing` cursor and spreads the `dragHandleProps` directly onto the root card container (suppressing the rendering of the default visual drag handle).
+Alternatively, you can make the **whole card surface** draggable by passing the opt-in **`dragWholeCard`** prop. When set to `true`, the card root shows a `grab`/`grabbing` cursor and spreads the `dragHandleProps` directly onto the root card container (it can coexist with a focusable `dragHandle` grip for keyboard/screen reader sorting).
 
 Both drag mechanisms can safely **coexist with navigation links** (`renderLink` or `onClick`). Since DND library sensors (like `@dnd-kit`'s Mouse/Touch sensors) enforce distance activation thresholds (e.g. dragging at least 5px to start a drag), a quick click/tap on the card triggers normal navigation, while dragging past the threshold initiates a drag.
 

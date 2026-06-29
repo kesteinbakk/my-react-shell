@@ -669,7 +669,7 @@ export const StatCard = forwardRef<HTMLDivElement, StatCardProps>(function StatC
       {hasArtWatermark ? (
         <div className="mrs-stat-card__watermark" aria-hidden="true">{effectiveWatermark}</div>
       ) : null}
-      {dragHandle && !dragWholeCard ? (
+      {dragHandle ? (
         <button
           type="button"
           className="mrs-stat-card__drag-handle"

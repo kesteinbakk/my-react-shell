@@ -615,7 +615,7 @@ whole-card link via `renderLink`. Medallion, gauge (`sideBarCompleteness`,
 | `onClick` | — | Click handler; also enables hover lift. |
 | `hoverable` | `!!onClick` | Hover lift (translateY + shadow). |
 | `dragHandle` / `dragHandleProps` / `dragHandleLabel` | — | Drag-reorder grip (built-in or custom node). `dragHandleLabel` is the handle's accessible name — **no default**; pass a translated string when `dragHandle` is set (or supply `aria-label` via `dragHandleProps`); absent → the grip glyph stands alone. |
-| `dragWholeCard` | `false` | Switches the root cursor of the card to `grab`/`grabbing` and binds DND listeners on the card root itself (suppressing the rendering of the default visual drag handle). |
+| `dragWholeCard` | `false` | Switches the root cursor of the card to `grab`/`grabbing` and binds DND listeners on the card root itself (can coexist with a focusable `dragHandle` grip for keyboard/screen reader sorting). |
 | `renderLink` | — | Interactive-root seam — `(linkProps) => ReactNode`. The consumer renders its router `<Link>` spreading `linkProps` (`className` + auto-wired `aria-labelledby` from the title), adding `to`/`params`. The card mounts it as a **full-bleed block-link overlay** so the whole tile is a real, keyboard-activatable anchor while the root owns its hover/border/focus states; the medallion button (`onMedallionPress`) and drag handle stay raised above it. The shell imports no router; `to`/`params` type-safety lives at the call site. |
 | `className` | — | Extra classes. |
 
@@ -701,7 +701,7 @@ import { DynamicCardGrid, DynamicGridCard } from 'my-react-shell/components'
 | `accentPlacement` | `'top'` | Where the accent reads when `tone`/`color` is set: a `'top'` stripe or a `'left'` bar. |
 | `renderLink` | — | Interactive-root seam. `(linkProps) => ReactNode` — the consumer renders its router `<Link>` spreading `linkProps` (`className` + auto-wired `aria-labelledby` from the title), adding `to`/`params`. The card mounts it as a **full-bleed block-link overlay** so the whole tile is a real, keyboard-activatable anchor while the root `<div>` owns its hover/border/focus states. The shell imports no router; `to`/`params` type-safety lives at the call site. |
 | `dragHandle` / `dragHandleProps` / `dragHandleLabel` | — | Drag-reorder grip — `true` renders a built-in **vertical-stripes** handle pinned to the **right edge, vertically centred** (or pass a custom `ReactNode`); spread your DND library's listeners via `dragHandleProps`. `dragHandleLabel` is the handle's accessible name — **no default**; pass a translated string when `dragHandle` is set (or supply `aria-label` via `dragHandleProps`); absent → the grip glyph stands alone. Same seam as `StatCard`/`ContentCard`/`PaperCard`. |
-| `dragWholeCard` | `false` | Switches the root cursor of the card to `grab`/`grabbing` and binds DND listeners on the card root itself (suppressing the rendering of the default visual drag handle). |
+| `dragWholeCard` | `false` | Switches the root cursor of the card to `grab`/`grabbing` and binds DND listeners on the card root itself (can coexist with a focusable `dragHandle` grip for keyboard/screen reader sorting). |
 
 ```tsx
 import { Link } from '@tanstack/react-router'
@@ -781,7 +781,7 @@ sizing, accent logic, variants, watermark, and footer, but accepts either a `con
 | `size` | `'md'` | `sm`·`md`·`lg`·`xl` = 240/312/400/520px wide; height = width / φ. Default `md` ≈312px → four to a `wide` (1440px) row. |
 | `shape` | `'standard'` | `'standard'` = φ:1 · `'landscape'` = φ²:1 (`height = width / φ²`, shorter box). |
 | `dragHandle` / `dragHandleProps` / `dragHandleLabel` | — | Drag-reorder grip. `dragHandleLabel` is the handle's accessible name — **no default**; pass a translated string when `dragHandle` is set (or supply `aria-label` via `dragHandleProps`); absent → the grip glyph stands alone. |
-| `dragWholeCard` | `false` | Switches the root cursor of the card to `grab`/`grabbing` and binds DND listeners on the card root itself (suppressing the rendering of the default visual drag handle). |
+| `dragWholeCard` | `false` | Switches the root cursor of the card to `grab`/`grabbing` and binds DND listeners on the card root itself (can coexist with a focusable `dragHandle` grip for keyboard/screen reader sorting). |
 | `renderLink` | — | Interactive-root seam — same block-link-overlay mechanism as `StatCard` (`(linkProps) => ReactNode`; the whole tile becomes the consumer's router `<Link>`, root owns its states, no router dep in the shell). |
 
 > [!WARNING]

@@ -398,7 +398,7 @@ export const ContentCard = forwardRef<HTMLDivElement, ContentCardProps>(function
       {hasArtWatermark ? (
         <div className="mrs-content-card__watermark" aria-hidden="true">{effectiveWatermark}</div>
       ) : null}
-      {dragHandle && !dragWholeCard ? (
+      {dragHandle ? (
         <button
           type="button"
           className="mrs-content-card__drag-handle"
