@@ -235,6 +235,7 @@
   transform: translate(-50%, -50%);
   width: calc(100vw - 2rem);
   max-width: 26rem;
+  min-height: 12rem;
   /* Cap at the viewport; the body region scrolls within. */
   max-height: calc(100dvh - 2rem);
   display: flex;

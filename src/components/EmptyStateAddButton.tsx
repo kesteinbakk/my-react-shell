@@ -107,6 +107,10 @@ export interface EmptyStateAddButtonProps
 /**
  * Add button tailored for empty states.
  *
+ * This is a replacement for the typical "You do not have any items yet" text
+ * that agents often put on empty lists. When using this button such text must
+ * be replaced by the button, not kept in addition to the button.
+ *
  * Two shapes from one component:
  *   - `showBorder` (default `true`) → in-list / inline shape: full-width
  *     dashed rectangle wrapping the button + label. Use for sidebar / list
