@@ -51,6 +51,12 @@ export interface DialogProps {
     closeOnBackdrop?: boolean;
     /** Close when Esc is pressed. Defaults to `true`. */
     closeOnEsc?: boolean;
+    /**
+     * Override where Radix sends focus when the dialog opens. Pass `(e) => e.preventDefault()`
+     * to suppress the default auto-focus (useful when the first focusable element is a header
+     * action button that should not appear pre-selected on open).
+     */
+    onOpenAutoFocus?: (e: Event) => void;
     className?: string;
 }
 /**
@@ -81,4 +87,4 @@ export interface DialogProps {
  * </Dialog>
  * ```
  */
-export declare function Dialog({ open, onOpenChange, title, titleActions, headerActions, description, children, footer, useCancel, usePrimary, size, bleed, showClose, closeLabel, closeOnBackdrop, closeOnEsc, className, }: DialogProps): import("react").JSX.Element;
+export declare function Dialog({ open, onOpenChange, title, titleActions, headerActions, description, children, footer, useCancel, usePrimary, size, bleed, showClose, closeLabel, closeOnBackdrop, closeOnEsc, onOpenAutoFocus, className, }: DialogProps): import("react").JSX.Element;

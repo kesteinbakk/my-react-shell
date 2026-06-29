@@ -57,6 +57,12 @@ export interface DialogProps {
   closeOnBackdrop?: boolean
   /** Close when Esc is pressed. Defaults to `true`. */
   closeOnEsc?: boolean
+  /**
+   * Override where Radix sends focus when the dialog opens. Pass `(e) => e.preventDefault()`
+   * to suppress the default auto-focus (useful when the first focusable element is a header
+   * action button that should not appear pre-selected on open).
+   */
+  onOpenAutoFocus?: (e: Event) => void
   className?: string
 }
 
@@ -105,6 +111,7 @@ export function Dialog({
   closeLabel,
   closeOnBackdrop = true,
   closeOnEsc = true,
+  onOpenAutoFocus,
   className,
 }: DialogProps) {
   const getButtonClass = (tone: 'primary' | 'neutral' | 'danger') => {
@@ -160,6 +167,7 @@ export function Dialog({
           onPointerDownOutside={closeOnBackdrop ? undefined : (e) => e.preventDefault()}
           onInteractOutside={closeOnBackdrop ? undefined : (e) => e.preventDefault()}
           onEscapeKeyDown={closeOnEsc ? undefined : (e) => e.preventDefault()}
+          onOpenAutoFocus={onOpenAutoFocus}
         >
           {bleed ? (
             <>
