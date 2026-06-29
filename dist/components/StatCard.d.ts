@@ -123,7 +123,8 @@ export interface StatCardProps {
      */
     footer?: ReactNode | StatCardFooter;
     /**
-     * Faint background watermark behind the card content, centred horizontally and vertically.
+     * Faint background watermark behind the card content, centred horizontally and positioned
+     * slightly below the card's vertical centre.
      *
      * - A **string** is an emoji/text watermark (e.g. `'🏆'`), drawn oversized via a pseudo-element.
      * - A **`ReactNode`** (e.g. a `DrawerMark`) is rendered in a faint art layer; the card
