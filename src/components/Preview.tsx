@@ -34,6 +34,17 @@ export interface PreviewProps {
   noDataLabel: string
   /** Label shown when no file is provided. */
   noFileLabel: string
+  /** 1-based page to open scrolled to. Omit or `≤ 1` opens at the top. Re-aligns
+   *  over a short window as pages paint, so it lands accurately on lazy-rendered
+   *  documents. */
+  initialPage?: number
+  /**
+   * Show the loading state in the body even when no `file` is set yet — so the
+   * modal + backdrop can open instantly while the consumer fetches the document
+   * (e.g. an auth-gated blob). Overrides the no-file state; once the file arrives
+   * pass `loading={false}` with the `file`.
+   */
+  loading?: boolean
   /** Classes applied to the content container. */
   className?: string
 }
@@ -56,6 +67,8 @@ export function Preview({
   errorLabel,
   noDataLabel,
   noFileLabel,
+  initialPage,
+  loading = false,
   className,
 }: PreviewProps) {
   const [containerEl, setContainerEl] = useState<HTMLDivElement | null>(null)
@@ -64,6 +77,13 @@ export function Preview({
   const [aspect, setAspect] = useState(DEFAULT_ASPECT)
   const [visiblePages, setVisiblePages] = useState<Set<number>>(() => new Set([1]))
   const observerRef = useRef<IntersectionObserver | null>(null)
+  const didScrollRef = useRef(false)
+  const scrollTimersRef = useRef<ReturnType<typeof setTimeout>[]>([])
+
+  // A new file is a new document — allow the initial-page scroll to run again.
+  useEffect(() => {
+    didScrollRef.current = false
+  }, [file])
 
   // Track the container width to fit the pages.
   useEffect(() => {
@@ -134,6 +154,32 @@ export function Preview({
     window.print()
   }, [])
 
+  // Scroll to `initialPage` once layout is ready, then re-align over a short window
+  // (the layout shifts as pages paint / fonts load / the scrollbar appears, so a
+  // single align lands wrong). setTimeout (not rAF) so it still fires when the tab
+  // isn't foregrounded. Runs once per document.
+  useEffect(() => {
+    if (didScrollRef.current) return
+    if (!initialPage || initialPage <= 1 || !numPages || !width || !containerEl) return
+    const n = Math.min(Math.max(1, Math.floor(initialPage)), numPages)
+    didScrollRef.current = true
+    setVisiblePages((prev) => (prev.has(n) ? prev : new Set(prev).add(n)))
+
+    const align = () => {
+      const target = containerEl.querySelector<HTMLElement>(`[data-page="${n}"]`)
+      if (!target) return
+      const delta =
+        target.getBoundingClientRect().top - containerEl.getBoundingClientRect().top
+      if (Math.abs(delta) > 1) containerEl.scrollTop += delta
+    }
+    scrollTimersRef.current = [0, 60, 150, 300, 500, 800].map((ms) =>
+      setTimeout(align, ms),
+    )
+  }, [initialPage, numPages, width, containerEl])
+
+  // Clear any pending re-align timers on unmount.
+  useEffect(() => () => scrollTimersRef.current.forEach(clearTimeout), [])
+
   const reservedHeight = width ? Math.round(width * aspect) : undefined
 
   return (
@@ -166,7 +212,9 @@ export function Preview({
           </div>
           
           <div className="mrs-preview__body" ref={setContainerEl}>
-            {!file ? (
+            {loading ? (
+              <div className="mrs-preview__msg">{loadingLabel}</div>
+            ) : !file ? (
               <div className="mrs-preview__msg">{noFileLabel}</div>
             ) : (
               <Document
