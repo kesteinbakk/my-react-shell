@@ -2357,6 +2357,35 @@
   user-select: none;
 }
 
+/* `watermarkMode='glyph'` — a keyed icon glyph (lucide <svg> / emoji span) made to mirror the
+   string-emoji watermark above: oversized, faint, bottom-right, rotated. Overrides the centred
+   art-layer geometry; scoped to `--glyph` so the default `'art'` (DrawerMark) path is untouched. */
+.mrs-stat-card__watermark--glyph {
+  left: auto;
+  top: auto;
+  right: 15%;
+  bottom: 8%;
+  width: auto;
+  transform: rotate(-8deg);
+  opacity: 0.10;
+  font-size: 7.5em;
+  line-height: 1;
+}
+.mrs-stat-card--landscape .mrs-stat-card__watermark--glyph {
+  font-size: 5.5em;
+}
+/* Scale the glyph child to the watermark font-size. CSS width/height beat the svg's own
+   width/height attributes; the `!important` font-size beats an icon kit's inline `font-size:20px`
+   on an emoji span. */
+.mrs-stat-card__watermark--glyph svg {
+  width: 1em;
+  height: 1em;
+}
+.mrs-stat-card__watermark--glyph > span,
+.mrs-stat-card__watermark--glyph span {
+  font-size: 1em !important;
+}
+
 /* Hover lift — translateY + deeper shadow */
 .mrs-stat-card--hoverable {
   cursor: pointer;

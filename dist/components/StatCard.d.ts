@@ -133,6 +133,17 @@ export interface StatCardProps {
      * Ignored when `variant` is set — the variant always shows `⚠️`.
      */
     watermark?: ReactNode;
+    /**
+     * How a **ReactNode** `watermark` is laid out (ignored for a string/variant watermark):
+     *
+     * - `'art'` (default) — the existing self-sized illustration layer (e.g. a `DrawerMark`):
+     *   centred horizontally, dropped a little below centre, scaled to the card.
+     * - `'glyph'` — a keyed icon glyph (e.g. a lucide `<svg>` / emoji span from a consumer icon
+     *   kit) scaled and positioned to **mirror the string-emoji watermark**: oversized, faint,
+     *   bottom-right, rotated `-8deg`. Use this when the watermark is a single icon rather than an
+     *   illustration, so it reads at the same size as the `string` emoji watermark.
+     */
+    watermarkMode?: 'art' | 'glyph';
     /** Size preset — fixed-width golden-ratio card. Default: `'md'` (≈312px). */
     size?: StatCardSize;
     /**
