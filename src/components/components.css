@@ -3751,11 +3751,11 @@
   width: 2.5rem;
   height: 1.375rem;
   padding: 0;
-  border: 1px solid transparent;
+  border: 1px solid var(--color-border-primary);
   border-radius: 9999px;
   background: var(--color-surface-sunken-deep);
   cursor: pointer;
-  transition: background-color 120ms ease;
+  transition: background-color 120ms ease, border-color 120ms ease;
 }
 .mrs-switch--full {
   display: flex;
@@ -3777,6 +3777,7 @@
 }
 .mrs-switch[data-state='checked'] {
   background: var(--color-primary);
+  border-color: transparent;
 }
 .mrs-switch[data-disabled] {
   opacity: 0.5;
