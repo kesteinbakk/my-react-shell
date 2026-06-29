@@ -2591,12 +2591,12 @@
 
 .mrs-stat-card[data-has-medallion="true"] .mrs-stat-card__head-text,
 .mrs-stat-card[data-has-medallion="true"] .mrs-stat-card__body {
-  padding-right: 4.5em; /* 3.75em width + 0.75em gap */
+  padding-right: 3.9em; /* 3.75em width + 0.15em gap */
 }
 
 .mrs-stat-card[data-has-medallion="true"][data-medallion-size="sm"] .mrs-stat-card__head-text,
 .mrs-stat-card[data-has-medallion="true"][data-medallion-size="sm"] .mrs-stat-card__body {
-  padding-right: 3em; /* 2.25em width + 0.75em gap */
+  padding-right: 2.4em; /* 2.25em width + 0.15em gap */
 }
 
 .mrs-stat-card__medallion--pressable {
