@@ -15,5 +15,15 @@ export function createConvexClient(url = import.meta.env.VITE_CONVEX_URL) {
         throw new Error(`my-react-shell: VITE_CONVEX_URL must not end with a trailing slash (got "${url}") — ` +
             'a trailing slash breaks the Convex sync websocket (close code 1006).');
     }
-    return new ConvexReactClient(url);
+    // Disable the built-in unsaved-changes dialog unconditionally. Convex registers
+    // a beforeunload listener unless this is exactly `false`; passing a computed
+    // `!import.meta.env.DEV` is unreliable in a consumed dist (the env substitution
+    // does not happen when the shell's dist/ is resolved via a link: dep, leaving
+    // import.meta.env.DEV as undefined — !undefined = true — so the warning fires).
+    // Unconditionally false is correct: consumers use debounced autosave everywhere;
+    // there is nothing this dialog protects that the autosave pattern does not already
+    // cover. Convex mutations also complete server-side regardless of client disconnect.
+    return new ConvexReactClient(url, {
+        unsavedChangesWarning: false,
+    });
 }
