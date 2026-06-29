@@ -5850,3 +5850,16 @@
   stroke-linecap: round;
 }
 
+/* Whole-card dragging cursors */
+.mrs-stat-card--drag-whole,
+.mrs-content-card--drag-whole,
+.mrs-dynamic-grid-card--drag-whole {
+  cursor: grab !important;
+}
+.mrs-stat-card--drag-whole:active,
+.mrs-content-card--drag-whole:active,
+.mrs-dynamic-grid-card--drag-whole:active {
+  cursor: grabbing !important;
+}
+
+

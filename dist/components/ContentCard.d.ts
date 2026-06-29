@@ -77,6 +77,11 @@ export interface ContentCardBaseProps {
      */
     dragHandleLabel?: string;
     /**
+     * Switches the root cursor to grab/grabbing and spreads `dragHandleProps` onto the card root
+     * (suppressing the default visual drag handle).
+     */
+    dragWholeCard?: boolean;
+    /**
      * Interactive-root seam. The consumer renders its own router `<Link>` here, spreading the
      * supplied props, and the card mounts it as a **full-bleed block-link overlay** so the whole
      * tile is a real, keyboard-activatable anchor — while the card root stays a `<div>` that owns

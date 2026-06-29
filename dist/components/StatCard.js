@@ -106,7 +106,7 @@ const DEFAULT_DRAG_HANDLE = (_jsxs("svg", { width: "11", height: "28", viewBox: 
  * The accent stripe, medallion tint, and watermark are driven by `tone` (mapped to
  * semantic tokens) or overridden with a raw CSS `color` string.
  */
-export const StatCard = forwardRef(function StatCard({ title, subtitle, medallion, tone = 'neutral', color, accentPlacement = 'top', sideBarCompleteness, topStripeFollowsGauge = false, stats, variant, footer, watermark, size = 'md', shape = 'standard', onClick, onMedallionPress, hoverable, dragHandle, dragHandleProps, dragHandleLabel, renderLink, className, style: styleProp, }, ref) {
+export const StatCard = forwardRef(function StatCard({ title, subtitle, medallion, tone = 'neutral', color, accentPlacement = 'top', sideBarCompleteness, topStripeFollowsGauge = false, stats, variant, footer, watermark, size = 'md', shape = 'standard', onClick, onMedallionPress, hoverable, dragHandle, dragHandleProps, dragHandleLabel, dragWholeCard, renderLink, className, style: styleProp, }, ref) {
     // variant overrides tone to the same value; ⚠️ always used as the watermark.
     const effectiveTone = variant ?? tone;
     const effectiveWatermark = variant ? '⚠️' : watermark;
@@ -149,9 +149,6 @@ export const StatCard = forwardRef(function StatCard({ title, subtitle, medallio
     const showVariantLeftStripe = !!variant && !hasGauge;
     // Dev guards
     if (process.env.NODE_ENV !== 'production') {
-        if (dragHandle && renderLink) {
-            throw new Error('StatCard: `dragHandle` and `renderLink` are mutually exclusive — a navigable tile cannot also be drag-reordered.');
-        }
         if (hasGauge && accentPlacement === 'left') {
             throw new Error("StatCard: `sideBarCompleteness` can't combine with `accentPlacement='left'` — both occupy the left edge. Keep the default `accentPlacement='top'` (or omit it) alongside the gauge.");
         }
@@ -241,9 +238,9 @@ export const StatCard = forwardRef(function StatCard({ title, subtitle, medallio
             medallionNode = (_jsxs(MedallionTag, { className: cn('mrs-stat-card__medallion', medallion.size === 'sm' && 'mrs-stat-card__medallion--sm', isPressable && 'mrs-stat-card__medallion--pressable'), ...medallionProps, children: [_jsx("span", { className: "mrs-stat-card__medallion-value", "data-len": valueStr.length, children: displayValue }), medallion.size !== 'sm' && medallion.label ? _jsx("span", { className: "mrs-stat-card__medallion-label", "data-len": medallion.label.length, children: medallion.label }) : null] }));
         }
     }
-    return (_jsxs("div", { ref: ref, className: cn('mrs-stat-card', !accentSuppressed && `mrs-stat-card--accent-${effectiveAccentPlacement}`, hasGauge && 'mrs-stat-card--gauge', variant && 'mrs-stat-card--variant', isHoverable && 'mrs-stat-card--hoverable', hasWatermark && 'mrs-stat-card--watermark', hasArtWatermark && 'mrs-reveal-host', dragHandle && 'mrs-stat-card--draggable', shape === 'landscape' && 'mrs-stat-card--landscape', renderLink && 'mrs-stat-card--linked', className), style: style, "data-watermark": watermarkIsString ? effectiveWatermark : undefined, "data-has-medallion": medallion != null ? "true" : undefined, "data-medallion-size": medallion?.size ?? 'lg', onClick: onClick, children: [renderLink
+    return (_jsxs("div", { ref: ref, className: cn('mrs-stat-card', !accentSuppressed && `mrs-stat-card--accent-${effectiveAccentPlacement}`, hasGauge && 'mrs-stat-card--gauge', variant && 'mrs-stat-card--variant', isHoverable && 'mrs-stat-card--hoverable', hasWatermark && 'mrs-stat-card--watermark', hasArtWatermark && 'mrs-reveal-host', dragHandle && 'mrs-stat-card--draggable', shape === 'landscape' && 'mrs-stat-card--landscape', renderLink && 'mrs-stat-card--linked', dragWholeCard && 'mrs-stat-card--drag-whole', className), style: style, "data-watermark": watermarkIsString ? effectiveWatermark : undefined, "data-has-medallion": medallion != null ? "true" : undefined, "data-medallion-size": medallion?.size ?? 'lg', onClick: onClick, ...(dragWholeCard ? dragHandleProps : {}), children: [renderLink
                 ? renderLink({ className: 'mrs-stat-card__link-overlay', 'aria-labelledby': titleId })
-                : null, hasArtWatermark ? (_jsx("div", { className: "mrs-stat-card__watermark", "aria-hidden": "true", children: effectiveWatermark })) : null, dragHandle ? (_jsx("button", { type: "button", className: "mrs-stat-card__drag-handle", "aria-label": dragHandleLabel, ...dragHandleProps, onClick: (e) => {
+                : null, hasArtWatermark ? (_jsx("div", { className: "mrs-stat-card__watermark", "aria-hidden": "true", children: effectiveWatermark })) : null, dragHandle && !dragWholeCard ? (_jsx("button", { type: "button", className: "mrs-stat-card__drag-handle", "aria-label": dragHandleLabel, ...dragHandleProps, onClick: (e) => {
                     e.stopPropagation();
                     dragHandleProps?.onClick?.(e);
                 }, children: dragHandle === true ? DEFAULT_DRAG_HANDLE : dragHandle })) : null, showVariantLeftStripe ? (_jsx("div", { className: "mrs-stat-card__variant-stripe", "aria-hidden": "true" })) : null, hasGauge ? (_jsx("div", { className: "mrs-stat-card__gauge", role: "meter", "aria-valuemin": 0, "aria-valuemax": 100, "aria-valuenow": gaugePct, "aria-label": `${gaugePct}%`, children: _jsx("div", { className: "mrs-stat-card__gauge-fill", style: { height: `${gaugeFraction * 100}%`, background: completenessFill(gaugeFraction) } }) })) : null, _jsxs("div", { className: "mrs-stat-card__inner", children: [_jsxs("div", { className: "mrs-stat-card__header", children: [_jsxs("div", { className: "mrs-stat-card__head-text", children: [_jsx("p", { className: "mrs-stat-card__title", id: titleId, "data-fit": titleFitStep(title) || undefined, children: title }), subtitle ? _jsx("p", { className: "mrs-stat-card__subtitle", children: subtitle }) : null] }), medallionNode] }), stats && stats.length > 0 ? (_jsx("dl", { className: "mrs-stat-card__stats", children: stats.map((item, i) => {

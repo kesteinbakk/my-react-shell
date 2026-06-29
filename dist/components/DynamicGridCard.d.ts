@@ -92,6 +92,11 @@ export interface DynamicGridCardProps extends Omit<HTMLAttributes<HTMLDivElement
      */
     dragHandleLabel?: string;
     /**
+     * Switches the root cursor to grab/grabbing and spreads `dragHandleProps` onto the card root
+     * (suppressing the default visual drag handle).
+     */
+    dragWholeCard?: boolean;
+    /**
      * Semantic tone — drives an optional accent stripe. Default **none** (no accent).
      * Ignored when `color` is set. Same accent vocabulary as `StatCard`/`PaperCard`.
      */

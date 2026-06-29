@@ -136,6 +136,11 @@ export interface ContentCardBaseProps {
    */
   dragHandleLabel?: string
   /**
+   * Switches the root cursor to grab/grabbing and spreads `dragHandleProps` onto the card root
+   * (suppressing the default visual drag handle).
+   */
+  dragWholeCard?: boolean
+  /**
    * Interactive-root seam. The consumer renders its own router `<Link>` here, spreading the
    * supplied props, and the card mounts it as a **full-bleed block-link overlay** so the whole
    * tile is a real, keyboard-activatable anchor — while the card root stays a `<div>` that owns
@@ -233,6 +238,7 @@ export const ContentCard = forwardRef<HTMLDivElement, ContentCardProps>(function
     dragHandle,
     dragHandleProps,
     dragHandleLabel,
+    dragWholeCard,
     renderLink,
     className,
     style: styleProp,
@@ -282,9 +288,6 @@ export const ContentCard = forwardRef<HTMLDivElement, ContentCardProps>(function
   const showVariantLeftStripe = !!variant && !hasGauge
  
   if (process.env.NODE_ENV !== 'production') {
-    if (dragHandle && renderLink) {
-      throw new Error('ContentCard: `dragHandle` and `renderLink` are mutually exclusive — a navigable tile cannot also be drag-reordered.')
-    }
     if (hasGauge && accentPlacement === 'left') {
       throw new Error(
         "ContentCard: left gauge can't combine with `accentPlacement='left'` — both occupy the left edge. Keep the default `accentPlacement='top'` (or omit it) alongside the gauge.",
@@ -381,11 +384,13 @@ export const ContentCard = forwardRef<HTMLDivElement, ContentCardProps>(function
         dragHandle && 'mrs-content-card--draggable',
         shape === 'landscape' && 'mrs-content-card--landscape',
         renderLink && 'mrs-content-card--linked',
+        dragWholeCard && 'mrs-content-card--drag-whole',
         className,
       )}
       style={style}
       data-watermark={watermarkIsString ? effectiveWatermark : undefined}
       onClick={onClick}
+      {...(dragWholeCard ? (dragHandleProps as any) : {})}
     >
       {renderLink
         ? renderLink({ className: 'mrs-content-card__link-overlay', 'aria-labelledby': titleId })
@@ -393,7 +398,7 @@ export const ContentCard = forwardRef<HTMLDivElement, ContentCardProps>(function
       {hasArtWatermark ? (
         <div className="mrs-content-card__watermark" aria-hidden="true">{effectiveWatermark}</div>
       ) : null}
-      {dragHandle ? (
+      {dragHandle && !dragWholeCard ? (
         <button
           type="button"
           className="mrs-content-card__drag-handle"

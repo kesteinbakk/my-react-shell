@@ -104,6 +104,11 @@ export interface DynamicGridCardProps extends Omit<HTMLAttributes<HTMLDivElement
    */
   dragHandleLabel?: string
   /**
+   * Switches the root cursor to grab/grabbing and spreads `dragHandleProps` onto the card root
+   * (suppressing the default visual drag handle).
+   */
+  dragWholeCard?: boolean
+  /**
    * Semantic tone — drives an optional accent stripe. Default **none** (no accent).
    * Ignored when `color` is set. Same accent vocabulary as `StatCard`/`PaperCard`.
    */
@@ -207,12 +212,9 @@ function StructuredFooter({ footer }: { footer: DynamicGridCardFooter }) {
  * overlay, with `corner` controls raised above it so they stay independently clickable.
  */
 export const DynamicGridCard = forwardRef<HTMLDivElement, DynamicGridCardProps>(function DynamicGridCard(
-  { size, shape = 'standard', title, subtitle, figure, hoverable, lift = true, watermark, corner, footer, renderLink, dragHandle, dragHandleProps, dragHandleLabel, tone, color, accentPlacement = 'top', className, style, children, ...props },
+  { size, shape = 'standard', title, subtitle, figure, hoverable, lift = true, watermark, corner, footer, renderLink, dragHandle, dragHandleProps, dragHandleLabel, dragWholeCard, tone, color, accentPlacement = 'top', className, style, children, ...props },
   ref,
 ) {
-  if (dragHandle && renderLink) {
-    throw new Error('DynamicGridCard: `dragHandle` and `renderLink` are mutually exclusive — a navigable tile cannot also be drag-reordered.')
-  }
 
   const minWidth = size ? DYNAMIC_GRID_CARD_MIN_WIDTH[size] : undefined
   const maxWidth = size ? DYNAMIC_GRID_CARD_MAX_WIDTH[size] : undefined
@@ -257,11 +259,13 @@ export const DynamicGridCard = forwardRef<HTMLDivElement, DynamicGridCardProps>(
         dragHandle && 'mrs-dynamic-grid-card--draggable',
         hasWatermark && 'mrs-dynamic-grid-card--watermark',
         hasArtWatermark && 'mrs-reveal-host',
+        dragWholeCard && 'mrs-dynamic-grid-card--drag-whole',
         className,
       )}
       style={cssVars}
       data-watermark={watermarkIsString ? watermark : undefined}
       {...props}
+      {...(dragWholeCard ? (dragHandleProps as any) : {})}
     >
       {renderLink
         ? renderLink({
@@ -274,7 +278,7 @@ export const DynamicGridCard = forwardRef<HTMLDivElement, DynamicGridCardProps>(
         <div className="mrs-dynamic-grid-card__watermark" aria-hidden="true">{watermark}</div>
       ) : null}
 
-      {dragHandle ? (
+      {dragHandle && !dragWholeCard ? (
         <button
           type="button"
           className="mrs-dynamic-grid-card__drag-handle"

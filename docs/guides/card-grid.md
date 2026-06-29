@@ -144,9 +144,11 @@ accessible name — **no default**; pass a translated string when `dragHandle` i
 `aria-label` via `dragHandleProps`). If you omit it the grip glyph stands alone with no accessible
 name, so pass it for any real reorder UI. Unlike the other cards (PaperCard/PhiCard) — whose handle sits
 top-centre — the `StatCard`, `ContentCard`, and `DynamicGridCard` grip is **vertical stripes pinned to the right edge, vertically
-centred**, and the card reserves a little right padding so the grip never overlaps its content. It
-is **mutually exclusive with `renderLink`** (a nav tile isn't drag-reorderable) — passing both
-throws in dev.
+centred**, and the card reserves a little right padding so the grip never overlaps its content.
+
+Alternatively, you can make the **whole card surface** draggable by passing the opt-in **`dragWholeCard`** prop. When set to `true`, the card root shows a `grab`/`grabbing` cursor and spreads the `dragHandleProps` directly onto the root card container (suppressing the rendering of the default visual drag handle).
+
+Both drag mechanisms can safely **coexist with navigation links** (`renderLink` or `onClick`). Since DND library sensors (like `@dnd-kit`'s Mouse/Touch sensors) enforce distance activation thresholds (e.g. dragging at least 5px to start a drag), a quick click/tap on the card triggers normal navigation, while dragging past the threshold initiates a drag.
 
 ```tsx
 import { DynamicGridCard } from 'my-react-shell/components'
@@ -211,8 +213,7 @@ renderCard={(it) => (
   is a **sibling** of the overlay, raised above it with `z-index`, so it stays independently
   clickable. The freeform `footer` is display-only text covered by the overlay — never put a
   live control there; add a raised slot for it instead.
-- **`dragHandle` × `renderLink` are mutually exclusive** — a nav tile is not drag-reorderable;
-  passing both throws in dev.
+- **Dragging coexists with navigation.** You can combine `dragHandle` or `dragWholeCard` with `renderLink` or `onClick`. The browser distinguishes between dragging and clicking based on motion/delay thresholds set on your DND sensors.
 
 On the fixed-size cards the overlay sits *beneath* the content layer and the inner wrapper is
 click-transparent, so `StatCard`'s medallion button (`onMedallionPress`) and any drag handle

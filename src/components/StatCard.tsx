@@ -216,6 +216,11 @@ export interface StatCardProps {
    */
   dragHandleLabel?: string
   /**
+   * Switches the root cursor to grab/grabbing and spreads `dragHandleProps` onto the card root
+   * (suppressing the default visual drag handle).
+   */
+  dragWholeCard?: boolean
+  /**
    * Interactive-root seam. The consumer renders its own router `<Link>` here, spreading the
    * supplied props, and the card mounts it as a **full-bleed block-link overlay** so the whole
    * tile is a real, keyboard-activatable anchor — while the card root stays a `<div>` that owns
@@ -415,6 +420,7 @@ export const StatCard = forwardRef<HTMLDivElement, StatCardProps>(function StatC
     dragHandle,
     dragHandleProps,
     dragHandleLabel,
+    dragWholeCard,
     renderLink,
     className,
     style: styleProp,
@@ -475,9 +481,6 @@ export const StatCard = forwardRef<HTMLDivElement, StatCardProps>(function StatC
  
   // Dev guards
   if (process.env.NODE_ENV !== 'production') {
-    if (dragHandle && renderLink) {
-      throw new Error('StatCard: `dragHandle` and `renderLink` are mutually exclusive — a navigable tile cannot also be drag-reordered.')
-    }
     if (hasGauge && accentPlacement === 'left') {
       throw new Error(
         "StatCard: `sideBarCompleteness` can't combine with `accentPlacement='left'` — both occupy the left edge. Keep the default `accentPlacement='top'` (or omit it) alongside the gauge.",
@@ -650,6 +653,7 @@ export const StatCard = forwardRef<HTMLDivElement, StatCardProps>(function StatC
         dragHandle && 'mrs-stat-card--draggable',
         shape === 'landscape' && 'mrs-stat-card--landscape',
         renderLink && 'mrs-stat-card--linked',
+        dragWholeCard && 'mrs-stat-card--drag-whole',
         className,
       )}
       style={style}
@@ -657,6 +661,7 @@ export const StatCard = forwardRef<HTMLDivElement, StatCardProps>(function StatC
       data-has-medallion={medallion != null ? "true" : undefined}
       data-medallion-size={medallion?.size ?? 'lg'}
       onClick={onClick}
+      {...(dragWholeCard ? (dragHandleProps as any) : {})}
     >
       {renderLink
         ? renderLink({ className: 'mrs-stat-card__link-overlay', 'aria-labelledby': titleId })
@@ -664,7 +669,7 @@ export const StatCard = forwardRef<HTMLDivElement, StatCardProps>(function StatC
       {hasArtWatermark ? (
         <div className="mrs-stat-card__watermark" aria-hidden="true">{effectiveWatermark}</div>
       ) : null}
-      {dragHandle ? (
+      {dragHandle && !dragWholeCard ? (
         <button
           type="button"
           className="mrs-stat-card__drag-handle"

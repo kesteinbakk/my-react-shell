@@ -72,9 +72,6 @@ export const PaperCard = forwardRef(function PaperCard({ title, subtitle, conten
     const accentColor = resolveAccentColor(tone, color);
     const hasAccent = accentColor != null;
     if (process.env.NODE_ENV !== 'production') {
-        if (dragHandle && renderLink) {
-            throw new Error('PaperCard: `dragHandle` and `renderLink` are mutually exclusive — a navigable tile cannot also be drag-reordered.');
-        }
     }
     let footerNode = null;
     if (structuredFooter) {

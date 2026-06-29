@@ -236,9 +236,6 @@ export const PaperCard = forwardRef<HTMLDivElement, PaperCardProps>(function Pap
   const hasAccent = accentColor != null
 
   if (process.env.NODE_ENV !== 'production') {
-    if (dragHandle && renderLink) {
-      throw new Error('PaperCard: `dragHandle` and `renderLink` are mutually exclusive — a navigable tile cannot also be drag-reordered.')
-    }
   }
 
   let footerNode: ReactNode = null
