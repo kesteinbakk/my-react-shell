@@ -832,7 +832,7 @@ export const StatCard = forwardRef<HTMLDivElement, StatCardProps>(function StatC
           title={info.title}
           description={info.description}
           closeLabel={info.closeLabel}
-          size="md"
+          size="lg"
         >
           {info.content != null ? (
             typeof info.content === 'string' ? (
