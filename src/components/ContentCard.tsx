@@ -82,12 +82,10 @@ const PHI = 1.6180339887
 export type ContentCardTone = Tone
 export type ContentCardVariant = 'warning' | 'danger'
 
-export interface ContentCardProps {
+export interface ContentCardBaseProps {
   title: string
   subtitle?: string
   
-  content: string
-  html?: boolean
   contentAlignX?: 'left' | 'center' | 'right'
   contentAlignY?: 'top' | 'center' | 'bottom'
 
@@ -144,6 +142,18 @@ export interface ContentCardProps {
   className?: string
   style?: CSSProperties
 }
+
+export type ContentCardProps =
+  | (ContentCardBaseProps & {
+      content: string
+      html?: boolean
+      children?: never
+    })
+  | (ContentCardBaseProps & {
+      content?: never
+      html?: never
+      children: ReactNode
+    })
 
 const FOOTER_GLYPHS: Record<NonNullable<ContentCardFooterLine['type']>, ReactNode> = {
   date: (
@@ -214,6 +224,7 @@ export const ContentCard = forwardRef<HTMLDivElement, ContentCardProps>(function
     renderLink,
     className,
     style: styleProp,
+    children,
   },
   ref,
 ) {
@@ -269,6 +280,16 @@ export const ContentCard = forwardRef<HTMLDivElement, ContentCardProps>(function
         "ContentCard: `topStripeFollowsGauge` drives the top stripe — it can't combine with `accentPlacement='left'`. Keep the default `accentPlacement='top'` (or omit it).",
       )
     }
+    if (content !== undefined && children !== undefined) {
+      throw new Error(
+        'ContentCard: `content` and `children` are mutually exclusive — pass either `content` or `children`, but not both.',
+      )
+    }
+    if (content === undefined && children === undefined) {
+      throw new Error(
+        'ContentCard: one of `content` or `children` must be supplied.',
+      )
+    }
   }
  
   let footerNode: ReactNode = null
@@ -316,15 +337,20 @@ export const ContentCard = forwardRef<HTMLDivElement, ContentCardProps>(function
     maxWidth: '100%',
   }
 
-  const contentNode = html ? (
-    <div 
-      className="mrs-content-card__content" 
-      style={contentStyle}
-      dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(content) }} 
-    />
-  ) : (
-    <div className="mrs-content-card__content" style={contentStyle}>{content}</div>
-  )
+  const contentNode =
+    content !== undefined ? (
+      html ? (
+        <div
+          className="mrs-content-card__content"
+          style={contentStyle}
+          dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(content) }}
+        />
+      ) : (
+        <div className="mrs-content-card__content" style={contentStyle}>
+          {content}
+        </div>
+      )
+    ) : null
  
   return (
     <div
@@ -393,7 +419,7 @@ export const ContentCard = forwardRef<HTMLDivElement, ContentCardProps>(function
           data-align-x={contentAlignX}
           data-align-y={contentAlignY}
         >
-          {contentNode}
+          {children !== undefined ? children : contentNode}
         </div>
  
         {hasFooter ? (

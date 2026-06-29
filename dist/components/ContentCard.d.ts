@@ -31,11 +31,9 @@ export interface ContentCardLinkProps {
 }
 export type ContentCardTone = Tone;
 export type ContentCardVariant = 'warning' | 'danger';
-export interface ContentCardProps {
+export interface ContentCardBaseProps {
     title: string;
     subtitle?: string;
-    content: string;
-    html?: boolean;
     contentAlignX?: 'left' | 'center' | 'right';
     contentAlignY?: 'top' | 'center' | 'bottom';
     value?: number;
@@ -85,4 +83,13 @@ export interface ContentCardProps {
     className?: string;
     style?: CSSProperties;
 }
+export type ContentCardProps = (ContentCardBaseProps & {
+    content: string;
+    html?: boolean;
+    children?: never;
+}) | (ContentCardBaseProps & {
+    content?: never;
+    html?: never;
+    children: ReactNode;
+});
 export declare const ContentCard: import("react").ForwardRefExoticComponent<ContentCardProps & import("react").RefAttributes<HTMLDivElement>>;

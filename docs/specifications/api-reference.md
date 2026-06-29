@@ -279,7 +279,7 @@ import 'my-react-shell/components/styles.css' // REQUIRED (plain prebuilt CSS; a
 | `Table` | component | Column-config data table: per-column sort, zebra, sticky header, empty state. Whole-row click (`onRowClick`, suppressed for clicks on in-cell controls/expand cells), an expandable per-row detail region (`renderExpanded`, kit-owned disclosure toggle + open state, full-width below the row; supply `renderDisclosure(row, isOpen, toggle)` to replace the kit's chevron with a consumer-styled control), per-cell expansion (`TableColumn.cellExpand(row)` — clicking cells in that column toggles a detail region keyed to that column, radio-style; one cell open at a time), per-row emphasis (`rowVariant`: `default`·`muted`·`selected`), and `frameless` to drop the wrapper border/radius when nesting inside a `Card`. `columns` is a plain array, so a dynamic column set can be built at render time. `TableColumn.align` sets the alignment for both the header and content cells equally (default `left`); `TableColumn.headerAlign` overrides alignment for just the header, leaving content at `align`. |
 | `PhiCard`, `PHI` | component + const | **Legacy — being phased out; prefer `StatCard`/`ContentCard`.** Golden-ratio card (W:H = φ:1): a figure (`icon`/`image`) fills its column, a centered text body (`upper` + `content`), and a structured `footer` (meta lines + stacked badges, per-size caps) or freeform `lower`. Collapses when there's no footer. Top-right ⋮ menu via `actions` or a `corner` slot. Uses the `@radix-ui/react-dropdown-menu` optional peer. No `renderLink` navigation seam (use a non-legacy card for nav tiles). |
 | `StatCard` | component | Self-contained φ-framed KPI/status card — a fixed-width golden-ratio card (`height = width / φ`); `size` default `md` ≈312px, four to a `wide` (1440px) row. Title + subtitle, an optional accent medallion circle (plain number+label **or** SVG arc-ring when `medallion.max` is set), a stats row, and a structured `footer` or freeform `lower`. Accent stripe (`accentPlacement` top/left) + medallion tint driven by `tone` (semantic tokens) or a raw CSS `color`. `variant` (`'warning'`·`'danger'`) overrides tone, forces ⚠️ watermark. Optional left-edge completion gauge (`sideBarCompleteness`, red→amber→green) that coexists with the top stripe, or drives the whole accent's color via `topStripeFollowsGauge`. Optional emoji `watermark`. Hover-lift via `onClick`/`hoverable`. |
-| `ContentCard` | component | Self-contained freeform text counterpart to `StatCard` — same fixed-width golden-ratio sizing (`size` default `md` ≈312px). Title + subtitle, a freeform `content` string (supports `html` prop, safely sanitized internally via DOMPurify), and a structured `footer` or freeform `lower`. Text aligns via `contentAlignX`/`contentAlignY`. Instead of a medallion, accepts `value` and `maxValue` to render a left-side completion gauge. Same `tone`, `color`, `variant`, and `watermark` properties as `StatCard`. |
+| `ContentCard` | component | Self-contained freeform text or custom-layout counterpart to `StatCard` — same fixed-width golden-ratio sizing (`size` default `md` ≈312px). Title + subtitle, and either a freeform `content` string (supports `html` prop, safely sanitized internally via DOMPurify) OR arbitrary `children` (mutually exclusive with `content`), and a structured `footer` or freeform `lower`. Text/children align via `contentAlignX`/`contentAlignY`. Instead of a medallion, accepts `value` and `maxValue` to render a left-side completion gauge. Same `tone`, `color`, `variant`, and `watermark` properties as `StatCard`. |
 | `PaperCard` | component | Small **preview / thumbnail** card styled as a dog-eared sheet of paper at **A4 portrait** proportions (`height = width × √2`). Fixed-width size scale (`sm` 134 · `md` 168 · `lg` 210 · `xl` 264 · `xxl` 320 px, **default `md`**); the folded top-right corner is cut from the sheet with `clip-path`, and the drop shadow rides a wrapper (`filter: drop-shadow()`) so it follows the dog-eared silhouette. Title + optional subtitle / `content` (+ `contentAlignX/Y`, `maxLines`), shared `{ lines, badges }` `footer`, **opt-in** `tone`/`color` top/left accent (none by default), `watermark`, hover-lift, `dragHandle`, and the `renderLink` block-link overlay. Fixed-size → drops into the static `CardGrid`. |
 | `CardGrid` | component | **Static** card grid: fixed-size cards flow left-to-right and **wrap** when a row is full, separated by a fixed `gap`. Cards are **not** stretched (a larger gap may remain at the end of a row) and keep their own intrinsic width/height (`StatCard`/`ContentCard`/`PhiCard`/`PaperCard`). `align` (`start`·`center`, default `start`), `gap` (CSS length override; default `1.5rem`, sized so four ≈312px cards fit a `wide` row). Children-based. |
 | `DynamicCardGrid` | component | **Fluid** card grid with a built-in search / filter / sort toolbar. Cards stretch to fill uniform `1fr` columns sized by `cardSize` (`sm`·`md`·`lg`) or a raw `minColumnWidth`. Data-driven via `items` / `renderCard` / `getKey`; `filters`, `sortOptions`, `searchFields`/`searchFn`, `loading`, empty + no-results states. Pair with `DynamicGridCard`. |
@@ -749,26 +749,27 @@ import { DynamicGridCard, DrawerMark } from 'my-react-shell/components'
 
 ### `ContentCard`
 
-Self-contained freeform-text counterpart to `StatCard` — same fixed-width golden-ratio
-sizing, accent logic, variants, watermark, and footer, but a `content` string slot
-(`maxLines` clamp, optional sanitized `html`) and a `value`/`maxValue` completion gauge in
-place of the medallion. Behaviour + examples:
+Self-contained freeform-text or custom-layout counterpart to `StatCard` — same fixed-width golden-ratio
+sizing, accent logic, variants, watermark, and footer, but accepts either a `content` string
+(`maxLines` clamp, optional sanitized `html`) OR custom React `children` in its main body, alongside a
+`value`/`maxValue` completion gauge in place of the medallion. Behaviour + examples:
 [card guide → ContentCard](../guides/card-grid.md#contentcard).
 
 | Prop | Default | Meaning |
 |---|---|---|
 | `title` | — | Card title. **Required.** Auto-fits. |
 | `subtitle` | — | Optional subtitle. |
-| `content` | — | **Required.** The main freeform text. Text is dynamically clamped based on the `maxLines` cap. |
-| `html` | `false` | When true, parses `content` as HTML via `dangerouslySetInnerHTML`. **Automatically sanitized** internally using `isomorphic-dompurify`. |
-| `maxLines` | *dynamic* | Number of lines to clamp the `content`. Defaults to `5` if neither subtitle nor footer is present, `4` if either is present, and `3` if both are present. |
-| `contentAlignX` | `'center'` | Horizontal alignment (`'left'` · `'center'` · `'right'`). |
-| `contentAlignY` | `'center'` | Vertical alignment (`'top'` · `'center'` · `'bottom'`). |
+| `content` | — | **Required unless `children` is supplied.** The main freeform text. Text is dynamically clamped based on the `maxLines` cap. Mutually exclusive with `children` (throws in dev). |
+| `html` | `false` | When true, parses `content` as HTML via `dangerouslySetInnerHTML`. **Automatically sanitized** internally using `isomorphic-dompurify`. (Ignored when using `children`). |
+| `children` | — | **Required unless `content` is supplied.** Custom layout/elements inside the card body. Mutually exclusive with `content`/`html` (throws in dev). *See layout & overflow warnings below.* |
+| `maxLines` | *dynamic* | Number of lines to clamp the `content`. Defaults to `5` if neither subtitle nor footer is present, `4` if either is present, and `3` if both are present. (Ignored when using `children`). |
+| `contentAlignX` | `'center'` | Horizontal alignment (`'left'` · `'center'` · `'right'`). Aligns content/children. |
+| `contentAlignY` | `'center'` | Vertical alignment (`'top'` · `'center'` · `'bottom'`). Aligns content/children. |
 | `value` / `maxValue` | — | Triggers a left-side completion gauge (red→amber→green based on ratio). Equivalent to `sideBarCompleteness` in StatCard. |
 | `tone` / `color` | `'neutral'` | Accent stripe color. |
 | `accentPlacement` | `'top'` | `'top'` or `'left'` |
 | `topStripeFollowsGauge` | `false` | Matches `StatCard` behavior (turns the top stripe into the gauge's completeness color). |
-| `variant` | — | `'warning'` · `'danger'`. Colors body text to match the alert hue. |
+| `variant` | — | `'warning'` · `'danger'`. Colors body text/content to match the alert hue. |
 | `footer` | — | Footer slot: a freeform `ReactNode` **or** a structured `{ lines?, badges? }` — same unified slot as `StatCard` (discriminated automatically). |
 | `watermark` | — | Faint background emoji. |
 | `size` | `'md'` | `sm`·`md`·`lg`·`xl` = 240/312/400/520px wide; height = width / φ. Default `md` ≈312px → four to a `wide` (1440px) row. |
@@ -776,8 +777,22 @@ place of the medallion. Behaviour + examples:
 | `dragHandle` / `dragHandleProps` | — | Drag-reorder grip. **Mutually exclusive with `renderLink`** — throws in dev. |
 | `renderLink` | — | Interactive-root seam — same block-link-overlay mechanism as `StatCard` (`(linkProps) => ReactNode`; the whole tile becomes the consumer's router `<Link>`, root owns its states, no router dep in the shell). |
 
+> [!WARNING]
+> **Layout & Overflow Constraints for `children`:**
+> - **Silent Size Overflow:** Since `ContentCard` enforces a strictly fixed width and height with `overflow: hidden`, custom `children` that exceed the remaining vertical space will be silently clipped at the card boundary. There is no automatic scrollbar or line-clamp truncation for custom elements.
+> - **Flexbox Alignment:** The body container uses flexbox (`align-items` for horizontal alignment, `justify-content` for vertical alignment). If custom children are flexbox items themselves, or have fixed heights (like standard layout block elements), they might not align as expected unless the consumer handles internal styles.
+> - **Nested Interactivity & Focus Conflicts:** If the card uses the interactive overlay pattern (`renderLink`), the entire card is wrapped in a link overlay. Placing interactive elements (buttons, inputs, other links) inside custom `children` will create illegal nested interactive elements in the DOM, which breaks keyboard accessibility (focus traps/skips) and can cause click handler conflicts.
+
 ```tsx
 <ContentCard size="md" tone="info" title="Status" content="All systems operational" />
+
+// Using custom children:
+<ContentCard size="md" tone="info" title="Custom Children">
+  <div style={{ display: 'flex', gap: '0.5rem', flexDirection: 'column' }}>
+    <span>Item 1</span>
+    <span>Item 2</span>
+  </div>
+</ContentCard>
 ```
 
 ### `PaperCard`

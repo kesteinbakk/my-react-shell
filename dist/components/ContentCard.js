@@ -61,7 +61,7 @@ function completenessFill(fraction) {
         return 'var(--color-warning)';
     return 'var(--color-success)';
 }
-export const ContentCard = forwardRef(function ContentCard({ title, subtitle, content, html = false, contentAlignX = 'center', contentAlignY = 'center', value, maxValue, tone = 'neutral', color, accentPlacement = 'top', topStripeFollowsGauge = false, variant, footer, maxLines, watermark, size = 'md', shape = 'standard', onClick, hoverable, dragHandle, dragHandleProps, dragHandleLabel, renderLink, className, style: styleProp, }, ref) {
+export const ContentCard = forwardRef(function ContentCard({ title, subtitle, content, html = false, contentAlignX = 'center', contentAlignY = 'center', value, maxValue, tone = 'neutral', color, accentPlacement = 'top', topStripeFollowsGauge = false, variant, footer, maxLines, watermark, size = 'md', shape = 'standard', onClick, hoverable, dragHandle, dragHandleProps, dragHandleLabel, renderLink, className, style: styleProp, children, }, ref) {
     const effectiveTone = variant ?? tone;
     const effectiveWatermark = variant ? '⚠️' : watermark;
     const width = SIZE_WIDTH_PX[size];
@@ -97,6 +97,12 @@ export const ContentCard = forwardRef(function ContentCard({ title, subtitle, co
         if (topStripeFollowsGauge && accentPlacement === 'left') {
             throw new Error("ContentCard: `topStripeFollowsGauge` drives the top stripe — it can't combine with `accentPlacement='left'`. Keep the default `accentPlacement='top'` (or omit it).");
         }
+        if (content !== undefined && children !== undefined) {
+            throw new Error('ContentCard: `content` and `children` are mutually exclusive — pass either `content` or `children`, but not both.');
+        }
+        if (content === undefined && children === undefined) {
+            throw new Error('ContentCard: one of `content` or `children` must be supplied.');
+        }
     }
     let footerNode = null;
     if (structuredFooter) {
@@ -124,11 +130,11 @@ export const ContentCard = forwardRef(function ContentCard({ title, subtitle, co
         textOverflow: 'ellipsis',
         maxWidth: '100%',
     };
-    const contentNode = html ? (_jsx("div", { className: "mrs-content-card__content", style: contentStyle, dangerouslySetInnerHTML: { __html: DOMPurify.sanitize(content) } })) : (_jsx("div", { className: "mrs-content-card__content", style: contentStyle, children: content }));
+    const contentNode = content !== undefined ? (html ? (_jsx("div", { className: "mrs-content-card__content", style: contentStyle, dangerouslySetInnerHTML: { __html: DOMPurify.sanitize(content) } })) : (_jsx("div", { className: "mrs-content-card__content", style: contentStyle, children: content }))) : null;
     return (_jsxs("div", { ref: ref, className: cn('mrs-content-card', !accentSuppressed && `mrs-content-card--accent-${effectiveAccentPlacement}`, hasGauge && 'mrs-content-card--gauge', variant && 'mrs-content-card--variant', isHoverable && 'mrs-content-card--hoverable', effectiveWatermark && 'mrs-content-card--watermark', dragHandle && 'mrs-content-card--draggable', shape === 'landscape' && 'mrs-content-card--landscape', renderLink && 'mrs-content-card--linked', className), style: style, "data-watermark": effectiveWatermark, onClick: onClick, children: [renderLink
                 ? renderLink({ className: 'mrs-content-card__link-overlay', 'aria-labelledby': titleId })
                 : null, dragHandle ? (_jsx("button", { type: "button", className: "mrs-content-card__drag-handle", "aria-label": dragHandleLabel, ...dragHandleProps, onClick: (e) => {
                     e.stopPropagation();
                     dragHandleProps?.onClick?.(e);
-                }, children: dragHandle === true ? DEFAULT_DRAG_HANDLE : dragHandle })) : null, showVariantLeftStripe ? (_jsx("div", { className: "mrs-content-card__variant-stripe", "aria-hidden": "true" })) : null, hasGauge ? (_jsx("div", { className: "mrs-content-card__gauge", role: "meter", "aria-valuemin": 0, "aria-valuemax": 100, "aria-valuenow": gaugePct, "aria-label": `${gaugePct}%`, children: _jsx("div", { className: "mrs-content-card__gauge-fill", style: { height: `${gaugeFraction * 100}%`, background: completenessFill(gaugeFraction) } }) })) : null, _jsxs("div", { className: "mrs-content-card__inner", children: [_jsx("div", { className: "mrs-content-card__header", children: _jsxs("div", { className: "mrs-content-card__head-text", children: [_jsx("p", { className: "mrs-content-card__title", id: titleId, "data-fit": titleFitStep(title) || undefined, children: title }), subtitle ? _jsx("p", { className: "mrs-content-card__subtitle", children: subtitle }) : null] }) }), _jsx("div", { className: cn('mrs-content-card__body', variant && 'mrs-content-card__body--variant'), "data-align-x": contentAlignX, "data-align-y": contentAlignY, children: contentNode }), hasFooter ? (_jsx("div", { className: "mrs-content-card__lower", children: structuredFooter ? footerNode : footer })) : null] })] }));
+                }, children: dragHandle === true ? DEFAULT_DRAG_HANDLE : dragHandle })) : null, showVariantLeftStripe ? (_jsx("div", { className: "mrs-content-card__variant-stripe", "aria-hidden": "true" })) : null, hasGauge ? (_jsx("div", { className: "mrs-content-card__gauge", role: "meter", "aria-valuemin": 0, "aria-valuemax": 100, "aria-valuenow": gaugePct, "aria-label": `${gaugePct}%`, children: _jsx("div", { className: "mrs-content-card__gauge-fill", style: { height: `${gaugeFraction * 100}%`, background: completenessFill(gaugeFraction) } }) })) : null, _jsxs("div", { className: "mrs-content-card__inner", children: [_jsx("div", { className: "mrs-content-card__header", children: _jsxs("div", { className: "mrs-content-card__head-text", children: [_jsx("p", { className: "mrs-content-card__title", id: titleId, "data-fit": titleFitStep(title) || undefined, children: title }), subtitle ? _jsx("p", { className: "mrs-content-card__subtitle", children: subtitle }) : null] }) }), _jsx("div", { className: cn('mrs-content-card__body', variant && 'mrs-content-card__body--variant'), "data-align-x": contentAlignX, "data-align-y": contentAlignY, children: children !== undefined ? children : contentNode }), hasFooter ? (_jsx("div", { className: "mrs-content-card__lower", children: structuredFooter ? footerNode : footer })) : null] })] }));
 });
