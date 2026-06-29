@@ -3769,6 +3769,9 @@
   justify-content: space-between;
   align-items: center;
 }
+.mrs-switch:hover:not([data-disabled]) {
+  border-color: var(--color-border-hover);
+}
 .mrs-switch:focus-visible {
   outline: 2px solid var(--color-focus);
   outline-offset: 2px;
