@@ -1,9 +1,10 @@
-import { forwardRef, isValidElement, useId, type CSSProperties, type ReactNode } from 'react'
+import { forwardRef, isValidElement, useId, useState, type CSSProperties, type ReactNode } from 'react'
 import { cn } from './cn'
 import { resolveAccentColor } from './accent'
 import type { AccentPlacement } from './accent'
 import { TONE_COLOR } from './tone'
 import type { Tone } from './tone'
+import { Dialog } from './Dialog'
 declare const process: { env: { NODE_ENV?: string } }
 
 /**
@@ -113,6 +114,40 @@ export interface StatItem {
    */
   max?: number
 }
+
+// ── Info button ───────────────────────────────────────────────────────────────
+
+/** One numbered section rendered in the info dialog when `content` is an array. */
+export interface StatCardInfoSection {
+  /** Section heading — rendered next to the numbered badge; do not include the number. */
+  title: string
+  /** Optional body text below the heading. */
+  description?: string
+}
+
+type _StatCardInfoBase = {
+  /** Dialog title — required. */
+  title: string
+  /** Accessible label for the info icon button itself — required; pass a translated string (e.g. `"Information"`). */
+  label: string
+  /** Accessible label for the dialog close ✕ button — required; pass a translated string. */
+  closeLabel: string
+  /** Which lower corner the info button appears in. Default `'right'`. */
+  corner?: 'right' | 'left'
+}
+
+/**
+ * Configuration for the info button shown in a lower corner of the card.
+ * At least one of `description` or `content` is required (TypeScript enforced).
+ *
+ * - `content` as a `string` → plain paragraph in the dialog body.
+ * - `content` as a `StatCardInfoSection[]` → numbered-badge sections, one per item.
+ */
+export type StatCardInfo = _StatCardInfoBase &
+  (
+    | { description: string; content?: string | StatCardInfoSection[] }
+    | { description?: string; content: string | StatCardInfoSection[] }
+  )
 
 // ── Props ─────────────────────────────────────────────────────────────────────
 
@@ -250,6 +285,8 @@ export interface StatCardProps {
   className?: string
   /** Optional style override. */
   style?: CSSProperties
+  /** Info button in a lower corner — opens a dialog with title, optional description, and optional content. */
+  info?: StatCardInfo
 }
 
 // ── Footer glyphs ───────────────────────────────────────────────────────────
@@ -436,9 +473,12 @@ export const StatCard = forwardRef<HTMLDivElement, StatCardProps>(function StatC
     renderLink,
     className,
     style: styleProp,
+    info,
   },
   ref,
 ) {
+  const [infoOpen, setInfoOpen] = useState(false)
+
   // variant overrides tone to the same value; ⚠️ always used as the watermark.
   const effectiveTone: StatCardTone = variant ?? tone
   const effectiveWatermark = variant ? '⚠️' : watermark
@@ -762,6 +802,59 @@ export const StatCard = forwardRef<HTMLDivElement, StatCardProps>(function StatC
           </div>
         ) : null}
       </div>
+
+      {/* Info button */}
+      {info ? (
+        <button
+          type="button"
+          className={cn(
+            'mrs-stat-card__info',
+            info.corner === 'left' && 'mrs-stat-card__info--left',
+          )}
+          aria-label={info.label}
+          onClick={(e) => {
+            e.stopPropagation()
+            setInfoOpen(true)
+          }}
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="10" />
+            <path d="M12 16v-4M12 8h.01" />
+          </svg>
+        </button>
+      ) : null}
+
+      {/* Info dialog */}
+      {info ? (
+        <Dialog
+          open={infoOpen}
+          onOpenChange={setInfoOpen}
+          title={info.title}
+          description={info.description}
+          closeLabel={info.closeLabel}
+          size="sm"
+        >
+          {info.content != null ? (
+            typeof info.content === 'string' ? (
+              <p className="mrs-stat-card__info-text">{info.content}</p>
+            ) : (
+              <div className="mrs-stat-card__info-sections">
+                {info.content.map((section, i) => (
+                  <div key={i} className="mrs-stat-card__info-section">
+                    <div className="mrs-stat-card__info-section-header">
+                      <span className="mrs-stat-card__info-badge">{i + 1}</span>
+                      <strong className="mrs-stat-card__info-section-title">{section.title}</strong>
+                    </div>
+                    {section.description ? (
+                      <p className="mrs-stat-card__info-section-desc">{section.description}</p>
+                    ) : null}
+                  </div>
+                ))}
+              </div>
+            )
+          ) : null}
+        </Dialog>
+      ) : null}
     </div>
   )
 })

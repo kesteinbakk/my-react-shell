@@ -1,8 +1,9 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
-import { forwardRef, isValidElement, useId } from 'react';
+import { forwardRef, isValidElement, useId, useState } from 'react';
 import { cn } from './cn';
 import { resolveAccentColor } from './accent';
 import { TONE_COLOR } from './tone';
+import { Dialog } from './Dialog';
 /**
  * Discriminate the structured `{ lines, badges }` footer from a freeform `ReactNode`.
  * A React element, array, or primitive is freeform; a plain object carrying `lines`/`badges`
@@ -106,7 +107,8 @@ const DEFAULT_DRAG_HANDLE = (_jsxs("svg", { width: "11", height: "28", viewBox: 
  * The accent stripe, medallion tint, and watermark are driven by `tone` (mapped to
  * semantic tokens) or overridden with a raw CSS `color` string.
  */
-export const StatCard = forwardRef(function StatCard({ title, subtitle, medallion, tone = 'neutral', color, accentPlacement = 'top', sideBarCompleteness, topStripeFollowsGauge = false, stats, variant, footer, watermark, watermarkMode = 'art', size = 'md', shape = 'standard', onClick, onMedallionPress, hoverable, dragHandle, dragHandleProps, dragHandleLabel, dragWholeCard, renderLink, className, style: styleProp, }, ref) {
+export const StatCard = forwardRef(function StatCard({ title, subtitle, medallion, tone = 'neutral', color, accentPlacement = 'top', sideBarCompleteness, topStripeFollowsGauge = false, stats, variant, footer, watermark, watermarkMode = 'art', size = 'md', shape = 'standard', onClick, onMedallionPress, hoverable, dragHandle, dragHandleProps, dragHandleLabel, dragWholeCard, renderLink, className, style: styleProp, info, }, ref) {
+    const [infoOpen, setInfoOpen] = useState(false);
     // variant overrides tone to the same value; ⚠️ always used as the watermark.
     const effectiveTone = variant ?? tone;
     const effectiveWatermark = variant ? '⚠️' : watermark;
@@ -249,5 +251,8 @@ export const StatCard = forwardRef(function StatCard({ title, subtitle, medallio
                                 return (_jsx("div", { className: "mrs-stat-card__stat mrs-stat-card__stat--arc", children: _jsx(ArcRing, { value: item.value, max: item.max }) }, i));
                             }
                             return (_jsxs("div", { className: "mrs-stat-card__stat", children: [item.label ? (_jsx("dt", { className: "mrs-stat-card__stat-label", children: item.label })) : null, _jsx("dd", { className: "mrs-stat-card__stat-value", children: item.value })] }, i));
-                        }) })) : null, hasFooter ? (_jsx("div", { className: "mrs-stat-card__lower", children: structuredFooter ? footerNode : footer })) : null] })] }));
+                        }) })) : null, hasFooter ? (_jsx("div", { className: "mrs-stat-card__lower", children: structuredFooter ? footerNode : footer })) : null] }), info ? (_jsx("button", { type: "button", className: cn('mrs-stat-card__info', info.corner === 'left' && 'mrs-stat-card__info--left'), "aria-label": info.label, onClick: (e) => {
+                    e.stopPropagation();
+                    setInfoOpen(true);
+                }, children: _jsxs("svg", { viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", "aria-hidden": "true", children: [_jsx("circle", { cx: "12", cy: "12", r: "10" }), _jsx("path", { d: "M12 16v-4M12 8h.01" })] }) })) : null, info ? (_jsx(Dialog, { open: infoOpen, onOpenChange: setInfoOpen, title: info.title, description: info.description, closeLabel: info.closeLabel, size: "sm", children: info.content != null ? (typeof info.content === 'string' ? (_jsx("p", { className: "mrs-stat-card__info-text", children: info.content })) : (_jsx("div", { className: "mrs-stat-card__info-sections", children: info.content.map((section, i) => (_jsxs("div", { className: "mrs-stat-card__info-section", children: [_jsxs("div", { className: "mrs-stat-card__info-section-header", children: [_jsx("span", { className: "mrs-stat-card__info-badge", children: i + 1 }), _jsx("strong", { className: "mrs-stat-card__info-section-title", children: section.title })] }), section.description ? (_jsx("p", { className: "mrs-stat-card__info-section-desc", children: section.description })) : null] }, i))) }))) : null })) : null] }));
 });

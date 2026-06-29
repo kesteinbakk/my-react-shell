@@ -63,6 +63,37 @@ export interface StatItem {
      */
     max?: number;
 }
+/** One numbered section rendered in the info dialog when `content` is an array. */
+export interface StatCardInfoSection {
+    /** Section heading — rendered next to the numbered badge; do not include the number. */
+    title: string;
+    /** Optional body text below the heading. */
+    description?: string;
+}
+type _StatCardInfoBase = {
+    /** Dialog title — required. */
+    title: string;
+    /** Accessible label for the info icon button itself — required; pass a translated string (e.g. `"Information"`). */
+    label: string;
+    /** Accessible label for the dialog close ✕ button — required; pass a translated string. */
+    closeLabel: string;
+    /** Which lower corner the info button appears in. Default `'right'`. */
+    corner?: 'right' | 'left';
+};
+/**
+ * Configuration for the info button shown in a lower corner of the card.
+ * At least one of `description` or `content` is required (TypeScript enforced).
+ *
+ * - `content` as a `string` → plain paragraph in the dialog body.
+ * - `content` as a `StatCardInfoSection[]` → numbered-badge sections, one per item.
+ */
+export type StatCardInfo = _StatCardInfoBase & ({
+    description: string;
+    content?: string | StatCardInfoSection[];
+} | {
+    description?: string;
+    content: string | StatCardInfoSection[];
+});
 export interface StatCardProps {
     /** Card title. */
     title: string;
@@ -197,6 +228,8 @@ export interface StatCardProps {
     className?: string;
     /** Optional style override. */
     style?: CSSProperties;
+    /** Info button in a lower corner — opens a dialog with title, optional description, and optional content. */
+    info?: StatCardInfo;
 }
 /**
  * Stat card — a φ-framed KPI/status card with a title, an optional accent
@@ -207,3 +240,4 @@ export interface StatCardProps {
  * semantic tokens) or overridden with a raw CSS `color` string.
  */
 export declare const StatCard: import("react").ForwardRefExoticComponent<StatCardProps & import("react").RefAttributes<HTMLDivElement>>;
+export {};
