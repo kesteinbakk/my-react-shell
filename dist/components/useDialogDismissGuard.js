@@ -1,5 +1,23 @@
 import { useEffect, useRef } from 'react';
 /**
+ * Is an *interactive, dismissable* Radix popper currently mounted? Select listboxes,
+ * dropdown/context menus, and popovers lock outside pointer events (that lock is what causes
+ * the surface teardown this hook prevents). A Tooltip is also a popper but is **passive** —
+ * it doesn't lock pointer events and the user isn't clicking to dismiss it — so it must NOT
+ * count, or a backdrop click that happens while a tooltip shows would be wrongly suppressed.
+ * We treat a popper wrapper as interactive when it does not contain tooltip content.
+ */
+function hasInteractivePopperOpen() {
+    if (typeof document === 'undefined')
+        return false;
+    const wrappers = document.querySelectorAll('[data-radix-popper-content-wrapper]');
+    for (const w of wrappers) {
+        if (!w.querySelector('[role="tooltip"]'))
+            return true;
+    }
+    return false;
+}
+/**
  * Guards a Radix-Dialog-based surface (Dialog, Sheet, ConfirmDialog) against a nested Radix
  * popper (Select, DropdownMenu, Popover, Combobox, …) tearing down the whole surface.
  *
@@ -32,15 +50,13 @@ export function useDialogDismissGuard(open) {
         if (open === false || typeof document === 'undefined')
             return;
         const onPointerDown = () => {
-            pointerStartedWithPopperRef.current = !!document.querySelector('[data-radix-popper-content-wrapper]');
+            pointerStartedWithPopperRef.current = hasInteractivePopperOpen();
         };
         document.addEventListener('pointerdown', onPointerDown, true);
         return () => document.removeEventListener('pointerdown', onPointerDown, true);
     }, [open]);
     return (event) => {
-        if (typeof document !== 'undefined' &&
-            (pointerStartedWithPopperRef.current ||
-                document.querySelector('[data-radix-popper-content-wrapper]'))) {
+        if (pointerStartedWithPopperRef.current || hasInteractivePopperOpen()) {
             event.preventDefault();
             return true;
         }
