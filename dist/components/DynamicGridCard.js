@@ -1,5 +1,5 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
-import { forwardRef, isValidElement, useId } from 'react';
+import { forwardRef, isValidElement, useId, useRef, useState } from 'react';
 import { cn } from './cn';
 import { resolveAccentColor } from './accent';
 /** φ — the golden ratio. The dynamic card's shape is `aspect-ratio: φ : 1` (or `φ² : 1` for landscape). */
@@ -55,6 +55,18 @@ function StructuredFooter({ footer }) {
  * overlay, with `corner` controls raised above it so they stay independently clickable.
  */
 export const DynamicGridCard = forwardRef(function DynamicGridCard({ size, shape = 'standard', title, subtitle, figure, hoverable, lift = true, watermark, corner, footer, renderLink, dragHandle, dragHandleProps, dragHandleLabel, dragWholeCard, tone, color, accentPlacement = 'top', className, style, children, ...props }, ref) {
+    const [isHolding, setIsHolding] = useState(false);
+    const holdTimerRef = useRef(null);
+    function startHold() {
+        holdTimerRef.current = setTimeout(() => setIsHolding(true), 200);
+    }
+    function clearHold() {
+        if (holdTimerRef.current) {
+            clearTimeout(holdTimerRef.current);
+            holdTimerRef.current = null;
+        }
+        setIsHolding(false);
+    }
     const minWidth = size ? DYNAMIC_GRID_CARD_MIN_WIDTH[size] : undefined;
     const maxWidth = size ? DYNAMIC_GRID_CARD_MAX_WIDTH[size] : undefined;
     const aspectRatio = shape === 'landscape' ? `${PHI * PHI} / 1` : `${PHI} / 1`;
@@ -80,7 +92,21 @@ export const DynamicGridCard = forwardRef(function DynamicGridCard({ size, shape
         ...(hasAccent ? { '--mrs-stat-accent': accentColor } : {}),
         ...style,
     };
-    return (_jsxs("div", { ref: ref, className: cn('mrs-dynamic-grid-card', hasAccent && `mrs-dynamic-grid-card--accent-${accentPlacement}`, hoverable && 'mrs-dynamic-grid-card--hoverable', hoverable && !lift && 'mrs-dynamic-grid-card--no-lift', renderLink && 'mrs-dynamic-grid-card--linked', dragHandle && 'mrs-dynamic-grid-card--draggable', hasWatermark && 'mrs-dynamic-grid-card--watermark', hasArtWatermark && 'mrs-reveal-host', dragWholeCard && 'mrs-dynamic-grid-card--drag-whole', className), style: cssVars, "data-watermark": watermarkIsString ? watermark : undefined, ...props, ...(dragWholeCard ? dragHandleProps : {}), children: [renderLink
+    return (_jsxs("div", { ref: ref, className: cn('mrs-dynamic-grid-card', hasAccent && `mrs-dynamic-grid-card--accent-${accentPlacement}`, hoverable && 'mrs-dynamic-grid-card--hoverable', hoverable && !lift && 'mrs-dynamic-grid-card--no-lift', renderLink && 'mrs-dynamic-grid-card--linked', dragHandle && 'mrs-dynamic-grid-card--draggable', hasWatermark && 'mrs-dynamic-grid-card--watermark', hasArtWatermark && 'mrs-reveal-host', dragWholeCard && 'mrs-dynamic-grid-card--drag-whole', dragWholeCard && isHolding && 'mrs-dynamic-grid-card--holding', className), style: cssVars, "data-watermark": watermarkIsString ? watermark : undefined, ...props, ...(dragWholeCard ? {
+            ...dragHandleProps,
+            onPointerDown: (e) => {
+                startHold();
+                dragHandleProps?.onPointerDown?.(e);
+            },
+            onPointerUp: (e) => {
+                clearHold();
+                dragHandleProps?.onPointerUp?.(e);
+            },
+            onPointerLeave: (e) => {
+                clearHold();
+                dragHandleProps?.onPointerLeave?.(e);
+            },
+        } : {}), children: [renderLink
                 ? renderLink({
                     className: 'mrs-dynamic-grid-card__link-overlay',
                     ...(hasTitle ? { 'aria-labelledby': titleId } : {}),

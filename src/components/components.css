@@ -5978,13 +5978,21 @@
 
 /* Whole-card dragging cursors */
 .mrs-stat-card--drag-whole,
-.mrs-content-card--drag-whole,
-.mrs-dynamic-grid-card--drag-whole {
+.mrs-content-card--drag-whole {
   cursor: grab !important;
 }
 .mrs-stat-card--drag-whole:active,
-.mrs-content-card--drag-whole:active,
-.mrs-dynamic-grid-card--drag-whole:active {
+.mrs-content-card--drag-whole:active {
+  cursor: grabbing !important;
+}
+/* DynamicGridCard: pointer by default; grab only after the hold threshold is crossed. */
+.mrs-dynamic-grid-card--drag-whole {
+  cursor: pointer;
+}
+.mrs-dynamic-grid-card--drag-whole.mrs-dynamic-grid-card--holding {
+  cursor: grab !important;
+}
+.mrs-dynamic-grid-card--drag-whole.mrs-dynamic-grid-card--holding:active {
   cursor: grabbing !important;
 }
 

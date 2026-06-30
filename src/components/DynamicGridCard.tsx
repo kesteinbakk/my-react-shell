@@ -1,4 +1,4 @@
-import { forwardRef, isValidElement, useId, type HTMLAttributes, type ReactNode } from 'react'
+import { forwardRef, isValidElement, useId, useRef, useState, type HTMLAttributes, type ReactNode } from 'react'
 import { cn } from './cn'
 import { resolveAccentColor } from './accent'
 import type { AccentPlacement } from './accent'
@@ -216,6 +216,17 @@ export const DynamicGridCard = forwardRef<HTMLDivElement, DynamicGridCardProps>(
   ref,
 ) {
 
+  const [isHolding, setIsHolding] = useState(false)
+  const holdTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  function startHold() {
+    holdTimerRef.current = setTimeout(() => setIsHolding(true), 200)
+  }
+  function clearHold() {
+    if (holdTimerRef.current) { clearTimeout(holdTimerRef.current); holdTimerRef.current = null }
+    setIsHolding(false)
+  }
+
   const minWidth = size ? DYNAMIC_GRID_CARD_MIN_WIDTH[size] : undefined
   const maxWidth = size ? DYNAMIC_GRID_CARD_MAX_WIDTH[size] : undefined
   const aspectRatio = shape === 'landscape' ? `${PHI * PHI} / 1` : `${PHI} / 1`
@@ -260,12 +271,27 @@ export const DynamicGridCard = forwardRef<HTMLDivElement, DynamicGridCardProps>(
         hasWatermark && 'mrs-dynamic-grid-card--watermark',
         hasArtWatermark && 'mrs-reveal-host',
         dragWholeCard && 'mrs-dynamic-grid-card--drag-whole',
+        dragWholeCard && isHolding && 'mrs-dynamic-grid-card--holding',
         className,
       )}
       style={cssVars}
       data-watermark={watermarkIsString ? watermark : undefined}
       {...props}
-      {...(dragWholeCard ? (dragHandleProps as any) : {})}
+      {...(dragWholeCard ? {
+        ...(dragHandleProps as any),
+        onPointerDown: (e: React.PointerEvent<HTMLDivElement>) => {
+          startHold()
+          ;(dragHandleProps as any)?.onPointerDown?.(e)
+        },
+        onPointerUp: (e: React.PointerEvent<HTMLDivElement>) => {
+          clearHold()
+          ;(dragHandleProps as any)?.onPointerUp?.(e)
+        },
+        onPointerLeave: (e: React.PointerEvent<HTMLDivElement>) => {
+          clearHold()
+          ;(dragHandleProps as any)?.onPointerLeave?.(e)
+        },
+      } : {})}
     >
       {renderLink
         ? renderLink({
