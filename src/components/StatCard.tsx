@@ -589,7 +589,7 @@ export const StatCard = forwardRef<HTMLDivElement, StatCardProps>(function StatC
     variant,
     footer,
     watermark,
-    watermarkMode = 'art',
+    watermarkMode,
     size = 'md',
     shape = 'standard',
     onClick,
@@ -678,6 +678,11 @@ export const StatCard = forwardRef<HTMLDivElement, StatCardProps>(function StatC
  
   // Dev guards
   if (process.env.NODE_ENV !== 'production') {
+    if (hasArtWatermark && watermarkMode == null) {
+      throw new Error(
+        "StatCard: a ReactNode `watermark` requires `watermarkMode` ('art' or 'glyph') — there is no safe default. 'art' assumes a self-sized illustration (e.g. DrawerMark) and won't scale a small icon node; use 'glyph' for an icon-kit glyph (e.g. <AppIcon>).",
+      )
+    }
     if (hasGauge && accentPlacement === 'left') {
       throw new Error(
         "StatCard: `sideBarCompleteness` can't combine with `accentPlacement='left'` — both occupy the left edge. Keep the default `accentPlacement='top'` (or omit it) alongside the gauge.",
