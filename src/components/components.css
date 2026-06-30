@@ -1743,7 +1743,7 @@
   border-radius: 0.5rem;
   box-shadow: var(--mrs-elevation-card);
   overflow: hidden;
-  padding: 1rem;
+  padding: 0.625rem 1rem;
   color: var(--color-text-primary);
   transition: box-shadow 200ms ease, transform 200ms ease;
   display: flex;
@@ -1785,7 +1785,7 @@
 }
 /* Inset the content off the stripe so the two never overlap. */
 .mrs-dynamic-grid-card--accent-top {
-  padding-top: calc(1rem + 4px);
+  padding-top: calc(0.625rem + 4px);
 }
 .mrs-dynamic-grid-card--accent-left {
   padding-left: calc(1rem + 4px);
@@ -1799,14 +1799,16 @@
   gap: 0.625rem;
 }
 
-/* Figure-split: an icon/emoji column beside the title block. */
+/* Figure-split: an icon/emoji column beside the title block. The figure shares
+   the title's line-box height and top-aligns with it (header `align-items:
+   flex-start`), so the glyph sits level with the title's first line. */
 .mrs-dynamic-grid-card__figure {
   flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 1.5rem;
-  line-height: 1;
+  line-height: 1.5rem;
   color: var(--color-text-secondary);
 }
 
@@ -1817,6 +1819,7 @@
 
 .mrs-dynamic-grid-card__title {
   font-weight: 600;
+  line-height: 1.5rem;
   color: var(--color-text-primary);
 }
 
