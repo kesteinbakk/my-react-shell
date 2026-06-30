@@ -134,6 +134,7 @@ function Breadcrumbs(props) {
     const { chain, shell, spec, leafMatchesPath, showMenuButton, onOpenMenu } = props;
     const config = shell.config;
     const homeLabel = config.labels?.home?.();
+    const upLabel = config.labels?.up?.();
     const navLabel = config.labels?.breadcrumb?.();
     const openMenuLabel = config.labels?.openMenu?.();
     // Drop access-hidden ancestor levels (`PageEntry.hideCrumb()` returns true). The
@@ -148,7 +149,15 @@ function Breadcrumbs(props) {
     // leaf is the current page (Hard Rule #2: title never adds a level).
     const leafOverride = spec.title && leafMatchesPath ? spec.title() : undefined;
     const slots = buildCrumbSlots(visibleChain, config.shellPageHeader?.breadcrumbCollapse);
-    return (_jsxs("nav", { className: "mrs-breadcrumbs", "aria-label": navLabel, children: [showMenuButton ? (_jsx("button", { type: "button", className: "mrs-page-header__hamburger", "aria-label": openMenuLabel, onClick: onOpenMenu, children: config.renderIcon('menu', 20) })) : null, _jsx(Link, { to: "/", className: "mrs-breadcrumbs__home", title: homeLabel, children: config.renderIcon('home', 18) }), slots.map(slot => {
+    // "Up one level": the previous visible crumb's route, or home when the
+    // current page is a top-level entry. Hidden on the home route itself
+    // (an empty chain), where there is no level above to go up to.
+    const upRoute = visibleChain.length === 0
+        ? undefined
+        : visibleChain.length === 1
+            ? '/'
+            : visibleChain[visibleChain.length - 2].entry.route;
+    return (_jsxs("nav", { className: "mrs-breadcrumbs", "aria-label": navLabel, children: [showMenuButton ? (_jsx("button", { type: "button", className: "mrs-page-header__hamburger", "aria-label": openMenuLabel, onClick: onOpenMenu, children: config.renderIcon('menu', 20) })) : null, _jsx(Link, { to: "/", className: "mrs-breadcrumbs__home", title: homeLabel, children: config.renderIcon('home', 18) }), upRoute !== undefined ? (_jsx(Link, { to: upRoute, className: "mrs-breadcrumbs__up", title: upLabel, "aria-label": upLabel, children: config.renderIcon('arrowUp', 14) })) : null, slots.map(slot => {
                 const chevron = (_jsx("span", { className: "mrs-breadcrumbs__chevron", children: config.renderIcon('chevronRight', 14) }));
                 if (slot.kind === 'overflow') {
                     return (_jsxs("span", { className: "mrs-breadcrumbs__crumb", children: [chevron, _jsx(OverflowCrumb, { shell: shell, hidden: slot.hidden })] }, "overflow"));

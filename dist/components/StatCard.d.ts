@@ -90,47 +90,6 @@ export type StatCardInfo = _StatCardInfoBase & ({
     description?: string;
     content: string | StatCardInfoSection[];
 });
-/**
- * `watermark`/`watermarkMode` as a discriminated union: a `ReactNode` watermark
- * makes `watermarkMode` **mandatory** (no default). The default `'art'` mode
- * assumes a self-sized illustration (e.g. `DrawerMark`) and does not scale an
- * icon's intrinsic `<svg>`/`<span>` size, so an icon-kit glyph (e.g. `<AppIcon>`)
- * silently renders at its native ~20px size instead of the big watermark — this
- * has repeatedly slipped through as a runtime-only mistake. Forcing the choice at
- * the type level turns it into a compile error instead.
- */
-type StatCardWatermarkProps = {
-    /**
-     * Faint background watermark behind the card content, centred horizontally and positioned
-     * slightly below the card's vertical centre.
-     *
-     * A **string** is an emoji/text watermark (e.g. `'🏆'`), drawn oversized via a pseudo-element.
-     *
-     * Ignored when `variant` is set — the variant always shows `⚠️`.
-     */
-    watermark?: string;
-    watermarkMode?: never;
-} | {
-    /**
-     * A **`ReactNode`** watermark (e.g. a `DrawerMark` illustration, or an icon-kit glyph like
-     * `<AppIcon>`) is rendered in a faint art layer; the card root becomes a `mrs-reveal-host`,
-     * so a hover-reveal mark dropped here opens on card hover.
-     *
-     * Ignored when `variant` is set — the variant always shows `⚠️`.
-     */
-    watermark: Exclude<ReactNode, string | number | bigint | boolean | null | undefined>;
-    /**
-     * **Required** alongside a `ReactNode` watermark — there is no safe default:
-     *
-     * - `'art'` — a self-sized illustration (e.g. a `DrawerMark`): centred horizontally,
-     *   dropped a little below centre, scaled to the card.
-     * - `'glyph'` — a keyed icon glyph (e.g. a lucide `<svg>` / emoji span from a consumer icon
-     *   kit) scaled and positioned to **mirror the string-emoji watermark**: oversized, faint,
-     *   centred, without tilt. Use this for a single icon (e.g. `<AppIcon>`) rather than an
-     *   illustration, so it reads at the same size as the `string` emoji watermark.
-     */
-    watermarkMode: 'art' | 'glyph';
-};
 export interface StatCardBaseProps {
     /** Card title. */
     title: string;
@@ -190,6 +149,27 @@ export interface StatCardBaseProps {
      * `{ lines, badges }` (meta lines on the left, badges on the right).
      */
     footer?: ReactNode | StatCardFooter;
+    /**
+     * Faint background watermark behind the card content, centred horizontally and positioned
+     * slightly below the card's vertical centre.
+     *
+     * - A **string** is an emoji/text watermark (e.g. `'🏆'`), drawn oversized via a pseudo-element.
+     * - A **`ReactNode`** (e.g. an icon-kit glyph like `<AppIcon>`, or a `DrawerMark` illustration)
+     *   is rendered in a faint art layer; the card root becomes a `mrs-reveal-host`, so a
+     *   hover-reveal mark dropped here opens on card hover.
+     *
+     * Ignored when `variant` is set — the variant always shows `⚠️`.
+     */
+    watermark?: ReactNode;
+    /**
+     * For a **`ReactNode`** watermark only (ignored for a string/variant watermark): scales the
+     * node's intrinsic `<svg>`/`<span>` size up to watermark scale, oversized and faint, mirroring
+     * the string-emoji watermark — the right behavior for a small icon-kit glyph (e.g. `<AppIcon>`).
+     *
+     * Set `false` for a self-sized illustration (e.g. `DrawerMark`) that already lays itself out
+     * at watermark scale and shouldn't be force-scaled. Default `true`.
+     */
+    autoscaleWatermark?: boolean;
     /** Size preset — fixed-width golden-ratio card. Default: `'md'` (≈312px). */
     size?: StatCardSize;
     /**
@@ -251,7 +231,7 @@ export interface StatCardBaseProps {
     /** Info button in a lower corner — opens a dialog with title, optional description, and optional content. */
     info?: StatCardInfo;
 }
-export type StatCardProps = StatCardBaseProps & StatCardWatermarkProps;
+export type StatCardProps = StatCardBaseProps;
 /**
  * Stat card — a φ-framed KPI/status card with a title, an optional accent
  * medallion arc-ring (`value / max` progress) in the corner, a row of data stats,
@@ -260,5 +240,5 @@ export type StatCardProps = StatCardBaseProps & StatCardWatermarkProps;
  * The accent stripe, medallion tint, and watermark are driven by `tone` (mapped to
  * semantic tokens) or overridden with a raw CSS `color` string.
  */
-export declare const StatCard: import("react").ForwardRefExoticComponent<StatCardProps & import("react").RefAttributes<HTMLDivElement>>;
+export declare const StatCard: import("react").ForwardRefExoticComponent<StatCardBaseProps & import("react").RefAttributes<HTMLDivElement>>;
 export {};

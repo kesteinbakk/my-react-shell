@@ -1,9 +1,15 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
-import { forwardRef, isValidElement, useId, useRef, useState } from 'react';
+import { createContext, forwardRef, isValidElement, useContext, useId, useRef, useState } from 'react';
 import { cn } from './cn';
 import { resolveAccentColor } from './accent';
 /** φ — the golden ratio. The dynamic card's shape is `aspect-ratio: φ : 1` (or `φ² : 1` for landscape). */
 const PHI = 1.6180339887;
+/**
+ * Carries the enclosing `DynamicCardGrid`'s `cardSize` down to each `DynamicGridCard` so it
+ * can resolve its own effective size (for the icon/title scale below) without the consumer
+ * having to repeat `size` on every card — the grid is still what drives the column width.
+ */
+export const DynamicCardGridSizeContext = createContext(undefined);
 export const DYNAMIC_GRID_CARD_MIN_WIDTH = {
     sm: 180,
     md: 240,
@@ -45,6 +51,24 @@ function StructuredFooter({ footer }) {
         }) }));
 }
 /**
+ * `sm`-size title auto-fit: a long string title steps the font size down (3 steps) so it
+ * doesn't blow out the card's reserved heading height. Returns `0` (no reduction) through
+ * `3` (smallest); a non-string title (e.g. a `ReactNode`) always gets `0` since there's no
+ * length to measure. Thresholds tuned for the `sm` column's ~180–210px width.
+ */
+function titleFitStep(title) {
+    if (typeof title !== 'string')
+        return 0;
+    const n = title.length;
+    if (n > 34)
+        return 3;
+    if (n > 24)
+        return 2;
+    if (n > 14)
+        return 1;
+    return 0;
+}
+/**
  * Fluid card for the {@link DynamicCardGrid}: it stretches to `width: 100%` of its
  * grid column and inherits the grid's max-width cap, keeping the golden-ratio shape via
  * `aspect-ratio`. Accepts optional named slots (`title`, `subtitle`, `icon`, `footer`)
@@ -69,6 +93,11 @@ export const DynamicGridCard = forwardRef(function DynamicGridCard({ size, shape
         }
         setIsHolding(false);
     }
+    // The card's own `size` wins; absent that, fall back to the enclosing grid's `cardSize`
+    // (provided via context) so the icon/title scale below resolves without the consumer
+    // having to repeat `size` on every card.
+    const gridSize = useContext(DynamicCardGridSizeContext);
+    const effectiveSize = size ?? gridSize;
     const minWidth = size ? DYNAMIC_GRID_CARD_MIN_WIDTH[size] : undefined;
     const maxWidth = size ? DYNAMIC_GRID_CARD_MAX_WIDTH[size] : undefined;
     const aspectRatio = shape === 'landscape' ? `${PHI * PHI} / 1` : `${PHI} / 1`;
@@ -94,7 +123,7 @@ export const DynamicGridCard = forwardRef(function DynamicGridCard({ size, shape
         ...(hasAccent ? { '--mrs-stat-accent': accentColor } : {}),
         ...style,
     };
-    return (_jsxs("div", { ref: ref, className: cn('mrs-dynamic-grid-card', hasAccent && `mrs-dynamic-grid-card--accent-${accentPlacement}`, hoverable && 'mrs-dynamic-grid-card--hoverable', hoverable && !lift && 'mrs-dynamic-grid-card--no-lift', renderLink && 'mrs-dynamic-grid-card--linked', hasDragHandle && 'mrs-dynamic-grid-card--draggable', hasWatermark && 'mrs-dynamic-grid-card--watermark', hasArtWatermark && 'mrs-reveal-host', dragWholeCard && 'mrs-dynamic-grid-card--drag-whole', dragWholeCard && isHolding && 'mrs-dynamic-grid-card--holding', className), style: cssVars, "data-watermark": watermarkIsString ? watermark : undefined, ...props, ...(dragWholeCard ? {
+    return (_jsxs("div", { ref: ref, className: cn('mrs-dynamic-grid-card', effectiveSize && `mrs-dynamic-grid-card--${effectiveSize}`, hasAccent && `mrs-dynamic-grid-card--accent-${accentPlacement}`, hoverable && 'mrs-dynamic-grid-card--hoverable', hoverable && !lift && 'mrs-dynamic-grid-card--no-lift', renderLink && 'mrs-dynamic-grid-card--linked', hasDragHandle && 'mrs-dynamic-grid-card--draggable', hasWatermark && 'mrs-dynamic-grid-card--watermark', hasArtWatermark && 'mrs-reveal-host', dragWholeCard && 'mrs-dynamic-grid-card--drag-whole', dragWholeCard && isHolding && 'mrs-dynamic-grid-card--holding', className), style: cssVars, "data-watermark": watermarkIsString ? watermark : undefined, ...props, ...(dragWholeCard ? {
             ...dragHandleProps,
             onPointerDown: (e) => {
                 startHold();
@@ -116,5 +145,5 @@ export const DynamicGridCard = forwardRef(function DynamicGridCard({ size, shape
                 : null, hasArtWatermark ? (_jsx("div", { className: "mrs-dynamic-grid-card__watermark", "aria-hidden": "true", children: watermark })) : null, hasDragHandle ? (_jsx("button", { type: "button", className: "mrs-dynamic-grid-card__drag-handle", "aria-label": dragHandleLabel, ...dragHandleProps, onClick: (e) => {
                     e.stopPropagation();
                     dragHandleProps?.onClick?.(e);
-                }, children: dragHandle ?? DEFAULT_DRAG_HANDLE })) : null, corner != null ? _jsx("div", { className: "mrs-dynamic-grid-card__corner", children: corner }) : null, hasHeader ? (_jsxs("div", { className: "mrs-dynamic-grid-card__header", children: [icon != null ? _jsx("div", { className: "mrs-dynamic-grid-card__icon", children: icon }) : null, title != null || subtitle != null ? (_jsxs("div", { className: "mrs-dynamic-grid-card__heading", children: [title != null ? (_jsx("div", { className: "mrs-dynamic-grid-card__title", id: hasTitle ? titleId : undefined, children: title })) : null, subtitle != null ? _jsx("div", { className: "mrs-dynamic-grid-card__subtitle", children: subtitle }) : null] })) : null] })) : null, _jsx("div", { className: "mrs-dynamic-grid-card__body", children: children }), hasFooter ? (_jsx("div", { className: "mrs-dynamic-grid-card__footer", children: structuredFooter ? _jsx(StructuredFooter, { footer: structuredFooter }) : footer })) : null] }));
+                }, children: dragHandle ?? DEFAULT_DRAG_HANDLE })) : null, corner != null ? _jsx("div", { className: "mrs-dynamic-grid-card__corner", children: corner }) : null, hasHeader ? (_jsxs("div", { className: "mrs-dynamic-grid-card__header", children: [icon != null ? _jsx("div", { className: "mrs-dynamic-grid-card__icon", children: icon }) : null, title != null || subtitle != null ? (_jsxs("div", { className: "mrs-dynamic-grid-card__heading", children: [title != null ? (_jsx("div", { className: "mrs-dynamic-grid-card__title", id: hasTitle ? titleId : undefined, "data-fit": titleFitStep(title) || undefined, children: title })) : null, subtitle != null ? _jsx("div", { className: "mrs-dynamic-grid-card__subtitle", children: subtitle }) : null] })) : null] })) : null, _jsx("div", { className: "mrs-dynamic-grid-card__body", children: children }), hasFooter ? (_jsx("div", { className: "mrs-dynamic-grid-card__footer", children: structuredFooter ? _jsx(StructuredFooter, { footer: structuredFooter }) : footer })) : null] }));
 });

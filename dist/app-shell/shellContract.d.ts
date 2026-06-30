@@ -133,6 +133,8 @@ export type ShellIconRenderer = (key: ShellIcon, size: number) => ReactNode;
  */
 export interface ShellChromeLabels {
     home?: () => string;
+    /** Accessible name for the breadcrumb "up one level" arrow next to the home icon. */
+    up?: () => string;
     breadcrumb?: () => string;
     openMenu?: () => string;
     mainNavigation?: () => string;

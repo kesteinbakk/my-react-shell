@@ -612,8 +612,8 @@ whole-card link via `renderLink`. Medallion, gauge (`sideBarCompleteness`,
 | `stats` | — | `{ value, label?, max? }[]` — data items. `label` → label above + number below. `max` → compact arc-ring. **Cannot combine `label` and `max` on the same item** (throws in dev). |
 | `variant` | — | `'warning'` · `'danger'` — structural alert variant. Overrides `tone` to the same value (accent stripe, medallion tint, and stat numbers all reflect the variant hue) and forces `⚠️` as the watermark background emoji, ignoring the `watermark` prop. |
 | `footer` | — | Footer slot: a freeform `ReactNode` (e.g. a CTA pill via `.mrs-stat-card__cta`) **or** a structured `{ lines?, badges? }` (meta lines left, badges right — same shape as `ContentCard`). The two are discriminated automatically. |
-| `watermark` | — | Faint background watermark — centred horizontally, positioned slightly below vertical centre. A **`string`** is an oversized emoji (e.g. `'🏆'`); a **`ReactNode`** (e.g. a `DrawerMark`) renders in an art layer behind the content and makes the card root a `mrs-reveal-host` (so a hover-reveal mark opens on card hover). Ignored when `variant` is set. |
-| `watermarkMode` | — | How a **ReactNode** `watermark` is laid out (ignored for a string/variant watermark). **Required** when `watermark` is a ReactNode — no safe default exists. `'art'` = the existing self-sized illustration layer (e.g. a `DrawerMark`), centred + dropped below centre. `'glyph'` = a keyed icon glyph (a lucide `<svg>` / emoji span from a consumer icon kit) scaled and positioned to **mirror the string-emoji watermark**: oversized, faint, centred, without tilt. Use `'glyph'` when the watermark is a single icon rather than an illustration. Omitting it throws in dev; in prod it's treated as `'art'`. |
+| `watermark` | — | Faint background watermark — centred horizontally, positioned slightly below vertical centre. A **`string`** is an oversized emoji (e.g. `'🏆'`); a **`ReactNode`** (e.g. an icon-kit glyph like `<AppIcon>`, or a `DrawerMark`) renders in an art layer behind the content and makes the card root a `mrs-reveal-host` (so a hover-reveal mark opens on card hover). Ignored when `variant` is set. |
+| `autoscaleWatermark` | `true` | For a **ReactNode** `watermark` only (ignored for a string/variant watermark): scales the node's intrinsic `<svg>`/`<span>` size up to watermark scale, oversized and faint, mirroring the string-emoji watermark — the right behavior for a small icon-kit glyph (e.g. `<AppIcon>`). Set `false` for a self-sized illustration (e.g. `DrawerMark`) that already lays itself out at watermark scale. |
 | `size` | `'md'` | `sm`·`md`·`lg`·`xl` = 240/312/400/520px wide; height = width / φ. Default `md` ≈312px → four to a `wide` (1440px) row. |
 | `shape` | `'standard'` | `'standard'` = φ:1 · `'landscape'` = φ²:1 (`height = width / φ²`, shorter box). For light cards (no footer, small content) where the standard height reads too tall; a full stats row + footer can overflow the shorter box. |
 | `onClick` | — | Click handler; also enables hover lift. |
@@ -1004,7 +1004,7 @@ custom `() => string` resolver. `pages` may be **empty** for a nav-less card-das
 ```tsx
 export const shellConfig = defineShellConfig({
   appName: 'Acme',
-  // Internal chrome keys: 'menu', 'home', 'chevronRight', 'chevronDown', 'search', 'alert'
+  // Internal chrome keys: 'menu', 'home', 'arrowUp', 'chevronRight', 'chevronDown', 'search', 'alert'
   renderIcon: (key, size) => { const I = icons[key] ?? Home; return <I size={size} /> }, // REQUIRED
   pages: [{ id: 'dashboard', route: '/dashboard', label: () => t('nav.dashboard'), icon: 'dashboard' }],
 })
@@ -1022,6 +1022,12 @@ export const shellConfig = defineShellConfig({
 > `ShellConfigError` if you do. Home is always reachable via the brand link and the
 > breadcrumb house icon; it never appears as a named sidebar entry or breadcrumb level.
 > Start your first page at a real feature route (e.g. `/dashboard`, `/data`).
+>
+> **Breadcrumb "up one level" arrow.** Next to the house icon, the breadcrumb trail
+> renders an up-arrow link (`arrowUp` icon key) that navigates to the previous
+> visible crumb's route (home when the current page is top-level). It is hidden on
+> the home route itself, where there is no level above. `labels.up` supplies its
+> accessible name.
 >
 > **Three navigation layers, each one job:** `pages` (sidebar/banner) → top-level
 > areas · `subPages` (hierarchical sub-areas, recursive, each a breadcrumb level; leaf

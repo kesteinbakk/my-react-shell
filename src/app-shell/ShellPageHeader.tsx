@@ -287,6 +287,7 @@ function Breadcrumbs(props: BreadcrumbsProps): ReactNode {
   const config = shell.config
 
   const homeLabel = config.labels?.home?.()
+  const upLabel = config.labels?.up?.()
   const navLabel = config.labels?.breadcrumb?.()
   const openMenuLabel = config.labels?.openMenu?.()
 
@@ -309,6 +310,16 @@ function Breadcrumbs(props: BreadcrumbsProps): ReactNode {
     config.shellPageHeader?.breadcrumbCollapse,
   )
 
+  // "Up one level": the previous visible crumb's route, or home when the
+  // current page is a top-level entry. Hidden on the home route itself
+  // (an empty chain), where there is no level above to go up to.
+  const upRoute =
+    visibleChain.length === 0
+      ? undefined
+      : visibleChain.length === 1
+        ? '/'
+        : visibleChain[visibleChain.length - 2].entry.route
+
   return (
     <nav className="mrs-breadcrumbs" aria-label={navLabel}>
       {showMenuButton ? (
@@ -325,6 +336,17 @@ function Breadcrumbs(props: BreadcrumbsProps): ReactNode {
       <Link to="/" className="mrs-breadcrumbs__home" title={homeLabel}>
         {config.renderIcon('home', 18)}
       </Link>
+
+      {upRoute !== undefined ? (
+        <Link
+          to={upRoute}
+          className="mrs-breadcrumbs__up"
+          title={upLabel}
+          aria-label={upLabel}
+        >
+          {config.renderIcon('arrowUp', 14)}
+        </Link>
+      ) : null}
 
       {slots.map(slot => {
         const chevron = (

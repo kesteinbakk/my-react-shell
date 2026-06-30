@@ -308,6 +308,7 @@
 }
 /* Icons + separators never compress or wrap — only labels give up width. */
 .mrs-breadcrumbs__home,
+.mrs-breadcrumbs__up,
 .mrs-breadcrumbs__chevron,
 .mrs-breadcrumbs__caret,
 .mrs-breadcrumbs__overflow {
@@ -321,6 +322,7 @@
   min-width: 0;
 }
 .mrs-breadcrumbs__home,
+.mrs-breadcrumbs__up,
 .mrs-breadcrumbs__link {
   display: inline-flex;
   align-items: center;
@@ -330,6 +332,7 @@
   min-width: 0;
 }
 .mrs-breadcrumbs__home:hover,
+.mrs-breadcrumbs__up:hover,
 .mrs-breadcrumbs__link:hover {
   color: var(--color-text-primary);
 }

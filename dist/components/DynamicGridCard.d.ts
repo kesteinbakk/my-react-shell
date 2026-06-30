@@ -2,6 +2,12 @@ import { type HTMLAttributes, type ReactNode } from 'react';
 import type { AccentPlacement } from './accent';
 import type { Tone } from './tone';
 export type DynamicGridCardSize = 'sm' | 'md' | 'lg';
+/**
+ * Carries the enclosing `DynamicCardGrid`'s `cardSize` down to each `DynamicGridCard` so it
+ * can resolve its own effective size (for the icon/title scale below) without the consumer
+ * having to repeat `size` on every card — the grid is still what drives the column width.
+ */
+export declare const DynamicCardGridSizeContext: import("react").Context<DynamicGridCardSize | undefined>;
 /** Proportion of the card: `'standard'` is φ:1; `'landscape'` is the shorter-wider φ²:1. */
 export type DynamicGridCardShape = 'standard' | 'landscape';
 /** Leading glyph kind for a structured footer meta line. */

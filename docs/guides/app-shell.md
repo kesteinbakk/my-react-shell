@@ -42,7 +42,7 @@ at runtime. The icon library is yours: pass one `renderIcon(key, size)`.
 import { defineShellConfig } from 'my-react-shell/app-shell'
 import { Home, Database, Shield } from 'lucide-react'
 
-// The shell internally requests keys: 'menu', 'home', 'chevronRight', 'chevronDown', 'search', 'alert'
+// The shell internally requests keys: 'menu', 'home', 'arrowUp', 'chevronRight', 'chevronDown', 'search', 'alert'
 const icons: Record<string, typeof Home> = { home: Home, data: Database, trust: Shield }
 
 export const shellConfig = defineShellConfig({
@@ -96,7 +96,7 @@ route (e.g. `/dashboard`, `/data`).
 | `shellPageHeader.border` | `boolean` | `true` | Whether the header band draws a bottom border. |
 | `shellPageHeader.documentTitle` | `composed` · `leaf` · `app` | `composed` | Project-wide browser-tab title mode — see [Document title](#document-title-browser-tab). |
 | `shellPageHeader.breadcrumbCollapse` | `{ leading?, trailing? }` · `false` | `{ leading: 1, trailing: 2 }` | Breadcrumb middle-collapse — see [Overflow](#overflow-the-trail-never-breaks). |
-| `labels` | aria-label thunks: `home`, `breadcrumb`, `openMenu`, `mainNavigation`, `more`, `scrollTabsLeft`, `scrollTabsRight` | none (no language default) | Translated accessible names for the chrome. Each is optional with **no default** — omit one and that control is unnamed (an icon / landmark with no language), never an English fallback. Pass them for accessible chrome. |
+| `labels` | aria-label thunks: `home`, `up`, `breadcrumb`, `openMenu`, `mainNavigation`, `more`, `scrollTabsLeft`, `scrollTabsRight` | none (no language default) | Translated accessible names for the chrome. Each is optional with **no default** — omit one and that control is unnamed (an icon / landmark with no language), never an English fallback. Pass them for accessible chrome. |
 
 #### Optional per-`PageEntry` fields
 
@@ -300,6 +300,12 @@ longest-prefix match at each depth:
 - **A crumb appears only for registered routes.** Every route that should appear in the
   chain must be in the config tree (`pages` / `subPages`) or added at runtime via
   `useDynamicPages`. Unregistered paths fall through to the nearest matching ancestor.
+
+**An "up one level" arrow sits next to the house icon.** It links to the previous
+visible crumb's route (home when the current page is top-level), letting a user step
+back up the chain without targeting a specific crumb. It's hidden on the home route
+itself, where there is no level above. Uses the `arrowUp` icon key and the
+`labels.up` accessible name.
 
 #### Overflow: the trail never breaks
 

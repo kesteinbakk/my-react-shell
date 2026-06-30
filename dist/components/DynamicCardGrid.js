@@ -7,7 +7,7 @@ import { Select } from './Select';
 import { Switch } from './Switch';
 import { Icon } from '../icons';
 import { cn } from './cn';
-import { DYNAMIC_GRID_CARD_MIN_WIDTH, DYNAMIC_GRID_CARD_MAX_WIDTH } from './DynamicGridCard';
+import { DYNAMIC_GRID_CARD_MIN_WIDTH, DYNAMIC_GRID_CARD_MAX_WIDTH, DynamicCardGridSizeContext } from './DynamicGridCard';
 const FILTER_VISIBILITY_MIN_ITEMS = 6;
 function defaultSortCompare(a, b, key, dir) {
     const aVal = a[key];
@@ -123,5 +123,5 @@ export function DynamicCardGrid({ items, renderCard, getKey, searchFields, searc
                             vars['--mrs-dynamic-card-grid-item-max'] = `${DYNAMIC_GRID_CARD_MAX_WIDTH[cardSize]}px`;
                         }
                         return Object.keys(vars).length > 0 ? vars : undefined;
-                    })(), children: processedItems.map((item) => (_jsx(Fragment, { children: renderCard(item) }, getKey(item)))) })) })] }));
+                    })(), children: _jsx(DynamicCardGridSizeContext.Provider, { value: cardSize, children: processedItems.map((item) => (_jsx(Fragment, { children: renderCard(item) }, getKey(item)))) }) })) })] }));
 }

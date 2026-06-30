@@ -154,7 +154,7 @@ const DEFAULT_DRAG_HANDLE = (_jsxs("svg", { width: "11", height: "28", viewBox: 
  * The accent stripe, medallion tint, and watermark are driven by `tone` (mapped to
  * semantic tokens) or overridden with a raw CSS `color` string.
  */
-export const StatCard = forwardRef(function StatCard({ title, subtitle, medallion, tone = 'neutral', color, accentPlacement = 'top', sideBarCompleteness, topStripeFollowsGauge = false, stats, variant, footer, watermark, watermarkMode, size = 'md', shape = 'standard', onClick, onMedallionPress, hoverable, showDragHandle, dragHandle, dragHandleProps, dragHandleLabel, dragWholeCard, renderLink, className, style: styleProp, info, }, ref) {
+export const StatCard = forwardRef(function StatCard({ title, subtitle, medallion, tone = 'neutral', color, accentPlacement = 'top', sideBarCompleteness, topStripeFollowsGauge = false, stats, variant, footer, watermark, autoscaleWatermark = true, size = 'md', shape = 'standard', onClick, onMedallionPress, hoverable, showDragHandle, dragHandle, dragHandleProps, dragHandleLabel, dragWholeCard, renderLink, className, style: styleProp, info, }, ref) {
     const [infoOpen, setInfoOpen] = useState(false);
     // A visible grip shows when toggled on, or when a custom handle node is supplied.
     const hasDragHandle = showDragHandle || dragHandle != null;
@@ -214,9 +214,6 @@ export const StatCard = forwardRef(function StatCard({ title, subtitle, medallio
     const showVariantLeftStripe = !!variant && !hasGauge;
     // Dev guards
     if (process.env.NODE_ENV !== 'production') {
-        if (hasArtWatermark && watermarkMode == null) {
-            throw new Error("StatCard: a ReactNode `watermark` requires `watermarkMode` ('art' or 'glyph') — there is no safe default. 'art' assumes a self-sized illustration (e.g. DrawerMark) and won't scale a small icon node; use 'glyph' for an icon-kit glyph (e.g. <AppIcon>).");
-        }
         if (hasGauge && accentPlacement === 'left') {
             throw new Error("StatCard: `sideBarCompleteness` can't combine with `accentPlacement='left'` — both occupy the left edge. Keep the default `accentPlacement='top'` (or omit it) alongside the gauge.");
         }
@@ -268,7 +265,7 @@ export const StatCard = forwardRef(function StatCard({ title, subtitle, medallio
             onPointerLeave: (e) => { clearHold(); dragHandleProps?.onPointerLeave?.(e); },
         } : {}), children: [renderLink
                 ? renderLink({ className: 'mrs-stat-card__link-overlay', 'aria-labelledby': titleId })
-                : null, hasArtWatermark ? (_jsx("div", { className: cn('mrs-stat-card__watermark', watermarkMode === 'glyph' && 'mrs-stat-card__watermark--glyph'), "aria-hidden": "true", children: effectiveWatermark })) : null, hasDragHandle ? (_jsx("button", { type: "button", className: "mrs-stat-card__drag-handle", "aria-label": dragHandleLabel, ...dragHandleProps, onClick: (e) => {
+                : null, hasArtWatermark ? (_jsx("div", { className: cn('mrs-stat-card__watermark', autoscaleWatermark && 'mrs-stat-card__watermark--glyph'), "aria-hidden": "true", children: effectiveWatermark })) : null, hasDragHandle ? (_jsx("button", { type: "button", className: "mrs-stat-card__drag-handle", "aria-label": dragHandleLabel, ...dragHandleProps, onClick: (e) => {
                     e.stopPropagation();
                     dragHandleProps?.onClick?.(e);
                 }, children: dragHandle ?? DEFAULT_DRAG_HANDLE })) : null, showVariantLeftStripe ? (_jsx("div", { className: "mrs-stat-card__variant-stripe", "aria-hidden": "true" })) : null, hasGauge ? (_jsx("div", { className: "mrs-stat-card__gauge", role: "meter", "aria-valuemin": 0, "aria-valuemax": 100, "aria-valuenow": gaugePct, "aria-label": `${gaugePct}%`, children: _jsx("div", { className: "mrs-stat-card__gauge-fill", style: { height: `${gaugeFraction * 100}%`, background: completenessFill(gaugeFraction) } }) })) : null, _jsxs("div", { className: "mrs-stat-card__inner", children: [_jsxs("div", { className: "mrs-stat-card__header", children: [_jsxs("div", { className: "mrs-stat-card__head-text", children: [_jsx("p", { className: "mrs-stat-card__title", id: titleId, "data-fit": titleFitStep(title) || undefined, children: title }), subtitle ? _jsx("p", { className: "mrs-stat-card__subtitle", children: subtitle }) : null] }), medallionNode] }), stats && stats.length > 0 ? (_jsx("dl", { className: "mrs-stat-card__stats", children: stats.map((item, i) => {
