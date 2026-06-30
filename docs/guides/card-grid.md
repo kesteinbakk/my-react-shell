@@ -197,7 +197,7 @@ import { Link } from '@tanstack/react-router'
 
 renderCard={(it) => (
   <DynamicGridCard
-    figure={it.icon}
+    icon={it.icon}
     title={it.title}
     subtitle={it.subtitle}
     hoverable

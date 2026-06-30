@@ -1799,10 +1799,10 @@
   gap: 0.625rem;
 }
 
-/* Figure-split: an icon/emoji column beside the title block. The figure is
-   vertically centred against the whole heading (title + subtitle) via the
-   header's `align-items: center`, so the glyph reads level with the text block. */
-.mrs-dynamic-grid-card__figure {
+/* Icon column beside the title block. The icon is vertically centred against the
+   whole heading (title + subtitle) via the header's `align-items: center`, so the
+   glyph reads level with the text block. */
+.mrs-dynamic-grid-card__icon {
   flex-shrink: 0;
   display: flex;
   align-items: center;

@@ -47,14 +47,14 @@ function StructuredFooter({ footer }) {
 /**
  * Fluid card for the {@link DynamicCardGrid}: it stretches to `width: 100%` of its
  * grid column and inherits the grid's max-width cap, keeping the golden-ratio shape via
- * `aspect-ratio`. Accepts optional named slots (`title`, `subtitle`, `figure`, `footer`)
+ * `aspect-ratio`. Accepts optional named slots (`title`, `subtitle`, `icon`, `footer`)
  * with the primary content passed as `children`.
  *
  * It can act as a **whole-card navigation link** without the shell depending on any router:
  * pass `renderLink` and the card mounts the consumer's `<Link>` as a full-bleed block-link
  * overlay, with `corner` controls raised above it so they stay independently clickable.
  */
-export const DynamicGridCard = forwardRef(function DynamicGridCard({ size, shape = 'standard', title, subtitle, figure, hoverable, lift = true, watermark, corner, footer, renderLink, showDragHandle, dragHandle, dragHandleProps, dragHandleLabel, dragWholeCard, tone, color, accentPlacement = 'top', className, style, children, ...props }, ref) {
+export const DynamicGridCard = forwardRef(function DynamicGridCard({ size, shape = 'standard', title, subtitle, icon, hoverable, lift = true, watermark, corner, footer, renderLink, showDragHandle, dragHandle, dragHandleProps, dragHandleLabel, dragWholeCard, tone, color, accentPlacement = 'top', className, style, children, ...props }, ref) {
     // A visible grip shows when toggled on, or when a custom handle node is supplied.
     const hasDragHandle = showDragHandle || dragHandle != null;
     const [isHolding, setIsHolding] = useState(false);
@@ -78,7 +78,7 @@ export const DynamicGridCard = forwardRef(function DynamicGridCard({ size, shape
     // Auto-wire the overlay anchor's accessible name from the card title.
     const titleId = useId();
     const hasTitle = title != null;
-    const hasHeader = title != null || subtitle != null || figure != null;
+    const hasHeader = title != null || subtitle != null || icon != null;
     // A string watermark uses the emoji `::after` path; any other node renders in an art layer.
     const watermarkIsString = typeof watermark === 'string';
     const hasWatermark = watermarkIsString ? watermark.length > 0 : watermark != null;
@@ -116,5 +116,5 @@ export const DynamicGridCard = forwardRef(function DynamicGridCard({ size, shape
                 : null, hasArtWatermark ? (_jsx("div", { className: "mrs-dynamic-grid-card__watermark", "aria-hidden": "true", children: watermark })) : null, hasDragHandle ? (_jsx("button", { type: "button", className: "mrs-dynamic-grid-card__drag-handle", "aria-label": dragHandleLabel, ...dragHandleProps, onClick: (e) => {
                     e.stopPropagation();
                     dragHandleProps?.onClick?.(e);
-                }, children: dragHandle ?? DEFAULT_DRAG_HANDLE })) : null, corner != null ? _jsx("div", { className: "mrs-dynamic-grid-card__corner", children: corner }) : null, hasHeader ? (_jsxs("div", { className: "mrs-dynamic-grid-card__header", children: [figure != null ? _jsx("div", { className: "mrs-dynamic-grid-card__figure", children: figure }) : null, title != null || subtitle != null ? (_jsxs("div", { className: "mrs-dynamic-grid-card__heading", children: [title != null ? (_jsx("div", { className: "mrs-dynamic-grid-card__title", id: hasTitle ? titleId : undefined, children: title })) : null, subtitle != null ? _jsx("div", { className: "mrs-dynamic-grid-card__subtitle", children: subtitle }) : null] })) : null] })) : null, _jsx("div", { className: "mrs-dynamic-grid-card__body", children: children }), hasFooter ? (_jsx("div", { className: "mrs-dynamic-grid-card__footer", children: structuredFooter ? _jsx(StructuredFooter, { footer: structuredFooter }) : footer })) : null] }));
+                }, children: dragHandle ?? DEFAULT_DRAG_HANDLE })) : null, corner != null ? _jsx("div", { className: "mrs-dynamic-grid-card__corner", children: corner }) : null, hasHeader ? (_jsxs("div", { className: "mrs-dynamic-grid-card__header", children: [icon != null ? _jsx("div", { className: "mrs-dynamic-grid-card__icon", children: icon }) : null, title != null || subtitle != null ? (_jsxs("div", { className: "mrs-dynamic-grid-card__heading", children: [title != null ? (_jsx("div", { className: "mrs-dynamic-grid-card__title", id: hasTitle ? titleId : undefined, children: title })) : null, subtitle != null ? _jsx("div", { className: "mrs-dynamic-grid-card__subtitle", children: subtitle }) : null] })) : null] })) : null, _jsx("div", { className: "mrs-dynamic-grid-card__body", children: children }), hasFooter ? (_jsx("div", { className: "mrs-dynamic-grid-card__footer", children: structuredFooter ? _jsx(StructuredFooter, { footer: structuredFooter }) : footer })) : null] }));
 });

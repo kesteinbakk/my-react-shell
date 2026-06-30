@@ -43,8 +43,8 @@ export interface DynamicGridCardProps extends Omit<HTMLAttributes<HTMLDivElement
   shape?: DynamicGridCardShape
   title?: ReactNode
   subtitle?: ReactNode
-  /** Icon/emoji column rendered beside the title (a figure-split header). */
-  figure?: ReactNode
+  /** Icon/emoji column rendered beside the title. */
+  icon?: ReactNode
   /** Cursor + hover-lift + `:focus-visible` ring on the card root. */
   hoverable?: boolean
   /**
@@ -208,7 +208,7 @@ function StructuredFooter({ footer }: { footer: DynamicGridCardFooter }) {
 /**
  * Fluid card for the {@link DynamicCardGrid}: it stretches to `width: 100%` of its
  * grid column and inherits the grid's max-width cap, keeping the golden-ratio shape via
- * `aspect-ratio`. Accepts optional named slots (`title`, `subtitle`, `figure`, `footer`)
+ * `aspect-ratio`. Accepts optional named slots (`title`, `subtitle`, `icon`, `footer`)
  * with the primary content passed as `children`.
  *
  * It can act as a **whole-card navigation link** without the shell depending on any router:
@@ -216,7 +216,7 @@ function StructuredFooter({ footer }: { footer: DynamicGridCardFooter }) {
  * overlay, with `corner` controls raised above it so they stay independently clickable.
  */
 export const DynamicGridCard = forwardRef<HTMLDivElement, DynamicGridCardProps>(function DynamicGridCard(
-  { size, shape = 'standard', title, subtitle, figure, hoverable, lift = true, watermark, corner, footer, renderLink, showDragHandle, dragHandle, dragHandleProps, dragHandleLabel, dragWholeCard, tone, color, accentPlacement = 'top', className, style, children, ...props },
+  { size, shape = 'standard', title, subtitle, icon, hoverable, lift = true, watermark, corner, footer, renderLink, showDragHandle, dragHandle, dragHandleProps, dragHandleLabel, dragWholeCard, tone, color, accentPlacement = 'top', className, style, children, ...props },
   ref,
 ) {
 
@@ -245,7 +245,7 @@ export const DynamicGridCard = forwardRef<HTMLDivElement, DynamicGridCardProps>(
   // Auto-wire the overlay anchor's accessible name from the card title.
   const titleId = useId()
   const hasTitle = title != null
-  const hasHeader = title != null || subtitle != null || figure != null
+  const hasHeader = title != null || subtitle != null || icon != null
 
   // A string watermark uses the emoji `::after` path; any other node renders in an art layer.
   const watermarkIsString = typeof watermark === 'string'
@@ -330,7 +330,7 @@ export const DynamicGridCard = forwardRef<HTMLDivElement, DynamicGridCardProps>(
 
       {hasHeader ? (
         <div className="mrs-dynamic-grid-card__header">
-          {figure != null ? <div className="mrs-dynamic-grid-card__figure">{figure}</div> : null}
+          {icon != null ? <div className="mrs-dynamic-grid-card__icon">{icon}</div> : null}
           {title != null || subtitle != null ? (
             <div className="mrs-dynamic-grid-card__heading">
               {title != null ? (

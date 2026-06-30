@@ -31,8 +31,8 @@ export interface DynamicGridCardProps extends Omit<HTMLAttributes<HTMLDivElement
     shape?: DynamicGridCardShape;
     title?: ReactNode;
     subtitle?: ReactNode;
-    /** Icon/emoji column rendered beside the title (a figure-split header). */
-    figure?: ReactNode;
+    /** Icon/emoji column rendered beside the title. */
+    icon?: ReactNode;
     /** Cursor + hover-lift + `:focus-visible` ring on the card root. */
     hoverable?: boolean;
     /**
@@ -115,7 +115,7 @@ export declare const DYNAMIC_GRID_CARD_MAX_WIDTH: Record<DynamicGridCardSize, nu
 /**
  * Fluid card for the {@link DynamicCardGrid}: it stretches to `width: 100%` of its
  * grid column and inherits the grid's max-width cap, keeping the golden-ratio shape via
- * `aspect-ratio`. Accepts optional named slots (`title`, `subtitle`, `figure`, `footer`)
+ * `aspect-ratio`. Accepts optional named slots (`title`, `subtitle`, `icon`, `footer`)
  * with the primary content passed as `children`.
  *
  * It can act as a **whole-card navigation link** without the shell depending on any router:
