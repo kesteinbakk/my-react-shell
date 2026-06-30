@@ -149,6 +149,14 @@ export interface PaperCardProps {
 
   /** Emoji or text rendered as a faint background watermark. E.g. `'📄'`. */
   watermark?: string
+
+  /**
+   * A real, full-opacity preview layer filling the sheet behind the title/footer — e.g. a
+   * rendered PDF first page (`<canvas>`/`<img>`). Unlike `watermark` (a faint decorative
+   * background glyph), `image` is the card's actual visible content, so the title/subtitle and
+   * footer render over it on a translucent scrim for legibility.
+   */
+  image?: ReactNode
   /** Size preset — fixed-width A4-portrait card. Default: `'md'` (≈168px). */
   size?: PaperCardSize
 
@@ -215,6 +223,7 @@ export const PaperCard = forwardRef<HTMLDivElement, PaperCardProps>(function Pap
     footer,
     corner,
     watermark,
+    image,
     size = 'md',
     onClick,
     hoverable,
@@ -308,6 +317,7 @@ export const PaperCard = forwardRef<HTMLDivElement, PaperCardProps>(function Pap
         hasAccent && `mrs-paper-card--accent-${accentPlacement}`,
         isHoverable && 'mrs-paper-card--hoverable',
         watermark && 'mrs-paper-card--watermark',
+        image != null && 'mrs-paper-card--imaged',
         hasDragHandle && 'mrs-paper-card--draggable',
         corner != null && 'mrs-paper-card--cornered',
         renderLink && 'mrs-paper-card--linked',
@@ -337,6 +347,9 @@ export const PaperCard = forwardRef<HTMLDivElement, PaperCardProps>(function Pap
       {/* The sheet: clip-path cuts the notch; the fold triangle sits in it. */}
       <div className="mrs-paper-card__sheet" data-watermark={watermark}>
         <span className="mrs-paper-card__fold" aria-hidden="true" />
+        {image != null ? (
+          <div className="mrs-paper-card__image" aria-hidden="true">{image}</div>
+        ) : null}
         <div className="mrs-paper-card__inner">
           <div className="mrs-paper-card__header">
             <div className="mrs-paper-card__head-text">

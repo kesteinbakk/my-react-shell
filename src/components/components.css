@@ -5773,6 +5773,27 @@
   user-select: none;
 }
 
+/* Full-opacity preview layer (e.g. a rendered PDF first page) — the card's actual content,
+   not a decorative watermark. Sits behind __inner; title/footer get a scrim for legibility. */
+.mrs-paper-card__image {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+}
+.mrs-paper-card__image > * {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.mrs-paper-card--imaged .mrs-paper-card__head-text,
+.mrs-paper-card--imaged .mrs-paper-card__lower {
+  background: color-mix(in srgb, var(--color-surface-raised) 88%, transparent);
+  border-radius: 0.35em;
+  box-shadow: 0 0 0 0.35em color-mix(in srgb, var(--color-surface-raised) 88%, transparent);
+}
+
 .mrs-paper-card__inner {
   position: relative;
   z-index: 1;

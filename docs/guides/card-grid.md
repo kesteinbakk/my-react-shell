@@ -386,6 +386,21 @@ seams. An accent stripe is **opt-in** (none by default — a paper card reads fr
 proportion, fold, and shadow alone), and the folded corner stays a neutral surface tint even
 when an accent is set. `content` clamps to `maxLines` (dynamic: `7` / `5` / `4`).
 
+**`image` — a real preview layer, not a watermark.** `watermark` stays a faint, decorative
+background glyph (string only). For an actual document preview/thumbnail — e.g. a rendered
+PDF first page — pass a `<canvas>`/`<img>` to **`image`** instead: a full-opacity layer that
+fills the sheet behind the title/footer, which render on top with a translucent scrim for
+legibility.
+
+```tsx
+<PaperCard
+  title="Invoice_2026_06.pdf" subtitle="Uploaded today"
+  image={<img src={pdfThumbnailUrl} alt="" />}
+  footer={{ lines: [{ type: 'date', text: '30 Jun 2026' }] }}
+  renderLink={(p) => <Link {...p} to="/doc/$id" params={{ id }} />}
+/>
+```
+
 The **`corner`** slot works the same way as on `DynamicGridCard`: a freeform `ReactNode`
 (typically a `DropdownMenu` trigger) rendered above the link overlay as a sibling of the anchor,
 so it stays clickable even when the whole card is a navigation link. It sits just below the

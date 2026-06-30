@@ -63,6 +63,13 @@ export interface PaperCardProps {
     corner?: ReactNode;
     /** Emoji or text rendered as a faint background watermark. E.g. `'📄'`. */
     watermark?: string;
+    /**
+     * A real, full-opacity preview layer filling the sheet behind the title/footer — e.g. a
+     * rendered PDF first page (`<canvas>`/`<img>`). Unlike `watermark` (a faint decorative
+     * background glyph), `image` is the card's actual visible content, so the title/subtitle and
+     * footer render over it on a translucent scrim for legibility.
+     */
+    image?: ReactNode;
     /** Size preset — fixed-width A4-portrait card. Default: `'md'` (≈168px). */
     size?: PaperCardSize;
     /** Click handler; makes the whole card interactive. */
