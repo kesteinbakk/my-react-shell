@@ -1,4 +1,4 @@
-import { forwardRef, isValidElement, useId, useState, type CSSProperties, type ReactNode } from 'react'
+import { forwardRef, isValidElement, useId, useRef, useState, type CSSProperties, type ReactNode } from 'react'
 import { cn } from './cn'
 import { resolveAccentColor } from './accent'
 import type { AccentPlacement } from './accent'
@@ -249,10 +249,15 @@ export interface StatCardProps {
   /** Click handler for the medallion. */
   onMedallionPress?: () => void
   /**
-   * Enables the drag handler. If `true`, renders a built-in right-edge vertically-centered grip handle.
-   * If a `ReactNode`, renders your custom handle.
+   * Shows the built-in right-edge vertically-centred grip handle. Pair with
+   * `dragHandleProps` to wire your DND library.
    */
-  dragHandle?: boolean | ReactNode
+  showDragHandle?: boolean
+  /**
+   * A custom drag handle node, rendered in place of the built-in grip (implies a
+   * visible handle, so `showDragHandle` isn't also needed). Wire it with `dragHandleProps`.
+   */
+  dragHandle?: ReactNode
   /**
    * The event listeners and attributes from your DND library (e.g. `@dnd-kit`),
    * spread onto the drag handle element.
@@ -280,7 +285,7 @@ export interface StatCardProps {
    * renderLink={(p) => <Link {...p} to="/entity/$id" params={{ id }} />}
    * ```
    *
-   * Mutually exclusive with `dragHandle` (a nav tile isn't drag-reorderable) — throws in dev.
+   * Mutually exclusive with a drag handle (a nav tile isn't drag-reorderable).
    */
   renderLink?: (linkProps: StatCardLinkProps) => ReactNode
   /** Extra classes on the outer card element. */
@@ -468,6 +473,7 @@ export const StatCard = forwardRef<HTMLDivElement, StatCardProps>(function StatC
     onClick,
     onMedallionPress,
     hoverable,
+    showDragHandle,
     dragHandle,
     dragHandleProps,
     dragHandleLabel,
@@ -480,6 +486,21 @@ export const StatCard = forwardRef<HTMLDivElement, StatCardProps>(function StatC
   ref,
 ) {
   const [infoOpen, setInfoOpen] = useState(false)
+
+  // A visible grip shows when toggled on, or when a custom handle node is supplied.
+  const hasDragHandle = showDragHandle || dragHandle != null
+
+  // Whole-card drag: the grabbing cursor engages only after a short hold, so a
+  // quick click never changes the cursor (see the `--drag-whole` cursor rules).
+  const [isHolding, setIsHolding] = useState(false)
+  const holdTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  function startHold() {
+    holdTimerRef.current = setTimeout(() => setIsHolding(true), 200)
+  }
+  function clearHold() {
+    if (holdTimerRef.current) { clearTimeout(holdTimerRef.current); holdTimerRef.current = null }
+    setIsHolding(false)
+  }
 
   // variant overrides tone to the same value; ⚠️ always used as the watermark.
   const effectiveTone: StatCardTone = variant ?? tone
@@ -704,10 +725,11 @@ export const StatCard = forwardRef<HTMLDivElement, StatCardProps>(function StatC
         isHoverable && 'mrs-stat-card--hoverable',
         hasWatermark && 'mrs-stat-card--watermark',
         hasArtWatermark && 'mrs-reveal-host',
-        dragHandle && 'mrs-stat-card--draggable',
+        hasDragHandle && 'mrs-stat-card--draggable',
         shape === 'landscape' && 'mrs-stat-card--landscape',
         renderLink && 'mrs-stat-card--linked',
         dragWholeCard && 'mrs-stat-card--drag-whole',
+        dragWholeCard && isHolding && 'mrs-stat-card--holding',
         className,
       )}
       style={style}
@@ -715,7 +737,12 @@ export const StatCard = forwardRef<HTMLDivElement, StatCardProps>(function StatC
       data-has-medallion={medallion != null ? "true" : undefined}
       data-medallion-size={medallion?.size ?? 'lg'}
       onClick={onClick}
-      {...(dragWholeCard ? (dragHandleProps as any) : {})}
+      {...(dragWholeCard ? {
+        ...(dragHandleProps as any),
+        onPointerDown: (e: React.PointerEvent) => { startHold(); (dragHandleProps as any)?.onPointerDown?.(e) },
+        onPointerUp: (e: React.PointerEvent) => { clearHold(); (dragHandleProps as any)?.onPointerUp?.(e) },
+        onPointerLeave: (e: React.PointerEvent) => { clearHold(); (dragHandleProps as any)?.onPointerLeave?.(e) },
+      } : {})}
     >
       {renderLink
         ? renderLink({ className: 'mrs-stat-card__link-overlay', 'aria-labelledby': titleId })
@@ -731,7 +758,7 @@ export const StatCard = forwardRef<HTMLDivElement, StatCardProps>(function StatC
           {effectiveWatermark}
         </div>
       ) : null}
-      {dragHandle ? (
+      {hasDragHandle ? (
         <button
           type="button"
           className="mrs-stat-card__drag-handle"
@@ -742,7 +769,7 @@ export const StatCard = forwardRef<HTMLDivElement, StatCardProps>(function StatC
             dragHandleProps?.onClick?.(e as any)
           }}
         >
-          {dragHandle === true ? DEFAULT_DRAG_HANDLE : dragHandle}
+          {dragHandle ?? DEFAULT_DRAG_HANDLE}
         </button>
       ) : null}
       {showVariantLeftStripe ? (

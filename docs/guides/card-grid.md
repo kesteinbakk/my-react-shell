@@ -136,17 +136,24 @@ the same accent vocabulary as `StatCard`/`PaperCard`. It's independent of the fa
 
 ### Drag-reorder handle
 
-`DynamicGridCard` carries the same `dragHandle` / `dragHandleProps` / `dragHandleLabel` seam as
-`StatCard` / `ContentCard` / `PaperCard`. Pass `dragHandle` (`true` for the built-in grip, or a
-custom `ReactNode`) to render a handle, and spread your DND library's listeners (e.g. `@dnd-kit`'s
+`DynamicGridCard` carries the same `showDragHandle` / `dragHandle` / `dragHandleProps` /
+`dragHandleLabel` seam as `StatCard` / `ContentCard` / `PaperCard`. Pass **`showDragHandle`**
+(boolean) to render the built-in grip, or pass a custom handle `ReactNode` to **`dragHandle`**
+(which implies a visible handle on its own). Spread your DND library's listeners (e.g. `@dnd-kit`'s
 `attributes` + `listeners`) onto it through `dragHandleProps`. `dragHandleLabel` is the handle's
-accessible name — **no default**; pass a translated string when `dragHandle` is set (or supply
+accessible name — **no default**; pass a translated string when a handle is shown (or supply
 `aria-label` via `dragHandleProps`). If you omit it the grip glyph stands alone with no accessible
 name, so pass it for any real reorder UI. Unlike the other cards (PaperCard/PhiCard) — whose handle sits
 top-centre — the `StatCard`, `ContentCard`, and `DynamicGridCard` grip is **vertical stripes pinned to the right edge, vertically
 centred**, and the card reserves a little right padding so the grip never overlaps its content.
 
-Alternatively, you can make the **whole card surface** draggable by passing the opt-in **`dragWholeCard`** prop. When set to `true`, the card root shows a `grab`/`grabbing` cursor and spreads the `dragHandleProps` directly onto the root card container (it can coexist with a focusable `dragHandle` grip for keyboard/screen reader sorting).
+Alternatively, you can make the **whole card surface** draggable by passing the opt-in
+**`dragWholeCard`** prop, which spreads the `dragHandleProps` directly onto the root card container.
+Its cursor is **conditional on whether the card is also clickable**: a drag-only card shows an open
+hand (`grab`) at idle, while a clickable card (`onClick` / `hoverable`) keeps the normal `pointer`.
+In **both** cases a short press-and-hold engages the closed hand (`grabbing`) — so a quick click
+never changes the cursor (a 200ms hold threshold gates it). It can coexist with a focusable
+`showDragHandle` grip for keyboard/screen-reader sorting.
 
 Both drag mechanisms can safely **coexist with navigation links** (`renderLink` or `onClick`). Since DND library sensors (like `@dnd-kit`'s Mouse/Touch sensors) enforce distance activation thresholds (e.g. dragging at least 5px to start a drag), a quick click/tap on the card triggers normal navigation, while dragging past the threshold initiates a drag.
 
@@ -161,7 +168,7 @@ function SortableCard({ item }: { item: Item }) {
       ref={setNodeRef}
       title={item.title}
       footer={{ lines: [{ text: item.meta }] }}
-      dragHandle
+      showDragHandle
       dragHandleLabel={t('common.dragToReorder')}
       dragHandleProps={{ ...attributes, ...listeners }}
       style={{ transform: CSS.Transform.toString(transform), transition }}
@@ -213,7 +220,7 @@ renderCard={(it) => (
   is a **sibling** of the overlay, raised above it with `z-index`, so it stays independently
   clickable. The freeform `footer` is display-only text covered by the overlay — never put a
   live control there; add a raised slot for it instead.
-- **Dragging coexists with navigation.** You can combine `dragHandle` or `dragWholeCard` with `renderLink` or `onClick`. The browser distinguishes between dragging and clicking based on motion/delay thresholds set on your DND sensors.
+- **Dragging coexists with navigation.** You can combine a drag handle (`showDragHandle`) or `dragWholeCard` with `renderLink` or `onClick`. The browser distinguishes between dragging and clicking based on motion/delay thresholds set on your DND sensors.
 
 On the fixed-size cards the overlay sits *beneath* the content layer and the inner wrapper is
 click-transparent, so `StatCard`'s medallion button (`onMedallionPress`) and any drag handle
@@ -374,7 +381,7 @@ follows the dog-eared silhouette (an ordinary `box-shadow` would be clipped away
 size is **`md`** (≈168px) — it's a thumbnail, not a full page; `sm` is a smaller, denser
 thumbnail and `xxl` (320px) the largest preset.
 
-It shares the card-family `footer`, `watermark`, hover-lift, `dragHandle`, `corner`, and `renderLink`
+It shares the card-family `footer`, `watermark`, hover-lift, `showDragHandle`, `corner`, and `renderLink`
 seams. An accent stripe is **opt-in** (none by default — a paper card reads from its
 proportion, fold, and shadow alone), and the folded corner stays a neutral surface tint even
 when an accent is set. `content` clamps to `maxLines` (dynamic: `7` / `5` / `4`).

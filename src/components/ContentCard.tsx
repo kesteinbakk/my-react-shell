@@ -1,4 +1,4 @@
-import { forwardRef, isValidElement, useId, type CSSProperties, type ReactNode } from 'react'
+import { forwardRef, isValidElement, useId, useRef, useState, type CSSProperties, type ReactNode } from 'react'
 import DOMPurify from 'isomorphic-dompurify'
 import { cn } from './cn'
 import { resolveAccentColor } from './accent'
@@ -128,7 +128,16 @@ export interface ContentCardBaseProps {
   onClick?: () => void
   hoverable?: boolean
 
-  dragHandle?: boolean | ReactNode
+  /**
+   * Shows the built-in right-edge vertically-centred grip handle. Pair with
+   * `dragHandleProps` to wire your DND library.
+   */
+  showDragHandle?: boolean
+  /**
+   * A custom drag handle node, rendered in place of the built-in grip (implies a
+   * visible handle, so `showDragHandle` isn't also needed). Wire it with `dragHandleProps`.
+   */
+  dragHandle?: ReactNode
   dragHandleProps?: React.HTMLAttributes<HTMLButtonElement>
   /**
    * Accessible label for the drag handle. No default — pass a translated string (or supply
@@ -151,7 +160,7 @@ export interface ContentCardBaseProps {
    * renderLink={(p) => <Link {...p} to="/doc/$id" params={{ id }} />}
    * ```
    *
-   * Mutually exclusive with `dragHandle` — throws in dev.
+   * Mutually exclusive with a drag handle.
    */
   renderLink?: (linkProps: ContentCardLinkProps) => ReactNode
   className?: string
@@ -235,6 +244,7 @@ export const ContentCard = forwardRef<HTMLDivElement, ContentCardProps>(function
     shape = 'standard',
     onClick,
     hoverable,
+    showDragHandle,
     dragHandle,
     dragHandleProps,
     dragHandleLabel,
@@ -246,6 +256,21 @@ export const ContentCard = forwardRef<HTMLDivElement, ContentCardProps>(function
   },
   ref,
 ) {
+  // A visible grip shows when toggled on, or when a custom handle node is supplied.
+  const hasDragHandle = showDragHandle || dragHandle != null
+
+  // Whole-card drag: the grabbing cursor engages only after a short hold, so a
+  // quick click never changes the cursor (see the `--drag-whole` cursor rules).
+  const [isHolding, setIsHolding] = useState(false)
+  const holdTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  function startHold() {
+    holdTimerRef.current = setTimeout(() => setIsHolding(true), 200)
+  }
+  function clearHold() {
+    if (holdTimerRef.current) { clearTimeout(holdTimerRef.current); holdTimerRef.current = null }
+    setIsHolding(false)
+  }
+
   const effectiveTone: ContentCardTone = variant ?? tone
   const effectiveWatermark = variant ? '⚠️' : watermark
   const watermarkIsString = typeof effectiveWatermark === 'string'
@@ -381,16 +406,22 @@ export const ContentCard = forwardRef<HTMLDivElement, ContentCardProps>(function
         isHoverable && 'mrs-content-card--hoverable',
         hasWatermark && 'mrs-content-card--watermark',
         hasArtWatermark && 'mrs-reveal-host',
-        dragHandle && 'mrs-content-card--draggable',
+        hasDragHandle && 'mrs-content-card--draggable',
         shape === 'landscape' && 'mrs-content-card--landscape',
         renderLink && 'mrs-content-card--linked',
         dragWholeCard && 'mrs-content-card--drag-whole',
+        dragWholeCard && isHolding && 'mrs-content-card--holding',
         className,
       )}
       style={style}
       data-watermark={watermarkIsString ? effectiveWatermark : undefined}
       onClick={onClick}
-      {...(dragWholeCard ? (dragHandleProps as any) : {})}
+      {...(dragWholeCard ? {
+        ...(dragHandleProps as any),
+        onPointerDown: (e: React.PointerEvent) => { startHold(); (dragHandleProps as any)?.onPointerDown?.(e) },
+        onPointerUp: (e: React.PointerEvent) => { clearHold(); (dragHandleProps as any)?.onPointerUp?.(e) },
+        onPointerLeave: (e: React.PointerEvent) => { clearHold(); (dragHandleProps as any)?.onPointerLeave?.(e) },
+      } : {})}
     >
       {renderLink
         ? renderLink({ className: 'mrs-content-card__link-overlay', 'aria-labelledby': titleId })
@@ -398,7 +429,7 @@ export const ContentCard = forwardRef<HTMLDivElement, ContentCardProps>(function
       {hasArtWatermark ? (
         <div className="mrs-content-card__watermark" aria-hidden="true">{effectiveWatermark}</div>
       ) : null}
-      {dragHandle ? (
+      {hasDragHandle ? (
         <button
           type="button"
           className="mrs-content-card__drag-handle"
@@ -409,7 +440,7 @@ export const ContentCard = forwardRef<HTMLDivElement, ContentCardProps>(function
             dragHandleProps?.onClick?.(e as any)
           }}
         >
-          {dragHandle === true ? DEFAULT_DRAG_HANDLE : dragHandle}
+          {dragHandle ?? DEFAULT_DRAG_HANDLE}
         </button>
       ) : null}
       {showVariantLeftStripe ? (

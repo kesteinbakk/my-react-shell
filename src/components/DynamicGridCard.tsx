@@ -86,13 +86,17 @@ export interface DynamicGridCardProps extends Omit<HTMLAttributes<HTMLDivElement
    */
   renderLink?: (linkProps: DynamicGridCardLinkProps) => ReactNode
   /**
-   * Enables the drag handler. If `true`, renders a built-in grip handle — vertical
-   * stripes pinned to the right edge, vertically centred. If a `ReactNode`, renders
-   * your custom handle.
+   * Shows the built-in grip handle — vertical stripes pinned to the right edge,
+   * vertically centred. Pair with `dragHandleProps` to wire your DND library.
    *
-   * Mutually exclusive with `renderLink` (a nav tile isn't drag-reorderable) — throws in dev.
+   * Mutually exclusive with `renderLink` (a nav tile isn't drag-reorderable).
    */
-  dragHandle?: boolean | ReactNode
+  showDragHandle?: boolean
+  /**
+   * A custom drag handle node, rendered in place of the built-in grip (implies a
+   * visible handle, so `showDragHandle` isn't also needed). Wire it with `dragHandleProps`.
+   */
+  dragHandle?: ReactNode
   /**
    * The event listeners and attributes from your DND library (e.g. `@dnd-kit`),
    * spread onto the drag handle element.
@@ -212,9 +216,12 @@ function StructuredFooter({ footer }: { footer: DynamicGridCardFooter }) {
  * overlay, with `corner` controls raised above it so they stay independently clickable.
  */
 export const DynamicGridCard = forwardRef<HTMLDivElement, DynamicGridCardProps>(function DynamicGridCard(
-  { size, shape = 'standard', title, subtitle, figure, hoverable, lift = true, watermark, corner, footer, renderLink, dragHandle, dragHandleProps, dragHandleLabel, dragWholeCard, tone, color, accentPlacement = 'top', className, style, children, ...props },
+  { size, shape = 'standard', title, subtitle, figure, hoverable, lift = true, watermark, corner, footer, renderLink, showDragHandle, dragHandle, dragHandleProps, dragHandleLabel, dragWholeCard, tone, color, accentPlacement = 'top', className, style, children, ...props },
   ref,
 ) {
+
+  // A visible grip shows when toggled on, or when a custom handle node is supplied.
+  const hasDragHandle = showDragHandle || dragHandle != null
 
   const [isHolding, setIsHolding] = useState(false)
   const holdTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -267,7 +274,7 @@ export const DynamicGridCard = forwardRef<HTMLDivElement, DynamicGridCardProps>(
         hoverable && 'mrs-dynamic-grid-card--hoverable',
         hoverable && !lift && 'mrs-dynamic-grid-card--no-lift',
         renderLink && 'mrs-dynamic-grid-card--linked',
-        dragHandle && 'mrs-dynamic-grid-card--draggable',
+        hasDragHandle && 'mrs-dynamic-grid-card--draggable',
         hasWatermark && 'mrs-dynamic-grid-card--watermark',
         hasArtWatermark && 'mrs-reveal-host',
         dragWholeCard && 'mrs-dynamic-grid-card--drag-whole',
@@ -304,7 +311,7 @@ export const DynamicGridCard = forwardRef<HTMLDivElement, DynamicGridCardProps>(
         <div className="mrs-dynamic-grid-card__watermark" aria-hidden="true">{watermark}</div>
       ) : null}
 
-      {dragHandle ? (
+      {hasDragHandle ? (
         <button
           type="button"
           className="mrs-dynamic-grid-card__drag-handle"
@@ -315,7 +322,7 @@ export const DynamicGridCard = forwardRef<HTMLDivElement, DynamicGridCardProps>(
             dragHandleProps?.onClick?.(e as React.MouseEvent<HTMLButtonElement>)
           }}
         >
-          {dragHandle === true ? DEFAULT_DRAG_HANDLE : dragHandle}
+          {dragHandle ?? DEFAULT_DRAG_HANDLE}
         </button>
       ) : null}
 

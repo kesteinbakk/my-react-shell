@@ -152,10 +152,14 @@ export interface PhiCardProps {
   /** Extra classes on the outer card, merged via `cn()`. */
   className?: string
   /**
-   * Enables the drag handler. If `true`, renders a built-in top-center grip handle.
-   * If a `ReactNode`, renders your custom handle.
+   * Shows the built-in top-centre grip handle. Pair with `dragHandleProps` to wire your DND library.
    */
-  dragHandle?: boolean | ReactNode
+  showDragHandle?: boolean
+  /**
+   * A custom drag handle node, rendered in place of the built-in grip (implies a
+   * visible handle, so `showDragHandle` isn't also needed). Wire it with `dragHandleProps`.
+   */
+  dragHandle?: ReactNode
   /**
    * The event listeners and attributes from your DND library (e.g. `@dnd-kit`),
    * spread onto the drag handle element.
@@ -255,6 +259,7 @@ export const PhiCard = forwardRef<HTMLDivElement, PhiCardProps>(function PhiCard
     accentPlacement = 'top',
     onClick,
     hoverable,
+    showDragHandle,
     dragHandle,
     dragHandleProps,
     dragHandleLabel,
@@ -263,6 +268,9 @@ export const PhiCard = forwardRef<HTMLDivElement, PhiCardProps>(function PhiCard
   },
   ref,
 ) {
+  // A visible grip shows when toggled on, or when a custom handle node is supplied.
+  const hasDragHandle = showDragHandle || dragHandle != null
+
   const accent = resolveAccentColor(tone, color)
   const width = SIZE_WIDTH_PX[size]
   const hasIcon = !isEmpty(icon)
@@ -390,7 +398,7 @@ export const PhiCard = forwardRef<HTMLDivElement, PhiCardProps>(function PhiCard
       style={style}
       onClick={onClick}
     >
-      {dragHandle ? (
+      {hasDragHandle ? (
         <button
           type="button"
           className="mrs-phi-card__drag-handle"
@@ -401,7 +409,7 @@ export const PhiCard = forwardRef<HTMLDivElement, PhiCardProps>(function PhiCard
             dragHandleProps?.onClick?.(e as any)
           }}
         >
-          {dragHandle === true ? DEFAULT_DRAG_HANDLE : dragHandle}
+          {dragHandle ?? DEFAULT_DRAG_HANDLE}
         </button>
       ) : null}
       <div className={cn('mrs-phi-card__section', topSectionMod)}>{topContent}</div>
