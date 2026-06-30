@@ -1795,13 +1795,13 @@
   flex-shrink: 0;
   margin-bottom: 0.5rem;
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 0.625rem;
 }
 
-/* Figure-split: an icon/emoji column beside the title block. The figure shares
-   the title's line-box height and top-aligns with it (header `align-items:
-   flex-start`), so the glyph sits level with the title's first line. */
+/* Figure-split: an icon/emoji column beside the title block. The figure is
+   vertically centred against the whole heading (title + subtitle) via the
+   header's `align-items: center`, so the glyph reads level with the text block. */
 .mrs-dynamic-grid-card__figure {
   flex-shrink: 0;
   display: flex;
