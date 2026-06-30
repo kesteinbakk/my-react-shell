@@ -1815,6 +1815,14 @@
 .mrs-dynamic-grid-card__heading {
   flex: 1 1 auto;
   min-width: 0;
+  /* Reserve a two-line block (one title line + one subtitle line) so the heading
+     height — and thus the centred figure's level — stays constant whether or not a
+     subtitle is present. With a title alone, it centres within the reserved space,
+     landing at the figure's level. */
+  min-height: calc(1.5rem + 1.25rem);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .mrs-dynamic-grid-card__title {
@@ -1825,6 +1833,7 @@
 
 .mrs-dynamic-grid-card__subtitle {
   font-size: 0.875rem;
+  line-height: 1.25rem;
   color: var(--color-text-secondary);
 }
 
