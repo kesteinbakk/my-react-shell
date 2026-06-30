@@ -45,7 +45,9 @@ const DEFAULT_DRAG_HANDLE = (_jsxs("svg", { width: "64", height: "12", viewBox: 
  * the footer (`footer` structured, or `lower` freeform) spreads its rows evenly. The
  * bottom collapses (card shortens) when there's no footer.
  */
-export const PhiCard = forwardRef(function PhiCard({ upper, content, image, imageAlt = '', icon, iconFill = false, lower, footer, divider = false, size = 'md', actions, menuIcon, menuLabel, corner, tone, color, accentPlacement = 'top', onClick, hoverable, dragHandle, dragHandleProps, dragHandleLabel, className, style: styleProp, }, ref) {
+export const PhiCard = forwardRef(function PhiCard({ upper, content, image, imageAlt = '', icon, iconFill = false, lower, footer, divider = false, size = 'md', actions, menuIcon, menuLabel, corner, tone, color, accentPlacement = 'top', onClick, hoverable, showDragHandle, dragHandle, dragHandleProps, dragHandleLabel, className, style: styleProp, }, ref) {
+    // A visible grip shows when toggled on, or when a custom handle node is supplied.
+    const hasDragHandle = showDragHandle || dragHandle != null;
     const accent = resolveAccentColor(tone, color);
     const width = SIZE_WIDTH_PX[size];
     const hasIcon = !isEmpty(icon);
@@ -120,8 +122,8 @@ export const PhiCard = forwardRef(function PhiCard({ upper, content, image, imag
         fontSize: `${SIZE_FONT_REM[size]}rem`,
         ...(accent != null ? { '--mrs-phi-accent': accent } : {}),
     };
-    return (_jsxs("div", { ref: ref, className: cn('mrs-phi-card', !hasBottom && 'mrs-phi-card--single', isHoverable && 'mrs-phi-card--hoverable', accent != null && 'mrs-phi-card--accent', accent != null && `mrs-phi-card--accent-${accentPlacement}`, className), style: style, onClick: onClick, children: [dragHandle ? (_jsx("button", { type: "button", className: "mrs-phi-card__drag-handle", "aria-label": dragHandleLabel, ...dragHandleProps, onClick: (e) => {
+    return (_jsxs("div", { ref: ref, className: cn('mrs-phi-card', !hasBottom && 'mrs-phi-card--single', isHoverable && 'mrs-phi-card--hoverable', accent != null && 'mrs-phi-card--accent', accent != null && `mrs-phi-card--accent-${accentPlacement}`, className), style: style, onClick: onClick, children: [hasDragHandle ? (_jsx("button", { type: "button", className: "mrs-phi-card__drag-handle", "aria-label": dragHandleLabel, ...dragHandleProps, onClick: (e) => {
                     e.stopPropagation();
                     dragHandleProps?.onClick?.(e);
-                }, children: dragHandle === true ? DEFAULT_DRAG_HANDLE : dragHandle })) : null, _jsx("div", { className: cn('mrs-phi-card__section', topSectionMod), children: topContent }), hasBottom ? (_jsx("div", { className: cn('mrs-phi-card__section', 'mrs-phi-card__section--lower', divider && 'mrs-phi-card__section--divider'), children: hasFooter ? footerNode : lower })) : null, cornerNode != null ? (_jsx("div", { className: "mrs-phi-card__corner", onClick: (e) => e.stopPropagation(), children: cornerNode })) : null] }));
+                }, children: dragHandle ?? DEFAULT_DRAG_HANDLE })) : null, _jsx("div", { className: cn('mrs-phi-card__section', topSectionMod), children: topContent }), hasBottom ? (_jsx("div", { className: cn('mrs-phi-card__section', 'mrs-phi-card__section--lower', divider && 'mrs-phi-card__section--divider'), children: hasFooter ? footerNode : lower })) : null, cornerNode != null ? (_jsx("div", { className: "mrs-phi-card__corner", onClick: (e) => e.stopPropagation(), children: cornerNode })) : null] }));
 });

@@ -55,6 +55,12 @@ export interface PaperCardProps {
      * (meta lines on the left, badges on the right). Same shape as `StatCard`/`ContentCard`.
      */
     footer?: ReactNode | PaperCardFooter;
+    /**
+     * Top-corner action slot (e.g. a `DropdownMenu` trigger). Rendered as a direct sibling
+     * of the link overlay — **above** it (`z-index`) — so it stays independently clickable when
+     * `renderLink` is set. Positioned just below the fold triangle to preserve the dog-ear.
+     */
+    corner?: ReactNode;
     /** Emoji or text rendered as a faint background watermark. E.g. `'📄'`. */
     watermark?: string;
     /** Size preset — fixed-width A4-portrait card. Default: `'md'` (≈168px). */
@@ -64,10 +70,14 @@ export interface PaperCardProps {
     /** Hover lift effect. Defaults to `true` when `onClick` is set. */
     hoverable?: boolean;
     /**
-     * Enables the drag handler. If `true`, renders a built-in top-center grip handle.
-     * If a `ReactNode`, renders your custom handle.
+     * Shows the built-in top-centre grip handle. Pair with `dragHandleProps` to wire your DND library.
      */
-    dragHandle?: boolean | ReactNode;
+    showDragHandle?: boolean;
+    /**
+     * A custom drag handle node, rendered in place of the built-in grip (implies a
+     * visible handle, so `showDragHandle` isn't also needed). Wire it with `dragHandleProps`.
+     */
+    dragHandle?: ReactNode;
     /** Event listeners / attributes from your DND library, spread onto the drag handle. */
     dragHandleProps?: React.HTMLAttributes<HTMLButtonElement>;
     /**
@@ -86,7 +96,7 @@ export interface PaperCardProps {
      * renderLink={(p) => <Link {...p} to="/doc/$id" params={{ id }} />}
      * ```
      *
-     * Mutually exclusive with `dragHandle` — throws in dev.
+     * Mutually exclusive with a drag handle.
      */
     renderLink?: (linkProps: PaperCardLinkProps) => ReactNode;
     className?: string;

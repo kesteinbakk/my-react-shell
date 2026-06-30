@@ -69,7 +69,16 @@ export interface ContentCardBaseProps {
     shape?: ContentCardShape;
     onClick?: () => void;
     hoverable?: boolean;
-    dragHandle?: boolean | ReactNode;
+    /**
+     * Shows the built-in right-edge vertically-centred grip handle. Pair with
+     * `dragHandleProps` to wire your DND library.
+     */
+    showDragHandle?: boolean;
+    /**
+     * A custom drag handle node, rendered in place of the built-in grip (implies a
+     * visible handle, so `showDragHandle` isn't also needed). Wire it with `dragHandleProps`.
+     */
+    dragHandle?: ReactNode;
     dragHandleProps?: React.HTMLAttributes<HTMLButtonElement>;
     /**
      * Accessible label for the drag handle. No default — pass a translated string (or supply
@@ -92,7 +101,7 @@ export interface ContentCardBaseProps {
      * renderLink={(p) => <Link {...p} to="/doc/$id" params={{ id }} />}
      * ```
      *
-     * Mutually exclusive with `dragHandle` — throws in dev.
+     * Mutually exclusive with a drag handle.
      */
     renderLink?: (linkProps: ContentCardLinkProps) => ReactNode;
     className?: string;

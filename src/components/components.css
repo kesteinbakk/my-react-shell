@@ -5890,6 +5890,22 @@
   cursor: grabbing !important;
 }
 
+/* Corner action slot — raised above the link overlay so it stays independently clickable.
+   Positioned just below the fold triangle height so the dog-ear stays visible. */
+.mrs-paper-card__corner {
+  position: absolute;
+  top: var(--mrs-paper-fold, 26px);
+  right: 0.25rem;
+  z-index: 6;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+/* Reserve right-side space in the header so the corner doesn't overlap the title. */
+.mrs-paper-card--cornered .mrs-paper-card__head-text {
+  padding-right: 1.75em;
+}
+
 /* Whole-card navigation link — full-bleed block-link overlay (shared seam). */
 .mrs-paper-card__link-overlay {
   position: absolute;
@@ -5988,23 +6004,20 @@
   stroke-linecap: round;
 }
 
-/* Whole-card dragging cursors */
-.mrs-stat-card--drag-whole,
-.mrs-content-card--drag-whole {
-  cursor: grab !important;
+/* Whole-card drag cursors (`dragWholeCard`). Idle: an open hand (`grab`) when the
+   card is drag-only, but the normal `pointer` when the card is also clickable
+   (`--hoverable`, set from `onClick`/`hoverable`). A short press-and-hold engages the
+   closed hand (`grabbing`) via the `--holding` class, so a quick click never changes
+   the cursor. The `:not(--hoverable)` guard (specificity 0,2,0) keeps the clickable
+   card's pointer from the earlier `--hoverable` rule. */
+.mrs-stat-card--drag-whole:not(.mrs-stat-card--hoverable),
+.mrs-content-card--drag-whole:not(.mrs-content-card--hoverable),
+.mrs-dynamic-grid-card--drag-whole:not(.mrs-dynamic-grid-card--hoverable) {
+  cursor: grab;
 }
-.mrs-stat-card--drag-whole:active,
-.mrs-content-card--drag-whole:active {
-  cursor: grabbing !important;
-}
-/* DynamicGridCard: pointer by default; grab only after the hold threshold is crossed. */
-.mrs-dynamic-grid-card--drag-whole {
-  cursor: pointer;
-}
+.mrs-stat-card--drag-whole.mrs-stat-card--holding,
+.mrs-content-card--drag-whole.mrs-content-card--holding,
 .mrs-dynamic-grid-card--drag-whole.mrs-dynamic-grid-card--holding {
-  cursor: grab !important;
-}
-.mrs-dynamic-grid-card--drag-whole.mrs-dynamic-grid-card--holding:active {
   cursor: grabbing !important;
 }
 

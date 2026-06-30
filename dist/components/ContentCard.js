@@ -1,5 +1,5 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
-import { forwardRef, isValidElement, useId } from 'react';
+import { forwardRef, isValidElement, useId, useRef, useState } from 'react';
 import DOMPurify from 'isomorphic-dompurify';
 import { cn } from './cn';
 import { resolveAccentColor } from './accent';
@@ -65,7 +65,23 @@ function completenessFill(fraction) {
         return 'var(--color-warning)';
     return 'var(--color-success)';
 }
-export const ContentCard = forwardRef(function ContentCard({ title, subtitle, content, html = false, contentAlignX = 'center', contentAlignY = 'center', value, maxValue, tone = 'neutral', color, accentPlacement = 'top', topStripeFollowsGauge = false, variant, footer, maxLines, watermark, size = 'md', shape = 'standard', onClick, hoverable, dragHandle, dragHandleProps, dragHandleLabel, dragWholeCard, renderLink, className, style: styleProp, children, }, ref) {
+export const ContentCard = forwardRef(function ContentCard({ title, subtitle, content, html = false, contentAlignX = 'center', contentAlignY = 'center', value, maxValue, tone = 'neutral', color, accentPlacement = 'top', topStripeFollowsGauge = false, variant, footer, maxLines, watermark, size = 'md', shape = 'standard', onClick, hoverable, showDragHandle, dragHandle, dragHandleProps, dragHandleLabel, dragWholeCard, renderLink, className, style: styleProp, children, }, ref) {
+    // A visible grip shows when toggled on, or when a custom handle node is supplied.
+    const hasDragHandle = showDragHandle || dragHandle != null;
+    // Whole-card drag: the grabbing cursor engages only after a short hold, so a
+    // quick click never changes the cursor (see the `--drag-whole` cursor rules).
+    const [isHolding, setIsHolding] = useState(false);
+    const holdTimerRef = useRef(null);
+    function startHold() {
+        holdTimerRef.current = setTimeout(() => setIsHolding(true), 200);
+    }
+    function clearHold() {
+        if (holdTimerRef.current) {
+            clearTimeout(holdTimerRef.current);
+            holdTimerRef.current = null;
+        }
+        setIsHolding(false);
+    }
     const effectiveTone = variant ?? tone;
     const effectiveWatermark = variant ? '⚠️' : watermark;
     const watermarkIsString = typeof effectiveWatermark === 'string';
@@ -135,10 +151,15 @@ export const ContentCard = forwardRef(function ContentCard({ title, subtitle, co
         maxWidth: '100%',
     };
     const contentNode = content !== undefined ? (html ? (_jsx("div", { className: "mrs-content-card__content", style: contentStyle, dangerouslySetInnerHTML: { __html: DOMPurify.sanitize(content) } })) : (_jsx("div", { className: "mrs-content-card__content", style: contentStyle, children: content }))) : null;
-    return (_jsxs("div", { ref: ref, className: cn('mrs-content-card', !accentSuppressed && `mrs-content-card--accent-${effectiveAccentPlacement}`, hasGauge && 'mrs-content-card--gauge', variant && 'mrs-content-card--variant', isHoverable && 'mrs-content-card--hoverable', hasWatermark && 'mrs-content-card--watermark', hasArtWatermark && 'mrs-reveal-host', dragHandle && 'mrs-content-card--draggable', shape === 'landscape' && 'mrs-content-card--landscape', renderLink && 'mrs-content-card--linked', dragWholeCard && 'mrs-content-card--drag-whole', className), style: style, "data-watermark": watermarkIsString ? effectiveWatermark : undefined, onClick: onClick, ...(dragWholeCard ? dragHandleProps : {}), children: [renderLink
+    return (_jsxs("div", { ref: ref, className: cn('mrs-content-card', !accentSuppressed && `mrs-content-card--accent-${effectiveAccentPlacement}`, hasGauge && 'mrs-content-card--gauge', variant && 'mrs-content-card--variant', isHoverable && 'mrs-content-card--hoverable', hasWatermark && 'mrs-content-card--watermark', hasArtWatermark && 'mrs-reveal-host', hasDragHandle && 'mrs-content-card--draggable', shape === 'landscape' && 'mrs-content-card--landscape', renderLink && 'mrs-content-card--linked', dragWholeCard && 'mrs-content-card--drag-whole', dragWholeCard && isHolding && 'mrs-content-card--holding', className), style: style, "data-watermark": watermarkIsString ? effectiveWatermark : undefined, onClick: onClick, ...(dragWholeCard ? {
+            ...dragHandleProps,
+            onPointerDown: (e) => { startHold(); dragHandleProps?.onPointerDown?.(e); },
+            onPointerUp: (e) => { clearHold(); dragHandleProps?.onPointerUp?.(e); },
+            onPointerLeave: (e) => { clearHold(); dragHandleProps?.onPointerLeave?.(e); },
+        } : {}), children: [renderLink
                 ? renderLink({ className: 'mrs-content-card__link-overlay', 'aria-labelledby': titleId })
-                : null, hasArtWatermark ? (_jsx("div", { className: "mrs-content-card__watermark", "aria-hidden": "true", children: effectiveWatermark })) : null, dragHandle ? (_jsx("button", { type: "button", className: "mrs-content-card__drag-handle", "aria-label": dragHandleLabel, ...dragHandleProps, onClick: (e) => {
+                : null, hasArtWatermark ? (_jsx("div", { className: "mrs-content-card__watermark", "aria-hidden": "true", children: effectiveWatermark })) : null, hasDragHandle ? (_jsx("button", { type: "button", className: "mrs-content-card__drag-handle", "aria-label": dragHandleLabel, ...dragHandleProps, onClick: (e) => {
                     e.stopPropagation();
                     dragHandleProps?.onClick?.(e);
-                }, children: dragHandle === true ? DEFAULT_DRAG_HANDLE : dragHandle })) : null, showVariantLeftStripe ? (_jsx("div", { className: "mrs-content-card__variant-stripe", "aria-hidden": "true" })) : null, hasGauge ? (_jsx("div", { className: "mrs-content-card__gauge", role: "meter", "aria-valuemin": 0, "aria-valuemax": 100, "aria-valuenow": gaugePct, "aria-label": `${gaugePct}%`, children: _jsx("div", { className: "mrs-content-card__gauge-fill", style: { height: `${gaugeFraction * 100}%`, background: completenessFill(gaugeFraction) } }) })) : null, _jsxs("div", { className: "mrs-content-card__inner", children: [_jsx("div", { className: "mrs-content-card__header", children: _jsxs("div", { className: "mrs-content-card__head-text", children: [_jsx("p", { className: "mrs-content-card__title", id: titleId, "data-fit": titleFitStep(title) || undefined, children: title }), subtitle ? _jsx("p", { className: "mrs-content-card__subtitle", children: subtitle }) : null] }) }), _jsx("div", { className: cn('mrs-content-card__body', variant && 'mrs-content-card__body--variant'), "data-align-x": contentAlignX, "data-align-y": contentAlignY, children: children !== undefined ? children : contentNode }), hasFooter ? (_jsx("div", { className: "mrs-content-card__lower", children: structuredFooter ? footerNode : footer })) : null] })] }));
+                }, children: dragHandle ?? DEFAULT_DRAG_HANDLE })) : null, showVariantLeftStripe ? (_jsx("div", { className: "mrs-content-card__variant-stripe", "aria-hidden": "true" })) : null, hasGauge ? (_jsx("div", { className: "mrs-content-card__gauge", role: "meter", "aria-valuemin": 0, "aria-valuemax": 100, "aria-valuenow": gaugePct, "aria-label": `${gaugePct}%`, children: _jsx("div", { className: "mrs-content-card__gauge-fill", style: { height: `${gaugeFraction * 100}%`, background: completenessFill(gaugeFraction) } }) })) : null, _jsxs("div", { className: "mrs-content-card__inner", children: [_jsx("div", { className: "mrs-content-card__header", children: _jsxs("div", { className: "mrs-content-card__head-text", children: [_jsx("p", { className: "mrs-content-card__title", id: titleId, "data-fit": titleFitStep(title) || undefined, children: title }), subtitle ? _jsx("p", { className: "mrs-content-card__subtitle", children: subtitle }) : null] }) }), _jsx("div", { className: cn('mrs-content-card__body', variant && 'mrs-content-card__body--variant'), "data-align-x": contentAlignX, "data-align-y": contentAlignY, children: children !== undefined ? children : contentNode }), hasFooter ? (_jsx("div", { className: "mrs-content-card__lower", children: structuredFooter ? footerNode : footer })) : null] })] }));
 });

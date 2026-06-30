@@ -99,10 +99,14 @@ export interface PhiCardProps {
     /** Extra classes on the outer card, merged via `cn()`. */
     className?: string;
     /**
-     * Enables the drag handler. If `true`, renders a built-in top-center grip handle.
-     * If a `ReactNode`, renders your custom handle.
+     * Shows the built-in top-centre grip handle. Pair with `dragHandleProps` to wire your DND library.
      */
-    dragHandle?: boolean | ReactNode;
+    showDragHandle?: boolean;
+    /**
+     * A custom drag handle node, rendered in place of the built-in grip (implies a
+     * visible handle, so `showDragHandle` isn't also needed). Wire it with `dragHandleProps`.
+     */
+    dragHandle?: ReactNode;
     /**
      * The event listeners and attributes from your DND library (e.g. `@dnd-kit`),
      * spread onto the drag handle element.

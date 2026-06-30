@@ -74,13 +74,17 @@ export interface DynamicGridCardProps extends Omit<HTMLAttributes<HTMLDivElement
      */
     renderLink?: (linkProps: DynamicGridCardLinkProps) => ReactNode;
     /**
-     * Enables the drag handler. If `true`, renders a built-in grip handle — vertical
-     * stripes pinned to the right edge, vertically centred. If a `ReactNode`, renders
-     * your custom handle.
+     * Shows the built-in grip handle — vertical stripes pinned to the right edge,
+     * vertically centred. Pair with `dragHandleProps` to wire your DND library.
      *
-     * Mutually exclusive with `renderLink` (a nav tile isn't drag-reorderable) — throws in dev.
+     * Mutually exclusive with `renderLink` (a nav tile isn't drag-reorderable).
      */
-    dragHandle?: boolean | ReactNode;
+    showDragHandle?: boolean;
+    /**
+     * A custom drag handle node, rendered in place of the built-in grip (implies a
+     * visible handle, so `showDragHandle` isn't also needed). Wire it with `dragHandleProps`.
+     */
+    dragHandle?: ReactNode;
     /**
      * The event listeners and attributes from your DND library (e.g. `@dnd-kit`),
      * spread onto the drag handle element.

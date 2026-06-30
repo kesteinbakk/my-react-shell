@@ -374,10 +374,17 @@ follows the dog-eared silhouette (an ordinary `box-shadow` would be clipped away
 size is **`md`** (≈168px) — it's a thumbnail, not a full page; `sm` is a smaller, denser
 thumbnail and `xxl` (320px) the largest preset.
 
-It shares the card-family `footer`, `watermark`, hover-lift, `dragHandle`, and `renderLink`
+It shares the card-family `footer`, `watermark`, hover-lift, `dragHandle`, `corner`, and `renderLink`
 seams. An accent stripe is **opt-in** (none by default — a paper card reads from its
 proportion, fold, and shadow alone), and the folded corner stays a neutral surface tint even
 when an accent is set. `content` clamps to `maxLines` (dynamic: `7` / `5` / `4`).
+
+The **`corner`** slot works the same way as on `DynamicGridCard`: a freeform `ReactNode`
+(typically a `DropdownMenu` trigger) rendered above the link overlay as a sibling of the anchor,
+so it stays clickable even when the whole card is a navigation link. It sits just below the
+fold triangle height (via `top: var(--mrs-paper-fold)`) so the dog-ear remains visible; the
+card automatically adds right-side padding to the title block so the corner never overlaps the
+heading text.
 
 ```tsx
 import { PaperCard, CardGrid } from 'my-react-shell/components'
@@ -399,6 +406,14 @@ import { PaperCard, CardGrid } from 'my-react-shell/components'
   title="Proposal" subtitle="Acme · Sent" tone="primary"
   content="Two attachments. Awaiting countersignature."
   footer={{ badges: [<Badge tone="success">Active</Badge>] }}
+  renderLink={(p) => <Link {...p} to="/doc/$id" params={{ id }} />}
+/>
+
+// Corner action slot — independently clickable even when the card is a nav link:
+<PaperCard
+  title="Quarterly report" subtitle="Q2 · Finance"
+  content="Revenue up 12% QoQ; margins holding."
+  corner={<DropdownMenu iconTrigger={<MoreVertical size={14} />} iconTriggerLabel="Card actions" items={[…]} />}
   renderLink={(p) => <Link {...p} to="/doc/$id" params={{ id }} />}
 />
 

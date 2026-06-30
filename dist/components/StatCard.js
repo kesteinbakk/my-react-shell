@@ -1,5 +1,5 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
-import { forwardRef, isValidElement, useId, useState } from 'react';
+import { forwardRef, isValidElement, useId, useRef, useState } from 'react';
 import { cn } from './cn';
 import { resolveAccentColor } from './accent';
 import { TONE_COLOR } from './tone';
@@ -107,8 +107,24 @@ const DEFAULT_DRAG_HANDLE = (_jsxs("svg", { width: "11", height: "28", viewBox: 
  * The accent stripe, medallion tint, and watermark are driven by `tone` (mapped to
  * semantic tokens) or overridden with a raw CSS `color` string.
  */
-export const StatCard = forwardRef(function StatCard({ title, subtitle, medallion, tone = 'neutral', color, accentPlacement = 'top', sideBarCompleteness, topStripeFollowsGauge = false, stats, variant, footer, watermark, watermarkMode = 'art', size = 'md', shape = 'standard', onClick, onMedallionPress, hoverable, dragHandle, dragHandleProps, dragHandleLabel, dragWholeCard, renderLink, className, style: styleProp, info, }, ref) {
+export const StatCard = forwardRef(function StatCard({ title, subtitle, medallion, tone = 'neutral', color, accentPlacement = 'top', sideBarCompleteness, topStripeFollowsGauge = false, stats, variant, footer, watermark, watermarkMode = 'art', size = 'md', shape = 'standard', onClick, onMedallionPress, hoverable, showDragHandle, dragHandle, dragHandleProps, dragHandleLabel, dragWholeCard, renderLink, className, style: styleProp, info, }, ref) {
     const [infoOpen, setInfoOpen] = useState(false);
+    // A visible grip shows when toggled on, or when a custom handle node is supplied.
+    const hasDragHandle = showDragHandle || dragHandle != null;
+    // Whole-card drag: the grabbing cursor engages only after a short hold, so a
+    // quick click never changes the cursor (see the `--drag-whole` cursor rules).
+    const [isHolding, setIsHolding] = useState(false);
+    const holdTimerRef = useRef(null);
+    function startHold() {
+        holdTimerRef.current = setTimeout(() => setIsHolding(true), 200);
+    }
+    function clearHold() {
+        if (holdTimerRef.current) {
+            clearTimeout(holdTimerRef.current);
+            holdTimerRef.current = null;
+        }
+        setIsHolding(false);
+    }
     // variant overrides tone to the same value; ⚠️ always used as the watermark.
     const effectiveTone = variant ?? tone;
     const effectiveWatermark = variant ? '⚠️' : watermark;
@@ -240,12 +256,17 @@ export const StatCard = forwardRef(function StatCard({ title, subtitle, medallio
             medallionNode = (_jsxs(MedallionTag, { className: cn('mrs-stat-card__medallion', medallion.size === 'sm' && 'mrs-stat-card__medallion--sm', isPressable && 'mrs-stat-card__medallion--pressable'), ...medallionProps, children: [_jsx("span", { className: "mrs-stat-card__medallion-value", "data-len": valueStr.length, children: displayValue }), medallion.size !== 'sm' && medallion.label ? _jsx("span", { className: "mrs-stat-card__medallion-label", "data-len": medallion.label.length, children: medallion.label }) : null] }));
         }
     }
-    return (_jsxs("div", { ref: ref, className: cn('mrs-stat-card', !accentSuppressed && `mrs-stat-card--accent-${effectiveAccentPlacement}`, hasGauge && 'mrs-stat-card--gauge', variant && 'mrs-stat-card--variant', isHoverable && 'mrs-stat-card--hoverable', hasWatermark && 'mrs-stat-card--watermark', hasArtWatermark && 'mrs-reveal-host', dragHandle && 'mrs-stat-card--draggable', shape === 'landscape' && 'mrs-stat-card--landscape', renderLink && 'mrs-stat-card--linked', dragWholeCard && 'mrs-stat-card--drag-whole', className), style: style, "data-watermark": watermarkIsString ? effectiveWatermark : undefined, "data-has-medallion": medallion != null ? "true" : undefined, "data-medallion-size": medallion?.size ?? 'lg', onClick: onClick, ...(dragWholeCard ? dragHandleProps : {}), children: [renderLink
+    return (_jsxs("div", { ref: ref, className: cn('mrs-stat-card', !accentSuppressed && `mrs-stat-card--accent-${effectiveAccentPlacement}`, hasGauge && 'mrs-stat-card--gauge', variant && 'mrs-stat-card--variant', isHoverable && 'mrs-stat-card--hoverable', hasWatermark && 'mrs-stat-card--watermark', hasArtWatermark && 'mrs-reveal-host', hasDragHandle && 'mrs-stat-card--draggable', shape === 'landscape' && 'mrs-stat-card--landscape', renderLink && 'mrs-stat-card--linked', dragWholeCard && 'mrs-stat-card--drag-whole', dragWholeCard && isHolding && 'mrs-stat-card--holding', className), style: style, "data-watermark": watermarkIsString ? effectiveWatermark : undefined, "data-has-medallion": medallion != null ? "true" : undefined, "data-medallion-size": medallion?.size ?? 'lg', onClick: onClick, ...(dragWholeCard ? {
+            ...dragHandleProps,
+            onPointerDown: (e) => { startHold(); dragHandleProps?.onPointerDown?.(e); },
+            onPointerUp: (e) => { clearHold(); dragHandleProps?.onPointerUp?.(e); },
+            onPointerLeave: (e) => { clearHold(); dragHandleProps?.onPointerLeave?.(e); },
+        } : {}), children: [renderLink
                 ? renderLink({ className: 'mrs-stat-card__link-overlay', 'aria-labelledby': titleId })
-                : null, hasArtWatermark ? (_jsx("div", { className: cn('mrs-stat-card__watermark', watermarkMode === 'glyph' && 'mrs-stat-card__watermark--glyph'), "aria-hidden": "true", children: effectiveWatermark })) : null, dragHandle ? (_jsx("button", { type: "button", className: "mrs-stat-card__drag-handle", "aria-label": dragHandleLabel, ...dragHandleProps, onClick: (e) => {
+                : null, hasArtWatermark ? (_jsx("div", { className: cn('mrs-stat-card__watermark', watermarkMode === 'glyph' && 'mrs-stat-card__watermark--glyph'), "aria-hidden": "true", children: effectiveWatermark })) : null, hasDragHandle ? (_jsx("button", { type: "button", className: "mrs-stat-card__drag-handle", "aria-label": dragHandleLabel, ...dragHandleProps, onClick: (e) => {
                     e.stopPropagation();
                     dragHandleProps?.onClick?.(e);
-                }, children: dragHandle === true ? DEFAULT_DRAG_HANDLE : dragHandle })) : null, showVariantLeftStripe ? (_jsx("div", { className: "mrs-stat-card__variant-stripe", "aria-hidden": "true" })) : null, hasGauge ? (_jsx("div", { className: "mrs-stat-card__gauge", role: "meter", "aria-valuemin": 0, "aria-valuemax": 100, "aria-valuenow": gaugePct, "aria-label": `${gaugePct}%`, children: _jsx("div", { className: "mrs-stat-card__gauge-fill", style: { height: `${gaugeFraction * 100}%`, background: completenessFill(gaugeFraction) } }) })) : null, _jsxs("div", { className: "mrs-stat-card__inner", children: [_jsxs("div", { className: "mrs-stat-card__header", children: [_jsxs("div", { className: "mrs-stat-card__head-text", children: [_jsx("p", { className: "mrs-stat-card__title", id: titleId, "data-fit": titleFitStep(title) || undefined, children: title }), subtitle ? _jsx("p", { className: "mrs-stat-card__subtitle", children: subtitle }) : null] }), medallionNode] }), stats && stats.length > 0 ? (_jsx("dl", { className: "mrs-stat-card__stats", children: stats.map((item, i) => {
+                }, children: dragHandle ?? DEFAULT_DRAG_HANDLE })) : null, showVariantLeftStripe ? (_jsx("div", { className: "mrs-stat-card__variant-stripe", "aria-hidden": "true" })) : null, hasGauge ? (_jsx("div", { className: "mrs-stat-card__gauge", role: "meter", "aria-valuemin": 0, "aria-valuemax": 100, "aria-valuenow": gaugePct, "aria-label": `${gaugePct}%`, children: _jsx("div", { className: "mrs-stat-card__gauge-fill", style: { height: `${gaugeFraction * 100}%`, background: completenessFill(gaugeFraction) } }) })) : null, _jsxs("div", { className: "mrs-stat-card__inner", children: [_jsxs("div", { className: "mrs-stat-card__header", children: [_jsxs("div", { className: "mrs-stat-card__head-text", children: [_jsx("p", { className: "mrs-stat-card__title", id: titleId, "data-fit": titleFitStep(title) || undefined, children: title }), subtitle ? _jsx("p", { className: "mrs-stat-card__subtitle", children: subtitle }) : null] }), medallionNode] }), stats && stats.length > 0 ? (_jsx("dl", { className: "mrs-stat-card__stats", children: stats.map((item, i) => {
                             if (item.max != null) {
                                 // Arc-ring stat
                                 return (_jsx("div", { className: "mrs-stat-card__stat mrs-stat-card__stat--arc", children: _jsx(ArcRing, { value: item.value, max: item.max }) }, i));

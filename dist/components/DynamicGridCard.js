@@ -54,7 +54,9 @@ function StructuredFooter({ footer }) {
  * pass `renderLink` and the card mounts the consumer's `<Link>` as a full-bleed block-link
  * overlay, with `corner` controls raised above it so they stay independently clickable.
  */
-export const DynamicGridCard = forwardRef(function DynamicGridCard({ size, shape = 'standard', title, subtitle, figure, hoverable, lift = true, watermark, corner, footer, renderLink, dragHandle, dragHandleProps, dragHandleLabel, dragWholeCard, tone, color, accentPlacement = 'top', className, style, children, ...props }, ref) {
+export const DynamicGridCard = forwardRef(function DynamicGridCard({ size, shape = 'standard', title, subtitle, figure, hoverable, lift = true, watermark, corner, footer, renderLink, showDragHandle, dragHandle, dragHandleProps, dragHandleLabel, dragWholeCard, tone, color, accentPlacement = 'top', className, style, children, ...props }, ref) {
+    // A visible grip shows when toggled on, or when a custom handle node is supplied.
+    const hasDragHandle = showDragHandle || dragHandle != null;
     const [isHolding, setIsHolding] = useState(false);
     const holdTimerRef = useRef(null);
     function startHold() {
@@ -92,7 +94,7 @@ export const DynamicGridCard = forwardRef(function DynamicGridCard({ size, shape
         ...(hasAccent ? { '--mrs-stat-accent': accentColor } : {}),
         ...style,
     };
-    return (_jsxs("div", { ref: ref, className: cn('mrs-dynamic-grid-card', hasAccent && `mrs-dynamic-grid-card--accent-${accentPlacement}`, hoverable && 'mrs-dynamic-grid-card--hoverable', hoverable && !lift && 'mrs-dynamic-grid-card--no-lift', renderLink && 'mrs-dynamic-grid-card--linked', dragHandle && 'mrs-dynamic-grid-card--draggable', hasWatermark && 'mrs-dynamic-grid-card--watermark', hasArtWatermark && 'mrs-reveal-host', dragWholeCard && 'mrs-dynamic-grid-card--drag-whole', dragWholeCard && isHolding && 'mrs-dynamic-grid-card--holding', className), style: cssVars, "data-watermark": watermarkIsString ? watermark : undefined, ...props, ...(dragWholeCard ? {
+    return (_jsxs("div", { ref: ref, className: cn('mrs-dynamic-grid-card', hasAccent && `mrs-dynamic-grid-card--accent-${accentPlacement}`, hoverable && 'mrs-dynamic-grid-card--hoverable', hoverable && !lift && 'mrs-dynamic-grid-card--no-lift', renderLink && 'mrs-dynamic-grid-card--linked', hasDragHandle && 'mrs-dynamic-grid-card--draggable', hasWatermark && 'mrs-dynamic-grid-card--watermark', hasArtWatermark && 'mrs-reveal-host', dragWholeCard && 'mrs-dynamic-grid-card--drag-whole', dragWholeCard && isHolding && 'mrs-dynamic-grid-card--holding', className), style: cssVars, "data-watermark": watermarkIsString ? watermark : undefined, ...props, ...(dragWholeCard ? {
             ...dragHandleProps,
             onPointerDown: (e) => {
                 startHold();
@@ -111,8 +113,8 @@ export const DynamicGridCard = forwardRef(function DynamicGridCard({ size, shape
                     className: 'mrs-dynamic-grid-card__link-overlay',
                     ...(hasTitle ? { 'aria-labelledby': titleId } : {}),
                 })
-                : null, hasArtWatermark ? (_jsx("div", { className: "mrs-dynamic-grid-card__watermark", "aria-hidden": "true", children: watermark })) : null, dragHandle ? (_jsx("button", { type: "button", className: "mrs-dynamic-grid-card__drag-handle", "aria-label": dragHandleLabel, ...dragHandleProps, onClick: (e) => {
+                : null, hasArtWatermark ? (_jsx("div", { className: "mrs-dynamic-grid-card__watermark", "aria-hidden": "true", children: watermark })) : null, hasDragHandle ? (_jsx("button", { type: "button", className: "mrs-dynamic-grid-card__drag-handle", "aria-label": dragHandleLabel, ...dragHandleProps, onClick: (e) => {
                     e.stopPropagation();
                     dragHandleProps?.onClick?.(e);
-                }, children: dragHandle === true ? DEFAULT_DRAG_HANDLE : dragHandle })) : null, corner != null ? _jsx("div", { className: "mrs-dynamic-grid-card__corner", children: corner }) : null, hasHeader ? (_jsxs("div", { className: "mrs-dynamic-grid-card__header", children: [figure != null ? _jsx("div", { className: "mrs-dynamic-grid-card__figure", children: figure }) : null, title != null || subtitle != null ? (_jsxs("div", { className: "mrs-dynamic-grid-card__heading", children: [title != null ? (_jsx("div", { className: "mrs-dynamic-grid-card__title", id: hasTitle ? titleId : undefined, children: title })) : null, subtitle != null ? _jsx("div", { className: "mrs-dynamic-grid-card__subtitle", children: subtitle }) : null] })) : null] })) : null, _jsx("div", { className: "mrs-dynamic-grid-card__body", children: children }), hasFooter ? (_jsx("div", { className: "mrs-dynamic-grid-card__footer", children: structuredFooter ? _jsx(StructuredFooter, { footer: structuredFooter }) : footer })) : null] }));
+                }, children: dragHandle ?? DEFAULT_DRAG_HANDLE })) : null, corner != null ? _jsx("div", { className: "mrs-dynamic-grid-card__corner", children: corner }) : null, hasHeader ? (_jsxs("div", { className: "mrs-dynamic-grid-card__header", children: [figure != null ? _jsx("div", { className: "mrs-dynamic-grid-card__figure", children: figure }) : null, title != null || subtitle != null ? (_jsxs("div", { className: "mrs-dynamic-grid-card__heading", children: [title != null ? (_jsx("div", { className: "mrs-dynamic-grid-card__title", id: hasTitle ? titleId : undefined, children: title })) : null, subtitle != null ? _jsx("div", { className: "mrs-dynamic-grid-card__subtitle", children: subtitle }) : null] })) : null] })) : null, _jsx("div", { className: "mrs-dynamic-grid-card__body", children: children }), hasFooter ? (_jsx("div", { className: "mrs-dynamic-grid-card__footer", children: structuredFooter ? _jsx(StructuredFooter, { footer: structuredFooter }) : footer })) : null] }));
 });

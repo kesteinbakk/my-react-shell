@@ -140,6 +140,13 @@ export interface PaperCardProps {
    */
   footer?: ReactNode | PaperCardFooter
 
+  /**
+   * Top-corner action slot (e.g. a `DropdownMenu` trigger). Rendered as a direct sibling
+   * of the link overlay — **above** it (`z-index`) — so it stays independently clickable when
+   * `renderLink` is set. Positioned just below the fold triangle to preserve the dog-ear.
+   */
+  corner?: ReactNode
+
   /** Emoji or text rendered as a faint background watermark. E.g. `'📄'`. */
   watermark?: string
   /** Size preset — fixed-width A4-portrait card. Default: `'md'` (≈168px). */
@@ -151,10 +158,14 @@ export interface PaperCardProps {
   hoverable?: boolean
 
   /**
-   * Enables the drag handler. If `true`, renders a built-in top-center grip handle.
-   * If a `ReactNode`, renders your custom handle.
+   * Shows the built-in top-centre grip handle. Pair with `dragHandleProps` to wire your DND library.
    */
-  dragHandle?: boolean | ReactNode
+  showDragHandle?: boolean
+  /**
+   * A custom drag handle node, rendered in place of the built-in grip (implies a
+   * visible handle, so `showDragHandle` isn't also needed). Wire it with `dragHandleProps`.
+   */
+  dragHandle?: ReactNode
   /** Event listeners / attributes from your DND library, spread onto the drag handle. */
   dragHandleProps?: React.HTMLAttributes<HTMLButtonElement>
   /**
@@ -173,7 +184,7 @@ export interface PaperCardProps {
    * renderLink={(p) => <Link {...p} to="/doc/$id" params={{ id }} />}
    * ```
    *
-   * Mutually exclusive with `dragHandle` — throws in dev.
+   * Mutually exclusive with a drag handle.
    */
   renderLink?: (linkProps: PaperCardLinkProps) => ReactNode
   className?: string
@@ -202,10 +213,12 @@ export const PaperCard = forwardRef<HTMLDivElement, PaperCardProps>(function Pap
     color,
     accentPlacement = 'top',
     footer,
+    corner,
     watermark,
     size = 'md',
     onClick,
     hoverable,
+    showDragHandle,
     dragHandle,
     dragHandleProps,
     dragHandleLabel,
@@ -215,6 +228,9 @@ export const PaperCard = forwardRef<HTMLDivElement, PaperCardProps>(function Pap
   },
   ref,
 ) {
+  // A visible grip shows when toggled on, or when a custom handle node is supplied.
+  const hasDragHandle = showDragHandle || dragHandle != null
+
   const width = SIZE_WIDTH_PX[size]
   const height = width * SQRT2
   const fold = SIZE_FOLD_PX[size]
@@ -292,7 +308,8 @@ export const PaperCard = forwardRef<HTMLDivElement, PaperCardProps>(function Pap
         hasAccent && `mrs-paper-card--accent-${accentPlacement}`,
         isHoverable && 'mrs-paper-card--hoverable',
         watermark && 'mrs-paper-card--watermark',
-        dragHandle && 'mrs-paper-card--draggable',
+        hasDragHandle && 'mrs-paper-card--draggable',
+        corner != null && 'mrs-paper-card--cornered',
         renderLink && 'mrs-paper-card--linked',
         className,
       )}
@@ -302,7 +319,7 @@ export const PaperCard = forwardRef<HTMLDivElement, PaperCardProps>(function Pap
       {renderLink
         ? renderLink({ className: 'mrs-paper-card__link-overlay', 'aria-labelledby': titleId })
         : null}
-      {dragHandle ? (
+      {hasDragHandle ? (
         <button
           type="button"
           className="mrs-paper-card__drag-handle"
@@ -313,9 +330,10 @@ export const PaperCard = forwardRef<HTMLDivElement, PaperCardProps>(function Pap
             dragHandleProps?.onClick?.(e as any)
           }}
         >
-          {dragHandle === true ? DEFAULT_DRAG_HANDLE : dragHandle}
+          {dragHandle ?? DEFAULT_DRAG_HANDLE}
         </button>
       ) : null}
+      {corner != null ? <div className="mrs-paper-card__corner">{corner}</div> : null}
       {/* The sheet: clip-path cuts the notch; the fold triangle sits in it. */}
       <div className="mrs-paper-card__sheet" data-watermark={watermark}>
         <span className="mrs-paper-card__fold" aria-hidden="true" />

@@ -192,10 +192,15 @@ export interface StatCardProps {
     /** Click handler for the medallion. */
     onMedallionPress?: () => void;
     /**
-     * Enables the drag handler. If `true`, renders a built-in right-edge vertically-centered grip handle.
-     * If a `ReactNode`, renders your custom handle.
+     * Shows the built-in right-edge vertically-centred grip handle. Pair with
+     * `dragHandleProps` to wire your DND library.
      */
-    dragHandle?: boolean | ReactNode;
+    showDragHandle?: boolean;
+    /**
+     * A custom drag handle node, rendered in place of the built-in grip (implies a
+     * visible handle, so `showDragHandle` isn't also needed). Wire it with `dragHandleProps`.
+     */
+    dragHandle?: ReactNode;
     /**
      * The event listeners and attributes from your DND library (e.g. `@dnd-kit`),
      * spread onto the drag handle element.
@@ -223,7 +228,7 @@ export interface StatCardProps {
      * renderLink={(p) => <Link {...p} to="/entity/$id" params={{ id }} />}
      * ```
      *
-     * Mutually exclusive with `dragHandle` (a nav tile isn't drag-reorderable) — throws in dev.
+     * Mutually exclusive with a drag handle (a nav tile isn't drag-reorderable).
      */
     renderLink?: (linkProps: StatCardLinkProps) => ReactNode;
     /** Extra classes on the outer card element. */
