@@ -53,6 +53,53 @@ function ArcRing({ value, max, className, }) {
     }
     return (_jsxs("svg", { className: cn('mrs-stat-card__arc', className), viewBox: `0 0 ${SIZE} ${SIZE}`, role: "img", "aria-label": `${pctInt}%`, children: [_jsx("circle", { cx: cx, cy: cx, r: r, fill: "none", strokeWidth: STROKE, className: "mrs-stat-card__arc-track" }), _jsx("circle", { cx: cx, cy: cx, r: r, fill: "none", strokeWidth: STROKE, strokeDasharray: circum, strokeDashoffset: offset, strokeLinecap: "round", transform: `rotate(-90 ${cx} ${cx})`, style: { stroke: 'var(--mrs-stat-accent, currentColor)' } }), _jsxs("text", { x: cx, y: cx, textAnchor: "middle", dominantBaseline: "central", fontSize: 12, fontWeight: "700", fill: "currentColor", className: "mrs-stat-card__arc-text", children: [pctInt, "%"] })] }));
 }
+// ── Medallion content (shared by the corner medallion and per-stat medallions) ─
+/**
+ * Builds a medallion's inner circle/arc — a plain circle (`value` + `label`) when
+ * `max` is absent, an SVG arc-ring (`value / max` progress) when `max` is set. Shared
+ * by the card's corner medallion (arc-only — `max` is mandatory there) and any
+ * `stats[]` item with `medallion: true` (both modes, same as a freestanding medallion).
+ */
+function renderMedallionContent({ value, label, max, size, pressable, onPress, }) {
+    const MedallionTag = pressable ? 'button' : 'div';
+    const medallionProps = pressable
+        ? {
+            type: 'button',
+            onClick: (e) => {
+                e.stopPropagation();
+                onPress?.();
+            },
+        }
+        : {};
+    if (max != null) {
+        const numVal = typeof value === 'number' ? value : parseFloat(String(value));
+        const pct = Math.min(1, Math.max(0, isNaN(numVal) ? 0 : numVal / max));
+        if (pct >= 1) {
+            return (_jsx(MedallionTag, { className: cn('mrs-stat-card__medallion', size === 'sm' && 'mrs-stat-card__medallion--sm', pressable && 'mrs-stat-card__medallion--pressable'), ...medallionProps, children: _jsx("svg", { viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "3.5", strokeLinecap: "round", strokeLinejoin: "round", "aria-hidden": "true", style: { width: '1.8em', height: '1.8em' }, children: _jsx("path", { d: "M20 6 9 17l-5-5" }) }) }));
+        }
+        return (_jsx(MedallionTag, { className: cn('mrs-stat-card__medallion mrs-stat-card__medallion--arc', size === 'sm' && 'mrs-stat-card__medallion--sm', pressable && 'mrs-stat-card__medallion--pressable'), ...medallionProps, children: _jsx(ArcRing, { value: value, max: max }) }));
+    }
+    let displayValue = value;
+    if (size === 'sm') {
+        const num = typeof displayValue === 'number' ? displayValue : Number(displayValue);
+        if (!isNaN(num) && num > 99) {
+            displayValue = 99;
+        }
+    }
+    if (typeof displayValue === 'number') {
+        displayValue = Math.round(displayValue);
+    }
+    else if (typeof displayValue === 'string' && !isNaN(Number(displayValue)) && displayValue.trim() !== '') {
+        displayValue = Math.round(Number(displayValue)).toString();
+    }
+    const valueStr = String(displayValue);
+    if (process.env.NODE_ENV !== 'production') {
+        if (valueStr.length > 4) {
+            throw new Error(`StatCard: medallion value cannot exceed 4 characters (got "${valueStr}").`);
+        }
+    }
+    return (_jsxs(MedallionTag, { className: cn('mrs-stat-card__medallion', size === 'sm' && 'mrs-stat-card__medallion--sm', pressable && 'mrs-stat-card__medallion--pressable'), ...medallionProps, children: [_jsx("span", { className: "mrs-stat-card__medallion-value", "data-len": valueStr.length, children: displayValue }), size !== 'sm' && label ? _jsx("span", { className: "mrs-stat-card__medallion-label", "data-len": label.length, children: label }) : null] }));
+}
 // ── Completion gauge ──────────────────────────────────────────────────────────
 /**
  * Completion-gauge fill paint: interpolate the semantic signal tokens
@@ -101,7 +148,8 @@ function titleFitStep(title) {
 const DEFAULT_DRAG_HANDLE = (_jsxs("svg", { width: "11", height: "28", viewBox: "0 0 11 28", fill: "currentColor", "aria-hidden": "true", opacity: "0.4", children: [_jsx("rect", { x: "1", y: "0", width: "3", height: "28", rx: "1.5" }), _jsx("rect", { x: "7", y: "0", width: "3", height: "28", rx: "1.5" })] }));
 /**
  * Stat card — a φ-framed KPI/status card with a title, an optional accent
- * medallion circle (plain number or arc-ring progress), a row of data stats, and an
+ * medallion arc-ring (`value / max` progress) in the corner, a row of data stats
+ * (any of which can render as its own medallion via `stats[].medallion`), and an
  * optional footer or freeform lower slot.
  *
  * The accent stripe, medallion tint, and watermark are driven by `tone` (mapped to
@@ -174,18 +222,18 @@ export const StatCard = forwardRef(function StatCard({ title, subtitle, medallio
             throw new Error("StatCard: `topStripeFollowsGauge` drives the top stripe — it can't combine with `accentPlacement='left'`. Keep the default `accentPlacement='top'` (or omit it).");
         }
         stats?.forEach((item, i) => {
-            if (item.label !== undefined && item.max !== undefined) {
+            if (!item.medallion && item.label !== undefined && item.max !== undefined) {
                 throw new Error(`StatCard: stats[${i}] cannot have both \`label\` and \`max\` — use one layout or the other.`);
             }
+            if (item.medallion && item.label) {
+                if (item.label.length > 8) {
+                    console.warn(`StatCard: stats[${i}].label (medallion) exceeds 8 characters — the card may not render correctly. (Got "${item.label}")`);
+                }
+                if (/\s/.test(item.label.trim())) {
+                    throw new Error(`StatCard: stats[${i}].label (medallion) must be a single word without spaces. (Got "${item.label}")`);
+                }
+            }
         });
-        if (medallion?.label) {
-            if (medallion.label.length > 8) {
-                console.warn(`StatCard: medallion.label exceeds 8 characters — the card may not render correctly. (Got "${medallion.label}")`);
-            }
-            if (/\s/.test(medallion.label.trim())) {
-                throw new Error(`StatCard: medallion.label must be a single word without spaces. (Got "${medallion.label}")`);
-            }
-        }
     }
     const hasFooter = structuredFooter
         ? (structuredFooter.lines?.length ?? 0) > 0 || (structuredFooter.badges?.length ?? 0) > 0
@@ -209,53 +257,16 @@ export const StatCard = forwardRef(function StatCard({ title, subtitle, medallio
         fontSize: `${SIZE_FONT_REM[size]}rem`,
         '--mrs-stat-accent': accentColor,
     };
-    // Medallion circle or arc ring
-    let medallionNode = null;
-    if (medallion) {
-        const isPressable = !!onMedallionPress;
-        const MedallionTag = isPressable ? 'button' : 'div';
-        const medallionProps = isPressable
-            ? {
-                type: 'button',
-                onClick: (e) => {
-                    e.stopPropagation();
-                    onMedallionPress();
-                },
-            }
-            : {};
-        if (medallion.max != null) {
-            const numVal = typeof medallion.value === 'number' ? medallion.value : parseFloat(String(medallion.value));
-            const pct = Math.min(1, Math.max(0, isNaN(numVal) ? 0 : numVal / medallion.max));
-            if (pct >= 1) {
-                medallionNode = (_jsx(MedallionTag, { className: cn('mrs-stat-card__medallion', medallion.size === 'sm' && 'mrs-stat-card__medallion--sm', isPressable && 'mrs-stat-card__medallion--pressable'), ...medallionProps, children: _jsx("svg", { viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "3.5", strokeLinecap: "round", strokeLinejoin: "round", "aria-hidden": "true", style: { width: '1.8em', height: '1.8em' }, children: _jsx("path", { d: "M20 6 9 17l-5-5" }) }) }));
-            }
-            else {
-                medallionNode = (_jsx(MedallionTag, { className: cn('mrs-stat-card__medallion mrs-stat-card__medallion--arc', medallion.size === 'sm' && 'mrs-stat-card__medallion--sm', isPressable && 'mrs-stat-card__medallion--pressable'), ...medallionProps, children: _jsx(ArcRing, { value: medallion.value, max: medallion.max }) }));
-            }
-        }
-        else {
-            let displayValue = medallion.value;
-            if (medallion.size === 'sm') {
-                const num = typeof displayValue === 'number' ? displayValue : Number(displayValue);
-                if (!isNaN(num) && num > 99) {
-                    displayValue = 99;
-                }
-            }
-            if (typeof displayValue === 'number') {
-                displayValue = Math.round(displayValue);
-            }
-            else if (typeof displayValue === 'string' && !isNaN(Number(displayValue)) && displayValue.trim() !== '') {
-                displayValue = Math.round(Number(displayValue)).toString();
-            }
-            const valueStr = String(displayValue);
-            if (process.env.NODE_ENV !== 'production') {
-                if (valueStr.length > 4) {
-                    throw new Error(`StatCard: medallion.value cannot exceed 4 characters (got "${valueStr}").`);
-                }
-            }
-            medallionNode = (_jsxs(MedallionTag, { className: cn('mrs-stat-card__medallion', medallion.size === 'sm' && 'mrs-stat-card__medallion--sm', isPressable && 'mrs-stat-card__medallion--pressable'), ...medallionProps, children: [_jsx("span", { className: "mrs-stat-card__medallion-value", "data-len": valueStr.length, children: displayValue }), medallion.size !== 'sm' && medallion.label ? _jsx("span", { className: "mrs-stat-card__medallion-label", "data-len": medallion.label.length, children: medallion.label }) : null] }));
-        }
-    }
+    // Corner medallion — arc-ring only (`max` is mandatory on `StatCardMedallion`).
+    const medallionNode = medallion
+        ? renderMedallionContent({
+            value: medallion.value,
+            max: medallion.max,
+            size: medallion.size,
+            pressable: !!onMedallionPress,
+            onPress: onMedallionPress,
+        })
+        : null;
     return (_jsxs("div", { ref: ref, className: cn('mrs-stat-card', !accentSuppressed && `mrs-stat-card--accent-${effectiveAccentPlacement}`, hasGauge && 'mrs-stat-card--gauge', variant && 'mrs-stat-card--variant', isHoverable && 'mrs-stat-card--hoverable', hasWatermark && 'mrs-stat-card--watermark', hasArtWatermark && 'mrs-reveal-host', hasDragHandle && 'mrs-stat-card--draggable', shape === 'landscape' && 'mrs-stat-card--landscape', renderLink && 'mrs-stat-card--linked', dragWholeCard && 'mrs-stat-card--drag-whole', dragWholeCard && isHolding && 'mrs-stat-card--holding', className), style: style, "data-watermark": watermarkIsString ? effectiveWatermark : undefined, "data-has-medallion": medallion != null ? "true" : undefined, "data-medallion-size": medallion?.size ?? 'lg', onClick: onClick, ...(dragWholeCard ? {
             ...dragHandleProps,
             onPointerDown: (e) => { startHold(); dragHandleProps?.onPointerDown?.(e); },
@@ -267,6 +278,10 @@ export const StatCard = forwardRef(function StatCard({ title, subtitle, medallio
                     e.stopPropagation();
                     dragHandleProps?.onClick?.(e);
                 }, children: dragHandle ?? DEFAULT_DRAG_HANDLE })) : null, showVariantLeftStripe ? (_jsx("div", { className: "mrs-stat-card__variant-stripe", "aria-hidden": "true" })) : null, hasGauge ? (_jsx("div", { className: "mrs-stat-card__gauge", role: "meter", "aria-valuemin": 0, "aria-valuemax": 100, "aria-valuenow": gaugePct, "aria-label": `${gaugePct}%`, children: _jsx("div", { className: "mrs-stat-card__gauge-fill", style: { height: `${gaugeFraction * 100}%`, background: completenessFill(gaugeFraction) } }) })) : null, _jsxs("div", { className: "mrs-stat-card__inner", children: [_jsxs("div", { className: "mrs-stat-card__header", children: [_jsxs("div", { className: "mrs-stat-card__head-text", children: [_jsx("p", { className: "mrs-stat-card__title", id: titleId, "data-fit": titleFitStep(title) || undefined, children: title }), subtitle ? _jsx("p", { className: "mrs-stat-card__subtitle", children: subtitle }) : null] }), medallionNode] }), stats && stats.length > 0 ? (_jsx("dl", { className: "mrs-stat-card__stats", children: stats.map((item, i) => {
+                            if (item.medallion) {
+                                // Medallion stat — same circle/arc treatment as the corner medallion.
+                                return (_jsx("div", { className: "mrs-stat-card__stat mrs-stat-card__stat--medallion", children: renderMedallionContent({ value: item.value, label: item.label, max: item.max, size: 'sm' }) }, i));
+                            }
                             if (item.max != null) {
                                 // Arc-ring stat
                                 return (_jsx("div", { className: "mrs-stat-card__stat mrs-stat-card__stat--arc", children: _jsx(ArcRing, { value: item.value, max: item.max }) }, i));

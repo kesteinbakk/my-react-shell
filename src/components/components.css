@@ -2640,23 +2640,33 @@
   color: var(--color-text-primary);
 }
 
-/* If a medallion is present, we take it out of document flow so the freeform body can 
-   flow up next to it. We reserve space on the right side of the text to prevent overlap. */
-.mrs-stat-card[data-has-medallion="true"] .mrs-stat-card__medallion {
+/* The corner medallion: out of document flow so the freeform body can flow up next
+   to it, sized down and pulled in tighter to the corner than the shared base size.
+   Scoped to the header so it never affects a `stats[].medallion` item rendered in
+   the stats row below — those keep the shared base / `--sm` sizing. */
+.mrs-stat-card__header .mrs-stat-card__medallion {
   position: absolute;
-  top: 1.1em;
-  right: 1.1em;
+  top: 0.65em;
+  right: 0.65em;
   z-index: 2;
+  width: 3.2em;
+  height: 3.2em;
 }
 
+.mrs-stat-card__header .mrs-stat-card__medallion--sm {
+  width: 1.9em;
+  height: 1.9em;
+}
+
+/* Reserve space on the right side of the text to prevent overlap with the corner medallion. */
 .mrs-stat-card[data-has-medallion="true"] .mrs-stat-card__head-text,
 .mrs-stat-card[data-has-medallion="true"] .mrs-stat-card__body {
-  padding-right: 3.0em; /* 3.75em width (medallion is circular, allowing slight visual overlap) */
+  padding-right: 2.45em; /* 3.2em width (medallion is circular, allowing slight visual overlap) */
 }
 
 .mrs-stat-card[data-has-medallion="true"][data-medallion-size="sm"] .mrs-stat-card__head-text,
 .mrs-stat-card[data-has-medallion="true"][data-medallion-size="sm"] .mrs-stat-card__body {
-  padding-right: 1.8em; /* 2.25em width (medallion is circular, allowing slight visual overlap) */
+  padding-right: 1.45em; /* 1.9em width (medallion is circular, allowing slight visual overlap) */
 }
 
 .mrs-stat-card__medallion--pressable {
@@ -2802,6 +2812,16 @@
 .mrs-stat-card__stat--arc {
   width: 2.8em;
   height: 2.8em;
+}
+
+/* Medallion stat item — wraps a fixed `sm`-size medallion (the shared
+   `.mrs-stat-card__medallion--sm` size), centered in its grid cell. */
+.mrs-stat-card__stat--medallion {
+  width: 2.25em;
+  height: 2.25em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .mrs-stat-card__stat-label {

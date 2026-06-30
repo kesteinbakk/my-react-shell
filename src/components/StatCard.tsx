@@ -82,19 +82,13 @@ export type StatCardVariant = 'warning' | 'danger'
 // ── Medallion ─────────────────────────────────────────────────────────────────
 
 export interface StatCardMedallion {
-  /** Primary value shown in the medallion circle. */
+  /** Primary value shown in the medallion arc-ring. */
   value: number | string
-  /** Short uppercase label below the value. Omit when `max` is present. */
-  label?: string
-  /**
-   * When given: renders an SVG arc-ring showing `value / max` progress.
-   * The `label` prop is ignored in arc mode.
-   */
-  max?: number
+  /** Renders an SVG arc-ring showing `value / max` progress. **Required.** */
+  max: number
   /**
    * Size of the medallion. `'lg'` is the standard size. `'sm'` is a smaller
-   * footprint with no label, a smaller font, and value clamped to 99.
-   * Default: `'lg'`.
+   * footprint. Default: `'lg'`.
    */
   size?: 'lg' | 'sm'
 }
@@ -105,14 +99,24 @@ export interface StatItem {
   value: number | string
   /**
    * Label shown above the number.
-   * **Cannot be combined with `max`** — throws in dev.
+   * **Cannot be combined with `max`** — throws in dev, unless `medallion` is set
+   * (medallion mode ignores `label` when `max` is present, same as the corner
+   * medallion's own arc-ring behavior).
    */
   label?: string
   /**
-   * When given: renders the item as a compact arc-ring.
-   * **Cannot be combined with `label`** — throws in dev.
+   * When given: renders the item as a compact arc-ring (or, with `medallion`,
+   * a full medallion arc-ring).
+   * **Cannot be combined with `label`** — throws in dev, unless `medallion` is set.
    */
   max?: number
+  /**
+   * Render this item as a medallion — the same circle (plain `value` + `label`)
+   * or arc-ring (when `max` is set) treatment as the card's corner medallion —
+   * instead of the standard label-over-number layout. Always renders at a
+   * fixed, compact size within the stats row.
+   */
+  medallion?: boolean
 }
 
 // ── Info button ───────────────────────────────────────────────────────────────
@@ -153,12 +157,56 @@ export type StatCardInfo = _StatCardInfoBase &
 
 // ── Props ─────────────────────────────────────────────────────────────────────
 
-export interface StatCardProps {
+/**
+ * `watermark`/`watermarkMode` as a discriminated union: a `ReactNode` watermark
+ * makes `watermarkMode` **mandatory** (no default). The default `'art'` mode
+ * assumes a self-sized illustration (e.g. `DrawerMark`) and does not scale an
+ * icon's intrinsic `<svg>`/`<span>` size, so an icon-kit glyph (e.g. `<AppIcon>`)
+ * silently renders at its native ~20px size instead of the big watermark — this
+ * has repeatedly slipped through as a runtime-only mistake. Forcing the choice at
+ * the type level turns it into a compile error instead.
+ */
+type StatCardWatermarkProps =
+  | {
+      /**
+       * Faint background watermark behind the card content, centred horizontally and positioned
+       * slightly below the card's vertical centre.
+       *
+       * A **string** is an emoji/text watermark (e.g. `'🏆'`), drawn oversized via a pseudo-element.
+       *
+       * Ignored when `variant` is set — the variant always shows `⚠️`.
+       */
+      watermark?: string
+      watermarkMode?: never
+    }
+  | {
+      /**
+       * A **`ReactNode`** watermark (e.g. a `DrawerMark` illustration, or an icon-kit glyph like
+       * `<AppIcon>`) is rendered in a faint art layer; the card root becomes a `mrs-reveal-host`,
+       * so a hover-reveal mark dropped here opens on card hover.
+       *
+       * Ignored when `variant` is set — the variant always shows `⚠️`.
+       */
+      watermark: Exclude<ReactNode, string | number | bigint | boolean | null | undefined>
+      /**
+       * **Required** alongside a `ReactNode` watermark — there is no safe default:
+       *
+       * - `'art'` — a self-sized illustration (e.g. a `DrawerMark`): centred horizontally,
+       *   dropped a little below centre, scaled to the card.
+       * - `'glyph'` — a keyed icon glyph (e.g. a lucide `<svg>` / emoji span from a consumer icon
+       *   kit) scaled and positioned to **mirror the string-emoji watermark**: oversized, faint,
+       *   centred, without tilt. Use this for a single icon (e.g. `<AppIcon>`) rather than an
+       *   illustration, so it reads at the same size as the `string` emoji watermark.
+       */
+      watermarkMode: 'art' | 'glyph'
+    }
+
+export interface StatCardBaseProps {
   /** Card title. */
   title: string
   /** Optional subtitle shown below the title. */
   subtitle?: string
-  /** Circle medallion in the top-right corner. */
+  /** Arc-ring medallion in the top-right corner, showing `value / max` progress. */
   medallion?: StatCardMedallion
   /**
    * Semantic tone — drives the accent stripe color and medallion tint.
@@ -198,7 +246,8 @@ export interface StatCardProps {
   topStripeFollowsGauge?: boolean
   /**
    * Data stat items displayed below the header.
-   * Each item has a `value` with either a `label` OR a `max` — not both (throws in dev).
+   * Each item has a `value` with either a `label` OR a `max` — not both (throws in dev),
+   * unless `medallion` is set on the item.
    */
   stats?: StatItem[]
   /**
@@ -212,28 +261,6 @@ export interface StatCardProps {
    * `{ lines, badges }` (meta lines on the left, badges on the right).
    */
   footer?: ReactNode | StatCardFooter
-  /**
-   * Faint background watermark behind the card content, centred horizontally and positioned
-   * slightly below the card's vertical centre.
-   *
-   * - A **string** is an emoji/text watermark (e.g. `'🏆'`), drawn oversized via a pseudo-element.
-   * - A **`ReactNode`** (e.g. a `DrawerMark`) is rendered in a faint art layer; the card
-   *   root becomes a `mrs-reveal-host`, so a hover-reveal mark dropped here opens on card hover.
-   *
-   * Ignored when `variant` is set — the variant always shows `⚠️`.
-   */
-  watermark?: ReactNode
-  /**
-   * How a **ReactNode** `watermark` is laid out (ignored for a string/variant watermark):
-   *
-   * - `'art'` (default) — the existing self-sized illustration layer (e.g. a `DrawerMark`):
-   *   centred horizontally, dropped a little below centre, scaled to the card.
-   * - `'glyph'` — a keyed icon glyph (e.g. a lucide `<svg>` / emoji span from a consumer icon
-   *   kit) scaled and positioned to **mirror the string-emoji watermark**: oversized, faint,
-   *   centred, without tilt. Use this when the watermark is a single icon rather than an
-   *   illustration, so it reads at the same size as the `string` emoji watermark.
-   */
-  watermarkMode?: 'art' | 'glyph'
   /** Size preset — fixed-width golden-ratio card. Default: `'md'` (≈312px). */
   size?: StatCardSize
   /**
@@ -295,6 +322,8 @@ export interface StatCardProps {
   /** Info button in a lower corner — opens a dialog with title, optional description, and optional content. */
   info?: StatCardInfo
 }
+
+export type StatCardProps = StatCardBaseProps & StatCardWatermarkProps
 
 // ── Footer glyphs ───────────────────────────────────────────────────────────
 
@@ -395,6 +424,110 @@ function ArcRing({
   )
 }
 
+// ── Medallion content (shared by the corner medallion and per-stat medallions) ─
+
+/**
+ * Builds a medallion's inner circle/arc — a plain circle (`value` + `label`) when
+ * `max` is absent, an SVG arc-ring (`value / max` progress) when `max` is set. Shared
+ * by the card's corner medallion (arc-only — `max` is mandatory there) and any
+ * `stats[]` item with `medallion: true` (both modes, same as a freestanding medallion).
+ */
+function renderMedallionContent({
+  value,
+  label,
+  max,
+  size,
+  pressable,
+  onPress,
+}: {
+  value: number | string
+  label?: string
+  max?: number
+  size?: 'lg' | 'sm'
+  pressable?: boolean
+  onPress?: () => void
+}): ReactNode {
+  const MedallionTag = pressable ? 'button' : 'div'
+  const medallionProps = pressable
+    ? {
+        type: 'button' as const,
+        onClick: (e: React.MouseEvent) => {
+          e.stopPropagation()
+          onPress?.()
+        },
+      }
+    : {}
+
+  if (max != null) {
+    const numVal = typeof value === 'number' ? value : parseFloat(String(value))
+    const pct = Math.min(1, Math.max(0, isNaN(numVal) ? 0 : numVal / max))
+
+    if (pct >= 1) {
+      return (
+        <MedallionTag
+          className={cn(
+            'mrs-stat-card__medallion',
+            size === 'sm' && 'mrs-stat-card__medallion--sm',
+            pressable && 'mrs-stat-card__medallion--pressable'
+          )}
+          {...medallionProps}
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{ width: '1.8em', height: '1.8em' }}>
+            <path d="M20 6 9 17l-5-5" />
+          </svg>
+        </MedallionTag>
+      )
+    }
+    return (
+      <MedallionTag
+        className={cn(
+          'mrs-stat-card__medallion mrs-stat-card__medallion--arc',
+          size === 'sm' && 'mrs-stat-card__medallion--sm',
+          pressable && 'mrs-stat-card__medallion--pressable'
+        )}
+        {...medallionProps}
+      >
+        <ArcRing value={value} max={max} />
+      </MedallionTag>
+    )
+  }
+
+  let displayValue = value
+  if (size === 'sm') {
+    const num = typeof displayValue === 'number' ? displayValue : Number(displayValue)
+    if (!isNaN(num) && num > 99) {
+      displayValue = 99
+    }
+  }
+
+  if (typeof displayValue === 'number') {
+    displayValue = Math.round(displayValue)
+  } else if (typeof displayValue === 'string' && !isNaN(Number(displayValue)) && displayValue.trim() !== '') {
+    displayValue = Math.round(Number(displayValue)).toString()
+  }
+  const valueStr = String(displayValue)
+
+  if (process.env.NODE_ENV !== 'production') {
+    if (valueStr.length > 4) {
+      throw new Error(`StatCard: medallion value cannot exceed 4 characters (got "${valueStr}").`)
+    }
+  }
+
+  return (
+    <MedallionTag
+      className={cn(
+        'mrs-stat-card__medallion',
+        size === 'sm' && 'mrs-stat-card__medallion--sm',
+        pressable && 'mrs-stat-card__medallion--pressable'
+      )}
+      {...medallionProps}
+    >
+      <span className="mrs-stat-card__medallion-value" data-len={valueStr.length}>{displayValue}</span>
+      {size !== 'sm' && label ? <span className="mrs-stat-card__medallion-label" data-len={label.length}>{label}</span> : null}
+    </MedallionTag>
+  )
+}
+
 // ── Completion gauge ──────────────────────────────────────────────────────────
 
 /**
@@ -447,7 +580,8 @@ const DEFAULT_DRAG_HANDLE = (
 
 /**
  * Stat card — a φ-framed KPI/status card with a title, an optional accent
- * medallion circle (plain number or arc-ring progress), a row of data stats, and an
+ * medallion arc-ring (`value / max` progress) in the corner, a row of data stats
+ * (any of which can render as its own medallion via `stats[].medallion`), and an
  * optional footer or freeform lower slot.
  *
  * The accent stripe, medallion tint, and watermark are driven by `tone` (mapped to
@@ -567,24 +701,24 @@ export const StatCard = forwardRef<HTMLDivElement, StatCardProps>(function StatC
       )
     }
     stats?.forEach((item, i) => {
-      if (item.label !== undefined && item.max !== undefined) {
+      if (!item.medallion && item.label !== undefined && item.max !== undefined) {
         throw new Error(
           `StatCard: stats[${i}] cannot have both \`label\` and \`max\` — use one layout or the other.`,
         )
       }
+      if (item.medallion && item.label) {
+        if (item.label.length > 8) {
+          console.warn(
+            `StatCard: stats[${i}].label (medallion) exceeds 8 characters — the card may not render correctly. (Got "${item.label}")`
+          )
+        }
+        if (/\s/.test(item.label.trim())) {
+          throw new Error(
+            `StatCard: stats[${i}].label (medallion) must be a single word without spaces. (Got "${item.label}")`
+          )
+        }
+      }
     })
-    if (medallion?.label) {
-      if (medallion.label.length > 8) {
-        console.warn(
-          `StatCard: medallion.label exceeds 8 characters — the card may not render correctly. (Got "${medallion.label}")`
-        )
-      }
-      if (/\s/.test(medallion.label.trim())) {
-        throw new Error(
-          `StatCard: medallion.label must be a single word without spaces. (Got "${medallion.label}")`
-        )
-      }
-    }
   }
  
   const hasFooter = structuredFooter
@@ -628,92 +762,17 @@ export const StatCard = forwardRef<HTMLDivElement, StatCardProps>(function StatC
     '--mrs-stat-accent': accentColor,
   } as unknown as CSSProperties
  
-  // Medallion circle or arc ring
-  let medallionNode: ReactNode = null
-  if (medallion) {
-    const isPressable = !!onMedallionPress
-    const MedallionTag = isPressable ? 'button' : 'div'
-    const medallionProps = isPressable
-      ? {
-          type: 'button' as const,
-          onClick: (e: React.MouseEvent) => {
-            e.stopPropagation()
-            onMedallionPress()
-          },
-        }
-      : {}
+  // Corner medallion — arc-ring only (`max` is mandatory on `StatCardMedallion`).
+  const medallionNode: ReactNode = medallion
+    ? renderMedallionContent({
+        value: medallion.value,
+        max: medallion.max,
+        size: medallion.size,
+        pressable: !!onMedallionPress,
+        onPress: onMedallionPress,
+      })
+    : null
 
-    if (medallion.max != null) {
-      const numVal = typeof medallion.value === 'number' ? medallion.value : parseFloat(String(medallion.value))
-      const pct = Math.min(1, Math.max(0, isNaN(numVal) ? 0 : numVal / medallion.max))
-
-      if (pct >= 1) {
-        medallionNode = (
-          <MedallionTag
-            className={cn(
-              'mrs-stat-card__medallion',
-              medallion.size === 'sm' && 'mrs-stat-card__medallion--sm',
-              isPressable && 'mrs-stat-card__medallion--pressable'
-            )}
-            {...medallionProps}
-          >
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{ width: '1.8em', height: '1.8em' }}>
-              <path d="M20 6 9 17l-5-5" />
-            </svg>
-          </MedallionTag>
-        )
-      } else {
-        medallionNode = (
-          <MedallionTag
-            className={cn(
-              'mrs-stat-card__medallion mrs-stat-card__medallion--arc',
-              medallion.size === 'sm' && 'mrs-stat-card__medallion--sm',
-              isPressable && 'mrs-stat-card__medallion--pressable'
-            )}
-            {...medallionProps}
-          >
-            <ArcRing value={medallion.value} max={medallion.max} />
-          </MedallionTag>
-        )
-      }
-    } else {
-      let displayValue = medallion.value
-      if (medallion.size === 'sm') {
-        const num = typeof displayValue === 'number' ? displayValue : Number(displayValue)
-        if (!isNaN(num) && num > 99) {
-          displayValue = 99
-        }
-      }
-
-      if (typeof displayValue === 'number') {
-        displayValue = Math.round(displayValue)
-      } else if (typeof displayValue === 'string' && !isNaN(Number(displayValue)) && displayValue.trim() !== '') {
-        displayValue = Math.round(Number(displayValue)).toString()
-      }
-      const valueStr = String(displayValue)
-
-      if (process.env.NODE_ENV !== 'production') {
-        if (valueStr.length > 4) {
-          throw new Error(`StatCard: medallion.value cannot exceed 4 characters (got "${valueStr}").`)
-        }
-      }
-
-      medallionNode = (
-        <MedallionTag
-          className={cn(
-            'mrs-stat-card__medallion',
-            medallion.size === 'sm' && 'mrs-stat-card__medallion--sm',
-            isPressable && 'mrs-stat-card__medallion--pressable'
-          )}
-          {...medallionProps}
-        >
-          <span className="mrs-stat-card__medallion-value" data-len={valueStr.length}>{displayValue}</span>
-          {medallion.size !== 'sm' && medallion.label ? <span className="mrs-stat-card__medallion-label" data-len={medallion.label.length}>{medallion.label}</span> : null}
-        </MedallionTag>
-      )
-    }
-  }
- 
   return (
     <div
       ref={ref}
@@ -804,6 +863,14 @@ export const StatCard = forwardRef<HTMLDivElement, StatCardProps>(function StatC
         {stats && stats.length > 0 ? (
           <dl className="mrs-stat-card__stats">
             {stats.map((item, i) => {
+              if (item.medallion) {
+                // Medallion stat — same circle/arc treatment as the corner medallion.
+                return (
+                  <div key={i} className="mrs-stat-card__stat mrs-stat-card__stat--medallion">
+                    {renderMedallionContent({ value: item.value, label: item.label, max: item.max, size: 'sm' })}
+                  </div>
+                )
+              }
               if (item.max != null) {
                 // Arc-ring stat
                 return (

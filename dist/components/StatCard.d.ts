@@ -34,19 +34,13 @@ export type StatCardTone = Tone;
 /** Structural alert variant — overrides `tone` to the same value and forces the ⚠️ watermark. */
 export type StatCardVariant = 'warning' | 'danger';
 export interface StatCardMedallion {
-    /** Primary value shown in the medallion circle. */
+    /** Primary value shown in the medallion arc-ring. */
     value: number | string;
-    /** Short uppercase label below the value. Omit when `max` is present. */
-    label?: string;
-    /**
-     * When given: renders an SVG arc-ring showing `value / max` progress.
-     * The `label` prop is ignored in arc mode.
-     */
-    max?: number;
+    /** Renders an SVG arc-ring showing `value / max` progress. **Required.** */
+    max: number;
     /**
      * Size of the medallion. `'lg'` is the standard size. `'sm'` is a smaller
-     * footprint with no label, a smaller font, and value clamped to 99.
-     * Default: `'lg'`.
+     * footprint. Default: `'lg'`.
      */
     size?: 'lg' | 'sm';
 }
@@ -54,14 +48,24 @@ export interface StatItem {
     value: number | string;
     /**
      * Label shown above the number.
-     * **Cannot be combined with `max`** — throws in dev.
+     * **Cannot be combined with `max`** — throws in dev, unless `medallion` is set
+     * (medallion mode ignores `label` when `max` is present, same as the corner
+     * medallion's own arc-ring behavior).
      */
     label?: string;
     /**
-     * When given: renders the item as a compact arc-ring.
-     * **Cannot be combined with `label`** — throws in dev.
+     * When given: renders the item as a compact arc-ring (or, with `medallion`,
+     * a full medallion arc-ring).
+     * **Cannot be combined with `label`** — throws in dev, unless `medallion` is set.
      */
     max?: number;
+    /**
+     * Render this item as a medallion — the same circle (plain `value` + `label`)
+     * or arc-ring (when `max` is set) treatment as the card's corner medallion —
+     * instead of the standard label-over-number layout. Always renders at a
+     * fixed, compact size within the stats row.
+     */
+    medallion?: boolean;
 }
 /** One numbered section rendered in the info dialog when `content` is an array. */
 export interface StatCardInfoSection {
@@ -96,12 +100,53 @@ export type StatCardInfo = _StatCardInfoBase & ({
     description?: string;
     content: string | StatCardInfoSection[];
 });
-export interface StatCardProps {
+/**
+ * `watermark`/`watermarkMode` as a discriminated union: a `ReactNode` watermark
+ * makes `watermarkMode` **mandatory** (no default). The default `'art'` mode
+ * assumes a self-sized illustration (e.g. `DrawerMark`) and does not scale an
+ * icon's intrinsic `<svg>`/`<span>` size, so an icon-kit glyph (e.g. `<AppIcon>`)
+ * silently renders at its native ~20px size instead of the big watermark — this
+ * has repeatedly slipped through as a runtime-only mistake. Forcing the choice at
+ * the type level turns it into a compile error instead.
+ */
+type StatCardWatermarkProps = {
+    /**
+     * Faint background watermark behind the card content, centred horizontally and positioned
+     * slightly below the card's vertical centre.
+     *
+     * A **string** is an emoji/text watermark (e.g. `'🏆'`), drawn oversized via a pseudo-element.
+     *
+     * Ignored when `variant` is set — the variant always shows `⚠️`.
+     */
+    watermark?: string;
+    watermarkMode?: never;
+} | {
+    /**
+     * A **`ReactNode`** watermark (e.g. a `DrawerMark` illustration, or an icon-kit glyph like
+     * `<AppIcon>`) is rendered in a faint art layer; the card root becomes a `mrs-reveal-host`,
+     * so a hover-reveal mark dropped here opens on card hover.
+     *
+     * Ignored when `variant` is set — the variant always shows `⚠️`.
+     */
+    watermark: Exclude<ReactNode, string | number | bigint | boolean | null | undefined>;
+    /**
+     * **Required** alongside a `ReactNode` watermark — there is no safe default:
+     *
+     * - `'art'` — a self-sized illustration (e.g. a `DrawerMark`): centred horizontally,
+     *   dropped a little below centre, scaled to the card.
+     * - `'glyph'` — a keyed icon glyph (e.g. a lucide `<svg>` / emoji span from a consumer icon
+     *   kit) scaled and positioned to **mirror the string-emoji watermark**: oversized, faint,
+     *   centred, without tilt. Use this for a single icon (e.g. `<AppIcon>`) rather than an
+     *   illustration, so it reads at the same size as the `string` emoji watermark.
+     */
+    watermarkMode: 'art' | 'glyph';
+};
+export interface StatCardBaseProps {
     /** Card title. */
     title: string;
     /** Optional subtitle shown below the title. */
     subtitle?: string;
-    /** Circle medallion in the top-right corner. */
+    /** Arc-ring medallion in the top-right corner, showing `value / max` progress. */
     medallion?: StatCardMedallion;
     /**
      * Semantic tone — drives the accent stripe color and medallion tint.
@@ -141,7 +186,8 @@ export interface StatCardProps {
     topStripeFollowsGauge?: boolean;
     /**
      * Data stat items displayed below the header.
-     * Each item has a `value` with either a `label` OR a `max` — not both (throws in dev).
+     * Each item has a `value` with either a `label` OR a `max` — not both (throws in dev),
+     * unless `medallion` is set on the item.
      */
     stats?: StatItem[];
     /**
@@ -155,28 +201,6 @@ export interface StatCardProps {
      * `{ lines, badges }` (meta lines on the left, badges on the right).
      */
     footer?: ReactNode | StatCardFooter;
-    /**
-     * Faint background watermark behind the card content, centred horizontally and positioned
-     * slightly below the card's vertical centre.
-     *
-     * - A **string** is an emoji/text watermark (e.g. `'🏆'`), drawn oversized via a pseudo-element.
-     * - A **`ReactNode`** (e.g. a `DrawerMark`) is rendered in a faint art layer; the card
-     *   root becomes a `mrs-reveal-host`, so a hover-reveal mark dropped here opens on card hover.
-     *
-     * Ignored when `variant` is set — the variant always shows `⚠️`.
-     */
-    watermark?: ReactNode;
-    /**
-     * How a **ReactNode** `watermark` is laid out (ignored for a string/variant watermark):
-     *
-     * - `'art'` (default) — the existing self-sized illustration layer (e.g. a `DrawerMark`):
-     *   centred horizontally, dropped a little below centre, scaled to the card.
-     * - `'glyph'` — a keyed icon glyph (e.g. a lucide `<svg>` / emoji span from a consumer icon
-     *   kit) scaled and positioned to **mirror the string-emoji watermark**: oversized, faint,
-     *   centred, without tilt. Use this when the watermark is a single icon rather than an
-     *   illustration, so it reads at the same size as the `string` emoji watermark.
-     */
-    watermarkMode?: 'art' | 'glyph';
     /** Size preset — fixed-width golden-ratio card. Default: `'md'` (≈312px). */
     size?: StatCardSize;
     /**
@@ -238,9 +262,11 @@ export interface StatCardProps {
     /** Info button in a lower corner — opens a dialog with title, optional description, and optional content. */
     info?: StatCardInfo;
 }
+export type StatCardProps = StatCardBaseProps & StatCardWatermarkProps;
 /**
  * Stat card — a φ-framed KPI/status card with a title, an optional accent
- * medallion circle (plain number or arc-ring progress), a row of data stats, and an
+ * medallion arc-ring (`value / max` progress) in the corner, a row of data stats
+ * (any of which can render as its own medallion via `stats[].medallion`), and an
  * optional footer or freeform lower slot.
  *
  * The accent stripe, medallion tint, and watermark are driven by `tone` (mapped to

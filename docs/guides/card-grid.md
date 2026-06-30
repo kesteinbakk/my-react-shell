@@ -49,7 +49,7 @@ stretched, so the trailing space on a partial row simply stays empty.
 import { CardGrid, StatCard, ContentCard } from 'my-react-shell/components'
 
 <CardGrid>
-  <StatCard title="Active" medallion={{ value: 27, label: 'LIVE' }} stats={[{ value: 18, label: 'Open' }]} />
+  <StatCard title="Active" stats={[{ value: 27, label: 'LIVE', medallion: true }, { value: 18, label: 'Open' }]} />
   <ContentCard title="Status" content="All systems operational" tone="success" />
   {/* … more fixed-size cards */}
 </CardGrid>
@@ -262,13 +262,21 @@ This section carries the behaviour and the worked examples.
 ### `StatCard`
 
 A self-contained φ-framed KPI / status card (`height = width / φ`). Internal layout: a
-title + subtitle header, an accent **medallion** circle, a data-stats row, and an optional
+title + subtitle header, a corner accent **medallion**, a data-stats row, and an optional
 footer slot.
 
-- **Medallion** — `{ value, label?, max?, size? }`. A plain circle (number + label) when
-  `max` is absent; an **SVG arc-ring** showing `value/max` progress when `max` is set.
-  `size` defaults to `'lg'`; `'sm'` renders a smaller footprint, drops its label, and clamps
-  numeric values to `99`. Set `onMedallionPress` to make it a pressable `<button>`.
+- **Corner medallion** — `{ value, max, size? }`. Arc-ring only — `value` and `max` are both
+  **required** (no plain-circle mode here). `size` defaults to `'lg'`; `'sm'` renders a
+  smaller footprint. Set `onMedallionPress` to make it a pressable `<button>`. Smaller and
+  pulled in tighter to the corner than a `stats[].medallion` item (below) — the two are
+  visually distinct so it's clear which is which.
+- **Stat-row medallion** — pass `medallion: true` on a `stats[]` item to render that item with
+  the same circle (plain `value` + `label`) or arc-ring (when `max` is set) treatment as the
+  corner medallion, instead of the standard label-over-number layout. Always renders at a
+  fixed, compact size — `value`/`label` follow the corner medallion's `'sm'` rules (numeric
+  values clamp to `99`). Unlike a plain stat, `label` and `max` **can** coexist on a medallion
+  item — `label` is simply ignored once `max` puts it in arc mode, matching the corner
+  medallion's own behavior.
 - **Accent** — the stripe + medallion tint are driven by `tone` (semantic tokens) or a raw
   `color` CSS string; `accentPlacement` reads as a `'top'` stripe or a `'left'` bar.
 - **Side completion gauge** — `sideBarCompleteness` is a `0`–`1` fraction (clamped). The
@@ -284,8 +292,9 @@ footer slot.
   fall back to `tone`/`color`).
 - **`variant`** (`'warning'`·`'danger'`) — a structural alert variant. Overrides `tone` to
   the same value and forces `⚠️` as the watermark, ignoring `watermark`.
-- **`stats`** — `{ value, label?, max? }[]`. `label` → label above + number below; `max` →
-  compact arc-ring. **Cannot combine `label` and `max` on the same item** (throws in dev).
+- **`stats`** — `{ value, label?, max?, medallion? }[]`. `label` → label above + number below;
+  `max` → compact arc-ring. **Cannot combine `label` and `max` on the same item** (throws in
+  dev), unless `medallion` is set (see above).
 - **Title auto-fit** — a very long title steps its font size down in up to five steps (by
   character count) so it stays within ~two lines without resizing the card; the deeper steps
   let a much longer title fit before it has to ellipsize. The same ladder backs `StatCard`
@@ -296,16 +305,16 @@ footer slot.
 > slot — brand background, rounded, inherits font-size. Style it yourself or use this shortcut.
 
 ```tsx
-// Plain medallion circle:
+// Plain medallion circle — now a stats[].medallion item, not a corner prop:
 <StatCard
   size="lg" tone="success" title="Vinnere" subtitle="Unike leverandører"
-  medallion={{ value: 27, label: 'LEV' }} watermark="🏆"
-  stats={[{ value: 18, label: 'Bredde' }, { value: 14, label: 'Spisset' }]}
+  watermark="🏆"
+  stats={[{ value: 27, label: 'LEV', medallion: true }, { value: 18, label: 'Bredde' }, { value: 14, label: 'Spisset' }]}
   lower={<button className="mrs-stat-card__cta" onClick={open}>🏆 Vis resultater →</button>}
   onClick={open}
 />
 
-// Arc-ring medallion (medallion.max):
+// Corner arc-ring medallion (value + max both required):
 <StatCard
   size="lg" tone="warning" title="Leveransemodell"
   medallion={{ value: 10, max: 100 }} watermark="📊"
@@ -314,26 +323,23 @@ footer slot.
 
 // Structured footer ({ lines, badges } — same shape as the other cards):
 <StatCard size="xl" tone="info" title="Project Atlas"
-  medallion={{ value: 12, label: 'TASKS' }}
-  stats={[{ value: 8, label: 'Done' }, { value: 3, label: 'Open' }]}
+  stats={[{ value: 12, label: 'TASKS', medallion: true }, { value: 8, label: 'Done' }, { value: 3, label: 'Open' }]}
   footer={{ lines: [{ type: 'date', text: 'Jun 2026' }], badges: [<Badge tone="success">Live</Badge>] }}
 />
 
 // Side completion gauge (red→amber→green) alongside the default top stripe:
 <StatCard
   size="lg" tone="info" title="Onboarding" subtitle="Profile completeness"
-  medallion={{ value: 7, label: 'STEPS' }}
   sideBarCompleteness={0.7}            // 0–1; `0` shows an empty gauge, `undefined` shows none
-  stats={[{ value: 7, label: 'Done' }, { value: 3, label: 'Left' }]}
+  stats={[{ value: 7, label: 'STEPS', medallion: true }, { value: 7, label: 'Done' }, { value: 3, label: 'Left' }]}
 />
 
 // One coherent colour — top stripe + medallion + stat numbers all follow the gauge:
 <StatCard
   size="lg" title="Onboarding" subtitle="Profile completeness"
-  medallion={{ value: 7, label: 'STEPS' }}
   sideBarCompleteness={0.85}
   topStripeFollowsGauge          // tone/color ignored while a gauge is present
-  stats={[{ value: 6, label: 'Done' }, { value: 1, label: 'Left' }]}
+  stats={[{ value: 7, label: 'STEPS', medallion: true }, { value: 6, label: 'Done' }, { value: 1, label: 'Left' }]}
 />
 ```
 
