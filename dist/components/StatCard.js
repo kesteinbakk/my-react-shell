@@ -148,9 +148,8 @@ function titleFitStep(title) {
 const DEFAULT_DRAG_HANDLE = (_jsxs("svg", { width: "11", height: "28", viewBox: "0 0 11 28", fill: "currentColor", "aria-hidden": "true", opacity: "0.4", children: [_jsx("rect", { x: "1", y: "0", width: "3", height: "28", rx: "1.5" }), _jsx("rect", { x: "7", y: "0", width: "3", height: "28", rx: "1.5" })] }));
 /**
  * Stat card — a φ-framed KPI/status card with a title, an optional accent
- * medallion arc-ring (`value / max` progress) in the corner, a row of data stats
- * (any of which can render as its own medallion via `stats[].medallion`), and an
- * optional footer or freeform lower slot.
+ * medallion arc-ring (`value / max` progress) in the corner, a row of data stats,
+ * and an optional footer or freeform lower slot.
  *
  * The accent stripe, medallion tint, and watermark are driven by `tone` (mapped to
  * semantic tokens) or overridden with a raw CSS `color` string.
@@ -222,16 +221,8 @@ export const StatCard = forwardRef(function StatCard({ title, subtitle, medallio
             throw new Error("StatCard: `topStripeFollowsGauge` drives the top stripe — it can't combine with `accentPlacement='left'`. Keep the default `accentPlacement='top'` (or omit it).");
         }
         stats?.forEach((item, i) => {
-            if (!item.medallion && item.label !== undefined && item.max !== undefined) {
+            if (item.label !== undefined && item.max !== undefined) {
                 throw new Error(`StatCard: stats[${i}] cannot have both \`label\` and \`max\` — use one layout or the other.`);
-            }
-            if (item.medallion && item.label) {
-                if (item.label.length > 8) {
-                    console.warn(`StatCard: stats[${i}].label (medallion) exceeds 8 characters — the card may not render correctly. (Got "${item.label}")`);
-                }
-                if (/\s/.test(item.label.trim())) {
-                    throw new Error(`StatCard: stats[${i}].label (medallion) must be a single word without spaces. (Got "${item.label}")`);
-                }
             }
         });
     }
@@ -278,10 +269,6 @@ export const StatCard = forwardRef(function StatCard({ title, subtitle, medallio
                     e.stopPropagation();
                     dragHandleProps?.onClick?.(e);
                 }, children: dragHandle ?? DEFAULT_DRAG_HANDLE })) : null, showVariantLeftStripe ? (_jsx("div", { className: "mrs-stat-card__variant-stripe", "aria-hidden": "true" })) : null, hasGauge ? (_jsx("div", { className: "mrs-stat-card__gauge", role: "meter", "aria-valuemin": 0, "aria-valuemax": 100, "aria-valuenow": gaugePct, "aria-label": `${gaugePct}%`, children: _jsx("div", { className: "mrs-stat-card__gauge-fill", style: { height: `${gaugeFraction * 100}%`, background: completenessFill(gaugeFraction) } }) })) : null, _jsxs("div", { className: "mrs-stat-card__inner", children: [_jsxs("div", { className: "mrs-stat-card__header", children: [_jsxs("div", { className: "mrs-stat-card__head-text", children: [_jsx("p", { className: "mrs-stat-card__title", id: titleId, "data-fit": titleFitStep(title) || undefined, children: title }), subtitle ? _jsx("p", { className: "mrs-stat-card__subtitle", children: subtitle }) : null] }), medallionNode] }), stats && stats.length > 0 ? (_jsx("dl", { className: "mrs-stat-card__stats", children: stats.map((item, i) => {
-                            if (item.medallion) {
-                                // Medallion stat — same circle/arc treatment as the corner medallion.
-                                return (_jsx("div", { className: "mrs-stat-card__stat mrs-stat-card__stat--medallion", children: renderMedallionContent({ value: item.value, label: item.label, max: item.max, size: 'sm' }) }, i));
-                            }
                             if (item.max != null) {
                                 // Arc-ring stat
                                 return (_jsx("div", { className: "mrs-stat-card__stat mrs-stat-card__stat--arc", children: _jsx(ArcRing, { value: item.value, max: item.max }) }, i));

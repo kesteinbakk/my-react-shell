@@ -2814,16 +2814,6 @@
   height: 2.8em;
 }
 
-/* Medallion stat item — wraps a fixed `sm`-size medallion (the shared
-   `.mrs-stat-card__medallion--sm` size), centered in its grid cell. */
-.mrs-stat-card__stat--medallion {
-  width: 2.25em;
-  height: 2.25em;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
 .mrs-stat-card__stat-label {
   font-size: 0.58em;
   font-weight: 600;
