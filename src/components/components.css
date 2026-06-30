@@ -5773,6 +5773,32 @@
   user-select: none;
 }
 
+/* Element (art) watermark — a faint layer behind the sheet content (e.g. an `<AppIcon>` /
+   `<img>`), framed like the string emoji watermark above: centred, dropped a little below
+   centre, faintly tilted. The `__glyph` child scaling mirrors `mrs-stat-card__watermark`,
+   so a sized icon-kit glyph (svg / emoji span) reads at the big watermark scale. */
+.mrs-paper-card__watermark {
+  position: absolute;
+  top: 56%;
+  left: 50%;
+  width: auto;
+  transform: translate(-50%, -50%) rotate(-8deg);
+  font-size: 5em;
+  line-height: 1;
+  opacity: 0.1;
+  pointer-events: none;
+  user-select: none;
+  z-index: 0;
+}
+.mrs-paper-card__watermark svg {
+  width: 1em;
+  height: 1em;
+}
+.mrs-paper-card__watermark > span,
+.mrs-paper-card__watermark span {
+  font-size: 1em !important;
+}
+
 /* Full-opacity preview layer (e.g. a rendered PDF first page) — the card's actual content,
    not a decorative watermark. Sits behind __inner; title/footer get a scrim for legibility. */
 .mrs-paper-card__image {

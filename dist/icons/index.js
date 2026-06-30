@@ -13,3 +13,5 @@ export { IconModeProvider } from './IconModeProvider';
 export { Icon } from './Icon';
 export { createIconRenderer } from './createIconRenderer';
 export { useIconMode } from './useIconMode';
+export { EmojiRenderProvider } from './EmojiRenderProvider';
+export { useEmojiRender } from './emojiRenderContext';

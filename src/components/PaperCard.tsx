@@ -147,8 +147,13 @@ export interface PaperCardProps {
    */
   corner?: ReactNode
 
-  /** Emoji or text rendered as a faint background watermark. E.g. `'📄'`. */
-  watermark?: string
+  /**
+   * Faint background watermark. A **`string`** is an oversized emoji/text drawn via the
+   * sheet's CSS `::after` (e.g. `'📄'`); a **`ReactNode`** (e.g. an `<AppIcon>` / `<img>`)
+   * renders in an art layer behind the content. Same shape as `StatCard`/`ContentCard`/
+   * `DynamicGridCard`.
+   */
+  watermark?: ReactNode
 
   /**
    * A real, full-opacity preview layer filling the sheet behind the title/footer — e.g. a
@@ -240,6 +245,12 @@ export const PaperCard = forwardRef<HTMLDivElement, PaperCardProps>(function Pap
   // A visible grip shows when toggled on, or when a custom handle node is supplied.
   const hasDragHandle = showDragHandle || dragHandle != null
 
+  // A string watermark draws via the sheet's CSS `::after`; a ReactNode renders in an art
+  // layer (same string-vs-node split as StatCard/ContentCard/DynamicGridCard).
+  const watermarkIsString = typeof watermark === 'string'
+  const hasWatermark = watermarkIsString ? watermark.length > 0 : watermark != null
+  const hasArtWatermark = hasWatermark && !watermarkIsString
+
   const width = SIZE_WIDTH_PX[size]
   const height = width * SQRT2
   const fold = SIZE_FOLD_PX[size]
@@ -316,7 +327,7 @@ export const PaperCard = forwardRef<HTMLDivElement, PaperCardProps>(function Pap
         'mrs-paper-card',
         hasAccent && `mrs-paper-card--accent-${accentPlacement}`,
         isHoverable && 'mrs-paper-card--hoverable',
-        watermark && 'mrs-paper-card--watermark',
+        watermarkIsString && hasWatermark && 'mrs-paper-card--watermark',
         image != null && 'mrs-paper-card--imaged',
         hasDragHandle && 'mrs-paper-card--draggable',
         corner != null && 'mrs-paper-card--cornered',
@@ -345,8 +356,14 @@ export const PaperCard = forwardRef<HTMLDivElement, PaperCardProps>(function Pap
       ) : null}
       {corner != null ? <div className="mrs-paper-card__corner">{corner}</div> : null}
       {/* The sheet: clip-path cuts the notch; the fold triangle sits in it. */}
-      <div className="mrs-paper-card__sheet" data-watermark={watermark}>
+      <div
+        className="mrs-paper-card__sheet"
+        data-watermark={watermarkIsString ? watermark : undefined}
+      >
         <span className="mrs-paper-card__fold" aria-hidden="true" />
+        {hasArtWatermark ? (
+          <div className="mrs-paper-card__watermark" aria-hidden="true">{watermark}</div>
+        ) : null}
         {image != null ? (
           <div className="mrs-paper-card__image" aria-hidden="true">{image}</div>
         ) : null}

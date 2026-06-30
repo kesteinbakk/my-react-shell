@@ -7,3 +7,7 @@ export type { IconGlyph, IconRenderer, CreateIconRendererOptions } from './creat
 export { useIconMode } from './useIconMode';
 export type { UseIconModeResult } from './useIconMode';
 export type { IconMode, IconModeContextValue } from './iconModeContext';
+export { EmojiRenderProvider } from './EmojiRenderProvider';
+export type { EmojiRenderProviderProps } from './EmojiRenderProvider';
+export { useEmojiRender } from './emojiRenderContext';
+export type { EmojiRenderer } from './emojiRenderContext';

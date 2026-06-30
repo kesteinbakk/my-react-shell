@@ -61,8 +61,13 @@ export interface PaperCardProps {
      * `renderLink` is set. Positioned just below the fold triangle to preserve the dog-ear.
      */
     corner?: ReactNode;
-    /** Emoji or text rendered as a faint background watermark. E.g. `'📄'`. */
-    watermark?: string;
+    /**
+     * Faint background watermark. A **`string`** is an oversized emoji/text drawn via the
+     * sheet's CSS `::after` (e.g. `'📄'`); a **`ReactNode`** (e.g. an `<AppIcon>` / `<img>`)
+     * renders in an art layer behind the content. Same shape as `StatCard`/`ContentCard`/
+     * `DynamicGridCard`.
+     */
+    watermark?: ReactNode;
     /**
      * A real, full-opacity preview layer filling the sheet behind the title/footer — e.g. a
      * rendered PDF first page (`<canvas>`/`<img>`). Unlike `watermark` (a faint decorative

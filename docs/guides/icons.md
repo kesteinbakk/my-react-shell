@@ -149,6 +149,42 @@ Builds a `renderIcon(key, size, label?)` from your maps, with the guardrails abo
 
 Returns an `IconRenderer` — droppable straight into app-shell's `config.renderIcon`.
 
+## Swap how an emoji is drawn — `EmojiRenderProvider` (optional)
+
+By default `<Icon>`'s emoji branch prints the **raw char** in the page font, so the same
+glyph renders differently per OS (Apple vs Segoe vs Noto). For a cross-platform-consistent
+set, wrap the app in `EmojiRenderProvider` and supply a `render(emoji, size) => ReactNode`.
+`<Icon>` then calls it to draw the char — reaching **everything that renders through
+`<Icon>`** (a bare `<Icon>`, `createIconRenderer`, the chrome's `config.renderIcon`, every
+consumer `<AppIcon>`). The wrapper span (className / aria / sizing) is identical to the raw
+path; only the inner content changes.
+
+```tsx
+import { EmojiRenderProvider } from 'my-react-shell/icons'
+
+// e.g. serve a bundled per-codepoint SVG on non-Apple devices, native char on Apple,
+// native char if the asset is missing — the policy is yours; the shell ships none.
+<IconModeProvider>
+  <EmojiRenderProvider render={(emoji, size) => renderEmoji(emoji, size)}>
+    <App />
+  </EmojiRenderProvider>
+</IconModeProvider>
+```
+
+The seam is **fully optional and backward-compatible**: with no `EmojiRenderProvider`,
+`<Icon>` renders the raw char exactly as before — every existing consumer is unchanged.
+
+For an emoji surface that is *not* an `<Icon>` (e.g. a thin `<Emoji char>` for arbitrary
+user-picked chars with no registry key), read the same renderer with **`useEmojiRender()`**
+— it returns the active `EmojiRenderer` or `null` outside a provider — so that surface
+shares one render policy with the icon system.
+
+| Export | Kind | Meaning |
+|------|------|---------|
+| `EmojiRenderProvider` | component | Publishes `render: (emoji, size) => ReactNode` for the subtree. |
+| `useEmojiRender()` | hook | Returns the active `EmojiRenderer` or `null` outside a provider. |
+| `EmojiRenderer` | type | `(emoji: string, size: number) => ReactNode`. |
+
 ## Pair with `<UserPreferences>`
 
 `<UserPreferences>` (from `my-react-shell/components`) is the ready-made panel that
