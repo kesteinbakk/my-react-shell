@@ -1,6 +1,7 @@
 import { jsx as _jsx, Fragment as _Fragment, jsxs as _jsxs } from "react/jsx-runtime";
 import * as RadixDialog from '@radix-ui/react-dialog';
 import { cn } from './cn';
+import { useDialogDismissGuard } from './useDialogDismissGuard';
 /**
  * General-purpose controlled dialog on Radix Dialog (overlay, focus trap, Esc/backdrop
  * close, portal). Unlike `ConfirmDialog`, it renders no buttons of its own — pass your
@@ -44,7 +45,20 @@ export function Dialog({ open, onOpenChange, title, titleActions, headerActions,
         const loading = config.loading ?? false;
         return (_jsx("button", { type: "button", className: cn('mrs-dialog__btn', getButtonClass(tone)), style: style, onClick: onClick, disabled: loading, "aria-busy": loading || undefined, children: config.label }));
     };
+    // Keep a nested popper (Select, DropdownMenu, Popover, …) dismissal from tearing down the
+    // whole dialog. See useDialogDismissGuard for the full mechanism.
+    const guardPopperOutside = useDialogDismissGuard(open);
     const hasActions = useCancel != null || usePrimary != null || footer != null;
     const renderedFooter = hasActions ? (_jsxs(_Fragment, { children: [useCancel != null && renderButton(useCancel, 'neutral', { marginRight: 'auto' }), footer, usePrimary != null && renderButton(usePrimary, 'primary')] })) : null;
-    return (_jsx(RadixDialog.Root, { open: open, onOpenChange: onOpenChange, children: _jsxs(RadixDialog.Portal, { children: [_jsx(RadixDialog.Overlay, { className: "mrs-dialog__overlay" }), _jsxs(RadixDialog.Content, { className: cn('mrs-dialog', `mrs-dialog--${size}`, bleed && 'mrs-dialog--bleed', className), onPointerDownOutside: closeOnBackdrop ? undefined : (e) => e.preventDefault(), onInteractOutside: closeOnBackdrop ? undefined : (e) => e.preventDefault(), onEscapeKeyDown: closeOnEsc ? undefined : (e) => e.preventDefault(), onOpenAutoFocus: onOpenAutoFocus, children: [bleed ? (_jsxs(_Fragment, { children: [_jsx(RadixDialog.Title, { className: "mrs-dialog__title mrs-sr-only", children: title }), description != null && (_jsx(RadixDialog.Description, { className: "mrs-sr-only", children: description })), children] })) : (_jsxs(_Fragment, { children: [_jsxs("div", { className: "mrs-dialog__header", children: [_jsx(RadixDialog.Title, { className: "mrs-dialog__title", children: title }), titleActions != null && (_jsx("div", { className: "mrs-dialog__title-actions", children: titleActions }))] }), description != null && (_jsx(RadixDialog.Description, { className: "mrs-dialog__desc", children: description })), children != null && _jsx("div", { className: "mrs-dialog__body", children: children }), renderedFooter != null && _jsx("div", { className: "mrs-dialog__actions", children: renderedFooter })] })), (showClose || headerActions != null) && (_jsxs("div", { className: "mrs-dialog__close-container", children: [headerActions, showClose && (_jsx(RadixDialog.Close, { className: "mrs-dialog__close", "aria-label": closeLabel, children: _jsxs("svg", { width: 16, height: 16, viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: 2, strokeLinecap: "round", strokeLinejoin: "round", "aria-hidden": "true", children: [_jsx("path", { d: "M18 6 6 18" }), _jsx("path", { d: "m6 6 12 12" })] }) }))] }))] })] }) }));
+    return (_jsx(RadixDialog.Root, { open: open, onOpenChange: onOpenChange, children: _jsxs(RadixDialog.Portal, { children: [_jsx(RadixDialog.Overlay, { className: "mrs-dialog__overlay" }), _jsxs(RadixDialog.Content, { className: cn('mrs-dialog', `mrs-dialog--${size}`, bleed && 'mrs-dialog--bleed', className), onPointerDownOutside: (e) => {
+                        if (guardPopperOutside(e))
+                            return;
+                        if (!closeOnBackdrop)
+                            e.preventDefault();
+                    }, onInteractOutside: (e) => {
+                        if (guardPopperOutside(e))
+                            return;
+                        if (!closeOnBackdrop)
+                            e.preventDefault();
+                    }, onEscapeKeyDown: closeOnEsc ? undefined : (e) => e.preventDefault(), onOpenAutoFocus: onOpenAutoFocus, children: [bleed ? (_jsxs(_Fragment, { children: [_jsx(RadixDialog.Title, { className: "mrs-dialog__title mrs-sr-only", children: title }), description != null && (_jsx(RadixDialog.Description, { className: "mrs-sr-only", children: description })), children] })) : (_jsxs(_Fragment, { children: [_jsxs("div", { className: "mrs-dialog__header", children: [_jsx(RadixDialog.Title, { className: "mrs-dialog__title", children: title }), titleActions != null && (_jsx("div", { className: "mrs-dialog__title-actions", children: titleActions }))] }), description != null && (_jsx(RadixDialog.Description, { className: "mrs-dialog__desc", children: description })), children != null && _jsx("div", { className: "mrs-dialog__body", children: children }), renderedFooter != null && _jsx("div", { className: "mrs-dialog__actions", children: renderedFooter })] })), (showClose || headerActions != null) && (_jsxs("div", { className: "mrs-dialog__close-container", children: [headerActions, showClose && (_jsx(RadixDialog.Close, { className: "mrs-dialog__close", "aria-label": closeLabel, children: _jsxs("svg", { width: 16, height: 16, viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: 2, strokeLinecap: "round", strokeLinejoin: "round", "aria-hidden": "true", children: [_jsx("path", { d: "M18 6 6 18" }), _jsx("path", { d: "m6 6 12 12" })] }) }))] }))] })] }) }));
 }

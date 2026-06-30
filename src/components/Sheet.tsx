@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import * as RadixDialog from '@radix-ui/react-dialog'
 import { cn } from './cn'
+import { useDialogDismissGuard } from './useDialogDismissGuard'
 
 /** Which edge the panel slides in from. */
 export type SheetSide = 'left' | 'right' | 'top' | 'bottom'
@@ -119,6 +120,9 @@ export function Sheet({
   panelTestId,
 }: SheetProps) {
   const showHeader = !bare && (header != null || title != null || showClose || headerActions != null)
+  // Keep a nested popper (Select, DropdownMenu, Popover, …) dismissal from tearing down the
+  // whole sheet. See useDialogDismissGuard for the full mechanism.
+  const guardPopperOutside = useDialogDismissGuard(open)
   return (
     <RadixDialog.Root open={open} onOpenChange={onOpenChange} defaultOpen={defaultOpen} modal={modal}>
       {trigger != null && <RadixDialog.Trigger asChild>{trigger}</RadixDialog.Trigger>}
@@ -128,8 +132,15 @@ export function Sheet({
           data-testid={panelTestId}
           className={cn('mrs-sheet', `mrs-sheet--${side}`, `mrs-sheet--${size}`, className)}
           // Without a scrim, Radix still traps focus when modal; keep the panel from
-          // grabbing focus away from the live page in the non-modal float case.
-          onInteractOutside={modal ? undefined : (e) => e.preventDefault()}
+          // grabbing focus away from the live page in the non-modal float case. The popper
+          // guard runs first so a nested Select/menu dismissal never collapses the sheet.
+          onPointerDownOutside={(e) => {
+            guardPopperOutside(e)
+          }}
+          onInteractOutside={(e) => {
+            if (guardPopperOutside(e)) return
+            if (!modal) e.preventDefault()
+          }}
         >
           {bare ? (
             <>

@@ -2,6 +2,7 @@ import type { ReactNode } from 'react'
 import * as Dialog from '@radix-ui/react-dialog'
 import { cn } from './cn'
 import type { DialogButtonProp, DialogButtonConfig } from './Dialog'
+import { useDialogDismissGuard } from './useDialogDismissGuard'
 
 export interface ConfirmDialogProps {
   /** Controlled open state. */
@@ -79,11 +80,23 @@ export function ConfirmDialog({
   const confirmLoading = confirmConfig.loading ?? loading
   const confirmTone = confirmConfig.tone ?? (tone === 'danger' ? 'danger' : 'primary')
 
+  // Keep a nested popper (Select, DropdownMenu, Popover, …) dismissal from tearing down the
+  // whole dialog. See useDialogDismissGuard for the full mechanism.
+  const guardPopperOutside = useDialogDismissGuard(open)
+
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Portal>
         <Dialog.Overlay className="mrs-dialog__overlay" />
-        <Dialog.Content className={cn('mrs-dialog', className)}>
+        <Dialog.Content
+          className={cn('mrs-dialog', className)}
+          onPointerDownOutside={(e) => {
+            guardPopperOutside(e)
+          }}
+          onInteractOutside={(e) => {
+            guardPopperOutside(e)
+          }}
+        >
           <Dialog.Title className="mrs-dialog__title">{title}</Dialog.Title>
           {description != null && (
             <Dialog.Description className="mrs-dialog__desc">{description}</Dialog.Description>

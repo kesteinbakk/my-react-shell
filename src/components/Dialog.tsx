@@ -1,6 +1,7 @@
 import type { ReactNode, CSSProperties } from 'react'
 import * as RadixDialog from '@radix-ui/react-dialog'
 import { cn } from './cn'
+import { useDialogDismissGuard } from './useDialogDismissGuard'
 
 export interface DialogButtonConfig {
   /** The button label. */
@@ -144,6 +145,10 @@ export function Dialog({
     )
   }
 
+  // Keep a nested popper (Select, DropdownMenu, Popover, …) dismissal from tearing down the
+  // whole dialog. See useDialogDismissGuard for the full mechanism.
+  const guardPopperOutside = useDialogDismissGuard(open)
+
   const hasActions = useCancel != null || usePrimary != null || footer != null
   const renderedFooter = hasActions ? (
     <>
@@ -164,8 +169,14 @@ export function Dialog({
             bleed && 'mrs-dialog--bleed',
             className,
           )}
-          onPointerDownOutside={closeOnBackdrop ? undefined : (e) => e.preventDefault()}
-          onInteractOutside={closeOnBackdrop ? undefined : (e) => e.preventDefault()}
+          onPointerDownOutside={(e) => {
+            if (guardPopperOutside(e)) return
+            if (!closeOnBackdrop) e.preventDefault()
+          }}
+          onInteractOutside={(e) => {
+            if (guardPopperOutside(e)) return
+            if (!closeOnBackdrop) e.preventDefault()
+          }}
           onEscapeKeyDown={closeOnEsc ? undefined : (e) => e.preventDefault()}
           onOpenAutoFocus={onOpenAutoFocus}
         >
