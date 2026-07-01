@@ -5721,23 +5721,26 @@
 
 /* ── Art watermark + icon placements ──────────────────────────────────────────
    A `ReactNode` watermark renders in a faint art layer (the string watermark uses the
-   `::after` path above). `--glyph` (default via `autoscaleWatermark`) scales a keyed icon
-   glyph up to watermark scale, mirroring `mrs-stat-card__watermark`. */
+   `::after` path above), centred horizontally and dropped a little below the card's
+   vertical centre — same framing as `mrs-stat-card__watermark`/`mrs-paper-card__watermark`.
+   `--glyph` (default via `autoscaleWatermark`) scales a keyed icon glyph up to watermark
+   scale, mirroring `mrs-stat-card__watermark--glyph`. */
 .mrs-content-card__watermark {
   position: absolute;
-  right: 4%;
-  bottom: 2%;
-  width: 40%;
+  left: 54%;
+  top: 60%;
+  width: 62%;
+  transform: translate(-50%, -50%);
   z-index: 0;
   pointer-events: none;
   opacity: 0.16;
   user-select: none;
 }
 .mrs-content-card__watermark--glyph {
-  left: auto;
-  right: 6%;
-  bottom: 4%;
+  left: 50%;
+  top: 60%;
   width: auto;
+  transform: translate(-50%, -50%);
   opacity: 0.10;
   font-size: 5.5em;
   line-height: 1;
