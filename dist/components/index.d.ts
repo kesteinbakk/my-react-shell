@@ -41,6 +41,8 @@ export { ToastProvider, useToast } from './Toast';
 export type { ToastApi, ToastOptions, ToastProviderProps, ToastTone } from './Toast';
 export { ActionButton, ActionButtonGroup, actionPresets } from './ActionButton';
 export type { ActionButtonProps, ActionButtonPresetProps, ActionButtonIconProps, ActionButtonGroupProps, ActionButtonTone, ActionButtonSize, ActionButtonLayout, ActionType, ActionPreset, } from './ActionButton';
+export { CopyButton } from './CopyButton';
+export type { CopyButtonProps } from './CopyButton';
 export { Badge } from './Badge';
 export type { BadgeProps, BadgeTone } from './Badge';
 export { CountPill } from './CountPill';

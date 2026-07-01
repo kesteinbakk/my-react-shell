@@ -101,6 +101,9 @@ export type {
   ActionPreset,
 } from './ActionButton'
 
+export { CopyButton } from './CopyButton'
+export type { CopyButtonProps } from './CopyButton'
+
 export { Badge } from './Badge'
 export type { BadgeProps, BadgeTone } from './Badge'
 

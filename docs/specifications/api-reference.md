@@ -275,6 +275,7 @@ import 'my-react-shell/components/styles.css' // REQUIRED (plain prebuilt CSS; a
 | `ConfirmDialog` | component | Controlled confirm dialog on Radix Dialog (overlay, focus trap, Esc/backdrop close). `tone="danger"` for destructive; renders its own cancel/confirm buttons. `confirmLabel` and `cancelLabel` are **required** — pass translated strings (no English default). Buttons can also be configured via `useCancel`/`useConfirm` (a string label or `DialogButtonConfig`). A nested Radix popper in a custom `children` body (e.g. a `Select`) won't dismiss the dialog when clicked away from. |
 | `ToastProvider`, `useToast` | component + hook | Mount provider once; fire toasts via `useToast()` (`.success`/`.error`/…). Each renders as an `Alert`; auto-dismiss (3s; `duration:0` sticky). `dismissLabel` is **required** on `ToastProvider` — the accessible name for a dismissible toast's ✕ (no default). |
 | `ActionButton`, `ActionButtonGroup`, `actionPresets` | component + const | Icon/emoji + label action button with presets (table below). `actionPresets` is the `{ tone, emoji }` map — presets carry **no text**; pass a translated `label` (visible) and/or `aria-label`/`hint` (accessible name). With none, the button is icon-only and **unnamed**. |
+| `CopyButton` | component | Copy-to-clipboard action button on `ActionButton`. Click writes `value` to the clipboard, then shows a transient green **check** (`success` tone; ✅ in emoji mode) confirmation. `label` is **optional** (absent → icon only — give it an `aria-label`/`hint`); optional `copiedLabel`, `onCopy(ok)` callback (surface failures via your own toast — the kit can't), `copiedDuration` (default `1500`ms). Carries no text default; pass translated strings. See [below](#copybutton). |
 | `Badge` | component | Status/category badge; tones `primary`·`neutral`·`success`·`warning`·`danger`·`info` (`primary` is a solid pill); optional status `dot`. Forwards standard `<span>` attributes (`title`, `aria-*`, `data-*`, `id`, events) to the root. |
 | `CountPill` | component | Small solid-fill numeric count pill (unread counts, tab counts, a bell overlay). `count`; tones `primary`·`secondary`·`success`·`warning`·`danger`·`info`; clamps at `max` (default `99` → `99+`), `tabular-nums`. Caller gates visibility and positions any overlay via `className`. Forwards standard `<span>` attributes. |
 | `Chip`, `ChipGroup` | component | Tag: plain / toggleable (`selected`+`onClick`) / removable (`onRemove`). `ChipGroup` wraps. |
@@ -324,7 +325,7 @@ Every component has a matching `…Props` type export (e.g. `ButtonProps`, `Butt
 `AlertProps`, `AlertTone`,
 `TableProps`, `TableColumn`, `TableRowVariant`, `ToastApi`, `ToastOptions`, `ToastTone`, `SelectProps`,
 `SelectOption`, `SelectSize`, `SegmentedOption`, `BadgeTone`, `CountPillProps`, `CountPillTone`, `AvatarSize`, `ActionType`,
-`ActionPreset`, `ActionButtonTone`/`Size`/`Layout`, `PhiCardProps`, `PhiCardAction`,
+`ActionPreset`, `ActionButtonTone`/`Size`/`Layout`, `CopyButtonProps`, `PhiCardProps`, `PhiCardAction`,
 `PhiCardSize`, `PhiCardFooter`, `PhiCardFooterLine`, `PhiCardFooterLineType`,
 `CardIconPlacement`, `CardIconConfig`,
 `StatCardProps`, `StatCardSize`, `StatCardMedallion`, `StatItem`, `StatCardTone`, `StatCardVariant`,
@@ -431,6 +432,39 @@ trigger (e.g. a `Popover` / `Tooltip` / `DropdownMenu` anchor) with no wrapper e
   <ActionButton action="star" active={isFavorite} aria-label={t('action.favorite')} onClick={toggleFavorite} />
   <ActionButton icon={<Upload size={20} />} label="Import" tone="info" onClick={onImport} />
 </ActionButtonGroup>
+```
+
+### `CopyButton`
+
+A copy-to-clipboard action button built on `ActionButton`. Click writes `value` to the
+clipboard (`navigator.clipboard.writeText`), then the glyph swaps to a green **check** and
+the tone goes `success` for `copiedDuration` ms before returning to the `copy` glyph. It
+carries **no text default** (see [ActionButton](#actionbutton) — same rule); the label is
+optional, so with none it's an icon-only button — give it an `aria-label` or `hint`.
+
+| Prop | Default | Meaning |
+|---|---|---|
+| `value` | — | **Required.** The text written to the clipboard on click. |
+| `label` | — | Visible label (idle). No default — pass a translated string; absent → icon only. |
+| `copiedLabel` | — | Visible label shown briefly after a successful copy — replaces `label`. Absent → the label is unchanged and the confirmation is the check alone. Pass a translated string. |
+| `onCopy` | — | `(ok: boolean) => void` — fired after each attempt: `true` on success, `false` if the write failed or the Clipboard API is unavailable (e.g. an insecure context). Surface failures via your own toast — the kit can't. |
+| `copiedDuration` | `1500` | How long the copied confirmation shows, in ms. `<= 0` keeps it until the next copy. |
+| `showEmoji` | `false` | Render the emoji (📋 idle, ✅ copied) instead of the SVG — wire to `useIconMode().isEmoji`. |
+| `tone` | `neutral` | Idle tone; the copied state is always `success`. |
+| `size` | `sm` | `xs`·`sm`·`md`·`lg`·`xl` — drives padding, glyph, and label size. |
+| `layout` | `vertical` | `vertical` (glyph over label) or `inline` (glyph left of label). |
+| `coloredLabel` | `false` | Let the idle label take the tone color. The copied label is always colored (green). |
+| `hint` / `disabled` / `onClick` / `aria-label` / `className` | — | Usual button props, forwarded to the underlying `<button>` (`ref` too); `onClick` fires before the copy. |
+
+```tsx
+// Icon-only (label optional) — name it for a11y:
+<CopyButton value={inviteUrl} aria-label={t('action.copyLink')} showEmoji={useIconMode().isEmoji} />
+
+// With a visible label that swaps on success:
+<CopyButton value={apiKey} label={t('action.copy')} copiedLabel={t('action.copied')} layout="inline" />
+
+// Toast on failure (the kit can't — you own i18n):
+<CopyButton value={code} label={t('action.copy')} onCopy={(ok) => { if (!ok) toast.error(t('copy.failed')) }} />
 ```
 
 ### `SearchInput`

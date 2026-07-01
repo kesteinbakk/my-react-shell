@@ -32,6 +32,7 @@ export { InfoBox } from './InfoBox';
 export { ConfirmDialog } from './ConfirmDialog';
 export { ToastProvider, useToast } from './Toast';
 export { ActionButton, ActionButtonGroup, actionPresets } from './ActionButton';
+export { CopyButton } from './CopyButton';
 export { Badge } from './Badge';
 export { CountPill } from './CountPill';
 export { Chip, ChipGroup } from './Chip';

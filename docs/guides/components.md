@@ -137,6 +137,28 @@ anchor) with no wrapper element.
 </ActionButtonGroup>
 ```
 
+## `CopyButton` — copy with a built-in confirmation
+
+`CopyButton` is a thin composite over `ActionButton` for the ubiquitous copy-to-clipboard
+action, so you don't re-implement the write + the "copied!" feedback each time. Click →
+`navigator.clipboard.writeText(value)` → the glyph swaps from 📋 to a green **check** and the
+tone goes `success` for `copiedDuration` (default 1500 ms), then it returns to idle. It reuses
+`ActionButton`'s styling wholesale — no new tokens, no new CSS — so `size`, `layout`,
+`showEmoji`, and `tone` behave exactly as they do there.
+
+It follows the kit's **no-hardcoded-text** rule (above): the `label` is optional (icon-only when
+omitted — pass an `aria-label`/`hint` for a non-decorative action), and there is no language
+default. Pass a `copiedLabel` to swap the visible text on success; omit it and the check alone is
+the confirmation. Because a shell component can't reach your i18n or raise a toast, a **failed**
+copy (insecure context, denied permission, no Clipboard API) is surfaced only through the
+`onCopy(ok)` callback — hook your own error toast there; a success is shown inline, never toasted.
+
+```tsx
+<CopyButton value={inviteUrl} aria-label={t('action.copyLink')} showEmoji={useIconMode().isEmoji} />
+<CopyButton value={apiKey} label={t('action.copy')} copiedLabel={t('action.copied')} layout="inline" />
+<CopyButton value={code} label={t('action.copy')} onCopy={(ok) => { if (!ok) toast.error(t('copy.failed')) }} />
+```
+
 ## `ColorPicker` — free vs constrained
 
 A general, controlled colour picker behind a compact popover trigger. Two behaviours,
