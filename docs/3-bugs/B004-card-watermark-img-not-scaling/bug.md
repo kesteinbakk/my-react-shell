@@ -90,6 +90,11 @@ robust to an icon kit that sizes its glyph via an **inline `style`** rather than
   "Emoji-image glyph" card whose bundled Noto rocket `<img>` renders as a large faint watermark
   (screenshot captured during the fix).
 
+## Shipped
+
+Released in **`my-react-shell v0.11.4`** (2026-07-01). To verify in production, pin the consumer
+to that tag (`cd <app> && pnpm release v0.11.4 --push`) and open the Vercel preview.
+
 ## Awaiting user confirmation
 
 Behaviour-level closure requires the user to reproduce on their real **Windows/Android**
