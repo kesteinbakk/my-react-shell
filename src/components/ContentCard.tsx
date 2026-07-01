@@ -5,7 +5,7 @@ import { resolveAccentColor } from './accent'
 import type { AccentPlacement } from './accent'
 import { TONE_COLOR } from './tone'
 import type { Tone } from './tone'
-import { isIconConfig, type CardIconPlacement, type CardIconConfig } from './card-icon'
+import { isIconConfig, resolveCardIconPlacement, type CardIconPlacement, type CardIconConfig } from './card-icon'
 declare const process: { env: { NODE_ENV?: string } }
 
 /**
@@ -136,8 +136,9 @@ export interface ContentCardBaseProps {
   watermark?: ReactNode
   /**
    * For a **`ReactNode`** watermark only (ignored for a string/variant watermark): scales the
-   * node's intrinsic `<svg>`/`<span>` size up to watermark scale, oversized and faint, mirroring
-   * the string-emoji watermark — the right behavior for a small icon-kit glyph (e.g. `<AppIcon>`).
+   * node's intrinsic `<svg>` / `<img>` / `<span>` size up to watermark scale, oversized and faint,
+   * mirroring the string-emoji watermark — the right behavior for a small icon-kit glyph: a lucide
+   * `<svg>`, an emoji drawn as a bundled `<img>` asset, or a native-char span (e.g. `<AppIcon>`).
    *
    * Set `false` for a self-sized illustration (e.g. `DrawerMark`) that already lays itself out
    * at watermark scale and shouldn't be force-scaled. Default `true`.
@@ -314,7 +315,8 @@ export const ContentCard = forwardRef<HTMLDivElement, ContentCardProps>(function
   // Resolve the `icon` shorthand to its full `{ content, placement }` form.
   const hasIcon = icon != null
   const iconContent = hasIcon ? (isIconConfig(icon) ? icon.content : icon) : null
-  const iconPlacement: ContentCardIconPlacement = hasIcon && isIconConfig(icon) ? (icon.placement ?? 'title') : 'title'
+  const requestedIconPlacement: ContentCardIconPlacement = hasIcon && isIconConfig(icon) ? (icon.placement ?? 'title') : 'title'
+  const iconPlacement = resolveCardIconPlacement(requestedIconPlacement, title != null || subtitle != null)
   const isTitleIcon = hasIcon && iconPlacement === 'title'
   const isCornerIcon = hasIcon && (iconPlacement === 'upperLeft' || iconPlacement === 'upperRight' || iconPlacement === 'lowerLeft' || iconPlacement === 'lowerRight')
   const isCenterIcon = hasIcon && iconPlacement === 'center'

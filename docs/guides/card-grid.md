@@ -168,6 +168,13 @@ full `{ content, placement }` form:
 <ContentCard title="Empty state" icon={{ content: '📭', placement: 'center' }} />
 ```
 
+**`'upperLeft'` falls back to `'title'` when a title/subtitle is present.** The `'upperLeft'`
+corner sits at the same top-left inset where the `title`/`subtitle` block starts, so the overlay
+would land on top of that text. Rather than a dev-throw (`title` is mandatory on three of the
+four cards, which would make `'upperLeft'` unusable there), it's resolved silently to `'title'`
+placement instead — in-flow, beside the title. `'upperLeft'` still renders as a true corner
+overlay on a `DynamicGridCard` with no `title` or `subtitle`.
+
 **Per-card collision rules** — a placement that would land on an existing raised slot **throws
 in dev** (a no-op in prod). The four corners and the drag handle don't collide: the handle is
 vertically centred on the right edge, while the corner placements sit at the true top/bottom
@@ -299,11 +306,19 @@ watermark makes the card root a `mrs-reveal-host`, which is what drives the open
 `open` to keep it open for the active route.
 
 **`autoscaleWatermark` (default `true`, all four cards)** — for a **`ReactNode`** watermark only,
-it scales the node's intrinsic `<svg>`/`<span>` up to watermark scale (oversized and faint),
-mirroring the string-emoji watermark — the right behavior for a small icon-kit glyph (e.g.
-`<AppIcon>`). Pass **`autoscaleWatermark={false}`** for a self-sized illustration (e.g. `DrawerMark`)
-that already lays itself out at watermark scale and shouldn't be force-scaled. It's a no-op for a
-string watermark (and for `StatCard`/`ContentCard`'s `variant` ⚠️, which is a string).
+it scales the node's intrinsic `<svg>` / `<img>` / `<span>` up to watermark scale (oversized and
+faint), mirroring the string-emoji watermark — the right behavior for a small icon-kit glyph: a
+lucide `<svg>`, an emoji drawn as a bundled `<img>` asset, or a native-char span (e.g. `<AppIcon>`).
+Pass **`autoscaleWatermark={false}`** for a self-sized illustration (e.g. `DrawerMark`) that already
+lays itself out at watermark scale and shouldn't be force-scaled. It's a no-op for a string watermark
+(and for `StatCard`/`ContentCard`'s `variant` ⚠️, which is a string).
+
+> **Emoji-image watermarks** — a consumer's `EmojiRenderer` (the icons module's emoji seam) typically
+> draws each emoji as a **per-codepoint `<img>` asset**, with a native-char span as the fallback. The
+> autoscale covers all three shapes — `<svg>`, `<img>`, and the native-char `<span>` — and forces
+> `max-width: none` on the glyph so a consumer reset's `img { max-width: 100% }` (e.g. Tailwind
+> preflight) can't collapse the scaled asset. So an emoji watermark scales identically whether a
+> platform's policy renders the native char (common on Apple) or a bundled image (common elsewhere).
 
 ```tsx
 import { DynamicGridCard, DrawerMark } from 'my-react-shell/components'

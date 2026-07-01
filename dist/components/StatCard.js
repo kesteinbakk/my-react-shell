@@ -4,7 +4,7 @@ import { cn } from './cn';
 import { resolveAccentColor } from './accent';
 import { TONE_COLOR } from './tone';
 import { Dialog } from './Dialog';
-import { isIconConfig } from './card-icon';
+import { isIconConfig, resolveCardIconPlacement } from './card-icon';
 /**
  * Discriminate the structured `{ lines, badges }` footer from a freeform `ReactNode`.
  * A React element, array, or primitive is freeform; a plain object carrying `lines`/`badges`
@@ -182,7 +182,8 @@ export const StatCard = forwardRef(function StatCard({ title, subtitle, icon, me
     // Resolve the `icon` shorthand to its full `{ content, placement }` form.
     const hasIcon = icon != null;
     const iconContent = hasIcon ? (isIconConfig(icon) ? icon.content : icon) : null;
-    const iconPlacement = hasIcon && isIconConfig(icon) ? (icon.placement ?? 'title') : 'title';
+    const requestedIconPlacement = hasIcon && isIconConfig(icon) ? (icon.placement ?? 'title') : 'title';
+    const iconPlacement = resolveCardIconPlacement(requestedIconPlacement, title != null || subtitle != null);
     const isTitleIcon = hasIcon && iconPlacement === 'title';
     const isCornerIcon = hasIcon && (iconPlacement === 'upperLeft' || iconPlacement === 'upperRight' || iconPlacement === 'lowerLeft' || iconPlacement === 'lowerRight');
     const isCenterIcon = hasIcon && iconPlacement === 'center';

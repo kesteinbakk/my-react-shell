@@ -2,7 +2,7 @@ import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import { createContext, forwardRef, isValidElement, useContext, useId, useRef, useState } from 'react';
 import { cn } from './cn';
 import { resolveAccentColor } from './accent';
-import { isIconConfig } from './card-icon';
+import { isIconConfig, resolveCardIconPlacement } from './card-icon';
 /** φ — the golden ratio. The dynamic card's shape is `aspect-ratio: φ : 1` (or `φ² : 1` for landscape). */
 const PHI = 1.6180339887;
 /**
@@ -112,7 +112,8 @@ export const DynamicGridCard = forwardRef(function DynamicGridCard({ size, shape
     // Resolve the `icon` shorthand to its full `{ content, placement }` form.
     const hasIcon = icon != null;
     const iconContent = hasIcon ? (isIconConfig(icon) ? icon.content : icon) : null;
-    const iconPlacement = hasIcon && isIconConfig(icon) ? (icon.placement ?? 'title') : 'title';
+    const requestedIconPlacement = hasIcon && isIconConfig(icon) ? (icon.placement ?? 'title') : 'title';
+    const iconPlacement = resolveCardIconPlacement(requestedIconPlacement, title != null || subtitle != null);
     const isTitleIcon = hasIcon && iconPlacement === 'title';
     const isCornerIcon = hasIcon && (iconPlacement === 'upperLeft' || iconPlacement === 'upperRight' || iconPlacement === 'lowerLeft' || iconPlacement === 'lowerRight');
     const isCenterIcon = hasIcon && iconPlacement === 'center';

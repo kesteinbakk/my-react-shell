@@ -72,8 +72,9 @@ export interface DynamicGridCardProps extends Omit<HTMLAttributes<HTMLDivElement
     watermark?: ReactNode;
     /**
      * For a **`ReactNode`** watermark only (ignored for a string watermark): scales the node's
-     * intrinsic `<svg>`/`<span>` size up to watermark scale, oversized and faint, mirroring the
-     * string-emoji watermark — the right behavior for a small icon-kit glyph (e.g. `<AppIcon>`).
+     * intrinsic `<svg>` / `<img>` / `<span>` size up to watermark scale, oversized and faint, mirroring
+     * the string-emoji watermark — the right behavior for a small icon-kit glyph: a lucide `<svg>`, an
+     * emoji drawn as a bundled `<img>` asset, or a native-char span (e.g. `<AppIcon>`).
      *
      * Set `false` for a self-sized illustration (e.g. `DrawerMark`) that already lays itself out
      * at watermark scale and shouldn't be force-scaled. Default `true`.
