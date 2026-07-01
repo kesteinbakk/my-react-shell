@@ -10,6 +10,23 @@ export type DynamicGridCardSize = 'sm' | 'md' | 'lg';
 export declare const DynamicCardGridSizeContext: import("react").Context<DynamicGridCardSize | undefined>;
 /** Proportion of the card: `'standard'` is φ:1; `'landscape'` is the shorter-wider φ²:1. */
 export type DynamicGridCardShape = 'standard' | 'landscape';
+/**
+ * Where a `DynamicGridCard` `icon` renders.
+ *
+ * - `'title'` (default) — inline in the header, beside the title block (today's behavior).
+ *   Part of the document flow: it pushes/sizes alongside the title/subtitle.
+ * - `'upperLeft'` / `'upperRight'` / `'lowerLeft'` / `'lowerRight'` — an absolutely positioned
+ *   corner overlay. Never affects layout (never pushes title/body/footer).
+ * - `'center'` — replaces the card's main content area (`children`).
+ */
+export type DynamicGridCardIconPlacement = 'upperLeft' | 'upperRight' | 'lowerLeft' | 'lowerRight' | 'center' | 'title';
+/** The `{ content, placement }` object form of `icon` — see {@link DynamicGridCardIconPlacement}. */
+export interface DynamicGridCardIconConfig {
+    /** The icon/emoji/glyph content. */
+    content: ReactNode;
+    /** Where the icon renders. Default `'title'`. */
+    placement?: DynamicGridCardIconPlacement;
+}
 /** Leading glyph kind for a structured footer meta line. */
 export type DynamicGridCardFooterLineType = 'date' | 'time' | 'check';
 /** One left-side footer line: text with an optional kit-shipped leading glyph. */
@@ -37,15 +54,23 @@ export interface DynamicGridCardProps extends Omit<HTMLAttributes<HTMLDivElement
     shape?: DynamicGridCardShape;
     title?: ReactNode;
     subtitle?: ReactNode;
-    /** Icon/emoji column rendered beside the title. */
-    icon?: ReactNode;
-    /** Cursor + hover-lift + `:focus-visible` ring on the card root. */
+    /**
+     * Icon/emoji glyph. A bare `ReactNode` is shorthand for `{ content, placement: 'title' }`
+     * (today's behavior: rendered beside the title block). Pass the full
+     * `{ content, placement }` form to place it in a corner (never affects layout) or `'center'`
+     * (replaces `children`) — see {@link DynamicGridCardIconPlacement}.
+     */
+    icon?: ReactNode | DynamicGridCardIconConfig;
+    /**
+     * Cursor + hover feedback + `:focus-visible` ring on the card root. Defaults to `true` when
+     * `onClick` is set. The default hover feedback is a subtle background tint
+     * (`--color-surface-raised`) — see `lift` to additionally move the card.
+     */
     hoverable?: boolean;
     /**
-     * Whether the `hoverable` card lifts (`translateY`) on hover. Defaults to `true`. Set `false`
-     * to keep the card interactive — cursor, `onClick`, and a subtle hover elevation — **without**
-     * the movement (e.g. when the card carries a `DrawerMark` whose own open-on-hover is the
-     * feedback). No effect unless `hoverable` is set.
+     * Adds a `translateY` lift + stronger shadow on top of the default hover tint. Defaults to
+     * `false` — the tint alone is the hover feedback for most cards; opt into the extra movement
+     * for cards where a more pronounced affordance reads better. No effect unless `hoverable`.
      */
     lift?: boolean;
     /**

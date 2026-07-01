@@ -157,7 +157,7 @@ function Breadcrumbs(props) {
         : visibleChain.length === 1
             ? '/'
             : visibleChain[visibleChain.length - 2].entry.route;
-    return (_jsxs("nav", { className: "mrs-breadcrumbs", "aria-label": navLabel, children: [showMenuButton ? (_jsx("button", { type: "button", className: "mrs-page-header__hamburger", "aria-label": openMenuLabel, onClick: onOpenMenu, children: config.renderIcon('menu', 20) })) : null, _jsx(Link, { to: "/", className: "mrs-breadcrumbs__home", title: homeLabel, children: config.renderIcon('home', 18) }), upRoute !== undefined ? (_jsx(Link, { to: upRoute, className: "mrs-breadcrumbs__up", title: upLabel, "aria-label": upLabel, children: config.renderIcon('arrowUp', 14) })) : null, slots.map(slot => {
+    return (_jsxs("nav", { className: "mrs-breadcrumbs", "aria-label": navLabel, children: [showMenuButton ? (_jsx("button", { type: "button", className: "mrs-page-header__hamburger", "aria-label": openMenuLabel, onClick: onOpenMenu, children: config.renderIcon('menu', 20) })) : null, _jsx(Link, { to: "/", className: "mrs-breadcrumbs__home", title: homeLabel, children: config.renderIcon('home', 20) }), upRoute !== undefined ? (_jsx(Link, { to: upRoute, className: "mrs-breadcrumbs__up", title: upLabel, "aria-label": upLabel, children: config.renderIcon('arrowUp', 20) })) : null, slots.map(slot => {
                 const chevron = (_jsx("span", { className: "mrs-breadcrumbs__chevron", children: config.renderIcon('chevronRight', 14) }));
                 if (slot.kind === 'overflow') {
                     return (_jsxs("span", { className: "mrs-breadcrumbs__crumb", children: [chevron, _jsx(OverflowCrumb, { shell: shell, hidden: slot.hidden })] }, "overflow"));

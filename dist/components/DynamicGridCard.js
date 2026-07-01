@@ -40,6 +40,14 @@ function isStructuredFooter(footer) {
         !Array.isArray(footer) &&
         ('lines' in footer || 'badges' in footer));
 }
+/**
+ * Discriminate the `{ content, placement }` icon config from a bare `ReactNode` shorthand.
+ * A config is a plain object carrying `content`; a React element, array, or primitive is the
+ * shorthand (implies `{ content: icon, placement: 'title' }`).
+ */
+function isIconConfig(icon) {
+    return typeof icon === 'object' && icon !== null && !isValidElement(icon) && !Array.isArray(icon) && 'content' in icon;
+}
 function StructuredFooter({ footer }) {
     const lines = footer.lines ?? [];
     const badges = footer.badges ?? [];
@@ -78,9 +86,13 @@ function titleFitStep(title) {
  * pass `renderLink` and the card mounts the consumer's `<Link>` as a full-bleed block-link
  * overlay, with `corner` controls raised above it so they stay independently clickable.
  */
-export const DynamicGridCard = forwardRef(function DynamicGridCard({ size, shape = 'standard', title, subtitle, icon, hoverable, lift = true, watermark, corner, footer, renderLink, showDragHandle, dragHandle, dragHandleProps, dragHandleLabel, dragWholeCard, tone, color, accentPlacement = 'top', className, style, children, ...props }, ref) {
+export const DynamicGridCard = forwardRef(function DynamicGridCard({ size, shape = 'standard', title, subtitle, icon, hoverable, lift = false, watermark, corner, footer, renderLink, showDragHandle, dragHandle, dragHandleProps, dragHandleLabel, dragWholeCard, tone, color, accentPlacement = 'top', className, style, children, ...props }, ref) {
     // A visible grip shows when toggled on, or when a custom handle node is supplied.
     const hasDragHandle = showDragHandle || dragHandle != null;
+    // Mirrors StatCard/ContentCard: a card with an `onClick` is hoverable by default — without
+    // this, a clickable `dragWholeCard` card never gets `--hoverable`, so the drag-whole cursor
+    // rules (keyed off that class) read it as drag-only and show `grab` instead of `pointer`.
+    const isHoverable = hoverable ?? !!props.onClick;
     const [isHolding, setIsHolding] = useState(false);
     const holdTimerRef = useRef(null);
     function startHold() {
@@ -104,10 +116,17 @@ export const DynamicGridCard = forwardRef(function DynamicGridCard({ size, shape
     // No accent unless tone/color is given.
     const accentColor = resolveAccentColor(tone, color);
     const hasAccent = accentColor != null;
+    // Resolve the `icon` shorthand to its full `{ content, placement }` form.
+    const hasIcon = icon != null;
+    const iconContent = hasIcon ? (isIconConfig(icon) ? icon.content : icon) : null;
+    const iconPlacement = hasIcon && isIconConfig(icon) ? (icon.placement ?? 'title') : 'title';
+    const isTitleIcon = hasIcon && iconPlacement === 'title';
+    const isCornerIcon = hasIcon && (iconPlacement === 'upperLeft' || iconPlacement === 'upperRight' || iconPlacement === 'lowerLeft' || iconPlacement === 'lowerRight');
+    const isCenterIcon = hasIcon && iconPlacement === 'center';
     // Auto-wire the overlay anchor's accessible name from the card title.
     const titleId = useId();
     const hasTitle = title != null;
-    const hasHeader = title != null || subtitle != null || icon != null;
+    const hasHeader = title != null || subtitle != null || isTitleIcon;
     // A string watermark uses the emoji `::after` path; any other node renders in an art layer.
     const watermarkIsString = typeof watermark === 'string';
     const hasWatermark = watermarkIsString ? watermark.length > 0 : watermark != null;
@@ -123,7 +142,16 @@ export const DynamicGridCard = forwardRef(function DynamicGridCard({ size, shape
         ...(hasAccent ? { '--mrs-stat-accent': accentColor } : {}),
         ...style,
     };
-    return (_jsxs("div", { ref: ref, className: cn('mrs-dynamic-grid-card', effectiveSize && `mrs-dynamic-grid-card--${effectiveSize}`, hasAccent && `mrs-dynamic-grid-card--accent-${accentPlacement}`, hoverable && 'mrs-dynamic-grid-card--hoverable', hoverable && !lift && 'mrs-dynamic-grid-card--no-lift', renderLink && 'mrs-dynamic-grid-card--linked', hasDragHandle && 'mrs-dynamic-grid-card--draggable', hasWatermark && 'mrs-dynamic-grid-card--watermark', hasArtWatermark && 'mrs-reveal-host', dragWholeCard && 'mrs-dynamic-grid-card--drag-whole', dragWholeCard && isHolding && 'mrs-dynamic-grid-card--holding', className), style: cssVars, "data-watermark": watermarkIsString ? watermark : undefined, ...props, ...(dragWholeCard ? {
+    // Dev guards
+    if (process.env.NODE_ENV !== 'production') {
+        if (iconPlacement === 'upperRight' && corner != null) {
+            throw new Error("DynamicGridCard: icon placement 'upperRight' collides with the `corner` slot — both render in the top-right corner. Use a different icon placement (e.g. 'upperLeft') or drop `corner`.");
+        }
+        if (isCenterIcon && children != null) {
+            throw new Error("DynamicGridCard: icon placement 'center' replaces the card body — it can't combine with `children`. Drop one of the two.");
+        }
+    }
+    return (_jsxs("div", { ref: ref, className: cn('mrs-dynamic-grid-card', effectiveSize && `mrs-dynamic-grid-card--${effectiveSize}`, hasAccent && `mrs-dynamic-grid-card--accent-${accentPlacement}`, isHoverable && 'mrs-dynamic-grid-card--hoverable', isHoverable && lift && 'mrs-dynamic-grid-card--lift', renderLink && 'mrs-dynamic-grid-card--linked', hasDragHandle && 'mrs-dynamic-grid-card--draggable', hasWatermark && 'mrs-dynamic-grid-card--watermark', hasArtWatermark && 'mrs-reveal-host', dragWholeCard && 'mrs-dynamic-grid-card--drag-whole', dragWholeCard && isHolding && 'mrs-dynamic-grid-card--holding', className), style: cssVars, "data-watermark": watermarkIsString ? watermark : undefined, ...props, ...(dragWholeCard ? {
             ...dragHandleProps,
             onPointerDown: (e) => {
                 startHold();
@@ -145,5 +173,5 @@ export const DynamicGridCard = forwardRef(function DynamicGridCard({ size, shape
                 : null, hasArtWatermark ? (_jsx("div", { className: "mrs-dynamic-grid-card__watermark", "aria-hidden": "true", children: watermark })) : null, hasDragHandle ? (_jsx("button", { type: "button", className: "mrs-dynamic-grid-card__drag-handle", "aria-label": dragHandleLabel, ...dragHandleProps, onClick: (e) => {
                     e.stopPropagation();
                     dragHandleProps?.onClick?.(e);
-                }, children: dragHandle ?? DEFAULT_DRAG_HANDLE })) : null, corner != null ? _jsx("div", { className: "mrs-dynamic-grid-card__corner", children: corner }) : null, hasHeader ? (_jsxs("div", { className: "mrs-dynamic-grid-card__header", children: [icon != null ? _jsx("div", { className: "mrs-dynamic-grid-card__icon", children: icon }) : null, title != null || subtitle != null ? (_jsxs("div", { className: "mrs-dynamic-grid-card__heading", children: [title != null ? (_jsx("div", { className: "mrs-dynamic-grid-card__title", id: hasTitle ? titleId : undefined, "data-fit": titleFitStep(title) || undefined, children: title })) : null, subtitle != null ? _jsx("div", { className: "mrs-dynamic-grid-card__subtitle", children: subtitle }) : null] })) : null] })) : null, _jsx("div", { className: "mrs-dynamic-grid-card__body", children: children }), hasFooter ? (_jsx("div", { className: "mrs-dynamic-grid-card__footer", children: structuredFooter ? _jsx(StructuredFooter, { footer: structuredFooter }) : footer })) : null] }));
+                }, children: dragHandle ?? DEFAULT_DRAG_HANDLE })) : null, corner != null ? _jsx("div", { className: "mrs-dynamic-grid-card__corner", children: corner }) : null, isCornerIcon ? (_jsx("div", { className: cn('mrs-dynamic-grid-card__icon', `mrs-dynamic-grid-card__icon--${iconPlacement}`), children: iconContent })) : null, hasHeader ? (_jsxs("div", { className: "mrs-dynamic-grid-card__header", children: [isTitleIcon ? _jsx("div", { className: "mrs-dynamic-grid-card__icon", children: iconContent }) : null, title != null || subtitle != null ? (_jsxs("div", { className: "mrs-dynamic-grid-card__heading", children: [title != null ? (_jsx("div", { className: "mrs-dynamic-grid-card__title", id: hasTitle ? titleId : undefined, "data-fit": titleFitStep(title) || undefined, children: title })) : null, subtitle != null ? _jsx("div", { className: "mrs-dynamic-grid-card__subtitle", children: subtitle }) : null] })) : null] })) : null, _jsx("div", { className: cn('mrs-dynamic-grid-card__body', isCenterIcon && 'mrs-dynamic-grid-card__body--icon-center'), children: isCenterIcon ? iconContent : children }), hasFooter ? (_jsx("div", { className: "mrs-dynamic-grid-card__footer", children: structuredFooter ? _jsx(StructuredFooter, { footer: structuredFooter }) : footer })) : null] }));
 });

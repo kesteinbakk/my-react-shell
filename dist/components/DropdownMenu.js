@@ -43,6 +43,10 @@ function renderItem(item, key) {
  * the next state) and keep the menu open by default so several can be toggled in one
  * opening; pass `closeOnSelect` to close. Submenus nest to arbitrary depth.
  *
+ * Trigger-driven (uncontrolled) by default; pass `open` + `onOpenChange` (and
+ * optionally `defaultOpen`) to control the open state — e.g. a cursor-anchored
+ * context menu opened at the pointer on right-click.
+ *
  * ```tsx
  * <DropdownMenu
  *   trigger={<Button>Actions</Button>}
@@ -60,6 +64,6 @@ function renderItem(item, key) {
  * />
  * ```
  */
-export function DropdownMenu({ trigger, iconTrigger, iconTriggerLabel, onOpenChange, items, align = 'center', side = 'bottom', sideOffset = 8, className, }) {
-    return (_jsxs(RadixMenu.Root, { onOpenChange: onOpenChange, children: [iconTrigger != null ? (_jsx(RadixMenu.Trigger, { asChild: true, children: _jsx("button", { type: "button", className: "mrs-menu__icon-trigger", "aria-label": iconTriggerLabel, children: iconTrigger }) })) : (_jsx(RadixMenu.Trigger, { asChild: true, children: trigger })), _jsx(RadixMenu.Portal, { children: _jsx(RadixMenu.Content, { className: cn('mrs-menu', className), align: align, side: side, sideOffset: sideOffset, children: items.map((item, i) => renderItem(item, String(i))) }) })] }));
+export function DropdownMenu({ trigger, iconTrigger, iconTriggerLabel, open, defaultOpen, onOpenChange, items, align = 'center', side = 'bottom', sideOffset = 8, className, }) {
+    return (_jsxs(RadixMenu.Root, { open: open, defaultOpen: defaultOpen, onOpenChange: onOpenChange, children: [iconTrigger != null ? (_jsx(RadixMenu.Trigger, { asChild: true, children: _jsx("button", { type: "button", className: "mrs-menu__icon-trigger", "aria-label": iconTriggerLabel, children: iconTrigger }) })) : (_jsx(RadixMenu.Trigger, { asChild: true, children: trigger })), _jsx(RadixMenu.Portal, { children: _jsx(RadixMenu.Content, { className: cn('mrs-menu', className), align: align, side: side, sideOffset: sideOffset, children: items.map((item, i) => renderItem(item, String(i))) }) })] }));
 }

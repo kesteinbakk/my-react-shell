@@ -100,6 +100,14 @@ interface DropdownMenuBaseProps {
    * square ghost icon button.
    */
   trigger?: ReactNode
+  /**
+   * Controlled open state. Pair with `onOpenChange` to drive the menu
+   * programmatically — e.g. a cursor-anchored context menu opened on right-click.
+   * Omit for the default trigger-driven (uncontrolled) behaviour.
+   */
+  open?: boolean
+  /** Initial open state when uncontrolled. */
+  defaultOpen?: boolean
   /** Fires when the menu opens or closes. Receives `true` on open, `false` on close. */
   onOpenChange?: (open: boolean) => void
   /** The menu rows, in order. */
@@ -235,6 +243,10 @@ function renderItem(item: DropdownMenuItem, key: string) {
  * the next state) and keep the menu open by default so several can be toggled in one
  * opening; pass `closeOnSelect` to close. Submenus nest to arbitrary depth.
  *
+ * Trigger-driven (uncontrolled) by default; pass `open` + `onOpenChange` (and
+ * optionally `defaultOpen`) to control the open state — e.g. a cursor-anchored
+ * context menu opened at the pointer on right-click.
+ *
  * ```tsx
  * <DropdownMenu
  *   trigger={<Button>Actions</Button>}
@@ -256,6 +268,8 @@ export function DropdownMenu({
   trigger,
   iconTrigger,
   iconTriggerLabel,
+  open,
+  defaultOpen,
   onOpenChange,
   items,
   align = 'center',
@@ -264,7 +278,7 @@ export function DropdownMenu({
   className,
 }: DropdownMenuProps) {
   return (
-    <RadixMenu.Root onOpenChange={onOpenChange}>
+    <RadixMenu.Root open={open} defaultOpen={defaultOpen} onOpenChange={onOpenChange}>
       {iconTrigger != null ? (
         <RadixMenu.Trigger asChild>
           <button type="button" className="mrs-menu__icon-trigger" aria-label={iconTriggerLabel}>
