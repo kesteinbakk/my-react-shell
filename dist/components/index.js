@@ -79,4 +79,3 @@ export { DynamicGridCard } from './DynamicGridCard';
 // NavCard — a small navigation-tile variant of DynamicGridCard: fixed `sm`, no icon,
 // its single `title` rendered as the card's centred main content.
 export { NavCard } from './NavCard';
-export { Preview } from './Preview';

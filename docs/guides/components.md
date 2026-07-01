@@ -47,8 +47,7 @@ component shows **nothing, or an icon/emoji** — never an English word. This is
   **required** prop (TypeScript flags a missing one). Examples: `ConfirmDialog`'s
   `confirmLabel`/`cancelLabel`, `Dialog`/`Sheet` `closeLabel`, `Select`/`DatePicker`
   `placeholder`, every `UserPreferences` label, `ColorPicker` `hexLabel`, `EmojiPicker`
-  `categoriesLabel`/`frequentLabel`, `ToastProvider` `dismissLabel`, `Preview`
-  `printLabel`/`closeLabel`/`loadingLabel`/`errorLabel`/`noDataLabel`/`noFileLabel`.
+  `categoriesLabel`/`frequentLabel`, `ToastProvider` `dismissLabel`.
 - **The accessible name of an *opt-in* button** (rendered only when you enable a feature)
   → **required only when that feature is on**, via a discriminated union — so you can't
   enable the button without naming it, and you're never forced to name a button that isn't

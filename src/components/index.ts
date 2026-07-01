@@ -296,6 +296,3 @@ export type {
   NavCardFooterLineType,
   NavCardLinkProps,
 } from './NavCard'
-
-export { Preview } from './Preview'
-export type { PreviewProps } from './Preview'
