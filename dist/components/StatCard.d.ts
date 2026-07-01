@@ -1,6 +1,7 @@
 import { type CSSProperties, type ReactNode } from 'react';
 import type { AccentPlacement } from './accent';
 import type { Tone } from './tone';
+import { type CardIconPlacement, type CardIconConfig } from './card-icon';
 /**
  * Size preset — a fixed-width golden-ratio card (`height = width / φ`). `md` (≈312px,
  * four to a `wide` 1440px row) is the default. Self-contained — no longer derived from `PhiCard`.
@@ -20,6 +21,10 @@ export interface StatCardFooter {
 }
 /** Proportion of the card: `'standard'` is φ:1 (`height = width / φ`); `'landscape'` is the shorter-wider φ²:1 (`height = width / φ²`). */
 export type StatCardShape = 'standard' | 'landscape';
+/** Where a `StatCard` `icon` renders — see {@link CardIconPlacement}. */
+export type StatCardIconPlacement = CardIconPlacement;
+/** The `{ content, placement }` object form of `icon` — see {@link StatCardIconPlacement}. */
+export type StatCardIconConfig = CardIconConfig;
 /**
  * Props the card hands the consumer's {@link StatCardProps.renderLink} callback to spread onto
  * its router `<Link>`. The card supplies the overlay `className` and an auto-wired
@@ -95,6 +100,16 @@ export interface StatCardBaseProps {
     title: string;
     /** Optional subtitle shown below the title. */
     subtitle?: string;
+    /**
+     * Icon/emoji glyph. A bare `ReactNode` is shorthand for `{ content, placement: 'title' }`
+     * (rendered inline beside the title block). Pass the full `{ content, placement }` form to
+     * place it in a corner (never affects layout) or `'center'` (replaces the stats/content
+     * area) — see {@link StatCardIconPlacement}.
+     *
+     * `'upperRight'` collides with the corner `medallion` — combining the two throws in dev.
+     * `'center'` can't combine with `stats` (both own the card body) — throws in dev.
+     */
+    icon?: ReactNode | StatCardIconConfig;
     /** Arc-ring medallion in the top-right corner, showing `value / max` progress. */
     medallion?: StatCardMedallion;
     /**

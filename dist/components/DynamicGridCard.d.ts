@@ -1,6 +1,7 @@
 import { type HTMLAttributes, type ReactNode } from 'react';
 import type { AccentPlacement } from './accent';
 import type { Tone } from './tone';
+import { type CardIconPlacement, type CardIconConfig } from './card-icon';
 export type DynamicGridCardSize = 'sm' | 'md' | 'lg';
 /**
  * Carries the enclosing `DynamicCardGrid`'s `cardSize` down to each `DynamicGridCard` so it
@@ -10,23 +11,10 @@ export type DynamicGridCardSize = 'sm' | 'md' | 'lg';
 export declare const DynamicCardGridSizeContext: import("react").Context<DynamicGridCardSize | undefined>;
 /** Proportion of the card: `'standard'` is φ:1; `'landscape'` is the shorter-wider φ²:1. */
 export type DynamicGridCardShape = 'standard' | 'landscape';
-/**
- * Where a `DynamicGridCard` `icon` renders.
- *
- * - `'title'` (default) — inline in the header, beside the title block (today's behavior).
- *   Part of the document flow: it pushes/sizes alongside the title/subtitle.
- * - `'upperLeft'` / `'upperRight'` / `'lowerLeft'` / `'lowerRight'` — an absolutely positioned
- *   corner overlay. Never affects layout (never pushes title/body/footer).
- * - `'center'` — replaces the card's main content area (`children`).
- */
-export type DynamicGridCardIconPlacement = 'upperLeft' | 'upperRight' | 'lowerLeft' | 'lowerRight' | 'center' | 'title';
+/** Where a `DynamicGridCard` `icon` renders — see {@link CardIconPlacement}. */
+export type DynamicGridCardIconPlacement = CardIconPlacement;
 /** The `{ content, placement }` object form of `icon` — see {@link DynamicGridCardIconPlacement}. */
-export interface DynamicGridCardIconConfig {
-    /** The icon/emoji/glyph content. */
-    content: ReactNode;
-    /** Where the icon renders. Default `'title'`. */
-    placement?: DynamicGridCardIconPlacement;
-}
+export type DynamicGridCardIconConfig = CardIconConfig;
 /** Leading glyph kind for a structured footer meta line. */
 export type DynamicGridCardFooterLineType = 'date' | 'time' | 'check';
 /** One left-side footer line: text with an optional kit-shipped leading glyph. */
@@ -82,6 +70,15 @@ export interface DynamicGridCardProps extends Omit<HTMLAttributes<HTMLDivElement
      *   root becomes a `mrs-reveal-host`, so a hover-reveal mark dropped here opens on card hover.
      */
     watermark?: ReactNode;
+    /**
+     * For a **`ReactNode`** watermark only (ignored for a string watermark): scales the node's
+     * intrinsic `<svg>`/`<span>` size up to watermark scale, oversized and faint, mirroring the
+     * string-emoji watermark — the right behavior for a small icon-kit glyph (e.g. `<AppIcon>`).
+     *
+     * Set `false` for a self-sized illustration (e.g. `DrawerMark`) that already lays itself out
+     * at watermark scale and shouldn't be force-scaled. Default `true`.
+     */
+    autoscaleWatermark?: boolean;
     /**
      * Top-corner action slot (e.g. a `DropdownMenu` trigger). Rendered above the link overlay
      * (`z-index`) so it stays independently clickable — a sibling of the anchor, never nested in it.

@@ -1812,6 +1812,25 @@
   color: var(--color-text-secondary);
 }
 
+/* `sm`-size cards shrink the header icon. Resolved from the card's own `size` prop or
+   (inside a `DynamicCardGrid`) the grid's `cardSize`, via `DynamicCardGridSizeContext` —
+   a `@container` query on the rendered width was tried first and dropped: Chromium gives
+   inconsistent results for a container-query container that also carries `aspect-ratio`
+   inside a `1fr` grid track, so two equal-width cards could resolve to different icon
+   sizes. A resolved-size class is deterministic regardless of layout engine quirks. */
+.mrs-dynamic-grid-card--sm .mrs-dynamic-grid-card__icon {
+  font-size: 1.125rem;
+  line-height: 1.125rem;
+}
+
+/* Title auto-fit — `sm`-size cards only. A long title steps the font size down (3 steps)
+   so it doesn't blow out the card's reserved heading height. Length-based, mirroring the
+   `StatCard`/`ContentCard`/`PaperCard` title ladder; thresholds tuned for the `sm` column's
+   ~180–210px width via the demo preview. Absent at step 0 (titles ≤14 chars; no reduction). */
+.mrs-dynamic-grid-card--sm .mrs-dynamic-grid-card__title[data-fit='1'] { font-size: 0.92em; }
+.mrs-dynamic-grid-card--sm .mrs-dynamic-grid-card__title[data-fit='2'] { font-size: 0.84em; line-height: 1.2; }
+.mrs-dynamic-grid-card--sm .mrs-dynamic-grid-card__title[data-fit='3'] { font-size: 0.76em; line-height: 1.2; }
+
 .mrs-dynamic-grid-card__heading {
   flex: 1 1 auto;
   min-width: 0;
@@ -1831,6 +1850,16 @@
   color: var(--color-text-primary);
 }
 
+/* `sm`-size cards clamp the title to 2 lines (font-size alone can't bound the wrap count on
+   such a short, golden-ratio card), pairing with the `[data-fit]` ladder below — the smaller
+   the font, the more of a long title the 2-line box can hold before it ellipsizes. */
+.mrs-dynamic-grid-card--sm .mrs-dynamic-grid-card__title {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
 .mrs-dynamic-grid-card__subtitle {
   font-size: 0.875rem;
   line-height: 1.25rem;
@@ -1848,34 +1877,51 @@
   margin-top: 0.5rem;
 }
 
-/* Hover-lift — opt-in via `hoverable`. */
+/* Hover feedback — opt-in via `hoverable`. Default: a subtle background tint, no movement.
+   `lift` adds a translateY + stronger shadow on top for cards that want a more pronounced
+   affordance. */
 .mrs-dynamic-grid-card--hoverable {
   cursor: pointer;
 }
 .mrs-dynamic-grid-card--hoverable:hover {
+  background: var(--color-surface-raised);
+}
+/* `lift` — adds the translateY + stronger shadow on top of the default tint. */
+.mrs-dynamic-grid-card--hoverable.mrs-dynamic-grid-card--lift:hover {
   box-shadow: var(--mrs-elevation-card-hover);
   transform: translateY(-4px);
-}
-/* `lift={false}` — keep the cursor + hover elevation, drop the movement. */
-.mrs-dynamic-grid-card--hoverable.mrs-dynamic-grid-card--no-lift:hover {
-  transform: none;
 }
 
 /* Interactive-root: the consumer's `<Link>` mounts as a full-bleed block-link overlay.
    The anchor is the real interactive element; the root projects its focus ring (the
    anchor's own outline is clipped by the card's `overflow: hidden`, so we surface it
-   on the root via `:has()`). Raised controls (`__corner`) sit above the overlay. */
+   on the root via `:has()`). Raised controls (`__corner`, drag handle, corner icons) sit
+   above the overlay via z-index.
+   `header`/`body`/`footer` are click-transparent (matching `StatCard`/`ContentCard`'s
+   `__inner` pattern) so the overlay always receives the click — without this, a
+   watermarked card (which promotes header/body/footer to `position: relative; z-index: 1`
+   to sit above the z-index:0 watermark layer) ties the overlay's own z-index:1 and wins
+   the paint order by being later in the DOM, silently swallowing every click. */
 .mrs-dynamic-grid-card--linked {
   cursor: pointer;
 }
 .mrs-dynamic-grid-card--linked:hover {
   box-shadow: var(--mrs-elevation-card-hover);
 }
+.mrs-dynamic-grid-card--linked .mrs-dynamic-grid-card__header,
+.mrs-dynamic-grid-card--linked .mrs-dynamic-grid-card__body,
+.mrs-dynamic-grid-card--linked .mrs-dynamic-grid-card__footer {
+  pointer-events: none;
+}
 .mrs-dynamic-grid-card__link-overlay {
   position: absolute;
   inset: 0;
   z-index: 1;
   border-radius: inherit;
+  /* Without this, the anchor's own UA default (link hand cursor) wins at the hot pixel —
+     it's the topmost painted box, so the root's grab/grabbing/pointer rules never show,
+     even though they're set correctly (e.g. `dragWholeCard`'s press-and-hold grabbing). */
+  cursor: inherit;
 }
 .mrs-dynamic-grid-card__link-overlay:focus {
   outline: none;
@@ -1922,6 +1968,28 @@
   user-select: none;
 }
 
+/* `autoscaleWatermark` (default true) — a keyed icon glyph (lucide <svg> / emoji span) made to
+   mirror the string-emoji watermark: oversized, faint, centred. Overrides the centred art-layer
+   geometry; scoped to `--glyph` so a self-sized illustration (e.g. `DrawerMark`,
+   `autoscaleWatermark={false}`) is left untouched. */
+.mrs-dynamic-grid-card__watermark--glyph {
+  left: 50%;
+  top: 60%;
+  width: auto;
+  transform: translate(-50%, -50%);
+  opacity: 0.10;
+  font-size: 5em;
+  line-height: 1;
+}
+.mrs-dynamic-grid-card__watermark--glyph svg {
+  width: 1em;
+  height: 1em;
+}
+.mrs-dynamic-grid-card__watermark--glyph > span,
+.mrs-dynamic-grid-card__watermark--glyph span {
+  font-size: 1em !important;
+}
+
 /* Corner action slot — raised above the link overlay so it stays independently clickable. */
 .mrs-dynamic-grid-card__corner {
   position: absolute;
@@ -1931,6 +1999,44 @@
   display: flex;
   align-items: center;
   gap: 0.25rem;
+}
+
+/* `icon` corner placements — absolutely positioned overlays, never part of the document flow
+   (never push title/body/footer). Raised above the link overlay (z-index) like `corner`; below
+   the drag handle's z-index, but the drag handle is vertically centred on the right edge while
+   these sit at the true top/bottom corners, so the two don't collide in practice. */
+.mrs-dynamic-grid-card__icon--upperLeft,
+.mrs-dynamic-grid-card__icon--upperRight,
+.mrs-dynamic-grid-card__icon--lowerLeft,
+.mrs-dynamic-grid-card__icon--lowerRight {
+  position: absolute;
+  z-index: 2;
+}
+.mrs-dynamic-grid-card__icon--upperLeft {
+  top: 0.5rem;
+  left: 0.5rem;
+}
+.mrs-dynamic-grid-card__icon--upperRight {
+  top: 0.5rem;
+  right: 0.5rem;
+}
+.mrs-dynamic-grid-card__icon--lowerLeft {
+  bottom: 0.5rem;
+  left: 0.5rem;
+}
+.mrs-dynamic-grid-card__icon--lowerRight {
+  bottom: 0.5rem;
+  right: 0.5rem;
+}
+
+/* `icon` centre placement replaces the body content (`children`) and becomes the card's
+   visual focus, so it renders much larger than the inline title-placed icon. */
+.mrs-dynamic-grid-card__body--icon-center {
+  place-items: center;
+  text-align: center;
+  font-size: 2.75rem;
+  line-height: 1;
+  color: var(--color-text-secondary);
 }
 
 /* Drag handle — vertical-stripes grip pinned to the right edge, vertically centred.
@@ -2370,9 +2476,10 @@
   user-select: none;
 }
 
-/* `watermarkMode='glyph'` — a keyed icon glyph (lucide <svg> / emoji span) made to mirror the
-   string-emoji watermark above: oversized, faint, centred, without tilt. Overrides the centred
-   art-layer geometry; scoped to `--glyph` so the default `'art'` (DrawerMark) path is untouched. */
+/* `autoscaleWatermark` (default true) — a keyed icon glyph (lucide <svg> / emoji span) made to
+   mirror the string-emoji watermark above: oversized, faint, centred, without tilt. Overrides the
+   centred art-layer geometry; scoped to `--glyph` so a self-sized illustration (e.g. `DrawerMark`,
+   `autoscaleWatermark={false}`) is left untouched. */
 .mrs-stat-card__watermark--glyph {
   left: 50%;
   top: 60%;
@@ -2395,6 +2502,61 @@
 .mrs-stat-card__watermark--glyph > span,
 .mrs-stat-card__watermark--glyph span {
   font-size: 1em !important;
+}
+
+/* ── Icon placements ──────────────────────────────────────────────────────────
+   `icon` in the `'title'` placement renders inline in the header, left of the title block
+   (the header is a flex row); the corner placements are absolutely-positioned overlays that
+   never affect layout; `'center'` replaces the stats/content area. Sizing keyed off the
+   card's `em` scale so it tracks the size preset. */
+.mrs-stat-card__icon {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.75em;
+  line-height: 1;
+  color: var(--color-text-secondary);
+}
+.mrs-stat-card__icon svg {
+  width: 1em;
+  height: 1em;
+}
+
+/* Corner placements — absolutely positioned overlays, never part of the document flow.
+   Raised above the link overlay (z-index) like the medallion/drag handle so they stay
+   visible; the drag handle is vertically centred on the right edge while these sit at the
+   true top/bottom corners, so the two don't collide in practice. */
+.mrs-stat-card__icon--upperLeft,
+.mrs-stat-card__icon--upperRight,
+.mrs-stat-card__icon--lowerLeft,
+.mrs-stat-card__icon--lowerRight {
+  position: absolute;
+  z-index: 2;
+  font-size: 1.5em;
+}
+.mrs-stat-card__icon--upperLeft { top: 0.65em; left: 0.65em; }
+.mrs-stat-card__icon--upperRight { top: 0.65em; right: 0.65em; }
+.mrs-stat-card__icon--lowerLeft { bottom: 0.65em; left: 0.65em; }
+.mrs-stat-card__icon--lowerRight { bottom: 0.65em; right: 0.65em; }
+
+/* Center placement — replaces the stats/content area and becomes the card's visual focus,
+   so it renders much larger than the inline title icon. */
+.mrs-stat-card__body {
+  flex-grow: 1;
+  min-height: 0;
+}
+.mrs-stat-card__body--icon-center {
+  display: grid;
+  place-items: center;
+  text-align: center;
+  font-size: 3em;
+  line-height: 1;
+  color: var(--color-text-secondary);
+}
+.mrs-stat-card__body--icon-center svg {
+  width: 1em;
+  height: 1em;
 }
 
 /* Hover lift — translateY + deeper shadow */
@@ -2427,6 +2589,9 @@
   inset: 0;
   z-index: 1;
   border-radius: inherit;
+  /* See the dynamic-grid-card overlay comment: without this, the anchor's own UA hand
+     cursor wins over the root's grab/grabbing/pointer rules (`dragWholeCard`). */
+  cursor: inherit;
 }
 .mrs-stat-card__link-overlay:focus {
   outline: none;
@@ -5351,6 +5516,9 @@
   inset: 0;
   z-index: 1;
   border-radius: inherit;
+  /* See the dynamic-grid-card overlay comment: without this, the anchor's own UA hand
+     cursor wins over the root's grab/grabbing/pointer rules (`dragWholeCard`). */
+  cursor: inherit;
 }
 .mrs-content-card__link-overlay:focus {
   outline: none;
@@ -5549,6 +5717,82 @@
   font-size: 0.9em;
   line-height: 1.5;
   color: inherit;
+}
+
+/* ── Art watermark + icon placements ──────────────────────────────────────────
+   A `ReactNode` watermark renders in a faint art layer (the string watermark uses the
+   `::after` path above). `--glyph` (default via `autoscaleWatermark`) scales a keyed icon
+   glyph up to watermark scale, mirroring `mrs-stat-card__watermark`. */
+.mrs-content-card__watermark {
+  position: absolute;
+  right: 4%;
+  bottom: 2%;
+  width: 40%;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.16;
+  user-select: none;
+}
+.mrs-content-card__watermark--glyph {
+  left: auto;
+  right: 6%;
+  bottom: 4%;
+  width: auto;
+  opacity: 0.10;
+  font-size: 5.5em;
+  line-height: 1;
+}
+.mrs-content-card__watermark--glyph svg {
+  width: 1em;
+  height: 1em;
+}
+.mrs-content-card__watermark--glyph > span,
+.mrs-content-card__watermark--glyph span {
+  font-size: 1em !important;
+}
+
+/* `icon` in the `'title'` placement renders inline in the header, left of the title block;
+   corner placements are absolutely-positioned overlays; `'center'` replaces the body. */
+.mrs-content-card__icon {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.75em;
+  line-height: 1;
+  color: var(--color-text-secondary);
+}
+.mrs-content-card__icon svg {
+  width: 1em;
+  height: 1em;
+}
+.mrs-content-card__icon--upperLeft,
+.mrs-content-card__icon--upperRight,
+.mrs-content-card__icon--lowerLeft,
+.mrs-content-card__icon--lowerRight {
+  position: absolute;
+  z-index: 2;
+  font-size: 1.5em;
+  line-height: 1;
+  color: var(--color-text-secondary);
+}
+.mrs-content-card__icon--upperLeft { top: 0.65em; left: 0.65em; }
+.mrs-content-card__icon--upperRight { top: 0.65em; right: 0.65em; }
+.mrs-content-card__icon--lowerLeft { bottom: 0.65em; left: 0.65em; }
+.mrs-content-card__icon--lowerRight { bottom: 0.65em; right: 0.65em; }
+
+/* Center placement — replaces the body and becomes the card's visual focus. */
+.mrs-content-card__body--icon-center {
+  display: grid;
+  place-items: center;
+  text-align: center;
+  font-size: 3em;
+  line-height: 1;
+  color: var(--color-text-secondary);
+}
+.mrs-content-card__body--icon-center svg {
+  width: 1em;
+  height: 1em;
 }
 
 .mrs-stat-card__lower {
@@ -5785,27 +6029,32 @@
 
 /* Element (art) watermark — a faint layer behind the sheet content (e.g. an `<AppIcon>` /
    `<img>`), framed like the string emoji watermark above: centred, dropped a little below
-   centre, faintly tilted. The `__glyph` child scaling mirrors `mrs-stat-card__watermark`,
-   so a sized icon-kit glyph (svg / emoji span) reads at the big watermark scale. */
+   centre, faintly tilted. The base layer keeps the art at its own scale; `--glyph` (default
+   via `autoscaleWatermark`) scales a sized icon-kit glyph (svg / emoji span) up to the big
+   watermark scale, mirroring `mrs-stat-card__watermark`. Opt out (`autoscaleWatermark={false}`)
+   for a self-sized illustration (e.g. `DrawerMark`). */
 .mrs-paper-card__watermark {
   position: absolute;
   top: 56%;
   left: 50%;
-  width: auto;
+  width: 62%;
   transform: translate(-50%, -50%) rotate(-8deg);
-  font-size: 5em;
   line-height: 1;
   opacity: 0.1;
   pointer-events: none;
   user-select: none;
   z-index: 0;
 }
-.mrs-paper-card__watermark svg {
+.mrs-paper-card__watermark--glyph {
+  width: auto;
+  font-size: 5em;
+}
+.mrs-paper-card__watermark--glyph svg {
   width: 1em;
   height: 1em;
 }
-.mrs-paper-card__watermark > span,
-.mrs-paper-card__watermark span {
+.mrs-paper-card__watermark--glyph > span,
+.mrs-paper-card__watermark--glyph span {
   font-size: 1em !important;
 }
 
@@ -5856,8 +6105,62 @@
   padding-top: calc(1.7em + 4px);
 }
 
+.mrs-paper-card__header {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5em;
+}
 .mrs-paper-card__head-text {
   min-width: 0;
+  flex: 1 1 auto;
+}
+
+/* ── Icon placements ──────────────────────────────────────────────────────────
+   `'title'` renders inline in the header, left of the title block; corner placements are
+   absolutely-positioned overlays above the link overlay (`z-index` matching `__corner`, so
+   the fold stays visible); `'center'` replaces the sheet body. `'upperRight'` reuses the
+   `__corner` top offset (`var(--mrs-paper-fold)`) so it clears the dog-eared fold. */
+.mrs-paper-card__icon {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4em;
+  line-height: 1;
+  color: var(--color-text-muted);
+}
+.mrs-paper-card__icon svg {
+  width: 1em;
+  height: 1em;
+}
+.mrs-paper-card__icon--upperLeft,
+.mrs-paper-card__icon--upperRight,
+.mrs-paper-card__icon--lowerLeft,
+.mrs-paper-card__icon--lowerRight {
+  position: absolute;
+  z-index: 6;
+  font-size: 1.25em;
+  line-height: 1;
+  color: var(--color-text-muted);
+}
+.mrs-paper-card__icon--upperLeft { top: 0.4rem; left: 0.4rem; }
+/* Clear the fold, matching the `__corner` slot's top offset. */
+.mrs-paper-card__icon--upperRight { top: var(--mrs-paper-fold, 26px); right: 0.4rem; }
+.mrs-paper-card__icon--lowerLeft { bottom: 0.4rem; left: 0.4rem; }
+.mrs-paper-card__icon--lowerRight { bottom: 0.4rem; right: 0.4rem; }
+
+/* Center placement — replaces the sheet body and becomes the card's visual focus. */
+.mrs-paper-card__body--icon-center {
+  display: grid;
+  place-items: center;
+  text-align: center;
+  font-size: 2.5em;
+  line-height: 1;
+  color: var(--color-text-muted);
+}
+.mrs-paper-card__body--icon-center svg {
+  width: 1em;
+  height: 1em;
 }
 .mrs-paper-card__title {
   margin: 0;
@@ -5969,6 +6272,9 @@
   inset: 0;
   z-index: 5;
   border-radius: inherit;
+  /* See the dynamic-grid-card overlay comment: without this, the anchor's own UA hand
+     cursor wins over the root's cursor rules. */
+  cursor: inherit;
 }
 .mrs-paper-card__link-overlay:focus {
   outline: none;

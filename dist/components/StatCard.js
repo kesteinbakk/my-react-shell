@@ -4,6 +4,7 @@ import { cn } from './cn';
 import { resolveAccentColor } from './accent';
 import { TONE_COLOR } from './tone';
 import { Dialog } from './Dialog';
+import { isIconConfig } from './card-icon';
 /**
  * Discriminate the structured `{ lines, badges }` footer from a freeform `ReactNode`.
  * A React element, array, or primitive is freeform; a plain object carrying `lines`/`badges`
@@ -154,7 +155,7 @@ const DEFAULT_DRAG_HANDLE = (_jsxs("svg", { width: "11", height: "28", viewBox: 
  * The accent stripe, medallion tint, and watermark are driven by `tone` (mapped to
  * semantic tokens) or overridden with a raw CSS `color` string.
  */
-export const StatCard = forwardRef(function StatCard({ title, subtitle, medallion, tone = 'neutral', color, accentPlacement = 'top', sideBarCompleteness, topStripeFollowsGauge = false, stats, variant, footer, watermark, autoscaleWatermark = true, size = 'md', shape = 'standard', onClick, onMedallionPress, hoverable, showDragHandle, dragHandle, dragHandleProps, dragHandleLabel, dragWholeCard, renderLink, className, style: styleProp, info, }, ref) {
+export const StatCard = forwardRef(function StatCard({ title, subtitle, icon, medallion, tone = 'neutral', color, accentPlacement = 'top', sideBarCompleteness, topStripeFollowsGauge = false, stats, variant, footer, watermark, autoscaleWatermark = true, size = 'md', shape = 'standard', onClick, onMedallionPress, hoverable, showDragHandle, dragHandle, dragHandleProps, dragHandleLabel, dragWholeCard, renderLink, className, style: styleProp, info, }, ref) {
     const [infoOpen, setInfoOpen] = useState(false);
     // A visible grip shows when toggled on, or when a custom handle node is supplied.
     const hasDragHandle = showDragHandle || dragHandle != null;
@@ -178,6 +179,13 @@ export const StatCard = forwardRef(function StatCard({ title, subtitle, medallio
     const watermarkIsString = typeof effectiveWatermark === 'string';
     const hasWatermark = watermarkIsString ? effectiveWatermark.length > 0 : effectiveWatermark != null;
     const hasArtWatermark = hasWatermark && !watermarkIsString;
+    // Resolve the `icon` shorthand to its full `{ content, placement }` form.
+    const hasIcon = icon != null;
+    const iconContent = hasIcon ? (isIconConfig(icon) ? icon.content : icon) : null;
+    const iconPlacement = hasIcon && isIconConfig(icon) ? (icon.placement ?? 'title') : 'title';
+    const isTitleIcon = hasIcon && iconPlacement === 'title';
+    const isCornerIcon = hasIcon && (iconPlacement === 'upperLeft' || iconPlacement === 'upperRight' || iconPlacement === 'lowerLeft' || iconPlacement === 'lowerRight');
+    const isCenterIcon = hasIcon && iconPlacement === 'center';
     const width = SIZE_WIDTH_PX[size];
     // landscape = φ²:1 (shorter box at the same width); standard = φ:1.
     const height = shape === 'landscape' ? width / (PHI * PHI) : width / PHI;
@@ -225,6 +233,12 @@ export const StatCard = forwardRef(function StatCard({ title, subtitle, medallio
                 throw new Error(`StatCard: stats[${i}] cannot have both \`label\` and \`max\` — use one layout or the other.`);
             }
         });
+        if (iconPlacement === 'upperRight' && medallion != null) {
+            throw new Error("StatCard: icon placement 'upperRight' collides with `medallion` — both render in the top-right corner. Use a different icon placement (e.g. 'upperLeft') or drop `medallion`.");
+        }
+        if (isCenterIcon && stats != null) {
+            throw new Error("StatCard: icon placement 'center' replaces the stats/content area — it can't combine with `stats`. Drop one of the two.");
+        }
     }
     const hasFooter = structuredFooter
         ? (structuredFooter.lines?.length ?? 0) > 0 || (structuredFooter.badges?.length ?? 0) > 0
@@ -268,7 +282,7 @@ export const StatCard = forwardRef(function StatCard({ title, subtitle, medallio
                 : null, hasArtWatermark ? (_jsx("div", { className: cn('mrs-stat-card__watermark', autoscaleWatermark && 'mrs-stat-card__watermark--glyph'), "aria-hidden": "true", children: effectiveWatermark })) : null, hasDragHandle ? (_jsx("button", { type: "button", className: "mrs-stat-card__drag-handle", "aria-label": dragHandleLabel, ...dragHandleProps, onClick: (e) => {
                     e.stopPropagation();
                     dragHandleProps?.onClick?.(e);
-                }, children: dragHandle ?? DEFAULT_DRAG_HANDLE })) : null, showVariantLeftStripe ? (_jsx("div", { className: "mrs-stat-card__variant-stripe", "aria-hidden": "true" })) : null, hasGauge ? (_jsx("div", { className: "mrs-stat-card__gauge", role: "meter", "aria-valuemin": 0, "aria-valuemax": 100, "aria-valuenow": gaugePct, "aria-label": `${gaugePct}%`, children: _jsx("div", { className: "mrs-stat-card__gauge-fill", style: { height: `${gaugeFraction * 100}%`, background: completenessFill(gaugeFraction) } }) })) : null, _jsxs("div", { className: "mrs-stat-card__inner", children: [_jsxs("div", { className: "mrs-stat-card__header", children: [_jsxs("div", { className: "mrs-stat-card__head-text", children: [_jsx("p", { className: "mrs-stat-card__title", id: titleId, "data-fit": titleFitStep(title) || undefined, children: title }), subtitle ? _jsx("p", { className: "mrs-stat-card__subtitle", children: subtitle }) : null] }), medallionNode] }), stats && stats.length > 0 ? (_jsx("dl", { className: "mrs-stat-card__stats", children: stats.map((item, i) => {
+                }, children: dragHandle ?? DEFAULT_DRAG_HANDLE })) : null, isCornerIcon ? (_jsx("div", { className: cn('mrs-stat-card__icon', `mrs-stat-card__icon--${iconPlacement}`), "aria-hidden": "true", children: iconContent })) : null, showVariantLeftStripe ? (_jsx("div", { className: "mrs-stat-card__variant-stripe", "aria-hidden": "true" })) : null, hasGauge ? (_jsx("div", { className: "mrs-stat-card__gauge", role: "meter", "aria-valuemin": 0, "aria-valuemax": 100, "aria-valuenow": gaugePct, "aria-label": `${gaugePct}%`, children: _jsx("div", { className: "mrs-stat-card__gauge-fill", style: { height: `${gaugeFraction * 100}%`, background: completenessFill(gaugeFraction) } }) })) : null, _jsxs("div", { className: "mrs-stat-card__inner", children: [_jsxs("div", { className: "mrs-stat-card__header", children: [isTitleIcon ? _jsx("div", { className: "mrs-stat-card__icon", "aria-hidden": "true", children: iconContent }) : null, _jsxs("div", { className: "mrs-stat-card__head-text", children: [_jsx("p", { className: "mrs-stat-card__title", id: titleId, "data-fit": titleFitStep(title) || undefined, children: title }), subtitle ? _jsx("p", { className: "mrs-stat-card__subtitle", children: subtitle }) : null] }), medallionNode] }), isCenterIcon ? (_jsx("div", { className: "mrs-stat-card__body mrs-stat-card__body--icon-center", "aria-hidden": "true", children: iconContent })) : null, !isCenterIcon && stats && stats.length > 0 ? (_jsx("dl", { className: "mrs-stat-card__stats", children: stats.map((item, i) => {
                             if (item.max != null) {
                                 // Arc-ring stat
                                 return (_jsx("div", { className: "mrs-stat-card__stat mrs-stat-card__stat--arc", children: _jsx(ArcRing, { value: item.value, max: item.max }) }, i));

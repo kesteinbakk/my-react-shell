@@ -3,6 +3,7 @@ import { cn } from './cn'
 import { resolveAccentColor } from './accent'
 import type { AccentPlacement } from './accent'
 import type { Tone } from './tone'
+import { isIconConfig, type CardIconPlacement, type CardIconConfig } from './card-icon'
 declare const process: { env: { NODE_ENV?: string } }
 
 /**
@@ -38,6 +39,12 @@ export interface PaperCardLinkProps {
 }
 
 export type PaperCardTone = Tone
+
+/** Where a `PaperCard` `icon` renders — see {@link CardIconPlacement}. */
+export type PaperCardIconPlacement = CardIconPlacement
+
+/** The `{ content, placement }` object form of `icon` — see {@link PaperCardIconPlacement}. */
+export type PaperCardIconConfig = CardIconConfig
 
 /**
  * Discriminate the structured `{ lines, badges }` footer from a freeform `ReactNode`.
@@ -116,6 +123,18 @@ export interface PaperCardProps {
   /** Optional subtitle / meta line shown below the title. */
   subtitle?: string
 
+  /**
+   * Icon/emoji glyph. A bare `ReactNode` is shorthand for `{ content, placement: 'title' }`
+   * (rendered inline beside the title block). Pass the full `{ content, placement }` form to
+   * place it in a corner (never affects layout) or `'center'` (replaces the `content`/`image`
+   * body) — see {@link PaperCardIconPlacement}.
+   *
+   * `'upperRight'` clears the dog-eared fold (it reuses the `corner` slot's top offset) but
+   * collides with the `corner` slot itself — combining icon `'upperRight'` with `corner` throws
+   * in dev. `'center'` can't combine with `content` or `image` (both own the body) — throws in dev.
+   */
+  icon?: ReactNode | PaperCardIconConfig
+
   /** Freeform body text. Optional — a thumbnail can carry just a title. */
   content?: string
   contentAlignX?: 'left' | 'center' | 'right'
@@ -154,6 +173,15 @@ export interface PaperCardProps {
    * `DynamicGridCard`.
    */
   watermark?: ReactNode
+  /**
+   * For a **`ReactNode`** watermark only (ignored for a string watermark): scales the node's
+   * intrinsic `<svg>`/`<span>` size up to watermark scale, oversized and faint, mirroring the
+   * string-emoji watermark — the right behavior for a small icon-kit glyph (e.g. `<AppIcon>`).
+   *
+   * Set `false` for a self-sized illustration (e.g. `DrawerMark`) that already lays itself out
+   * at watermark scale and shouldn't be force-scaled. Default `true`.
+   */
+  autoscaleWatermark?: boolean
 
   /**
    * A real, full-opacity preview layer filling the sheet behind the title/footer — e.g. a
@@ -218,6 +246,7 @@ export const PaperCard = forwardRef<HTMLDivElement, PaperCardProps>(function Pap
   {
     title,
     subtitle,
+    icon,
     content,
     contentAlignX = 'left',
     contentAlignY = 'top',
@@ -228,6 +257,7 @@ export const PaperCard = forwardRef<HTMLDivElement, PaperCardProps>(function Pap
     footer,
     corner,
     watermark,
+    autoscaleWatermark = true,
     image,
     size = 'md',
     onClick,
@@ -251,6 +281,14 @@ export const PaperCard = forwardRef<HTMLDivElement, PaperCardProps>(function Pap
   const hasWatermark = watermarkIsString ? watermark.length > 0 : watermark != null
   const hasArtWatermark = hasWatermark && !watermarkIsString
 
+  // Resolve the `icon` shorthand to its full `{ content, placement }` form.
+  const hasIcon = icon != null
+  const iconContent = hasIcon ? (isIconConfig(icon) ? icon.content : icon) : null
+  const iconPlacement: PaperCardIconPlacement = hasIcon && isIconConfig(icon) ? (icon.placement ?? 'title') : 'title'
+  const isTitleIcon = hasIcon && iconPlacement === 'title'
+  const isCornerIcon = hasIcon && (iconPlacement === 'upperLeft' || iconPlacement === 'upperRight' || iconPlacement === 'lowerLeft' || iconPlacement === 'lowerRight')
+  const isCenterIcon = hasIcon && iconPlacement === 'center'
+
   const width = SIZE_WIDTH_PX[size]
   const height = width * SQRT2
   const fold = SIZE_FOLD_PX[size]
@@ -272,6 +310,16 @@ export const PaperCard = forwardRef<HTMLDivElement, PaperCardProps>(function Pap
   const hasAccent = accentColor != null
 
   if (process.env.NODE_ENV !== 'production') {
+    if (iconPlacement === 'upperRight' && corner != null) {
+      throw new Error(
+        "PaperCard: icon placement 'upperRight' collides with the `corner` slot — both render below the fold in the top-right corner. Use a different icon placement (e.g. 'upperLeft') or drop `corner`.",
+      )
+    }
+    if (isCenterIcon && (content != null || image != null)) {
+      throw new Error(
+        "PaperCard: icon placement 'center' replaces the sheet body — it can't combine with `content` or `image`. Drop one of the two.",
+      )
+    }
   }
 
   let footerNode: ReactNode = null
@@ -355,6 +403,11 @@ export const PaperCard = forwardRef<HTMLDivElement, PaperCardProps>(function Pap
         </button>
       ) : null}
       {corner != null ? <div className="mrs-paper-card__corner">{corner}</div> : null}
+      {isCornerIcon ? (
+        <div className={cn('mrs-paper-card__icon', `mrs-paper-card__icon--${iconPlacement}`)} aria-hidden="true">
+          {iconContent}
+        </div>
+      ) : null}
       {/* The sheet: clip-path cuts the notch; the fold triangle sits in it. */}
       <div
         className="mrs-paper-card__sheet"
@@ -362,20 +415,33 @@ export const PaperCard = forwardRef<HTMLDivElement, PaperCardProps>(function Pap
       >
         <span className="mrs-paper-card__fold" aria-hidden="true" />
         {hasArtWatermark ? (
-          <div className="mrs-paper-card__watermark" aria-hidden="true">{watermark}</div>
+          <div
+            className={cn(
+              'mrs-paper-card__watermark',
+              autoscaleWatermark && 'mrs-paper-card__watermark--glyph',
+            )}
+            aria-hidden="true"
+          >
+            {watermark}
+          </div>
         ) : null}
         {image != null ? (
           <div className="mrs-paper-card__image" aria-hidden="true">{image}</div>
         ) : null}
         <div className="mrs-paper-card__inner">
           <div className="mrs-paper-card__header">
+            {isTitleIcon ? <div className="mrs-paper-card__icon" aria-hidden="true">{iconContent}</div> : null}
             <div className="mrs-paper-card__head-text">
               <p className="mrs-paper-card__title" id={titleId}>{title}</p>
               {subtitle ? <p className="mrs-paper-card__subtitle">{subtitle}</p> : null}
             </div>
           </div>
 
-          {content != null ? (
+          {isCenterIcon ? (
+            <div className="mrs-paper-card__body mrs-paper-card__body--icon-center" aria-hidden="true">
+              {iconContent}
+            </div>
+          ) : content != null ? (
             <div
               className="mrs-paper-card__body"
               data-align-x={contentAlignX}

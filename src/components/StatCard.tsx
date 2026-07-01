@@ -5,6 +5,7 @@ import type { AccentPlacement } from './accent'
 import { TONE_COLOR } from './tone'
 import type { Tone } from './tone'
 import { Dialog } from './Dialog'
+import { isIconConfig, type CardIconPlacement, type CardIconConfig } from './card-icon'
 declare const process: { env: { NODE_ENV?: string } }
 
 /**
@@ -30,6 +31,12 @@ export interface StatCardFooter {
 
 /** Proportion of the card: `'standard'` is φ:1 (`height = width / φ`); `'landscape'` is the shorter-wider φ²:1 (`height = width / φ²`). */
 export type StatCardShape = 'standard' | 'landscape'
+
+/** Where a `StatCard` `icon` renders — see {@link CardIconPlacement}. */
+export type StatCardIconPlacement = CardIconPlacement
+
+/** The `{ content, placement }` object form of `icon` — see {@link StatCardIconPlacement}. */
+export type StatCardIconConfig = CardIconConfig
 
 /**
  * Props the card hands the consumer's {@link StatCardProps.renderLink} callback to spread onto
@@ -147,55 +154,21 @@ export type StatCardInfo = _StatCardInfoBase &
 
 // ── Props ─────────────────────────────────────────────────────────────────────
 
-/**
- * `watermark`/`watermarkMode` as a discriminated union: a `ReactNode` watermark
- * makes `watermarkMode` **mandatory** (no default). The default `'art'` mode
- * assumes a self-sized illustration (e.g. `DrawerMark`) and does not scale an
- * icon's intrinsic `<svg>`/`<span>` size, so an icon-kit glyph (e.g. `<AppIcon>`)
- * silently renders at its native ~20px size instead of the big watermark — this
- * has repeatedly slipped through as a runtime-only mistake. Forcing the choice at
- * the type level turns it into a compile error instead.
- */
-type StatCardWatermarkProps =
-  | {
-      /**
-       * Faint background watermark behind the card content, centred horizontally and positioned
-       * slightly below the card's vertical centre.
-       *
-       * A **string** is an emoji/text watermark (e.g. `'🏆'`), drawn oversized via a pseudo-element.
-       *
-       * Ignored when `variant` is set — the variant always shows `⚠️`.
-       */
-      watermark?: string
-      watermarkMode?: never
-    }
-  | {
-      /**
-       * A **`ReactNode`** watermark (e.g. a `DrawerMark` illustration, or an icon-kit glyph like
-       * `<AppIcon>`) is rendered in a faint art layer; the card root becomes a `mrs-reveal-host`,
-       * so a hover-reveal mark dropped here opens on card hover.
-       *
-       * Ignored when `variant` is set — the variant always shows `⚠️`.
-       */
-      watermark: Exclude<ReactNode, string | number | bigint | boolean | null | undefined>
-      /**
-       * **Required** alongside a `ReactNode` watermark — there is no safe default:
-       *
-       * - `'art'` — a self-sized illustration (e.g. a `DrawerMark`): centred horizontally,
-       *   dropped a little below centre, scaled to the card.
-       * - `'glyph'` — a keyed icon glyph (e.g. a lucide `<svg>` / emoji span from a consumer icon
-       *   kit) scaled and positioned to **mirror the string-emoji watermark**: oversized, faint,
-       *   centred, without tilt. Use this for a single icon (e.g. `<AppIcon>`) rather than an
-       *   illustration, so it reads at the same size as the `string` emoji watermark.
-       */
-      watermarkMode: 'art' | 'glyph'
-    }
-
 export interface StatCardBaseProps {
   /** Card title. */
   title: string
   /** Optional subtitle shown below the title. */
   subtitle?: string
+  /**
+   * Icon/emoji glyph. A bare `ReactNode` is shorthand for `{ content, placement: 'title' }`
+   * (rendered inline beside the title block). Pass the full `{ content, placement }` form to
+   * place it in a corner (never affects layout) or `'center'` (replaces the stats/content
+   * area) — see {@link StatCardIconPlacement}.
+   *
+   * `'upperRight'` collides with the corner `medallion` — combining the two throws in dev.
+   * `'center'` can't combine with `stats` (both own the card body) — throws in dev.
+   */
+  icon?: ReactNode | StatCardIconConfig
   /** Arc-ring medallion in the top-right corner, showing `value / max` progress. */
   medallion?: StatCardMedallion
   /**
@@ -250,6 +223,27 @@ export interface StatCardBaseProps {
    * `{ lines, badges }` (meta lines on the left, badges on the right).
    */
   footer?: ReactNode | StatCardFooter
+  /**
+   * Faint background watermark behind the card content, centred horizontally and positioned
+   * slightly below the card's vertical centre.
+   *
+   * - A **string** is an emoji/text watermark (e.g. `'🏆'`), drawn oversized via a pseudo-element.
+   * - A **`ReactNode`** (e.g. an icon-kit glyph like `<AppIcon>`, or a `DrawerMark` illustration)
+   *   is rendered in a faint art layer; the card root becomes a `mrs-reveal-host`, so a
+   *   hover-reveal mark dropped here opens on card hover.
+   *
+   * Ignored when `variant` is set — the variant always shows `⚠️`.
+   */
+  watermark?: ReactNode
+  /**
+   * For a **`ReactNode`** watermark only (ignored for a string/variant watermark): scales the
+   * node's intrinsic `<svg>`/`<span>` size up to watermark scale, oversized and faint, mirroring
+   * the string-emoji watermark — the right behavior for a small icon-kit glyph (e.g. `<AppIcon>`).
+   *
+   * Set `false` for a self-sized illustration (e.g. `DrawerMark`) that already lays itself out
+   * at watermark scale and shouldn't be force-scaled. Default `true`.
+   */
+  autoscaleWatermark?: boolean
   /** Size preset — fixed-width golden-ratio card. Default: `'md'` (≈312px). */
   size?: StatCardSize
   /**
@@ -312,7 +306,7 @@ export interface StatCardBaseProps {
   info?: StatCardInfo
 }
 
-export type StatCardProps = StatCardBaseProps & StatCardWatermarkProps
+export type StatCardProps = StatCardBaseProps
 
 // ── Footer glyphs ───────────────────────────────────────────────────────────
 
@@ -579,6 +573,7 @@ export const StatCard = forwardRef<HTMLDivElement, StatCardProps>(function StatC
   {
     title,
     subtitle,
+    icon,
     medallion,
     tone = 'neutral',
     color,
@@ -589,7 +584,7 @@ export const StatCard = forwardRef<HTMLDivElement, StatCardProps>(function StatC
     variant,
     footer,
     watermark,
-    watermarkMode,
+    autoscaleWatermark = true,
     size = 'md',
     shape = 'standard',
     onClick,
@@ -630,6 +625,14 @@ export const StatCard = forwardRef<HTMLDivElement, StatCardProps>(function StatC
   const watermarkIsString = typeof effectiveWatermark === 'string'
   const hasWatermark = watermarkIsString ? effectiveWatermark.length > 0 : effectiveWatermark != null
   const hasArtWatermark = hasWatermark && !watermarkIsString
+
+  // Resolve the `icon` shorthand to its full `{ content, placement }` form.
+  const hasIcon = icon != null
+  const iconContent = hasIcon ? (isIconConfig(icon) ? icon.content : icon) : null
+  const iconPlacement: StatCardIconPlacement = hasIcon && isIconConfig(icon) ? (icon.placement ?? 'title') : 'title'
+  const isTitleIcon = hasIcon && iconPlacement === 'title'
+  const isCornerIcon = hasIcon && (iconPlacement === 'upperLeft' || iconPlacement === 'upperRight' || iconPlacement === 'lowerLeft' || iconPlacement === 'lowerRight')
+  const isCenterIcon = hasIcon && iconPlacement === 'center'
 
   const width = SIZE_WIDTH_PX[size]
   // landscape = φ²:1 (shorter box at the same width); standard = φ:1.
@@ -678,11 +681,6 @@ export const StatCard = forwardRef<HTMLDivElement, StatCardProps>(function StatC
  
   // Dev guards
   if (process.env.NODE_ENV !== 'production') {
-    if (hasArtWatermark && watermarkMode == null) {
-      throw new Error(
-        "StatCard: a ReactNode `watermark` requires `watermarkMode` ('art' or 'glyph') — there is no safe default. 'art' assumes a self-sized illustration (e.g. DrawerMark) and won't scale a small icon node; use 'glyph' for an icon-kit glyph (e.g. <AppIcon>).",
-      )
-    }
     if (hasGauge && accentPlacement === 'left') {
       throw new Error(
         "StatCard: `sideBarCompleteness` can't combine with `accentPlacement='left'` — both occupy the left edge. Keep the default `accentPlacement='top'` (or omit it) alongside the gauge.",
@@ -700,6 +698,16 @@ export const StatCard = forwardRef<HTMLDivElement, StatCardProps>(function StatC
         )
       }
     })
+    if (iconPlacement === 'upperRight' && medallion != null) {
+      throw new Error(
+        "StatCard: icon placement 'upperRight' collides with `medallion` — both render in the top-right corner. Use a different icon placement (e.g. 'upperLeft') or drop `medallion`.",
+      )
+    }
+    if (isCenterIcon && stats != null) {
+      throw new Error(
+        "StatCard: icon placement 'center' replaces the stats/content area — it can't combine with `stats`. Drop one of the two.",
+      )
+    }
   }
  
   const hasFooter = structuredFooter
@@ -791,7 +799,7 @@ export const StatCard = forwardRef<HTMLDivElement, StatCardProps>(function StatC
         <div
           className={cn(
             'mrs-stat-card__watermark',
-            watermarkMode === 'glyph' && 'mrs-stat-card__watermark--glyph',
+            autoscaleWatermark && 'mrs-stat-card__watermark--glyph',
           )}
           aria-hidden="true"
         >
@@ -812,6 +820,11 @@ export const StatCard = forwardRef<HTMLDivElement, StatCardProps>(function StatC
           {dragHandle ?? DEFAULT_DRAG_HANDLE}
         </button>
       ) : null}
+      {isCornerIcon ? (
+        <div className={cn('mrs-stat-card__icon', `mrs-stat-card__icon--${iconPlacement}`)} aria-hidden="true">
+          {iconContent}
+        </div>
+      ) : null}
       {showVariantLeftStripe ? (
         <div className="mrs-stat-card__variant-stripe" aria-hidden="true" />
       ) : null}
@@ -831,17 +844,25 @@ export const StatCard = forwardRef<HTMLDivElement, StatCardProps>(function StatC
         </div>
       ) : null}
       <div className="mrs-stat-card__inner">
-        {/* Header: title block + medallion */}
+        {/* Header: optional title icon + title block + medallion */}
         <div className="mrs-stat-card__header">
+          {isTitleIcon ? <div className="mrs-stat-card__icon" aria-hidden="true">{iconContent}</div> : null}
           <div className="mrs-stat-card__head-text">
             <p className="mrs-stat-card__title" id={titleId} data-fit={titleFitStep(title) || undefined}>{title}</p>
             {subtitle ? <p className="mrs-stat-card__subtitle">{subtitle}</p> : null}
           </div>
           {medallionNode}
         </div>
- 
+
+        {/* Center icon replaces the stats/content area */}
+        {isCenterIcon ? (
+          <div className="mrs-stat-card__body mrs-stat-card__body--icon-center" aria-hidden="true">
+            {iconContent}
+          </div>
+        ) : null}
+
         {/* Stats grid */}
-        {stats && stats.length > 0 ? (
+        {!isCenterIcon && stats && stats.length > 0 ? (
           <dl className="mrs-stat-card__stats">
             {stats.map((item, i) => {
               if (item.max != null) {

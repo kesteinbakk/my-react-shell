@@ -5,6 +5,7 @@ import { resolveAccentColor } from './accent'
 import type { AccentPlacement } from './accent'
 import { TONE_COLOR } from './tone'
 import type { Tone } from './tone'
+import { isIconConfig, type CardIconPlacement, type CardIconConfig } from './card-icon'
 declare const process: { env: { NODE_ENV?: string } }
 
 /**
@@ -82,10 +83,25 @@ const PHI = 1.6180339887
 export type ContentCardTone = Tone
 export type ContentCardVariant = 'warning' | 'danger'
 
+/** Where a `ContentCard` `icon` renders — see {@link CardIconPlacement}. */
+export type ContentCardIconPlacement = CardIconPlacement
+
+/** The `{ content, placement }` object form of `icon` — see {@link ContentCardIconPlacement}. */
+export type ContentCardIconConfig = CardIconConfig
+
 export interface ContentCardBaseProps {
   title: string
   subtitle?: string
-  
+  /**
+   * Icon/emoji glyph. A bare `ReactNode` is shorthand for `{ content, placement: 'title' }`
+   * (rendered inline beside the title block). Pass the full `{ content, placement }` form to
+   * place it in a corner (never affects layout) or `'center'` (replaces the `content`/`children`
+   * body) — see {@link ContentCardIconPlacement}.
+   *
+   * `'center'` can't combine with `content`/`children` (both own the card body) — throws in dev.
+   */
+  icon?: ReactNode | ContentCardIconConfig
+
   contentAlignX?: 'left' | 'center' | 'right'
   contentAlignY?: 'top' | 'center' | 'bottom'
 
@@ -118,6 +134,15 @@ export interface ContentCardBaseProps {
    * Ignored when `variant` is set — the variant always shows `⚠️`.
    */
   watermark?: ReactNode
+  /**
+   * For a **`ReactNode`** watermark only (ignored for a string/variant watermark): scales the
+   * node's intrinsic `<svg>`/`<span>` size up to watermark scale, oversized and faint, mirroring
+   * the string-emoji watermark — the right behavior for a small icon-kit glyph (e.g. `<AppIcon>`).
+   *
+   * Set `false` for a self-sized illustration (e.g. `DrawerMark`) that already lays itself out
+   * at watermark scale and shouldn't be force-scaled. Default `true`.
+   */
+  autoscaleWatermark?: boolean
   size?: ContentCardSize
   /**
    * Proportion of the card. Default `'standard'` (`height = width / φ`); `'landscape'` is the
@@ -178,6 +203,13 @@ export type ContentCardProps =
       html?: never
       children: ReactNode
     })
+  // A `'center'` icon owns the card body, so neither `content` nor `children` is supplied.
+  | (ContentCardBaseProps & {
+      icon: ContentCardIconConfig
+      content?: never
+      html?: never
+      children?: never
+    })
 
 const FOOTER_GLYPHS: Record<NonNullable<ContentCardFooterLine['type']>, ReactNode> = {
   date: (
@@ -226,6 +258,7 @@ export const ContentCard = forwardRef<HTMLDivElement, ContentCardProps>(function
   {
     title,
     subtitle,
+    icon,
     content,
     html = false,
     contentAlignX = 'center',
@@ -240,6 +273,7 @@ export const ContentCard = forwardRef<HTMLDivElement, ContentCardProps>(function
     footer,
     maxLines,
     watermark,
+    autoscaleWatermark = true,
     size = 'md',
     shape = 'standard',
     onClick,
@@ -276,6 +310,14 @@ export const ContentCard = forwardRef<HTMLDivElement, ContentCardProps>(function
   const watermarkIsString = typeof effectiveWatermark === 'string'
   const hasWatermark = watermarkIsString ? effectiveWatermark.length > 0 : effectiveWatermark != null
   const hasArtWatermark = hasWatermark && !watermarkIsString
+
+  // Resolve the `icon` shorthand to its full `{ content, placement }` form.
+  const hasIcon = icon != null
+  const iconContent = hasIcon ? (isIconConfig(icon) ? icon.content : icon) : null
+  const iconPlacement: ContentCardIconPlacement = hasIcon && isIconConfig(icon) ? (icon.placement ?? 'title') : 'title'
+  const isTitleIcon = hasIcon && iconPlacement === 'title'
+  const isCornerIcon = hasIcon && (iconPlacement === 'upperLeft' || iconPlacement === 'upperRight' || iconPlacement === 'lowerLeft' || iconPlacement === 'lowerRight')
+  const isCenterIcon = hasIcon && iconPlacement === 'center'
 
   const width = SIZE_WIDTH_PX[size]
   // landscape = φ²:1 (shorter box at the same width); standard = φ:1.
@@ -328,9 +370,14 @@ export const ContentCard = forwardRef<HTMLDivElement, ContentCardProps>(function
         'ContentCard: `content` and `children` are mutually exclusive — pass either `content` or `children`, but not both.',
       )
     }
-    if (content === undefined && children === undefined) {
+    if (!isCenterIcon && content === undefined && children === undefined) {
       throw new Error(
-        'ContentCard: one of `content` or `children` must be supplied.',
+        'ContentCard: one of `content` or `children` must be supplied (unless a `center`-placed `icon` fills the body).',
+      )
+    }
+    if (isCenterIcon && (content !== undefined || children !== undefined)) {
+      throw new Error(
+        "ContentCard: icon placement 'center' replaces the card body — it can't combine with `content` or `children`. Drop one of the two.",
       )
     }
   }
@@ -427,7 +474,15 @@ export const ContentCard = forwardRef<HTMLDivElement, ContentCardProps>(function
         ? renderLink({ className: 'mrs-content-card__link-overlay', 'aria-labelledby': titleId })
         : null}
       {hasArtWatermark ? (
-        <div className="mrs-content-card__watermark" aria-hidden="true">{effectiveWatermark}</div>
+        <div
+          className={cn(
+            'mrs-content-card__watermark',
+            autoscaleWatermark && 'mrs-content-card__watermark--glyph',
+          )}
+          aria-hidden="true"
+        >
+          {effectiveWatermark}
+        </div>
       ) : null}
       {hasDragHandle ? (
         <button
@@ -442,6 +497,11 @@ export const ContentCard = forwardRef<HTMLDivElement, ContentCardProps>(function
         >
           {dragHandle ?? DEFAULT_DRAG_HANDLE}
         </button>
+      ) : null}
+      {isCornerIcon ? (
+        <div className={cn('mrs-content-card__icon', `mrs-content-card__icon--${iconPlacement}`)} aria-hidden="true">
+          {iconContent}
+        </div>
       ) : null}
       {showVariantLeftStripe ? (
         <div className="mrs-content-card__variant-stripe" aria-hidden="true" />
@@ -463,20 +523,27 @@ export const ContentCard = forwardRef<HTMLDivElement, ContentCardProps>(function
       ) : null}
       <div className="mrs-content-card__inner">
         <div className="mrs-content-card__header">
+          {isTitleIcon ? <div className="mrs-content-card__icon" aria-hidden="true">{iconContent}</div> : null}
           <div className="mrs-content-card__head-text">
             <p className="mrs-content-card__title" id={titleId} data-fit={titleFitStep(title) || undefined}>{title}</p>
             {subtitle ? <p className="mrs-content-card__subtitle">{subtitle}</p> : null}
           </div>
         </div>
- 
-        <div
-          className={cn('mrs-content-card__body', variant && 'mrs-content-card__body--variant')}
-          data-align-x={contentAlignX}
-          data-align-y={contentAlignY}
-        >
-          {children !== undefined ? children : contentNode}
-        </div>
- 
+
+        {isCenterIcon ? (
+          <div className="mrs-content-card__body mrs-content-card__body--icon-center" aria-hidden="true">
+            {iconContent}
+          </div>
+        ) : (
+          <div
+            className={cn('mrs-content-card__body', variant && 'mrs-content-card__body--variant')}
+            data-align-x={contentAlignX}
+            data-align-y={contentAlignY}
+          >
+            {children !== undefined ? children : contentNode}
+          </div>
+        )}
+
         {hasFooter ? (
           <div className="mrs-content-card__lower">
             {structuredFooter ? footerNode : (footer as ReactNode)}

@@ -4,6 +4,7 @@ import DOMPurify from 'isomorphic-dompurify';
 import { cn } from './cn';
 import { resolveAccentColor } from './accent';
 import { TONE_COLOR } from './tone';
+import { isIconConfig } from './card-icon';
 /**
  * Discriminate the structured `{ lines, badges }` footer from a freeform `ReactNode`.
  * A React element, array, or primitive is freeform; a plain object carrying `lines`/`badges`
@@ -65,7 +66,7 @@ function completenessFill(fraction) {
         return 'var(--color-warning)';
     return 'var(--color-success)';
 }
-export const ContentCard = forwardRef(function ContentCard({ title, subtitle, content, html = false, contentAlignX = 'center', contentAlignY = 'center', value, maxValue, tone = 'neutral', color, accentPlacement = 'top', topStripeFollowsGauge = false, variant, footer, maxLines, watermark, size = 'md', shape = 'standard', onClick, hoverable, showDragHandle, dragHandle, dragHandleProps, dragHandleLabel, dragWholeCard, renderLink, className, style: styleProp, children, }, ref) {
+export const ContentCard = forwardRef(function ContentCard({ title, subtitle, icon, content, html = false, contentAlignX = 'center', contentAlignY = 'center', value, maxValue, tone = 'neutral', color, accentPlacement = 'top', topStripeFollowsGauge = false, variant, footer, maxLines, watermark, autoscaleWatermark = true, size = 'md', shape = 'standard', onClick, hoverable, showDragHandle, dragHandle, dragHandleProps, dragHandleLabel, dragWholeCard, renderLink, className, style: styleProp, children, }, ref) {
     // A visible grip shows when toggled on, or when a custom handle node is supplied.
     const hasDragHandle = showDragHandle || dragHandle != null;
     // Whole-card drag: the grabbing cursor engages only after a short hold, so a
@@ -87,6 +88,13 @@ export const ContentCard = forwardRef(function ContentCard({ title, subtitle, co
     const watermarkIsString = typeof effectiveWatermark === 'string';
     const hasWatermark = watermarkIsString ? effectiveWatermark.length > 0 : effectiveWatermark != null;
     const hasArtWatermark = hasWatermark && !watermarkIsString;
+    // Resolve the `icon` shorthand to its full `{ content, placement }` form.
+    const hasIcon = icon != null;
+    const iconContent = hasIcon ? (isIconConfig(icon) ? icon.content : icon) : null;
+    const iconPlacement = hasIcon && isIconConfig(icon) ? (icon.placement ?? 'title') : 'title';
+    const isTitleIcon = hasIcon && iconPlacement === 'title';
+    const isCornerIcon = hasIcon && (iconPlacement === 'upperLeft' || iconPlacement === 'upperRight' || iconPlacement === 'lowerLeft' || iconPlacement === 'lowerRight');
+    const isCenterIcon = hasIcon && iconPlacement === 'center';
     const width = SIZE_WIDTH_PX[size];
     // landscape = φ²:1 (shorter box at the same width); standard = φ:1.
     const height = shape === 'landscape' ? width / (PHI * PHI) : width / PHI;
@@ -120,8 +128,11 @@ export const ContentCard = forwardRef(function ContentCard({ title, subtitle, co
         if (content !== undefined && children !== undefined) {
             throw new Error('ContentCard: `content` and `children` are mutually exclusive — pass either `content` or `children`, but not both.');
         }
-        if (content === undefined && children === undefined) {
-            throw new Error('ContentCard: one of `content` or `children` must be supplied.');
+        if (!isCenterIcon && content === undefined && children === undefined) {
+            throw new Error('ContentCard: one of `content` or `children` must be supplied (unless a `center`-placed `icon` fills the body).');
+        }
+        if (isCenterIcon && (content !== undefined || children !== undefined)) {
+            throw new Error("ContentCard: icon placement 'center' replaces the card body — it can't combine with `content` or `children`. Drop one of the two.");
         }
     }
     let footerNode = null;
@@ -158,8 +169,8 @@ export const ContentCard = forwardRef(function ContentCard({ title, subtitle, co
             onPointerLeave: (e) => { clearHold(); dragHandleProps?.onPointerLeave?.(e); },
         } : {}), children: [renderLink
                 ? renderLink({ className: 'mrs-content-card__link-overlay', 'aria-labelledby': titleId })
-                : null, hasArtWatermark ? (_jsx("div", { className: "mrs-content-card__watermark", "aria-hidden": "true", children: effectiveWatermark })) : null, hasDragHandle ? (_jsx("button", { type: "button", className: "mrs-content-card__drag-handle", "aria-label": dragHandleLabel, ...dragHandleProps, onClick: (e) => {
+                : null, hasArtWatermark ? (_jsx("div", { className: cn('mrs-content-card__watermark', autoscaleWatermark && 'mrs-content-card__watermark--glyph'), "aria-hidden": "true", children: effectiveWatermark })) : null, hasDragHandle ? (_jsx("button", { type: "button", className: "mrs-content-card__drag-handle", "aria-label": dragHandleLabel, ...dragHandleProps, onClick: (e) => {
                     e.stopPropagation();
                     dragHandleProps?.onClick?.(e);
-                }, children: dragHandle ?? DEFAULT_DRAG_HANDLE })) : null, showVariantLeftStripe ? (_jsx("div", { className: "mrs-content-card__variant-stripe", "aria-hidden": "true" })) : null, hasGauge ? (_jsx("div", { className: "mrs-content-card__gauge", role: "meter", "aria-valuemin": 0, "aria-valuemax": 100, "aria-valuenow": gaugePct, "aria-label": `${gaugePct}%`, children: _jsx("div", { className: "mrs-content-card__gauge-fill", style: { height: `${gaugeFraction * 100}%`, background: completenessFill(gaugeFraction) } }) })) : null, _jsxs("div", { className: "mrs-content-card__inner", children: [_jsx("div", { className: "mrs-content-card__header", children: _jsxs("div", { className: "mrs-content-card__head-text", children: [_jsx("p", { className: "mrs-content-card__title", id: titleId, "data-fit": titleFitStep(title) || undefined, children: title }), subtitle ? _jsx("p", { className: "mrs-content-card__subtitle", children: subtitle }) : null] }) }), _jsx("div", { className: cn('mrs-content-card__body', variant && 'mrs-content-card__body--variant'), "data-align-x": contentAlignX, "data-align-y": contentAlignY, children: children !== undefined ? children : contentNode }), hasFooter ? (_jsx("div", { className: "mrs-content-card__lower", children: structuredFooter ? footerNode : footer })) : null] })] }));
+                }, children: dragHandle ?? DEFAULT_DRAG_HANDLE })) : null, isCornerIcon ? (_jsx("div", { className: cn('mrs-content-card__icon', `mrs-content-card__icon--${iconPlacement}`), "aria-hidden": "true", children: iconContent })) : null, showVariantLeftStripe ? (_jsx("div", { className: "mrs-content-card__variant-stripe", "aria-hidden": "true" })) : null, hasGauge ? (_jsx("div", { className: "mrs-content-card__gauge", role: "meter", "aria-valuemin": 0, "aria-valuemax": 100, "aria-valuenow": gaugePct, "aria-label": `${gaugePct}%`, children: _jsx("div", { className: "mrs-content-card__gauge-fill", style: { height: `${gaugeFraction * 100}%`, background: completenessFill(gaugeFraction) } }) })) : null, _jsxs("div", { className: "mrs-content-card__inner", children: [_jsxs("div", { className: "mrs-content-card__header", children: [isTitleIcon ? _jsx("div", { className: "mrs-content-card__icon", "aria-hidden": "true", children: iconContent }) : null, _jsxs("div", { className: "mrs-content-card__head-text", children: [_jsx("p", { className: "mrs-content-card__title", id: titleId, "data-fit": titleFitStep(title) || undefined, children: title }), subtitle ? _jsx("p", { className: "mrs-content-card__subtitle", children: subtitle }) : null] })] }), isCenterIcon ? (_jsx("div", { className: "mrs-content-card__body mrs-content-card__body--icon-center", "aria-hidden": "true", children: iconContent })) : (_jsx("div", { className: cn('mrs-content-card__body', variant && 'mrs-content-card__body--variant'), "data-align-x": contentAlignX, "data-align-y": contentAlignY, children: children !== undefined ? children : contentNode })), hasFooter ? (_jsx("div", { className: "mrs-content-card__lower", children: structuredFooter ? footerNode : footer })) : null] })] }));
 });

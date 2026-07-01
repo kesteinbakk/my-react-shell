@@ -23,6 +23,7 @@ export { Skeleton } from './Skeleton';
 export { Dialog } from './Dialog';
 export { Popover } from './Popover';
 export { DropdownMenu } from './DropdownMenu';
+export { ContextMenu } from './ContextMenu';
 export { Alert } from './Alert';
 export { Spinner, PageSpinner, SectionSpinner } from './Spinner';
 export { EmptyState } from './EmptyState';
@@ -37,6 +38,9 @@ export { Chip, ChipGroup } from './Chip';
 export { Avatar, AvatarGroup } from './Avatar';
 export { Table } from './Table';
 export { PhiCard, PHI } from './PhiCard';
+// Shared card icon-placement vocabulary — the type + config shape + runtime discriminator
+// backing every card's `icon` prop (each card also re-exports its own named aliases).
+export { isIconConfig } from './card-icon';
 export { StatCard } from './StatCard';
 export { ContentCard } from './ContentCard';
 export { PaperCard } from './PaperCard';

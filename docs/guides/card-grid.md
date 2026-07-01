@@ -134,6 +134,60 @@ the same accent vocabulary as `StatCard`/`PaperCard`. It's independent of the fa
 > A `DynamicGridCard` used **outside** a `DynamicCardGrid` can set its own `size` to get the
 > same min/max cap; inside a grid, omit it and let `cardSize` drive the columns.
 
+The header `icon` auto-shrinks, and a string `title` auto-fits (3 length-based steps, clamped
+to 2 lines), on an `sm`-size card — `md`/`lg` keep both at their normal size. Resolution is
+**deterministic, not measured**: `DynamicGridCard` reads its own `size` prop, falling back to
+the enclosing `DynamicCardGrid`'s `cardSize` via context — so it works with no prop needed in
+the common case (`size` omitted, `cardSize="sm"` on the grid). A `@container` query on the
+card's rendered width was tried first and dropped: Chromium gives inconsistent results for a
+container-query container that also carries `aspect-ratio` inside a `1fr` grid track, so two
+equal-width cards could resolve to different icon/title sizes.
+
+### Icon placement (all four cards)
+
+`StatCard`, `ContentCard`, `PaperCard`, and `DynamicGridCard` all take the **same** `icon` prop
+and placement vocabulary — the shared `CardIconPlacement` type + `{ content, placement }` config
+(`CardIconConfig`). `icon` takes a bare `ReactNode` (shorthand for
+`{ content: icon, placement: 'title' }` — the in-flow behavior, beside the title block) **or** the
+full `{ content, placement }` form:
+
+| `placement` | Behaviour |
+| :--- | :--- |
+| `'title'` *(default)* | In the document flow, beside the title block — pushes/sizes with the heading. |
+| `'upperLeft'` · `'upperRight'` · `'lowerLeft'` · `'lowerRight'` | An absolutely positioned corner overlay — **never** affects layout (never pushes title/body/footer). |
+| `'center'` | Replaces the card's main content area. |
+
+```tsx
+// In-flow (shorthand — identical to { content: '⚙️', placement: 'title' }):
+<DynamicGridCard icon="⚙️" title="Setup" />
+
+// Corner badge — doesn't push the title:
+<StatCard title="Synced" icon={{ content: '✅', placement: 'lowerRight' }} />
+
+// Replaces the body:
+<ContentCard title="Empty state" icon={{ content: '📭', placement: 'center' }} />
+```
+
+**Per-card collision rules** — a placement that would land on an existing raised slot **throws
+in dev** (a no-op in prod). The four corners and the drag handle don't collide: the handle is
+vertically centred on the right edge, while the corner placements sit at the true top/bottom
+edges.
+
+| Card | `'upperRight'` collides with… | `'center'` collides with… |
+| :--- | :--- | :--- |
+| **`StatCard`** | the corner `medallion` (both own the top-right) | `stats` (both own the body) |
+| **`ContentCard`** | — *(no corner-occupying slot)* | `content` / `children` (both own the body — with a `center` icon they're optional) |
+| **`PaperCard`** | the `corner` slot (the icon is offset below the dog-eared fold to clear it, but `corner` sits there too) | `content` / `image` (both own the body) |
+| **`DynamicGridCard`** | the `corner` slot | `children` |
+
+### Hover feedback
+
+A `hoverable` card's default hover state is a subtle background tint
+(`--color-surface-raised`) — no movement, no shadow change. Pass **`lift`** to add a
+`translateY` + stronger shadow on top of the tint for a more pronounced affordance (e.g. a
+card that's the primary action in a dense layout). `hoverable` defaults to `true` when
+`onClick` is set, so a clickable card gets the tint with no extra prop.
+
 ### Drag-reorder handle
 
 `DynamicGridCard` carries the same `showDragHandle` / `dragHandle` / `dragHandleProps` /
@@ -222,26 +276,40 @@ renderCard={(it) => (
   live control there; add a raised slot for it instead.
 - **Dragging coexists with navigation.** You can combine a drag handle (`showDragHandle`) or `dragWholeCard` with `renderLink` or `onClick`. The browser distinguishes between dragging and clicking based on motion/delay thresholds set on your DND sensors.
 
-On the fixed-size cards the overlay sits *beneath* the content layer and the inner wrapper is
-click-transparent, so `StatCard`'s medallion button (`onMedallionPress`) and any drag handle
-stay live above it. Type-safety, the auto-wired accessible name, and the raised-slot rule are
-identical to the example above on all four cards.
+On every card the overlay sits *beneath* the content layer and the content (`header`/`body`/
+`footer` on `DynamicGridCard`, the equivalent inner wrapper on `StatCard`/`ContentCard`/
+`PaperCard`) is click-transparent (`pointer-events: none`), so a click anywhere on the card —
+not just the title — reaches the overlay; raised slots (`corner`, `StatCard`'s medallion button,
+any drag handle) opt back into `pointer-events` to stay independently clickable. This matters
+for `DynamicGridCard` specifically with a `watermark`: a watermarked card promotes `header`/
+`body`/`footer` to `position: relative; z-index: 1` (to sit above the watermark's `z-index: 0`
+layer), which ties the overlay's own `z-index: 1` — without click-transparency, the
+later-in-DOM content would win that tie and silently swallow every click. Type-safety, the
+auto-wired accessible name, and the raised-slot rule are identical across all four cards.
 
 ---
 
 ## 4. Watermarks — emoji or a hover-reveal mark
 
-`DynamicGridCard`'s `watermark` takes a **string** (a faint oversized emoji, the long-standing
-behaviour) **or** a **`ReactNode`** art layer. The shipped art mark is **`DrawerMark`** — an
-isometric drawer that rests closed and slides open on card hover, built on the **`RevealMark`**
-seam. An element watermark makes the card root a `mrs-reveal-host`, which is what drives the
-open-on-hover; pass `open` to keep it open for the active route.
+Every card in the family (`StatCard`, `ContentCard`, `PaperCard`, `DynamicGridCard`) shares one
+`watermark` seam: it takes a **string** (a faint oversized emoji, the long-standing behaviour)
+**or** a **`ReactNode`** art layer. The shipped art mark is **`DrawerMark`** — an isometric drawer
+that rests closed and slides open on card hover, built on the **`RevealMark`** seam. An element
+watermark makes the card root a `mrs-reveal-host`, which is what drives the open-on-hover; pass
+`open` to keep it open for the active route.
+
+**`autoscaleWatermark` (default `true`, all four cards)** — for a **`ReactNode`** watermark only,
+it scales the node's intrinsic `<svg>`/`<span>` up to watermark scale (oversized and faint),
+mirroring the string-emoji watermark — the right behavior for a small icon-kit glyph (e.g.
+`<AppIcon>`). Pass **`autoscaleWatermark={false}`** for a self-sized illustration (e.g. `DrawerMark`)
+that already lays itself out at watermark scale and shouldn't be force-scaled. It's a no-op for a
+string watermark (and for `StatCard`/`ContentCard`'s `variant` ⚠️, which is a string).
 
 ```tsx
 import { DynamicGridCard, DrawerMark } from 'my-react-shell/components'
 
 <DynamicGridCard title="Files" subtitle="Project documents"
-  footer={{ lines: [{ text: '8 items' }] }} hoverable lift={false}
+  footer={{ lines: [{ text: '8 items' }] }} hoverable
   watermark={<DrawerMark open={isActive} />}
   renderLink={(p) => <Link {...p} to="/files/$id" params={{ id }} />} />
 ```

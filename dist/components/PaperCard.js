@@ -2,6 +2,7 @@ import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import { forwardRef, isValidElement, useId } from 'react';
 import { cn } from './cn';
 import { resolveAccentColor } from './accent';
+import { isIconConfig } from './card-icon';
 /**
  * Discriminate the structured `{ lines, badges }` footer from a freeform `ReactNode`.
  * A React element, array, or primitive is freeform; a plain object carrying `lines`/`badges`
@@ -55,7 +56,7 @@ const FOOTER_GLYPHS = {
  * Optional `tone`/`color` adds an accent stripe (none by default). Shares the card-family
  * footer, watermark, hover-lift, drag-handle, and `renderLink` block-link seams.
  */
-export const PaperCard = forwardRef(function PaperCard({ title, subtitle, content, contentAlignX = 'left', contentAlignY = 'top', maxLines, tone, color, accentPlacement = 'top', footer, corner, watermark, image, size = 'md', onClick, hoverable, showDragHandle, dragHandle, dragHandleProps, dragHandleLabel, renderLink, className, style: styleProp, }, ref) {
+export const PaperCard = forwardRef(function PaperCard({ title, subtitle, icon, content, contentAlignX = 'left', contentAlignY = 'top', maxLines, tone, color, accentPlacement = 'top', footer, corner, watermark, autoscaleWatermark = true, image, size = 'md', onClick, hoverable, showDragHandle, dragHandle, dragHandleProps, dragHandleLabel, renderLink, className, style: styleProp, }, ref) {
     // A visible grip shows when toggled on, or when a custom handle node is supplied.
     const hasDragHandle = showDragHandle || dragHandle != null;
     // A string watermark draws via the sheet's CSS `::after`; a ReactNode renders in an art
@@ -63,6 +64,13 @@ export const PaperCard = forwardRef(function PaperCard({ title, subtitle, conten
     const watermarkIsString = typeof watermark === 'string';
     const hasWatermark = watermarkIsString ? watermark.length > 0 : watermark != null;
     const hasArtWatermark = hasWatermark && !watermarkIsString;
+    // Resolve the `icon` shorthand to its full `{ content, placement }` form.
+    const hasIcon = icon != null;
+    const iconContent = hasIcon ? (isIconConfig(icon) ? icon.content : icon) : null;
+    const iconPlacement = hasIcon && isIconConfig(icon) ? (icon.placement ?? 'title') : 'title';
+    const isTitleIcon = hasIcon && iconPlacement === 'title';
+    const isCornerIcon = hasIcon && (iconPlacement === 'upperLeft' || iconPlacement === 'upperRight' || iconPlacement === 'lowerLeft' || iconPlacement === 'lowerRight');
+    const isCenterIcon = hasIcon && iconPlacement === 'center';
     const width = SIZE_WIDTH_PX[size];
     const height = width * SQRT2;
     const fold = SIZE_FOLD_PX[size];
@@ -79,6 +87,12 @@ export const PaperCard = forwardRef(function PaperCard({ title, subtitle, conten
     const accentColor = resolveAccentColor(tone, color);
     const hasAccent = accentColor != null;
     if (process.env.NODE_ENV !== 'production') {
+        if (iconPlacement === 'upperRight' && corner != null) {
+            throw new Error("PaperCard: icon placement 'upperRight' collides with the `corner` slot — both render below the fold in the top-right corner. Use a different icon placement (e.g. 'upperLeft') or drop `corner`.");
+        }
+        if (isCenterIcon && (content != null || image != null)) {
+            throw new Error("PaperCard: icon placement 'center' replaces the sheet body — it can't combine with `content` or `image`. Drop one of the two.");
+        }
     }
     let footerNode = null;
     if (structuredFooter) {
@@ -112,5 +126,5 @@ export const PaperCard = forwardRef(function PaperCard({ title, subtitle, conten
                 : null, hasDragHandle ? (_jsx("button", { type: "button", className: "mrs-paper-card__drag-handle", "aria-label": dragHandleLabel, ...dragHandleProps, onClick: (e) => {
                     e.stopPropagation();
                     dragHandleProps?.onClick?.(e);
-                }, children: dragHandle ?? DEFAULT_DRAG_HANDLE })) : null, corner != null ? _jsx("div", { className: "mrs-paper-card__corner", children: corner }) : null, _jsxs("div", { className: "mrs-paper-card__sheet", "data-watermark": watermarkIsString ? watermark : undefined, children: [_jsx("span", { className: "mrs-paper-card__fold", "aria-hidden": "true" }), hasArtWatermark ? (_jsx("div", { className: "mrs-paper-card__watermark", "aria-hidden": "true", children: watermark })) : null, image != null ? (_jsx("div", { className: "mrs-paper-card__image", "aria-hidden": "true", children: image })) : null, _jsxs("div", { className: "mrs-paper-card__inner", children: [_jsx("div", { className: "mrs-paper-card__header", children: _jsxs("div", { className: "mrs-paper-card__head-text", children: [_jsx("p", { className: "mrs-paper-card__title", id: titleId, children: title }), subtitle ? _jsx("p", { className: "mrs-paper-card__subtitle", children: subtitle }) : null] }) }), content != null ? (_jsx("div", { className: "mrs-paper-card__body", "data-align-x": contentAlignX, "data-align-y": contentAlignY, children: _jsx("div", { className: "mrs-paper-card__content", style: contentStyle, children: content }) })) : null, hasFooter ? (_jsx("div", { className: "mrs-paper-card__lower", children: structuredFooter ? footerNode : footer })) : null] })] })] }));
+                }, children: dragHandle ?? DEFAULT_DRAG_HANDLE })) : null, corner != null ? _jsx("div", { className: "mrs-paper-card__corner", children: corner }) : null, isCornerIcon ? (_jsx("div", { className: cn('mrs-paper-card__icon', `mrs-paper-card__icon--${iconPlacement}`), "aria-hidden": "true", children: iconContent })) : null, _jsxs("div", { className: "mrs-paper-card__sheet", "data-watermark": watermarkIsString ? watermark : undefined, children: [_jsx("span", { className: "mrs-paper-card__fold", "aria-hidden": "true" }), hasArtWatermark ? (_jsx("div", { className: cn('mrs-paper-card__watermark', autoscaleWatermark && 'mrs-paper-card__watermark--glyph'), "aria-hidden": "true", children: watermark })) : null, image != null ? (_jsx("div", { className: "mrs-paper-card__image", "aria-hidden": "true", children: image })) : null, _jsxs("div", { className: "mrs-paper-card__inner", children: [_jsxs("div", { className: "mrs-paper-card__header", children: [isTitleIcon ? _jsx("div", { className: "mrs-paper-card__icon", "aria-hidden": "true", children: iconContent }) : null, _jsxs("div", { className: "mrs-paper-card__head-text", children: [_jsx("p", { className: "mrs-paper-card__title", id: titleId, children: title }), subtitle ? _jsx("p", { className: "mrs-paper-card__subtitle", children: subtitle }) : null] })] }), isCenterIcon ? (_jsx("div", { className: "mrs-paper-card__body mrs-paper-card__body--icon-center", "aria-hidden": "true", children: iconContent })) : content != null ? (_jsx("div", { className: "mrs-paper-card__body", "data-align-x": contentAlignX, "data-align-y": contentAlignY, children: _jsx("div", { className: "mrs-paper-card__content", style: contentStyle, children: content }) })) : null, hasFooter ? (_jsx("div", { className: "mrs-paper-card__lower", children: structuredFooter ? footerNode : footer })) : null] })] })] }));
 });

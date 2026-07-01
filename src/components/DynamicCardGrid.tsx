@@ -6,7 +6,7 @@ import { Select, type SelectOption } from './Select'
 import { Switch } from './Switch'
 import { Icon } from '../icons'
 import { cn } from './cn'
-import { DYNAMIC_GRID_CARD_MIN_WIDTH, DYNAMIC_GRID_CARD_MAX_WIDTH } from './DynamicGridCard'
+import { DYNAMIC_GRID_CARD_MIN_WIDTH, DYNAMIC_GRID_CARD_MAX_WIDTH, DynamicCardGridSizeContext } from './DynamicGridCard'
 
 const FILTER_VISIBILITY_MIN_ITEMS = 6
 
@@ -290,11 +290,13 @@ export function DynamicCardGrid<T>({
               return Object.keys(vars).length > 0 ? vars as React.CSSProperties : undefined
             })()}
           >
-            {processedItems.map((item) => (
-              <Fragment key={getKey(item)}>
-                {renderCard(item)}
-              </Fragment>
-            ))}
+            <DynamicCardGridSizeContext.Provider value={cardSize}>
+              {processedItems.map((item) => (
+                <Fragment key={getKey(item)}>
+                  {renderCard(item)}
+                </Fragment>
+              ))}
+            </DynamicCardGridSizeContext.Provider>
           </div>
         )}
       </div>

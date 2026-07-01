@@ -1,6 +1,7 @@
 import { type CSSProperties, type ReactNode } from 'react';
 import type { AccentPlacement } from './accent';
 import type { Tone } from './tone';
+import { type CardIconPlacement, type CardIconConfig } from './card-icon';
 /**
  * Size preset — a fixed-width golden-ratio card (`height = width / φ`). `md` (≈312px,
  * four to a `wide` 1440px row) is the default. Self-contained — no longer derived from `PhiCard`.
@@ -31,9 +32,22 @@ export interface ContentCardLinkProps {
 }
 export type ContentCardTone = Tone;
 export type ContentCardVariant = 'warning' | 'danger';
+/** Where a `ContentCard` `icon` renders — see {@link CardIconPlacement}. */
+export type ContentCardIconPlacement = CardIconPlacement;
+/** The `{ content, placement }` object form of `icon` — see {@link ContentCardIconPlacement}. */
+export type ContentCardIconConfig = CardIconConfig;
 export interface ContentCardBaseProps {
     title: string;
     subtitle?: string;
+    /**
+     * Icon/emoji glyph. A bare `ReactNode` is shorthand for `{ content, placement: 'title' }`
+     * (rendered inline beside the title block). Pass the full `{ content, placement }` form to
+     * place it in a corner (never affects layout) or `'center'` (replaces the `content`/`children`
+     * body) — see {@link ContentCardIconPlacement}.
+     *
+     * `'center'` can't combine with `content`/`children` (both own the card body) — throws in dev.
+     */
+    icon?: ReactNode | ContentCardIconConfig;
     contentAlignX?: 'left' | 'center' | 'right';
     contentAlignY?: 'top' | 'center' | 'bottom';
     value?: number;
@@ -60,6 +74,15 @@ export interface ContentCardBaseProps {
      * Ignored when `variant` is set — the variant always shows `⚠️`.
      */
     watermark?: ReactNode;
+    /**
+     * For a **`ReactNode`** watermark only (ignored for a string/variant watermark): scales the
+     * node's intrinsic `<svg>`/`<span>` size up to watermark scale, oversized and faint, mirroring
+     * the string-emoji watermark — the right behavior for a small icon-kit glyph (e.g. `<AppIcon>`).
+     *
+     * Set `false` for a self-sized illustration (e.g. `DrawerMark`) that already lays itself out
+     * at watermark scale and shouldn't be force-scaled. Default `true`.
+     */
+    autoscaleWatermark?: boolean;
     size?: ContentCardSize;
     /**
      * Proportion of the card. Default `'standard'` (`height = width / φ`); `'landscape'` is the
@@ -115,5 +138,10 @@ export type ContentCardProps = (ContentCardBaseProps & {
     content?: never;
     html?: never;
     children: ReactNode;
+}) | (ContentCardBaseProps & {
+    icon: ContentCardIconConfig;
+    content?: never;
+    html?: never;
+    children?: never;
 });
 export declare const ContentCard: import("react").ForwardRefExoticComponent<ContentCardProps & import("react").RefAttributes<HTMLDivElement>>;

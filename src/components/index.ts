@@ -64,6 +64,9 @@ export type {
   DropdownMenuSubmenuItem,
 } from './DropdownMenu'
 
+export { ContextMenu } from './ContextMenu'
+export type { ContextMenuProps } from './ContextMenu'
+
 export { Alert } from './Alert'
 export type { AlertProps, AlertTone } from './Alert'
 
@@ -123,6 +126,11 @@ export type {
   PhiCardFooterLineType,
 } from './PhiCard'
 
+// Shared card icon-placement vocabulary — the type + config shape + runtime discriminator
+// backing every card's `icon` prop (each card also re-exports its own named aliases).
+export { isIconConfig } from './card-icon'
+export type { CardIconPlacement, CardIconConfig } from './card-icon'
+
 export { StatCard } from './StatCard'
 export type {
   StatCardProps,
@@ -135,6 +143,8 @@ export type {
   StatCardFooterLine,
   StatCardFooterLineType,
   StatCardShape,
+  StatCardIconPlacement,
+  StatCardIconConfig,
   StatCardLinkProps,
 } from './StatCard'
 
@@ -148,6 +158,8 @@ export type {
   ContentCardFooterLine,
   ContentCardFooterLineType,
   ContentCardShape,
+  ContentCardIconPlacement,
+  ContentCardIconConfig,
   ContentCardLinkProps,
 } from './ContentCard'
 
@@ -159,6 +171,8 @@ export type {
   PaperCardFooter,
   PaperCardFooterLine,
   PaperCardFooterLineType,
+  PaperCardIconPlacement,
+  PaperCardIconConfig,
   PaperCardLinkProps,
 } from './PaperCard'
 
@@ -260,6 +274,8 @@ export type {
   DynamicGridCardProps,
   DynamicGridCardSize,
   DynamicGridCardShape,
+  DynamicGridCardIconPlacement,
+  DynamicGridCardIconConfig,
   DynamicGridCardFooter,
   DynamicGridCardFooterLine,
   DynamicGridCardFooterLineType,

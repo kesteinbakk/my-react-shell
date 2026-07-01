@@ -1,16 +1,34 @@
-import { forwardRef, isValidElement, useId, useRef, useState, type HTMLAttributes, type ReactNode } from 'react'
+import { createContext, forwardRef, isValidElement, useContext, useId, useRef, useState, type HTMLAttributes, type ReactNode } from 'react'
 import { cn } from './cn'
 import { resolveAccentColor } from './accent'
 import type { AccentPlacement } from './accent'
 import type { Tone } from './tone'
+import { isIconConfig, type CardIconPlacement, type CardIconConfig } from './card-icon'
+
+// Declared locally (browser-only lib, no @types/node). `process.env.NODE_ENV` is
+// replaced by the consumer's bundler, so the dev guards below are stripped in prod.
+declare const process: { env: { NODE_ENV?: string } }
 
 /** φ — the golden ratio. The dynamic card's shape is `aspect-ratio: φ : 1` (or `φ² : 1` for landscape). */
 const PHI = 1.6180339887
 
 export type DynamicGridCardSize = 'sm' | 'md' | 'lg'
 
+/**
+ * Carries the enclosing `DynamicCardGrid`'s `cardSize` down to each `DynamicGridCard` so it
+ * can resolve its own effective size (for the icon/title scale below) without the consumer
+ * having to repeat `size` on every card — the grid is still what drives the column width.
+ */
+export const DynamicCardGridSizeContext = createContext<DynamicGridCardSize | undefined>(undefined)
+
 /** Proportion of the card: `'standard'` is φ:1; `'landscape'` is the shorter-wider φ²:1. */
 export type DynamicGridCardShape = 'standard' | 'landscape'
+
+/** Where a `DynamicGridCard` `icon` renders — see {@link CardIconPlacement}. */
+export type DynamicGridCardIconPlacement = CardIconPlacement
+
+/** The `{ content, placement }` object form of `icon` — see {@link DynamicGridCardIconPlacement}. */
+export type DynamicGridCardIconConfig = CardIconConfig
 
 /** Leading glyph kind for a structured footer meta line. */
 export type DynamicGridCardFooterLineType = 'date' | 'time' | 'check'
@@ -43,15 +61,23 @@ export interface DynamicGridCardProps extends Omit<HTMLAttributes<HTMLDivElement
   shape?: DynamicGridCardShape
   title?: ReactNode
   subtitle?: ReactNode
-  /** Icon/emoji column rendered beside the title. */
-  icon?: ReactNode
-  /** Cursor + hover-lift + `:focus-visible` ring on the card root. */
+  /**
+   * Icon/emoji glyph. A bare `ReactNode` is shorthand for `{ content, placement: 'title' }`
+   * (today's behavior: rendered beside the title block). Pass the full
+   * `{ content, placement }` form to place it in a corner (never affects layout) or `'center'`
+   * (replaces `children`) — see {@link DynamicGridCardIconPlacement}.
+   */
+  icon?: ReactNode | DynamicGridCardIconConfig
+  /**
+   * Cursor + hover feedback + `:focus-visible` ring on the card root. Defaults to `true` when
+   * `onClick` is set. The default hover feedback is a subtle background tint
+   * (`--color-surface-raised`) — see `lift` to additionally move the card.
+   */
   hoverable?: boolean
   /**
-   * Whether the `hoverable` card lifts (`translateY`) on hover. Defaults to `true`. Set `false`
-   * to keep the card interactive — cursor, `onClick`, and a subtle hover elevation — **without**
-   * the movement (e.g. when the card carries a `DrawerMark` whose own open-on-hover is the
-   * feedback). No effect unless `hoverable` is set.
+   * Adds a `translateY` lift + stronger shadow on top of the default hover tint. Defaults to
+   * `false` — the tint alone is the hover feedback for most cards; opt into the extra movement
+   * for cards where a more pronounced affordance reads better. No effect unless `hoverable`.
    */
   lift?: boolean
   /**
@@ -63,6 +89,15 @@ export interface DynamicGridCardProps extends Omit<HTMLAttributes<HTMLDivElement
    *   root becomes a `mrs-reveal-host`, so a hover-reveal mark dropped here opens on card hover.
    */
   watermark?: ReactNode
+  /**
+   * For a **`ReactNode`** watermark only (ignored for a string watermark): scales the node's
+   * intrinsic `<svg>`/`<span>` size up to watermark scale, oversized and faint, mirroring the
+   * string-emoji watermark — the right behavior for a small icon-kit glyph (e.g. `<AppIcon>`).
+   *
+   * Set `false` for a self-sized illustration (e.g. `DrawerMark`) that already lays itself out
+   * at watermark scale and shouldn't be force-scaled. Default `true`.
+   */
+  autoscaleWatermark?: boolean
   /**
    * Top-corner action slot (e.g. a `DropdownMenu` trigger). Rendered above the link overlay
    * (`z-index`) so it stays independently clickable — a sibling of the anchor, never nested in it.
@@ -206,6 +241,21 @@ function StructuredFooter({ footer }: { footer: DynamicGridCardFooter }) {
 }
 
 /**
+ * `sm`-size title auto-fit: a long string title steps the font size down (3 steps) so it
+ * doesn't blow out the card's reserved heading height. Returns `0` (no reduction) through
+ * `3` (smallest); a non-string title (e.g. a `ReactNode`) always gets `0` since there's no
+ * length to measure. Thresholds tuned for the `sm` column's ~180–210px width.
+ */
+function titleFitStep(title: ReactNode): 0 | 1 | 2 | 3 {
+  if (typeof title !== 'string') return 0
+  const n = title.length
+  if (n > 34) return 3
+  if (n > 24) return 2
+  if (n > 14) return 1
+  return 0
+}
+
+/**
  * Fluid card for the {@link DynamicCardGrid}: it stretches to `width: 100%` of its
  * grid column and inherits the grid's max-width cap, keeping the golden-ratio shape via
  * `aspect-ratio`. Accepts optional named slots (`title`, `subtitle`, `icon`, `footer`)
@@ -216,12 +266,17 @@ function StructuredFooter({ footer }: { footer: DynamicGridCardFooter }) {
  * overlay, with `corner` controls raised above it so they stay independently clickable.
  */
 export const DynamicGridCard = forwardRef<HTMLDivElement, DynamicGridCardProps>(function DynamicGridCard(
-  { size, shape = 'standard', title, subtitle, icon, hoverable, lift = true, watermark, corner, footer, renderLink, showDragHandle, dragHandle, dragHandleProps, dragHandleLabel, dragWholeCard, tone, color, accentPlacement = 'top', className, style, children, ...props },
+  { size, shape = 'standard', title, subtitle, icon, hoverable, lift = false, watermark, autoscaleWatermark = true, corner, footer, renderLink, showDragHandle, dragHandle, dragHandleProps, dragHandleLabel, dragWholeCard, tone, color, accentPlacement = 'top', className, style, children, ...props },
   ref,
 ) {
 
   // A visible grip shows when toggled on, or when a custom handle node is supplied.
   const hasDragHandle = showDragHandle || dragHandle != null
+
+  // Mirrors StatCard/ContentCard: a card with an `onClick` is hoverable by default — without
+  // this, a clickable `dragWholeCard` card never gets `--hoverable`, so the drag-whole cursor
+  // rules (keyed off that class) read it as drag-only and show `grab` instead of `pointer`.
+  const isHoverable = hoverable ?? !!props.onClick
 
   const [isHolding, setIsHolding] = useState(false)
   const holdTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -234,6 +289,12 @@ export const DynamicGridCard = forwardRef<HTMLDivElement, DynamicGridCardProps>(
     setIsHolding(false)
   }
 
+  // The card's own `size` wins; absent that, fall back to the enclosing grid's `cardSize`
+  // (provided via context) so the icon/title scale below resolves without the consumer
+  // having to repeat `size` on every card.
+  const gridSize = useContext(DynamicCardGridSizeContext)
+  const effectiveSize = size ?? gridSize
+
   const minWidth = size ? DYNAMIC_GRID_CARD_MIN_WIDTH[size] : undefined
   const maxWidth = size ? DYNAMIC_GRID_CARD_MAX_WIDTH[size] : undefined
   const aspectRatio = shape === 'landscape' ? `${PHI * PHI} / 1` : `${PHI} / 1`
@@ -242,10 +303,18 @@ export const DynamicGridCard = forwardRef<HTMLDivElement, DynamicGridCardProps>(
   const accentColor = resolveAccentColor(tone, color)
   const hasAccent = accentColor != null
 
+  // Resolve the `icon` shorthand to its full `{ content, placement }` form.
+  const hasIcon = icon != null
+  const iconContent = hasIcon ? (isIconConfig(icon) ? icon.content : icon) : null
+  const iconPlacement: DynamicGridCardIconPlacement = hasIcon && isIconConfig(icon) ? (icon.placement ?? 'title') : 'title'
+  const isTitleIcon = hasIcon && iconPlacement === 'title'
+  const isCornerIcon = hasIcon && (iconPlacement === 'upperLeft' || iconPlacement === 'upperRight' || iconPlacement === 'lowerLeft' || iconPlacement === 'lowerRight')
+  const isCenterIcon = hasIcon && iconPlacement === 'center'
+
   // Auto-wire the overlay anchor's accessible name from the card title.
   const titleId = useId()
   const hasTitle = title != null
-  const hasHeader = title != null || subtitle != null || icon != null
+  const hasHeader = title != null || subtitle != null || isTitleIcon
 
   // A string watermark uses the emoji `::after` path; any other node renders in an art layer.
   const watermarkIsString = typeof watermark === 'string'
@@ -265,14 +334,29 @@ export const DynamicGridCard = forwardRef<HTMLDivElement, DynamicGridCardProps>(
     ...style,
   } as React.CSSProperties
 
+  // Dev guards
+  if (process.env.NODE_ENV !== 'production') {
+    if (iconPlacement === 'upperRight' && corner != null) {
+      throw new Error(
+        "DynamicGridCard: icon placement 'upperRight' collides with the `corner` slot — both render in the top-right corner. Use a different icon placement (e.g. 'upperLeft') or drop `corner`.",
+      )
+    }
+    if (isCenterIcon && children != null) {
+      throw new Error(
+        "DynamicGridCard: icon placement 'center' replaces the card body — it can't combine with `children`. Drop one of the two.",
+      )
+    }
+  }
+
   return (
     <div
       ref={ref}
       className={cn(
         'mrs-dynamic-grid-card',
+        effectiveSize && `mrs-dynamic-grid-card--${effectiveSize}`,
         hasAccent && `mrs-dynamic-grid-card--accent-${accentPlacement}`,
-        hoverable && 'mrs-dynamic-grid-card--hoverable',
-        hoverable && !lift && 'mrs-dynamic-grid-card--no-lift',
+        isHoverable && 'mrs-dynamic-grid-card--hoverable',
+        isHoverable && lift && 'mrs-dynamic-grid-card--lift',
         renderLink && 'mrs-dynamic-grid-card--linked',
         hasDragHandle && 'mrs-dynamic-grid-card--draggable',
         hasWatermark && 'mrs-dynamic-grid-card--watermark',
@@ -308,7 +392,15 @@ export const DynamicGridCard = forwardRef<HTMLDivElement, DynamicGridCardProps>(
         : null}
 
       {hasArtWatermark ? (
-        <div className="mrs-dynamic-grid-card__watermark" aria-hidden="true">{watermark}</div>
+        <div
+          className={cn(
+            'mrs-dynamic-grid-card__watermark',
+            autoscaleWatermark && 'mrs-dynamic-grid-card__watermark--glyph',
+          )}
+          aria-hidden="true"
+        >
+          {watermark}
+        </div>
       ) : null}
 
       {hasDragHandle ? (
@@ -328,13 +420,25 @@ export const DynamicGridCard = forwardRef<HTMLDivElement, DynamicGridCardProps>(
 
       {corner != null ? <div className="mrs-dynamic-grid-card__corner">{corner}</div> : null}
 
+      {isCornerIcon ? (
+        <div className={cn('mrs-dynamic-grid-card__icon', `mrs-dynamic-grid-card__icon--${iconPlacement}`)}>
+          {iconContent}
+        </div>
+      ) : null}
+
       {hasHeader ? (
         <div className="mrs-dynamic-grid-card__header">
-          {icon != null ? <div className="mrs-dynamic-grid-card__icon">{icon}</div> : null}
+          {isTitleIcon ? <div className="mrs-dynamic-grid-card__icon">{iconContent}</div> : null}
           {title != null || subtitle != null ? (
             <div className="mrs-dynamic-grid-card__heading">
               {title != null ? (
-                <div className="mrs-dynamic-grid-card__title" id={hasTitle ? titleId : undefined}>{title}</div>
+                <div
+                  className="mrs-dynamic-grid-card__title"
+                  id={hasTitle ? titleId : undefined}
+                  data-fit={titleFitStep(title) || undefined}
+                >
+                  {title}
+                </div>
               ) : null}
               {subtitle != null ? <div className="mrs-dynamic-grid-card__subtitle">{subtitle}</div> : null}
             </div>
@@ -342,7 +446,9 @@ export const DynamicGridCard = forwardRef<HTMLDivElement, DynamicGridCardProps>(
         </div>
       ) : null}
 
-      <div className="mrs-dynamic-grid-card__body">{children}</div>
+      <div className={cn('mrs-dynamic-grid-card__body', isCenterIcon && 'mrs-dynamic-grid-card__body--icon-center')}>
+        {isCenterIcon ? iconContent : children}
+      </div>
 
       {hasFooter ? (
         <div className="mrs-dynamic-grid-card__footer">

@@ -1,6 +1,7 @@
 import { type CSSProperties, type ReactNode } from 'react';
 import type { AccentPlacement } from './accent';
 import type { Tone } from './tone';
+import { type CardIconPlacement, type CardIconConfig } from './card-icon';
 /**
  * Size preset — a fixed-width A4-portrait card (`height = width × √2`). `md` (≈168px) is
  * the default: a small **preview / thumbnail** sheet, not a full page. `sm` is a smaller,
@@ -29,11 +30,26 @@ export interface PaperCardLinkProps {
     'aria-labelledby'?: string;
 }
 export type PaperCardTone = Tone;
+/** Where a `PaperCard` `icon` renders — see {@link CardIconPlacement}. */
+export type PaperCardIconPlacement = CardIconPlacement;
+/** The `{ content, placement }` object form of `icon` — see {@link PaperCardIconPlacement}. */
+export type PaperCardIconConfig = CardIconConfig;
 export interface PaperCardProps {
     /** Card title. */
     title: string;
     /** Optional subtitle / meta line shown below the title. */
     subtitle?: string;
+    /**
+     * Icon/emoji glyph. A bare `ReactNode` is shorthand for `{ content, placement: 'title' }`
+     * (rendered inline beside the title block). Pass the full `{ content, placement }` form to
+     * place it in a corner (never affects layout) or `'center'` (replaces the `content`/`image`
+     * body) — see {@link PaperCardIconPlacement}.
+     *
+     * `'upperRight'` clears the dog-eared fold (it reuses the `corner` slot's top offset) but
+     * collides with the `corner` slot itself — combining icon `'upperRight'` with `corner` throws
+     * in dev. `'center'` can't combine with `content` or `image` (both own the body) — throws in dev.
+     */
+    icon?: ReactNode | PaperCardIconConfig;
     /** Freeform body text. Optional — a thumbnail can carry just a title. */
     content?: string;
     contentAlignX?: 'left' | 'center' | 'right';
@@ -68,6 +84,15 @@ export interface PaperCardProps {
      * `DynamicGridCard`.
      */
     watermark?: ReactNode;
+    /**
+     * For a **`ReactNode`** watermark only (ignored for a string watermark): scales the node's
+     * intrinsic `<svg>`/`<span>` size up to watermark scale, oversized and faint, mirroring the
+     * string-emoji watermark — the right behavior for a small icon-kit glyph (e.g. `<AppIcon>`).
+     *
+     * Set `false` for a self-sized illustration (e.g. `DrawerMark`) that already lays itself out
+     * at watermark scale and shouldn't be force-scaled. Default `true`.
+     */
+    autoscaleWatermark?: boolean;
     /**
      * A real, full-opacity preview layer filling the sheet behind the title/footer — e.g. a
      * rendered PDF first page (`<canvas>`/`<img>`). Unlike `watermark` (a faint decorative
