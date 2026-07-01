@@ -118,5 +118,7 @@ export { DynamicCardGrid } from './DynamicCardGrid';
 export type { DynamicCardGridProps, ToggleFilter, SortOption } from './DynamicCardGrid';
 export { DynamicGridCard } from './DynamicGridCard';
 export type { DynamicGridCardProps, DynamicGridCardSize, DynamicGridCardShape, DynamicGridCardIconPlacement, DynamicGridCardIconConfig, DynamicGridCardFooter, DynamicGridCardFooterLine, DynamicGridCardFooterLineType, DynamicGridCardLinkProps, } from './DynamicGridCard';
+export { NavCard } from './NavCard';
+export type { NavCardProps, NavCardShape, NavCardFooter, NavCardFooterLine, NavCardFooterLineType, NavCardLinkProps, } from './NavCard';
 export { Preview } from './Preview';
 export type { PreviewProps } from './Preview';

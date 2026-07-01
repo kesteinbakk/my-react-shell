@@ -2084,6 +2084,27 @@
   padding-right: calc(1rem + 24px);
 }
 
+/* ── NavCard ─────────────────────────────────────────────────────────────── */
+/* A small navigation-tile variant of DynamicGridCard: fixed `sm` size, no icon, and its
+   single `title` rendered as the card's centred main content (the body) instead of a
+   header. Only the body (+ optional footer / raised overlays) renders, so the title span
+   centres within the grow-body — both horizontally and vertically. */
+.mrs-nav-card .mrs-dynamic-grid-card__body {
+  place-items: center;
+  text-align: center;
+}
+.mrs-nav-card__title {
+  font-weight: 600;
+  font-size: 1rem;
+  line-height: 1.3;
+  color: var(--color-text-primary);
+  /* Clamp a long label to 3 lines so it never blows out the small tile. */
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
 /* ── PhiCard ─────────────────────────────────────────────────────────────── */
 /* Golden-ratio card. Outer width:height = φ:1 (both set inline from PHI); the two
    sections split φ:1 via the `1.6180339887fr` literals (φ, kept in lockstep with PHI).
