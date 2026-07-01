@@ -78,6 +78,18 @@ demo project's pages — **not** this repo. Build the showcase there, against th
 modules this library publishes. Any showcase or demo material that lands in this
 repo is to be **moved to `my-react-shell-demo`**.
 
+**Editing `my-react-shell-demo` from here (and `my-react-shell` from there) is
+pre-approved, both directions.** This is a standing, explicit exception to the root
+`CLAUDE.md` rule *Mandatory User Approval → "Editing any project other than the one you
+were invoked in"*: **that rule does not apply between `my-react-shell` and
+`my-react-shell-demo`.** The two are one library-plus-showcase unit that must ship in
+lockstep, so an agent invoked in either repo may write to the other **without stopping to
+ask for that specific edit** — e.g. adding a new kit component's demo `PageSection`,
+registering its icon key in `shell-config.tsx`, updating `PaletteReference` after a token
+change, or reproducing a filed bug against the live surface. The carve-out is scoped to
+**this one repo pair only**; every other sibling project — including any consumer app that
+live-links this library (e.g. `evaluering`) — still requires explicit per-edit approval.
+
 **Demos show only what the shell ships — never pimp a demo.** Everything a demo
 renders (`my-react-shell-demo` and `my-react-shell-theme-demo`) must be **exactly what
 the library exports out of the box**, with its real, shipped appearance. **Never** add
