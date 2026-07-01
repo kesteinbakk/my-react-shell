@@ -257,6 +257,14 @@ export interface StatCardBaseProps {
   onClick?: () => void
   /** Hover lift effect. Defaults to `true` when `onClick` is set. */
   hoverable?: boolean
+  /**
+   * Renders the card **monochrome and faded**, so it reads as inactive/unavailable —
+   * **without blocking interaction.** `onClick` (and any `renderLink` navigation) still
+   * fires, and no `disabled`/`aria-disabled` is set, since the card stays operable. Purely
+   * a visual treatment: reach for it when a tile should *look* inactive but remain clickable
+   * (e.g. a locked metric whose click opens an explanation). Default `false`.
+   */
+  dimmed?: boolean
   /** Click handler for the medallion. */
   onMedallionPress?: () => void
   /**
@@ -591,6 +599,7 @@ export const StatCard = forwardRef<HTMLDivElement, StatCardProps>(function StatC
     onClick,
     onMedallionPress,
     hoverable,
+    dimmed,
     showDragHandle,
     dragHandle,
     dragHandleProps,
@@ -773,6 +782,7 @@ export const StatCard = forwardRef<HTMLDivElement, StatCardProps>(function StatC
         hasGauge && 'mrs-stat-card--gauge',
         variant && 'mrs-stat-card--variant',
         isHoverable && 'mrs-stat-card--hoverable',
+        dimmed && 'mrs-stat-card--dimmed',
         hasWatermark && 'mrs-stat-card--watermark',
         hasArtWatermark && 'mrs-reveal-host',
         hasDragHandle && 'mrs-stat-card--draggable',

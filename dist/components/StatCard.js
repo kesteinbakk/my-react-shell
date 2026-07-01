@@ -155,7 +155,7 @@ const DEFAULT_DRAG_HANDLE = (_jsxs("svg", { width: "11", height: "28", viewBox: 
  * The accent stripe, medallion tint, and watermark are driven by `tone` (mapped to
  * semantic tokens) or overridden with a raw CSS `color` string.
  */
-export const StatCard = forwardRef(function StatCard({ title, subtitle, icon, medallion, tone = 'neutral', color, accentPlacement = 'top', sideBarCompleteness, topStripeFollowsGauge = false, stats, variant, footer, watermark, autoscaleWatermark = true, size = 'md', shape = 'standard', onClick, onMedallionPress, hoverable, showDragHandle, dragHandle, dragHandleProps, dragHandleLabel, dragWholeCard, renderLink, className, style: styleProp, info, }, ref) {
+export const StatCard = forwardRef(function StatCard({ title, subtitle, icon, medallion, tone = 'neutral', color, accentPlacement = 'top', sideBarCompleteness, topStripeFollowsGauge = false, stats, variant, footer, watermark, autoscaleWatermark = true, size = 'md', shape = 'standard', onClick, onMedallionPress, hoverable, dimmed, showDragHandle, dragHandle, dragHandleProps, dragHandleLabel, dragWholeCard, renderLink, className, style: styleProp, info, }, ref) {
     const [infoOpen, setInfoOpen] = useState(false);
     // A visible grip shows when toggled on, or when a custom handle node is supplied.
     const hasDragHandle = showDragHandle || dragHandle != null;
@@ -273,7 +273,7 @@ export const StatCard = forwardRef(function StatCard({ title, subtitle, icon, me
             onPress: onMedallionPress,
         })
         : null;
-    return (_jsxs("div", { ref: ref, className: cn('mrs-stat-card', !accentSuppressed && `mrs-stat-card--accent-${effectiveAccentPlacement}`, hasGauge && 'mrs-stat-card--gauge', variant && 'mrs-stat-card--variant', isHoverable && 'mrs-stat-card--hoverable', hasWatermark && 'mrs-stat-card--watermark', hasArtWatermark && 'mrs-reveal-host', hasDragHandle && 'mrs-stat-card--draggable', shape === 'landscape' && 'mrs-stat-card--landscape', renderLink && 'mrs-stat-card--linked', dragWholeCard && 'mrs-stat-card--drag-whole', dragWholeCard && isHolding && 'mrs-stat-card--holding', className), style: style, "data-watermark": watermarkIsString ? effectiveWatermark : undefined, "data-has-medallion": medallion != null ? "true" : undefined, "data-medallion-size": medallion?.size ?? 'lg', onClick: onClick, ...(dragWholeCard ? {
+    return (_jsxs("div", { ref: ref, className: cn('mrs-stat-card', !accentSuppressed && `mrs-stat-card--accent-${effectiveAccentPlacement}`, hasGauge && 'mrs-stat-card--gauge', variant && 'mrs-stat-card--variant', isHoverable && 'mrs-stat-card--hoverable', dimmed && 'mrs-stat-card--dimmed', hasWatermark && 'mrs-stat-card--watermark', hasArtWatermark && 'mrs-reveal-host', hasDragHandle && 'mrs-stat-card--draggable', shape === 'landscape' && 'mrs-stat-card--landscape', renderLink && 'mrs-stat-card--linked', dragWholeCard && 'mrs-stat-card--drag-whole', dragWholeCard && isHolding && 'mrs-stat-card--holding', className), style: style, "data-watermark": watermarkIsString ? effectiveWatermark : undefined, "data-has-medallion": medallion != null ? "true" : undefined, "data-medallion-size": medallion?.size ?? 'lg', onClick: onClick, ...(dragWholeCard ? {
             ...dragHandleProps,
             onPointerDown: (e) => { startHold(); dragHandleProps?.onPointerDown?.(e); },
             onPointerUp: (e) => { clearHold(); dragHandleProps?.onPointerUp?.(e); },

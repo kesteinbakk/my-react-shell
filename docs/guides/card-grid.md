@@ -402,6 +402,11 @@ footer slot.
   fall back to `tone`/`color`).
 - **`variant`** (`'warning'`·`'danger'`) — a structural alert variant. Overrides `tone` to
   the same value and forces `⚠️` as the watermark, ignoring `watermark`.
+- **`dimmed`** — renders the card **monochrome + faded** (grayscale filter + reduced opacity)
+  so it reads as inactive/unavailable, **without disabling it**: `onClick` and `renderLink`
+  navigation still fire, hover-lift still applies, and no `aria-disabled` is set. It's a purely
+  visual state for a tile that should *look* inactive but stay clickable — not a true disabled
+  control.
 - **`stats`** — `{ value, label?, max? }[]`. `label` → label above + number below; `max` →
   compact arc-ring. **Cannot combine `label` and `max` on the same item** (throws in dev).
 - **Title auto-fit** — a very long title steps its font size down in up to five steps (by

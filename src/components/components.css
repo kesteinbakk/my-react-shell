@@ -2605,6 +2605,17 @@
   box-shadow: 0 0 0 1px var(--color-focus), var(--mrs-elevation-card-hover);
 }
 
+/* Dimmed — a monochrome, faded appearance for a tile that should read as
+   inactive/unavailable while staying fully clickable. Purely visual: no
+   `pointer-events` change and no `aria-disabled`, so `onClick`/`renderLink` still
+   fire and hover-lift still signals it's live. `filter: grayscale()` desaturates the
+   whole card (accent stripe, medallion, gauge, watermark included); the reduced opacity
+   matches the kit's faded convention (fields at 0.6). */
+.mrs-stat-card--dimmed {
+  filter: grayscale(1);
+  opacity: 0.6;
+}
+
 /* Interactive-root: the consumer's `<Link>` mounts as a full-bleed block-link overlay.
    `__inner` carries `z-index: 1`, so the overlay (also `z-index: 1`, earlier in DOM) sits
    visually beneath the content — we route clicks to it by making `__inner` click-transparent
