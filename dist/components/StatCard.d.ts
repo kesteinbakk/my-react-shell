@@ -113,6 +113,19 @@ export interface StatCardBaseProps {
     /** Arc-ring medallion in the top-right corner, showing `value / max` progress. */
     medallion?: StatCardMedallion;
     /**
+     * Padlock indicator in the top-right corner — **replaces the `medallion`** (the medallion
+     * is not rendered while this is set, since both own that corner). **Checked, not
+     * defaulted** — three states:
+     * - `true` → a **closed** padlock (locked).
+     * - `false` → an **open** padlock (unlocked).
+     * - `undefined`/absent → no padlock; the `medallion` renders normally if present.
+     *
+     * Purely a status glyph (decorative, `aria-hidden`); it does not gate interaction —
+     * `onClick`/`renderLink` still fire. Can't combine with an `icon` in the `'upperRight'`
+     * placement (both occupy the top-right corner — throws in dev).
+     */
+    locked?: boolean;
+    /**
      * Semantic tone — drives the accent stripe color and medallion tint.
      * Ignored when `color` is set.
      */

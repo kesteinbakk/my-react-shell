@@ -172,6 +172,19 @@ export interface StatCardBaseProps {
   /** Arc-ring medallion in the top-right corner, showing `value / max` progress. */
   medallion?: StatCardMedallion
   /**
+   * Padlock indicator in the top-right corner — **replaces the `medallion`** (the medallion
+   * is not rendered while this is set, since both own that corner). **Checked, not
+   * defaulted** — three states:
+   * - `true` → a **closed** padlock (locked).
+   * - `false` → an **open** padlock (unlocked).
+   * - `undefined`/absent → no padlock; the `medallion` renders normally if present.
+   *
+   * Purely a status glyph (decorative, `aria-hidden`); it does not gate interaction —
+   * `onClick`/`renderLink` still fire. Can't combine with an `icon` in the `'upperRight'`
+   * placement (both occupy the top-right corner — throws in dev).
+   */
+  locked?: boolean
+  /**
    * Semantic tone — drives the accent stripe color and medallion tint.
    * Ignored when `color` is set.
    */
@@ -570,6 +583,21 @@ const DEFAULT_DRAG_HANDLE = (
   </svg>
 )
 
+// Padlock glyphs for the `locked` corner indicator — closed (locked) vs open (unlocked),
+// in the kit's line-icon style (fill none, stroke currentColor). Decorative (aria-hidden).
+const LOCK_CLOSED = (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+    <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+  </svg>
+)
+const LOCK_OPEN = (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+    <path d="M7 11V7a5 5 0 0 1 9.9-1" />
+  </svg>
+)
+
 /**
  * Stat card — a φ-framed KPI/status card with a title, an optional accent
  * medallion arc-ring (`value / max` progress) in the corner, a row of data stats,
@@ -584,6 +612,7 @@ export const StatCard = forwardRef<HTMLDivElement, StatCardProps>(function StatC
     subtitle,
     icon,
     medallion,
+    locked,
     tone = 'neutral',
     color,
     accentPlacement = 'top',
@@ -644,6 +673,12 @@ export const StatCard = forwardRef<HTMLDivElement, StatCardProps>(function StatC
   const isTitleIcon = hasIcon && iconPlacement === 'title'
   const isCornerIcon = hasIcon && (iconPlacement === 'upperLeft' || iconPlacement === 'upperRight' || iconPlacement === 'lowerLeft' || iconPlacement === 'lowerRight')
   const isCenterIcon = hasIcon && iconPlacement === 'center'
+
+  // Padlock indicator — checked, not defaulted: `undefined` → none (medallion renders
+  // normally); `true`/`false` → a closed/open padlock in the top-right corner, which
+  // replaces the medallion (both own that corner).
+  const showLock = locked != null
+  const showMedallion = medallion != null && !showLock
 
   const width = SIZE_WIDTH_PX[size]
   // landscape = φ²:1 (shorter box at the same width); standard = φ:1.
@@ -714,6 +749,11 @@ export const StatCard = forwardRef<HTMLDivElement, StatCardProps>(function StatC
         "StatCard: icon placement 'upperRight' collides with `medallion` — both render in the top-right corner. Use a different icon placement (e.g. 'upperLeft') or drop `medallion`.",
       )
     }
+    if (iconPlacement === 'upperRight' && showLock) {
+      throw new Error(
+        "StatCard: icon placement 'upperRight' collides with `locked` — both render in the top-right corner. Use a different icon placement (e.g. 'upperLeft') or drop `locked`.",
+      )
+    }
     if (isCenterIcon && stats != null) {
       throw new Error(
         "StatCard: icon placement 'center' replaces the stats/content area — it can't combine with `stats`. Drop one of the two.",
@@ -763,7 +803,8 @@ export const StatCard = forwardRef<HTMLDivElement, StatCardProps>(function StatC
   } as unknown as CSSProperties
  
   // Corner medallion — arc-ring only (`max` is mandatory on `StatCardMedallion`).
-  const medallionNode: ReactNode = medallion
+  // Suppressed when a padlock (`locked`) is shown — both own the top-right corner.
+  const medallionNode: ReactNode = showMedallion
     ? renderMedallionContent({
         value: medallion.value,
         max: medallion.max,
@@ -794,8 +835,9 @@ export const StatCard = forwardRef<HTMLDivElement, StatCardProps>(function StatC
       )}
       style={style}
       data-watermark={watermarkIsString ? effectiveWatermark : undefined}
-      data-has-medallion={medallion != null ? "true" : undefined}
-      data-medallion-size={medallion?.size ?? 'lg'}
+      data-has-medallion={showMedallion ? "true" : undefined}
+      data-medallion-size={showMedallion ? (medallion?.size ?? 'lg') : undefined}
+      data-locked={showLock ? (locked ? 'closed' : 'open') : undefined}
       onClick={onClick}
       {...(dragWholeCard ? {
         ...(dragHandleProps as any),
@@ -835,6 +877,11 @@ export const StatCard = forwardRef<HTMLDivElement, StatCardProps>(function StatC
       {isCornerIcon ? (
         <div className={cn('mrs-stat-card__icon', `mrs-stat-card__icon--${iconPlacement}`)} aria-hidden="true">
           {iconContent}
+        </div>
+      ) : null}
+      {showLock ? (
+        <div className="mrs-stat-card__lock" aria-hidden="true">
+          {locked ? LOCK_CLOSED : LOCK_OPEN}
         </div>
       ) : null}
       {showVariantLeftStripe ? (

@@ -2877,6 +2877,32 @@
   padding-right: 1.45em; /* 1.9em width (medallion is circular, allowing slight visual overlap) */
 }
 
+/* Locked indicator — a padlock in the top-right corner (closed when `locked` is true,
+   open when false), owning the same spot the medallion would. Decorative status glyph:
+   a neutral line icon, out of flow so it never affects layout. */
+.mrs-stat-card__lock {
+  position: absolute;
+  top: 0.7em;
+  right: 0.7em;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-secondary);
+  pointer-events: none;
+}
+.mrs-stat-card__lock svg {
+  width: 1.6em;
+  height: 1.6em;
+}
+
+/* Reserve space on the right of the text so a long title/body doesn't run under the
+   padlock (mirrors the medallion's reserved space, above). */
+.mrs-stat-card[data-locked] .mrs-stat-card__head-text,
+.mrs-stat-card[data-locked] .mrs-stat-card__body {
+  padding-right: 2em;
+}
+
 .mrs-stat-card__medallion--pressable {
   cursor: pointer;
   transition: transform 150ms cubic-bezier(0.2, 0, 0, 1), box-shadow 150ms cubic-bezier(0.2, 0, 0, 1), filter 150ms ease, color 150ms ease, border-color 150ms ease;

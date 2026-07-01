@@ -387,6 +387,12 @@ footer slot.
 - **Medallion** — `{ value, max, size? }`. Arc-ring only — `value` and `max` are both
   **required** (no plain-circle mode). `size` defaults to `'lg'`; `'sm'` renders a smaller
   footprint. Set `onMedallionPress` to make it a pressable `<button>`.
+- **`locked`** — a padlock in the top-right corner that **replaces the medallion**. Checked,
+  not defaulted: `true` → closed padlock (locked), `false` → open padlock (unlocked),
+  `undefined` → no padlock (medallion renders normally if present). It's a decorative status
+  glyph and doesn't gate interaction — `onClick`/`renderLink` still fire. Pairs naturally with
+  `dimmed` for an inactive-but-clickable locked tile. Can't share the corner with an `icon` at
+  `'upperRight'` (throws in dev).
 - **Accent** — the stripe + medallion tint are driven by `tone` (semantic tokens) or a raw
   `color` CSS string; `accentPlacement` reads as a `'top'` stripe or a `'left'` bar.
 - **Side completion gauge** — `sideBarCompleteness` is a `0`–`1` fraction (clamped). The

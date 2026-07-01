@@ -147,6 +147,10 @@ function titleFitStep(title) {
 }
 // ── Component ─────────────────────────────────────────────────────────────────
 const DEFAULT_DRAG_HANDLE = (_jsxs("svg", { width: "11", height: "28", viewBox: "0 0 11 28", fill: "currentColor", "aria-hidden": "true", opacity: "0.4", children: [_jsx("rect", { x: "1", y: "0", width: "3", height: "28", rx: "1.5" }), _jsx("rect", { x: "7", y: "0", width: "3", height: "28", rx: "1.5" })] }));
+// Padlock glyphs for the `locked` corner indicator — closed (locked) vs open (unlocked),
+// in the kit's line-icon style (fill none, stroke currentColor). Decorative (aria-hidden).
+const LOCK_CLOSED = (_jsxs("svg", { viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", "aria-hidden": "true", children: [_jsx("rect", { x: "3", y: "11", width: "18", height: "11", rx: "2", ry: "2" }), _jsx("path", { d: "M7 11V7a5 5 0 0 1 10 0v4" })] }));
+const LOCK_OPEN = (_jsxs("svg", { viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", "aria-hidden": "true", children: [_jsx("rect", { x: "3", y: "11", width: "18", height: "11", rx: "2", ry: "2" }), _jsx("path", { d: "M7 11V7a5 5 0 0 1 9.9-1" })] }));
 /**
  * Stat card — a φ-framed KPI/status card with a title, an optional accent
  * medallion arc-ring (`value / max` progress) in the corner, a row of data stats,
@@ -155,7 +159,7 @@ const DEFAULT_DRAG_HANDLE = (_jsxs("svg", { width: "11", height: "28", viewBox: 
  * The accent stripe, medallion tint, and watermark are driven by `tone` (mapped to
  * semantic tokens) or overridden with a raw CSS `color` string.
  */
-export const StatCard = forwardRef(function StatCard({ title, subtitle, icon, medallion, tone = 'neutral', color, accentPlacement = 'top', sideBarCompleteness, topStripeFollowsGauge = false, stats, variant, footer, watermark, autoscaleWatermark = true, size = 'md', shape = 'standard', onClick, onMedallionPress, hoverable, dimmed, showDragHandle, dragHandle, dragHandleProps, dragHandleLabel, dragWholeCard, renderLink, className, style: styleProp, info, }, ref) {
+export const StatCard = forwardRef(function StatCard({ title, subtitle, icon, medallion, locked, tone = 'neutral', color, accentPlacement = 'top', sideBarCompleteness, topStripeFollowsGauge = false, stats, variant, footer, watermark, autoscaleWatermark = true, size = 'md', shape = 'standard', onClick, onMedallionPress, hoverable, dimmed, showDragHandle, dragHandle, dragHandleProps, dragHandleLabel, dragWholeCard, renderLink, className, style: styleProp, info, }, ref) {
     const [infoOpen, setInfoOpen] = useState(false);
     // A visible grip shows when toggled on, or when a custom handle node is supplied.
     const hasDragHandle = showDragHandle || dragHandle != null;
@@ -187,6 +191,11 @@ export const StatCard = forwardRef(function StatCard({ title, subtitle, icon, me
     const isTitleIcon = hasIcon && iconPlacement === 'title';
     const isCornerIcon = hasIcon && (iconPlacement === 'upperLeft' || iconPlacement === 'upperRight' || iconPlacement === 'lowerLeft' || iconPlacement === 'lowerRight');
     const isCenterIcon = hasIcon && iconPlacement === 'center';
+    // Padlock indicator — checked, not defaulted: `undefined` → none (medallion renders
+    // normally); `true`/`false` → a closed/open padlock in the top-right corner, which
+    // replaces the medallion (both own that corner).
+    const showLock = locked != null;
+    const showMedallion = medallion != null && !showLock;
     const width = SIZE_WIDTH_PX[size];
     // landscape = φ²:1 (shorter box at the same width); standard = φ:1.
     const height = shape === 'landscape' ? width / (PHI * PHI) : width / PHI;
@@ -237,6 +246,9 @@ export const StatCard = forwardRef(function StatCard({ title, subtitle, icon, me
         if (iconPlacement === 'upperRight' && medallion != null) {
             throw new Error("StatCard: icon placement 'upperRight' collides with `medallion` — both render in the top-right corner. Use a different icon placement (e.g. 'upperLeft') or drop `medallion`.");
         }
+        if (iconPlacement === 'upperRight' && showLock) {
+            throw new Error("StatCard: icon placement 'upperRight' collides with `locked` — both render in the top-right corner. Use a different icon placement (e.g. 'upperLeft') or drop `locked`.");
+        }
         if (isCenterIcon && stats != null) {
             throw new Error("StatCard: icon placement 'center' replaces the stats/content area — it can't combine with `stats`. Drop one of the two.");
         }
@@ -264,7 +276,8 @@ export const StatCard = forwardRef(function StatCard({ title, subtitle, icon, me
         '--mrs-stat-accent': accentColor,
     };
     // Corner medallion — arc-ring only (`max` is mandatory on `StatCardMedallion`).
-    const medallionNode = medallion
+    // Suppressed when a padlock (`locked`) is shown — both own the top-right corner.
+    const medallionNode = showMedallion
         ? renderMedallionContent({
             value: medallion.value,
             max: medallion.max,
@@ -273,7 +286,7 @@ export const StatCard = forwardRef(function StatCard({ title, subtitle, icon, me
             onPress: onMedallionPress,
         })
         : null;
-    return (_jsxs("div", { ref: ref, className: cn('mrs-stat-card', !accentSuppressed && `mrs-stat-card--accent-${effectiveAccentPlacement}`, hasGauge && 'mrs-stat-card--gauge', variant && 'mrs-stat-card--variant', isHoverable && 'mrs-stat-card--hoverable', dimmed && 'mrs-stat-card--dimmed', hasWatermark && 'mrs-stat-card--watermark', hasArtWatermark && 'mrs-reveal-host', hasDragHandle && 'mrs-stat-card--draggable', shape === 'landscape' && 'mrs-stat-card--landscape', renderLink && 'mrs-stat-card--linked', dragWholeCard && 'mrs-stat-card--drag-whole', dragWholeCard && isHolding && 'mrs-stat-card--holding', className), style: style, "data-watermark": watermarkIsString ? effectiveWatermark : undefined, "data-has-medallion": medallion != null ? "true" : undefined, "data-medallion-size": medallion?.size ?? 'lg', onClick: onClick, ...(dragWholeCard ? {
+    return (_jsxs("div", { ref: ref, className: cn('mrs-stat-card', !accentSuppressed && `mrs-stat-card--accent-${effectiveAccentPlacement}`, hasGauge && 'mrs-stat-card--gauge', variant && 'mrs-stat-card--variant', isHoverable && 'mrs-stat-card--hoverable', dimmed && 'mrs-stat-card--dimmed', hasWatermark && 'mrs-stat-card--watermark', hasArtWatermark && 'mrs-reveal-host', hasDragHandle && 'mrs-stat-card--draggable', shape === 'landscape' && 'mrs-stat-card--landscape', renderLink && 'mrs-stat-card--linked', dragWholeCard && 'mrs-stat-card--drag-whole', dragWholeCard && isHolding && 'mrs-stat-card--holding', className), style: style, "data-watermark": watermarkIsString ? effectiveWatermark : undefined, "data-has-medallion": showMedallion ? "true" : undefined, "data-medallion-size": showMedallion ? (medallion?.size ?? 'lg') : undefined, "data-locked": showLock ? (locked ? 'closed' : 'open') : undefined, onClick: onClick, ...(dragWholeCard ? {
             ...dragHandleProps,
             onPointerDown: (e) => { startHold(); dragHandleProps?.onPointerDown?.(e); },
             onPointerUp: (e) => { clearHold(); dragHandleProps?.onPointerUp?.(e); },
@@ -283,7 +296,7 @@ export const StatCard = forwardRef(function StatCard({ title, subtitle, icon, me
                 : null, hasArtWatermark ? (_jsx("div", { className: cn('mrs-stat-card__watermark', autoscaleWatermark && 'mrs-stat-card__watermark--glyph'), "aria-hidden": "true", children: effectiveWatermark })) : null, hasDragHandle ? (_jsx("button", { type: "button", className: "mrs-stat-card__drag-handle", "aria-label": dragHandleLabel, ...dragHandleProps, onClick: (e) => {
                     e.stopPropagation();
                     dragHandleProps?.onClick?.(e);
-                }, children: dragHandle ?? DEFAULT_DRAG_HANDLE })) : null, isCornerIcon ? (_jsx("div", { className: cn('mrs-stat-card__icon', `mrs-stat-card__icon--${iconPlacement}`), "aria-hidden": "true", children: iconContent })) : null, showVariantLeftStripe ? (_jsx("div", { className: "mrs-stat-card__variant-stripe", "aria-hidden": "true" })) : null, hasGauge ? (_jsx("div", { className: "mrs-stat-card__gauge", role: "meter", "aria-valuemin": 0, "aria-valuemax": 100, "aria-valuenow": gaugePct, "aria-label": `${gaugePct}%`, children: _jsx("div", { className: "mrs-stat-card__gauge-fill", style: { height: `${gaugeFraction * 100}%`, background: completenessFill(gaugeFraction) } }) })) : null, _jsxs("div", { className: "mrs-stat-card__inner", children: [_jsxs("div", { className: "mrs-stat-card__header", children: [isTitleIcon ? _jsx("div", { className: "mrs-stat-card__icon", "aria-hidden": "true", children: iconContent }) : null, _jsxs("div", { className: "mrs-stat-card__head-text", children: [_jsx("p", { className: "mrs-stat-card__title", id: titleId, "data-fit": titleFitStep(title) || undefined, children: title }), subtitle ? _jsx("p", { className: "mrs-stat-card__subtitle", children: subtitle }) : null] }), medallionNode] }), isCenterIcon ? (_jsx("div", { className: "mrs-stat-card__body mrs-stat-card__body--icon-center", "aria-hidden": "true", children: iconContent })) : null, !isCenterIcon && stats && stats.length > 0 ? (_jsx("dl", { className: "mrs-stat-card__stats", children: stats.map((item, i) => {
+                }, children: dragHandle ?? DEFAULT_DRAG_HANDLE })) : null, isCornerIcon ? (_jsx("div", { className: cn('mrs-stat-card__icon', `mrs-stat-card__icon--${iconPlacement}`), "aria-hidden": "true", children: iconContent })) : null, showLock ? (_jsx("div", { className: "mrs-stat-card__lock", "aria-hidden": "true", children: locked ? LOCK_CLOSED : LOCK_OPEN })) : null, showVariantLeftStripe ? (_jsx("div", { className: "mrs-stat-card__variant-stripe", "aria-hidden": "true" })) : null, hasGauge ? (_jsx("div", { className: "mrs-stat-card__gauge", role: "meter", "aria-valuemin": 0, "aria-valuemax": 100, "aria-valuenow": gaugePct, "aria-label": `${gaugePct}%`, children: _jsx("div", { className: "mrs-stat-card__gauge-fill", style: { height: `${gaugeFraction * 100}%`, background: completenessFill(gaugeFraction) } }) })) : null, _jsxs("div", { className: "mrs-stat-card__inner", children: [_jsxs("div", { className: "mrs-stat-card__header", children: [isTitleIcon ? _jsx("div", { className: "mrs-stat-card__icon", "aria-hidden": "true", children: iconContent }) : null, _jsxs("div", { className: "mrs-stat-card__head-text", children: [_jsx("p", { className: "mrs-stat-card__title", id: titleId, "data-fit": titleFitStep(title) || undefined, children: title }), subtitle ? _jsx("p", { className: "mrs-stat-card__subtitle", children: subtitle }) : null] }), medallionNode] }), isCenterIcon ? (_jsx("div", { className: "mrs-stat-card__body mrs-stat-card__body--icon-center", "aria-hidden": "true", children: iconContent })) : null, !isCenterIcon && stats && stats.length > 0 ? (_jsx("dl", { className: "mrs-stat-card__stats", children: stats.map((item, i) => {
                             if (item.max != null) {
                                 // Arc-ring stat
                                 return (_jsx("div", { className: "mrs-stat-card__stat mrs-stat-card__stat--arc", children: _jsx(ArcRing, { value: item.value, max: item.max }) }, i));
