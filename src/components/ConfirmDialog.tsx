@@ -178,9 +178,9 @@ export function ConfirmDialog({
 
   const leadingIcon = icon === false ? null : (icon ?? DEFAULT_TONE_ICONS[tone])
 
-  // Keep a nested popper (Select, DropdownMenu, Popover, …) dismissal from tearing down the
-  // whole dialog. See useDialogDismissGuard for the full mechanism.
-  const guardPopperOutside = useDialogDismissGuard(open)
+  // Keep a nested layer — a popper (Select, DropdownMenu, Popover, …) or a stacked Dialog —
+  // from tearing down the whole dialog when it's dismissed. See useDialogDismissGuard.
+  const guardNestedDismiss = useDialogDismissGuard(open)
 
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
@@ -189,10 +189,10 @@ export function ConfirmDialog({
         <Dialog.Content
           className={cn('mrs-dialog', className)}
           onPointerDownOutside={(e) => {
-            guardPopperOutside(e)
+            guardNestedDismiss(e)
           }}
           onInteractOutside={(e) => {
-            guardPopperOutside(e)
+            guardNestedDismiss(e)
           }}
         >
           <div className="mrs-dialog__title-row">

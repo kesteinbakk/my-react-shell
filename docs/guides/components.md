@@ -157,6 +157,29 @@ a lifted layer instead of sitting flat: a soft lift for cards (deeper on hover) 
 stronger ambient for floating chrome (dialogs, menus, toasts). The geometry is
 kit-internal (`--mrs-elevation-*`), not a public token.
 
+## Nested layers don't tear down their host dialog
+
+`Dialog`, `Sheet`, and `ConfirmDialog` guard against a **nested layer collapsing the whole
+surface** when that nested layer is dismissed — so you can freely open a `Select`,
+`DropdownMenu`, or `Popover` inside a dialog, or **stack a second `Dialog` on top of the
+first**, and dismissing the nested thing dismisses only *it*.
+
+Two Radix quirks make this necessary, both handled for you:
+
+- **Nested popper.** While a `Select`/menu/`Popover` is open, Radix locks the host content to
+  `pointer-events: none`; a click inside the host but outside the popper would otherwise be
+  re-read as an outside interaction and dismiss the host. Guarded by judging the gesture at
+  its *pointerdown* start.
+- **Stacked `Dialog`.** Closing an inner dialog by its ✕ unmounts its content and the browser
+  drops focus to `<body>`; that focus-out used to fire the *outer* dialog's dismiss. The guard
+  recognises focus falling to the document root and suppresses only that path — so the inner
+  dialog's own backdrop/Esc/✕ all still work, and so does the outer's genuine backdrop
+  dismissal.
+
+You get this automatically; there is nothing to wire. (A `closeOnBackdrop={false}` dialog is
+still the right call when you additionally want to protect in-progress edits from a genuine
+backdrop click.)
+
 ## `ActionButton` — header-band layout
 
 The `vertical` default (glyph over label) is for standalone toolbars and action grids. An

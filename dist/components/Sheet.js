@@ -28,17 +28,18 @@ import { useDialogDismissGuard } from './useDialogDismissGuard';
 export function Sheet({ children, trigger, open, onOpenChange, defaultOpen, title, header, headerActions, description, side = 'right', size = 'md', showClose = true, closeLabel, iconMode, scrim = true, modal = true, bare = false, className, overlayClass, panelTestId, }) {
     const st = useShellText();
     const showHeader = !bare && (header != null || title != null || showClose || headerActions != null);
-    // Keep a nested popper (Select, DropdownMenu, Popover, …) dismissal from tearing down the
-    // whole sheet. See useDialogDismissGuard for the full mechanism.
-    const guardPopperOutside = useDialogDismissGuard(open);
+    // Keep a nested layer — a popper (Select, DropdownMenu, Popover, …) or a stacked Dialog —
+    // from tearing down the whole sheet when it's dismissed. See useDialogDismissGuard.
+    const guardNestedDismiss = useDialogDismissGuard(open);
     return (_jsxs(RadixDialog.Root, { open: open, onOpenChange: onOpenChange, defaultOpen: defaultOpen, modal: modal, children: [trigger != null && _jsx(RadixDialog.Trigger, { asChild: true, children: trigger }), _jsxs(RadixDialog.Portal, { children: [scrim && _jsx(RadixDialog.Overlay, { className: cn('mrs-sheet__overlay', overlayClass) }), _jsx(RadixDialog.Content, { "data-testid": panelTestId, className: cn('mrs-sheet', `mrs-sheet--${side}`, `mrs-sheet--${size}`, className), 
                         // Without a scrim, Radix still traps focus when modal; keep the panel from
-                        // grabbing focus away from the live page in the non-modal float case. The popper
-                        // guard runs first so a nested Select/menu dismissal never collapses the sheet.
+                        // grabbing focus away from the live page in the non-modal float case. The nested-layer
+                        // guard runs first so a nested Select/menu or stacked Dialog dismissal never collapses
+                        // the sheet.
                         onPointerDownOutside: (e) => {
-                            guardPopperOutside(e);
+                            guardNestedDismiss(e);
                         }, onInteractOutside: (e) => {
-                            if (guardPopperOutside(e))
+                            if (guardNestedDismiss(e))
                                 return;
                             if (!modal)
                                 e.preventDefault();

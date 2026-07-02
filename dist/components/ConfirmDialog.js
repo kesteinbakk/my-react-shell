@@ -78,12 +78,12 @@ export function ConfirmDialog({ open, onOpenChange, title, description, children
     const derivedConfirmTone = tone === 'danger' ? 'danger' : tone === 'warning' ? 'warning' : 'primary';
     const confirmTone = confirmConfig.tone ?? derivedConfirmTone;
     const leadingIcon = icon === false ? null : (icon ?? DEFAULT_TONE_ICONS[tone]);
-    // Keep a nested popper (Select, DropdownMenu, Popover, …) dismissal from tearing down the
-    // whole dialog. See useDialogDismissGuard for the full mechanism.
-    const guardPopperOutside = useDialogDismissGuard(open);
+    // Keep a nested layer — a popper (Select, DropdownMenu, Popover, …) or a stacked Dialog —
+    // from tearing down the whole dialog when it's dismissed. See useDialogDismissGuard.
+    const guardNestedDismiss = useDialogDismissGuard(open);
     return (_jsx(Dialog.Root, { open: open, onOpenChange: onOpenChange, children: _jsxs(Dialog.Portal, { children: [_jsx(Dialog.Overlay, { className: "mrs-dialog__overlay" }), _jsxs(Dialog.Content, { className: cn('mrs-dialog', className), onPointerDownOutside: (e) => {
-                        guardPopperOutside(e);
+                        guardNestedDismiss(e);
                     }, onInteractOutside: (e) => {
-                        guardPopperOutside(e);
+                        guardNestedDismiss(e);
                     }, children: [_jsxs("div", { className: "mrs-dialog__title-row", children: [leadingIcon != null && (_jsx("span", { className: "mrs-dialog__tone-icon", style: { color: TONE_COLOR[tone] }, "aria-hidden": "true", children: leadingIcon })), _jsx(Dialog.Title, { className: "mrs-dialog__title", children: title })] }), description != null && (_jsx(Dialog.Description, { className: "mrs-dialog__desc", children: description })), children, _jsxs("div", { className: "mrs-dialog__actions", children: [_jsx("button", { type: "button", className: cn('mrs-dialog__btn', getButtonClass(confirmTone)), onClick: confirmClick, disabled: confirmLoading, "aria-busy": confirmLoading || undefined, children: confirmConfig.label }), cancelRequested && (_jsx("button", { type: "button", className: cn('mrs-dialog__btn', getButtonClass(cancelTone)), style: { marginRight: 'auto', order: -1 }, onClick: cancelClick, disabled: cancelLoading, "aria-busy": cancelLoading || undefined, children: cancelConfig.label }))] })] })] }) }));
 }

@@ -57,18 +57,18 @@ export function Dialog({ open, onOpenChange, title, titleActions, headerActions,
         const loading = config.loading ?? false;
         return (_jsx("button", { type: "button", className: cn('mrs-dialog__btn', getButtonClass(tone)), style: style, onClick: onClick, disabled: loading, "aria-busy": loading || undefined, children: config.label }));
     };
-    // Keep a nested popper (Select, DropdownMenu, Popover, …) dismissal from tearing down the
-    // whole dialog. See useDialogDismissGuard for the full mechanism.
-    const guardPopperOutside = useDialogDismissGuard(open);
+    // Keep a nested layer — a popper (Select, DropdownMenu, Popover, …) or a stacked Dialog —
+    // from tearing down the whole dialog when it's dismissed. See useDialogDismissGuard.
+    const guardNestedDismiss = useDialogDismissGuard(open);
     const hasActions = useCancel != null || usePrimary != null || footer != null;
     const renderedFooter = hasActions ? (_jsxs(_Fragment, { children: [footer, usePrimary != null && renderButton(usePrimary, 'primary'), useCancel != null && renderButton(useCancel, 'neutral', { marginRight: 'auto', order: -1 })] })) : null;
     return (_jsx(RadixDialog.Root, { open: open, onOpenChange: onOpenChange, children: _jsxs(RadixDialog.Portal, { children: [_jsx(RadixDialog.Overlay, { className: "mrs-dialog__overlay" }), _jsxs(RadixDialog.Content, { className: cn('mrs-dialog', `mrs-dialog--${size}`, bleed && 'mrs-dialog--bleed', className), onPointerDownOutside: (e) => {
-                        if (guardPopperOutside(e))
+                        if (guardNestedDismiss(e))
                             return;
                         if (!closeOnBackdrop)
                             e.preventDefault();
                     }, onInteractOutside: (e) => {
-                        if (guardPopperOutside(e))
+                        if (guardNestedDismiss(e))
                             return;
                         if (!closeOnBackdrop)
                             e.preventDefault();
