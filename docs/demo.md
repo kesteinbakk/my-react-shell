@@ -63,9 +63,9 @@ Convex backend, and the demo is deliberately no-auth / no-backend.
 
 ## How an agent uses it
 
-Dev-server and browser rules are governed by root `AGENTS.md` + the `browser-tools`
-skill: assume the server is up (never start it), verify freely in the sandboxed
-preview, and only chrome-devtools is user-instruction-only. Here that means:
+Verification runs in the sandboxed preview — see [AGENTS.md](../AGENTS.md) (*Dev
+servers*): `preview_start("vite")` serves this demo, no approval needed, leave it
+running. Only chrome-devtools is user-instruction-only. Here that means:
 
 - **To verify a change:** navigate to the route that renders the affected module and
   confirm the new surface; for anything theme-touching, eyeball light + dark and at

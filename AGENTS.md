@@ -367,8 +367,16 @@ Read and follow that file exactly when asked to perform a release.
 
 Governed by root `AGENTS.md` (*Dev Servers*, *Mandatory User Approval*). Project
 residue only: the shared watcher is the **`rs:watch` / `build:lib:watch`** sidecar
-(rebuilds `dist/` on save; started by `dev start` via `watch = true`). Verify UI in
-the sandboxed preview per the `browser-tools` skill.
+(rebuilds `dist/` on save; started by `dev start` via `watch = true`).
+
+**Verifying UI — use the preview, no approval needed.** `preview_start("vite")` here is
+wired (via launch.json) to serve the **demo** (`my-react-shell-demo`) — the shell's
+modules rendered the way a consumer sees them. That's the sandboxed agent preview, not a
+`dev start` server, so the approval rule above does **not** apply: start it, screenshot
+or inspect the relevant demo route to verify your change, and leave it running for the
+user (never `preview_stop`). Mechanics are in the `browser-tools` skill. If you genuinely
+can't verify (preview won't start, no route exercises the change), tell the user — never
+fall back to asking them to launch a server.
 
 ## How consumers use my-react-shell
 
