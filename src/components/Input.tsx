@@ -2,6 +2,7 @@ import { useId, type ChangeEvent, type InputHTMLAttributes, useState, useEffect,
 import { cva } from 'class-variance-authority'
 import { cn } from './cn'
 import { useDebounce } from './useDebounce'
+import { useRequiredValidation } from './useRequiredValidation'
 import { Label } from './Label'
 
 export type InputSize = 'sm' | 'md' | 'lg'
@@ -39,6 +40,18 @@ export interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 
   onChange?: (e: ChangeEvent<HTMLInputElement>) => void
   /** Optional label. If provided, renders a small label above the input. */
   label?: ReactNode
+  /**
+   * Marks the field as mandatory: renders the red asterisk on the built-in `label`
+   * and sets `aria-required`. Shell-managed — the native `required` attribute is
+   * **not** set, so the browser's native validation bubble never appears.
+   */
+  required?: boolean
+  /**
+   * Opt in to shell-owned validation: once the user blurs an empty `required` field,
+   * the invalid (red-border) state shows and clears the moment a value is typed.
+   * OR-ed with the controlled `invalid`, which always takes precedence. Default `false`.
+   */
+  validateOnBlur?: boolean
 }
 
 const CheckIcon = () => (
@@ -90,6 +103,8 @@ export function Input({
   saveStatus,
   onBlur,
   label,
+  required = false,
+  validateOnBlur = false,
   id: passedId,
   ...rest
 }: InputProps) {
@@ -102,11 +117,18 @@ export function Input({
   }, [saveStatus])
 
   const scheduleDebounced = useDebounce(onDebouncedChange, debounceMs)
+  const { autoInvalid, markTouched, trackValue } = useRequiredValidation({
+    required,
+    validateOnBlur,
+    value: rest.value,
+    defaultValue: rest.defaultValue,
+  })
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (localStatus === 'saved' || localStatus === 'error') {
       setLocalStatus('idle')
     }
+    trackValue(e.target.value)
     onChange?.(e)
     scheduleDebounced(e.target.value)
   }
@@ -115,10 +137,11 @@ export function Input({
     if (localStatus === 'saved' || localStatus === 'error') {
       setLocalStatus('idle')
     }
+    markTouched()
     onBlur?.(e)
   }
 
-  const isInvalid = invalid || localStatus === 'error'
+  const isInvalid = invalid || localStatus === 'error' || autoInvalid
 
   const inputEl = (
     <div className={cn('mrs-input-wrapper', fullWidth && 'mrs-input-wrapper--full')}>
@@ -132,6 +155,7 @@ export function Input({
           className,
         )}
         aria-invalid={isInvalid || undefined}
+        aria-required={required || undefined}
         onChange={handleChange}
         onBlur={handleBlur}
         {...rest}
@@ -152,7 +176,7 @@ export function Input({
   if (label != null) {
     return (
       <div className={cn('mrs-field', fullWidth && 'mrs-field--full')}>
-        <Label htmlFor={id} className="mrs-field__label">
+        <Label htmlFor={id} required={required} className="mrs-field__label">
           {label}
         </Label>
         {inputEl}

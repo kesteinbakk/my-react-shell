@@ -1,6 +1,8 @@
 import { useId, type ChangeEvent, type InputHTMLAttributes, type ReactNode, useState, useEffect, type FocusEvent } from 'react'
 import { cn } from './cn'
 import { useDebounce } from './useDebounce'
+import { useRequiredValidation } from './useRequiredValidation'
+import { Label } from './Label'
 import type { InputSize } from './Input'
 
 export interface InputFieldProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'id' | 'onChange'> {
@@ -27,6 +29,18 @@ export interface InputFieldProps extends Omit<InputHTMLAttributes<HTMLInputEleme
   saveStatus?: 'idle' | 'pending' | 'saving' | 'saved' | 'error'
   /** Custom onChange handler. Crucial for typing tracking. */
   onChange?: (e: ChangeEvent<HTMLInputElement>) => void
+  /**
+   * Marks the field as mandatory: renders the red asterisk on the `label` and sets
+   * `aria-required`. Shell-managed — the native `required` attribute is **not** set,
+   * so the browser's native validation bubble never appears.
+   */
+  required?: boolean
+  /**
+   * Opt in to shell-owned validation: once the user blurs an empty `required` field,
+   * the error (red-border) state shows and clears the moment a value is typed. OR-ed
+   * with the controlled `error`, which always takes precedence. Default `false`.
+   */
+  validateOnBlur?: boolean
 }
 
 const CheckIcon = () => (
@@ -78,6 +92,8 @@ export function InputField({
   onChange,
   saveStatus,
   onBlur,
+  required = false,
+  validateOnBlur = false,
   ...inputProps
 }: InputFieldProps) {
   const id = useId()
@@ -90,11 +106,18 @@ export function InputField({
   }, [saveStatus])
 
   const scheduleDebounced = useDebounce(onDebouncedChange, debounceMs)
+  const { autoInvalid, markTouched, trackValue } = useRequiredValidation({
+    required,
+    validateOnBlur,
+    value: inputProps.value,
+    defaultValue: inputProps.defaultValue,
+  })
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (localStatus === 'saved' || localStatus === 'error') {
       setLocalStatus('idle')
     }
+    trackValue(e.target.value)
     onChange?.(e)
     scheduleDebounced(e.target.value)
   }
@@ -103,10 +126,11 @@ export function InputField({
     if (localStatus === 'saved' || localStatus === 'error') {
       setLocalStatus('idle')
     }
+    markTouched()
     onBlur?.(e)
   }
 
-  const isError = error != null || localStatus === 'error'
+  const isError = error != null || localStatus === 'error' || autoInvalid
   const showError = error != null
   const showDesc = description != null && !showError
 
@@ -124,6 +148,7 @@ export function InputField({
           className,
         )}
         aria-invalid={isError || undefined}
+        aria-required={required || undefined}
         aria-describedby={showError ? errId : showDesc ? descId : undefined}
         onChange={handleChange}
         onBlur={handleBlur}
@@ -145,9 +170,9 @@ export function InputField({
   return (
     <div className={cn('mrs-field', fullWidth && 'mrs-field--full', containerClassName)}>
       {label != null && (
-        <label htmlFor={id} className="mrs-field__label">
+        <Label htmlFor={id} required={required} className="mrs-field__label">
           {label}
-        </label>
+        </Label>
       )}
       {wrappedInput}
       {showDesc && (

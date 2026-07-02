@@ -25,6 +25,18 @@ export interface SelectProps {
     saveStatus?: 'idle' | 'pending' | 'saving' | 'saved' | 'error';
     /** Optional label. If provided, renders a small label above the select trigger. */
     label?: ReactNode;
+    /**
+     * Marks the field as mandatory: renders the red asterisk on the built-in `label`
+     * and sets `aria-required` on the trigger. Shell-managed — no native constraint,
+     * so the browser's native validation bubble never appears.
+     */
+    required?: boolean;
+    /**
+     * Opt in to shell-owned validation: once the user blurs the trigger with no value
+     * selected, the invalid (red-border) state shows and clears on selection. OR-ed
+     * with `saveStatus === 'error'`, which always takes precedence. Default `false`.
+     */
+    validateOnBlur?: boolean;
     id?: string;
 }
 /**
@@ -32,4 +44,4 @@ export interface SelectProps {
  * handling), styled on the theme tokens. Pass an `options` list; controlled via
  * `value` / `onValueChange`.
  */
-export declare function Select({ options, value, onValueChange, placeholder, disabled, size, fullWidth, className, style, saveStatus, label, id: passedId, ...rest }: SelectProps): import("react").JSX.Element;
+export declare function Select({ options, value, onValueChange, placeholder, disabled, size, fullWidth, className, style, saveStatus, label, required, validateOnBlur, id: passedId, ...rest }: SelectProps): import("react").JSX.Element;

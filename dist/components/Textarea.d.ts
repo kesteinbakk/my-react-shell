@@ -14,6 +14,18 @@ export interface TextareaProps extends Omit<TextareaHTMLAttributes<HTMLTextAreaE
     onChange?: (e: ChangeEvent<HTMLTextAreaElement>) => void;
     /** Optional label. If provided, renders a small label above the textarea. */
     label?: ReactNode;
+    /**
+     * Marks the field as mandatory: renders the red asterisk on the built-in `label`
+     * and sets `aria-required`. Shell-managed — the native `required` attribute is
+     * **not** set, so the browser's native validation bubble never appears.
+     */
+    required?: boolean;
+    /**
+     * Opt in to shell-owned validation: once the user blurs an empty `required` field,
+     * the invalid (red-border) state shows and clears the moment a value is typed.
+     * OR-ed with the controlled `invalid`, which always takes precedence. Default `false`.
+     */
+    validateOnBlur?: boolean;
 }
 /**
  * Un-opinionated native `<textarea>` wrapper. All native textarea props (`value`,
@@ -21,4 +33,4 @@ export interface TextareaProps extends Omit<TextareaHTMLAttributes<HTMLTextAreaE
  * the only additions are `invalid` (error styling + `aria-invalid`) and
  * `onDebouncedChange` / `debounceMs` for stop-typing callbacks.
  */
-export declare function Textarea({ invalid, fullWidth, className, onDebouncedChange, debounceMs, onChange, saveStatus, onBlur, label, id: passedId, ...rest }: TextareaProps): import("react").JSX.Element;
+export declare function Textarea({ invalid, fullWidth, className, onDebouncedChange, debounceMs, onChange, saveStatus, onBlur, label, required, validateOnBlur, id: passedId, ...rest }: TextareaProps): import("react").JSX.Element;

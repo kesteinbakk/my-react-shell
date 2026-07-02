@@ -20,6 +20,18 @@ export interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 
     onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
     /** Optional label. If provided, renders a small label above the input. */
     label?: ReactNode;
+    /**
+     * Marks the field as mandatory: renders the red asterisk on the built-in `label`
+     * and sets `aria-required`. Shell-managed — the native `required` attribute is
+     * **not** set, so the browser's native validation bubble never appears.
+     */
+    required?: boolean;
+    /**
+     * Opt in to shell-owned validation: once the user blurs an empty `required` field,
+     * the invalid (red-border) state shows and clears the moment a value is typed.
+     * OR-ed with the controlled `invalid`, which always takes precedence. Default `false`.
+     */
+    validateOnBlur?: boolean;
 }
 /**
  * Un-opinionated native `<input>` wrapper. All native input props (`type`, `value`,
@@ -27,4 +39,4 @@ export interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 
  * additions are `invalid` (error styling + `aria-invalid`), `inputSize`, and
  * `onDebouncedChange` / `debounceMs` for stop-typing callbacks.
  */
-export declare function Input({ invalid, inputSize, fullWidth, className, onDebouncedChange, debounceMs, onChange, saveStatus, onBlur, label, id: passedId, ...rest }: InputProps): import("react").JSX.Element;
+export declare function Input({ invalid, inputSize, fullWidth, className, onDebouncedChange, debounceMs, onChange, saveStatus, onBlur, label, required, validateOnBlur, id: passedId, ...rest }: InputProps): import("react").JSX.Element;

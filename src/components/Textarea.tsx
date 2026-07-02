@@ -1,6 +1,7 @@
 import { useId, type ChangeEvent, type TextareaHTMLAttributes, useState, useEffect, type FocusEvent, type ReactNode } from 'react'
 import { cn } from './cn'
 import { useDebounce } from './useDebounce'
+import { useRequiredValidation } from './useRequiredValidation'
 import { Label } from './Label'
 
 export interface TextareaProps extends Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, 'onChange'> {
@@ -18,6 +19,18 @@ export interface TextareaProps extends Omit<TextareaHTMLAttributes<HTMLTextAreaE
   onChange?: (e: ChangeEvent<HTMLTextAreaElement>) => void
   /** Optional label. If provided, renders a small label above the textarea. */
   label?: ReactNode
+  /**
+   * Marks the field as mandatory: renders the red asterisk on the built-in `label`
+   * and sets `aria-required`. Shell-managed — the native `required` attribute is
+   * **not** set, so the browser's native validation bubble never appears.
+   */
+  required?: boolean
+  /**
+   * Opt in to shell-owned validation: once the user blurs an empty `required` field,
+   * the invalid (red-border) state shows and clears the moment a value is typed.
+   * OR-ed with the controlled `invalid`, which always takes precedence. Default `false`.
+   */
+  validateOnBlur?: boolean
 }
 
 const CheckIcon = () => (
@@ -68,6 +81,8 @@ export function Textarea({
   saveStatus,
   onBlur,
   label,
+  required = false,
+  validateOnBlur = false,
   id: passedId,
   ...rest
 }: TextareaProps) {
@@ -80,11 +95,18 @@ export function Textarea({
   }, [saveStatus])
 
   const scheduleDebounced = useDebounce(onDebouncedChange, debounceMs)
+  const { autoInvalid, markTouched, trackValue } = useRequiredValidation({
+    required,
+    validateOnBlur,
+    value: rest.value,
+    defaultValue: rest.defaultValue,
+  })
 
   const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     if (localStatus === 'saved' || localStatus === 'error') {
       setLocalStatus('idle')
     }
+    trackValue(e.target.value)
     onChange?.(e)
     scheduleDebounced(e.target.value)
   }
@@ -93,10 +115,11 @@ export function Textarea({
     if (localStatus === 'saved' || localStatus === 'error') {
       setLocalStatus('idle')
     }
+    markTouched()
     onBlur?.(e)
   }
 
-  const isInvalid = invalid || localStatus === 'error'
+  const isInvalid = invalid || localStatus === 'error' || autoInvalid
 
   const textareaEl = (
     <div className={cn('mrs-textarea-wrapper', fullWidth && 'mrs-textarea-wrapper--full')}>
@@ -112,6 +135,7 @@ export function Textarea({
           className,
         )}
         aria-invalid={isInvalid || undefined}
+        aria-required={required || undefined}
         onChange={handleChange}
         onBlur={handleBlur}
         {...rest}
@@ -132,7 +156,7 @@ export function Textarea({
   if (label != null) {
     return (
       <div className={cn('mrs-field', fullWidth && 'mrs-field--full')}>
-        <Label htmlFor={id} className="mrs-field__label">
+        <Label htmlFor={id} required={required} className="mrs-field__label">
           {label}
         </Label>
         {textareaEl}

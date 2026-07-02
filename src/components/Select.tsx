@@ -1,6 +1,7 @@
 import { useId, type ReactNode, type CSSProperties } from 'react'
 import * as RadixSelect from '@radix-ui/react-select'
 import { cn } from './cn'
+import { useRequiredValidation } from './useRequiredValidation'
 import { Label } from './Label'
 
 export interface SelectOption {
@@ -31,6 +32,18 @@ export interface SelectProps {
   saveStatus?: 'idle' | 'pending' | 'saving' | 'saved' | 'error'
   /** Optional label. If provided, renders a small label above the select trigger. */
   label?: ReactNode
+  /**
+   * Marks the field as mandatory: renders the red asterisk on the built-in `label`
+   * and sets `aria-required` on the trigger. Shell-managed — no native constraint,
+   * so the browser's native validation bubble never appears.
+   */
+  required?: boolean
+  /**
+   * Opt in to shell-owned validation: once the user blurs the trigger with no value
+   * selected, the invalid (red-border) state shows and clears on selection. OR-ed
+   * with `saveStatus === 'error'`, which always takes precedence. Default `false`.
+   */
+  validateOnBlur?: boolean
   id?: string
 }
 
@@ -81,12 +94,15 @@ export function Select({
   style,
   saveStatus,
   label,
+  required = false,
+  validateOnBlur = false,
   id: passedId,
   ...rest
 }: SelectProps) {
-  const isError = saveStatus === 'error'
   const generatedId = useId()
   const id = passedId ?? generatedId
+  const { autoInvalid, markTouched } = useRequiredValidation({ required, validateOnBlur, value })
+  const isError = saveStatus === 'error' || autoInvalid
 
   const selectEl = (
     <RadixSelect.Root value={value} onValueChange={onValueChange} disabled={disabled}>
@@ -102,7 +118,9 @@ export function Select({
         )}
         style={style}
         aria-invalid={isError || undefined}
+        aria-required={required || undefined}
         aria-label={rest['aria-label']}
+        onBlur={markTouched}
       >
         <RadixSelect.Value placeholder={placeholder} />
         <RadixSelect.Icon className="mrs-select__chevron">{chevron}</RadixSelect.Icon>
@@ -136,7 +154,7 @@ export function Select({
   if (label != null) {
     return (
       <div className={cn('mrs-field', fullWidth && 'mrs-field--full')}>
-        <Label htmlFor={id} className="mrs-field__label">
+        <Label htmlFor={id} required={required} className="mrs-field__label">
           {label}
         </Label>
         {selectEl}

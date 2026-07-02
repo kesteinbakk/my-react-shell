@@ -99,6 +99,44 @@ layout sizing and styling out of the box:
 <Textarea style={{ width: '400px', height: '150px' }} placeholder="Custom textarea size…" />
 ```
 
+## Required fields & validation — shell-owned, never native
+
+Mandatory form controls carry a **red asterisk** and are validated by the **shell**, not the
+browser. `Input`, `Textarea`, `InputField`, and `Select` take a **`required`** prop that:
+
+- renders a red `*` after the built-in `label` (decorative, `aria-hidden`),
+- sets **`aria-required`** on the control (so assistive tech announces it), and
+- **does not set the native `required` attribute** — so the browser's native validation
+  bubble (*"Please fill out this field"*, unstyleable and in the browser's own language)
+  **never appears**. Validation UX is entirely yours.
+
+The red asterisk is a static "this is mandatory" marker; it is **not** an error state — an
+empty required field is not painted red on load (the classic native `:invalid` anti-pattern).
+The error border is separate and **controlled**: you flip `invalid` (`Input`/`Textarea`) or
+`error` (`InputField`) from your own validation, typically on submit.
+
+For the common "**red border once the user leaves an empty required field**" behaviour, opt in
+with **`validateOnBlur`** instead of wiring it yourself. It mirrors the CSS `:user-invalid`
+timing — the border turns red only *after* a blur on an empty field, and clears the instant a
+value is typed — but is implemented in the shell (no native constraint, no bubble). It is
+**OR-ed** with the controlled `invalid`/`error`, which always wins, so it never fights a form
+library that owns the error state.
+
+```tsx
+// Mandatory field: red asterisk + aria-required, no native bubble, red border on blur-empty:
+<Input label={t('field.email')} required validateOnBlur fullWidth />
+<Textarea label={t('field.bio')} required validateOnBlur fullWidth />
+<Select label={t('field.role')} required validateOnBlur placeholder={t('field.pickRole')}
+  options={roleOptions} value={role} onValueChange={setRole} />
+
+// Marker only — you own the error state (e.g. a form library sets `invalid` on submit):
+<Input label={t('field.email')} required invalid={submitted && !email} fullWidth />
+```
+
+`InputField`'s `validateOnBlur` shows only the red border (no message text — the shell can't
+hardcode language); pass `error` for a translated message. Toggles (`Checkbox`/`Switch`) accept
+native `required` for form wiring but render no asterisk — a marker on a single toggle reads oddly.
+
 ## Surfaces & elevation
 
 Kit components render on the semantic **surface ladder** (full definition in the

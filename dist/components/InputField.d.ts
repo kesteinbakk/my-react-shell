@@ -24,9 +24,21 @@ export interface InputFieldProps extends Omit<InputHTMLAttributes<HTMLInputEleme
     saveStatus?: 'idle' | 'pending' | 'saving' | 'saved' | 'error';
     /** Custom onChange handler. Crucial for typing tracking. */
     onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
+    /**
+     * Marks the field as mandatory: renders the red asterisk on the `label` and sets
+     * `aria-required`. Shell-managed — the native `required` attribute is **not** set,
+     * so the browser's native validation bubble never appears.
+     */
+    required?: boolean;
+    /**
+     * Opt in to shell-owned validation: once the user blurs an empty `required` field,
+     * the error (red-border) state shows and clears the moment a value is typed. OR-ed
+     * with the controlled `error`, which always takes precedence. Default `false`.
+     */
+    validateOnBlur?: boolean;
 }
 /**
  * Full field: label + input + helper + error, a11y-wired (`htmlFor`/`aria-invalid`/`aria-describedby`).
  * Spreads native input props; pass `error` to switch on error styling.
  */
-export declare function InputField({ label, description, error, containerClassName, inputSize, fullWidth, className, onDebouncedChange, debounceMs, onChange, saveStatus, onBlur, ...inputProps }: InputFieldProps): import("react").JSX.Element;
+export declare function InputField({ label, description, error, containerClassName, inputSize, fullWidth, className, onDebouncedChange, debounceMs, onChange, saveStatus, onBlur, required, validateOnBlur, ...inputProps }: InputFieldProps): import("react").JSX.Element;
