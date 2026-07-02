@@ -1,8 +1,8 @@
-import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "react/jsx-runtime";
+import { jsx as _jsx, Fragment as _Fragment, jsxs as _jsxs } from "react/jsx-runtime";
 import * as RadixDialog from '@radix-ui/react-dialog';
 import { cn } from './cn';
+import { CloseGlyph } from './CloseGlyph';
 import { useDialogDismissGuard } from './useDialogDismissGuard';
-const CloseIcon = () => (_jsxs("svg", { width: 16, height: 16, viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: 2, strokeLinecap: "round", strokeLinejoin: "round", "aria-hidden": "true", children: [_jsx("path", { d: "M18 6 6 18" }), _jsx("path", { d: "m6 6 12 12" })] }));
 /**
  * Overlay sheet that slides in from any edge — for navigation menus, filters, detail
  * panels, or any content that overlays the page. Built on Radix Dialog (focus trap,
@@ -24,7 +24,7 @@ const CloseIcon = () => (_jsxs("svg", { width: 16, height: 16, viewBox: "0 0 24 
  * </Sheet>
  * ```
  */
-export function Sheet({ children, trigger, open, onOpenChange, defaultOpen, title, header, headerActions, description, side = 'right', size = 'md', showClose = true, closeLabel, scrim = true, modal = true, bare = false, className, overlayClass, panelTestId, }) {
+export function Sheet({ children, trigger, open, onOpenChange, defaultOpen, title, header, headerActions, description, side = 'right', size = 'md', showClose = true, closeLabel, iconMode, scrim = true, modal = true, bare = false, className, overlayClass, panelTestId, }) {
     const showHeader = !bare && (header != null || title != null || showClose || headerActions != null);
     // Keep a nested popper (Select, DropdownMenu, Popover, …) dismissal from tearing down the
     // whole sheet. See useDialogDismissGuard for the full mechanism.
@@ -40,5 +40,5 @@ export function Sheet({ children, trigger, open, onOpenChange, defaultOpen, titl
                                 return;
                             if (!modal)
                                 e.preventDefault();
-                        }, children: bare ? (_jsxs(_Fragment, { children: [title != null && (_jsx(RadixDialog.Title, { className: "mrs-sr-only", children: title })), description != null && (_jsx(RadixDialog.Description, { className: "mrs-sr-only", children: description })), children] })) : (_jsxs(_Fragment, { children: [header != null && title != null && (_jsx(RadixDialog.Title, { className: "mrs-sr-only", children: title })), showHeader && (_jsxs("div", { className: "mrs-sheet__header", children: [header != null ? (header) : (title != null && (_jsx(RadixDialog.Title, { className: "mrs-sheet__title", children: title }))), (showClose || headerActions != null) && (_jsxs("div", { className: "mrs-sheet__header-actions", children: [headerActions, showClose && (_jsx(RadixDialog.Close, { className: "mrs-sheet__close", "aria-label": closeLabel, children: _jsx(CloseIcon, {}) }))] }))] })), description != null && (_jsx(RadixDialog.Description, { className: "mrs-sheet__desc", children: description })), _jsx("div", { className: "mrs-sheet__body", children: children })] })) })] })] }));
+                        }, children: bare ? (_jsxs(_Fragment, { children: [title != null && (_jsx(RadixDialog.Title, { className: "mrs-sr-only", children: title })), description != null && (_jsx(RadixDialog.Description, { className: "mrs-sr-only", children: description })), children] })) : (_jsxs(_Fragment, { children: [header != null && title != null && (_jsx(RadixDialog.Title, { className: "mrs-sr-only", children: title })), showHeader && (_jsxs("div", { className: "mrs-sheet__header", children: [header != null ? (header) : (title != null && (_jsx(RadixDialog.Title, { className: "mrs-sheet__title", children: title }))), (showClose || headerActions != null) && (_jsxs("div", { className: "mrs-sheet__header-actions", children: [headerActions, showClose && (_jsx(RadixDialog.Close, { className: "mrs-sheet__close", "aria-label": closeLabel, children: _jsx(CloseGlyph, { iconMode: iconMode }) }))] }))] })), description != null && (_jsx(RadixDialog.Description, { className: "mrs-sheet__desc", children: description })), _jsx("div", { className: "mrs-sheet__body", children: children })] })) })] })] }));
 }

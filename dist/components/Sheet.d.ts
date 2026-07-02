@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import type { IconMode } from '../icons/iconModeContext';
 /** Which edge the panel slides in from. */
 export type SheetSide = 'left' | 'right' | 'top' | 'bottom';
 /** Panel extent — width for left/right, height for top/bottom. `full` fills that axis. */
@@ -30,6 +31,13 @@ export interface SheetProps {
     showClose?: boolean;
     /** Accessible label for the ✕ close button — **required**; pass a translated string. */
     closeLabel: string;
+    /**
+     * The app's icons↔emojis display mode. Pass the consumer's `iconMode` (from the
+     * icons seam) to make the ✕ close button follow it — the lucide-style icon in
+     * `'icon'` mode, the ✖️ emoji in `'emoji'` mode — matching `UserPreferences`.
+     * Omit to always render the icon (non-breaking default).
+     */
+    iconMode?: IconMode;
     /**
      * Render the dimming backdrop behind the panel (default `true`). Set `false` for a
      * sheet that floats over a still-visible page; pair with `modal={false}` to also keep
@@ -75,4 +83,4 @@ export interface SheetProps {
  * </Sheet>
  * ```
  */
-export declare function Sheet({ children, trigger, open, onOpenChange, defaultOpen, title, header, headerActions, description, side, size, showClose, closeLabel, scrim, modal, bare, className, overlayClass, panelTestId, }: SheetProps): import("react").JSX.Element;
+export declare function Sheet({ children, trigger, open, onOpenChange, defaultOpen, title, header, headerActions, description, side, size, showClose, closeLabel, iconMode, scrim, modal, bare, className, overlayClass, panelTestId, }: SheetProps): import("react").JSX.Element;

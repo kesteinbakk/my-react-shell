@@ -1,6 +1,8 @@
 import type { ReactNode } from 'react'
 import * as RadixDialog from '@radix-ui/react-dialog'
 import { cn } from './cn'
+import type { IconMode } from '../icons/iconModeContext'
+import { CloseGlyph } from './CloseGlyph'
 import { useDialogDismissGuard } from './useDialogDismissGuard'
 
 /** Which edge the panel slides in from. */
@@ -36,6 +38,13 @@ export interface SheetProps {
   /** Accessible label for the ✕ close button — **required**; pass a translated string. */
   closeLabel: string
   /**
+   * The app's icons↔emojis display mode. Pass the consumer's `iconMode` (from the
+   * icons seam) to make the ✕ close button follow it — the lucide-style icon in
+   * `'icon'` mode, the ✖️ emoji in `'emoji'` mode — matching `UserPreferences`.
+   * Omit to always render the icon (non-breaking default).
+   */
+  iconMode?: IconMode
+  /**
    * Render the dimming backdrop behind the panel (default `true`). Set `false` for a
    * sheet that floats over a still-visible page; pair with `modal={false}` to also keep
    * the page interactive and scrollable while the sheet is open.
@@ -59,23 +68,6 @@ export interface SheetProps {
   /** Optional `data-testid` on the panel. */
   panelTestId?: string
 }
-
-const CloseIcon = () => (
-  <svg
-    width={16}
-    height={16}
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth={2}
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    aria-hidden="true"
-  >
-    <path d="M18 6 6 18" />
-    <path d="m6 6 12 12" />
-  </svg>
-)
 
 /**
  * Overlay sheet that slides in from any edge — for navigation menus, filters, detail
@@ -112,6 +104,7 @@ export function Sheet({
   size = 'md',
   showClose = true,
   closeLabel,
+  iconMode,
   scrim = true,
   modal = true,
   bare = false,
@@ -176,7 +169,7 @@ export function Sheet({
                       {headerActions}
                       {showClose && (
                         <RadixDialog.Close className="mrs-sheet__close" aria-label={closeLabel}>
-                          <CloseIcon />
+                          <CloseGlyph iconMode={iconMode} />
                         </RadixDialog.Close>
                       )}
                     </div>

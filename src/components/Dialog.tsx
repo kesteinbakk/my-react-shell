@@ -2,6 +2,8 @@ import type { ReactNode, CSSProperties } from 'react'
 import * as RadixDialog from '@radix-ui/react-dialog'
 import { cn } from './cn'
 import type { Tone } from './tone'
+import type { IconMode } from '../icons/iconModeContext'
+import { CloseGlyph } from './CloseGlyph'
 import { useDialogDismissGuard } from './useDialogDismissGuard'
 
 export interface DialogButtonConfig {
@@ -55,6 +57,13 @@ export interface DialogProps {
   showClose?: boolean
   /** Accessible label for the ✕ close button — **required**; pass a translated string. */
   closeLabel: string
+  /**
+   * The app's icons↔emojis display mode. Pass the consumer's `iconMode` (from the
+   * icons seam) to make the ✕ close button follow it — the lucide-style icon in
+   * `'icon'` mode, the ✖️ emoji in `'emoji'` mode — matching `UserPreferences`.
+   * Omit to always render the icon (non-breaking default).
+   */
+  iconMode?: IconMode
   /** Close when the backdrop is clicked. Defaults to `true`; set `false` to guard unsaved edits. */
   closeOnBackdrop?: boolean
   /** Close when Esc is pressed. Defaults to `true`. */
@@ -111,6 +120,7 @@ export function Dialog({
   bleed = false,
   showClose = true,
   closeLabel,
+  iconMode,
   closeOnBackdrop = true,
   closeOnEsc = true,
   onOpenAutoFocus,
@@ -227,20 +237,7 @@ export function Dialog({
               {headerActions}
               {showClose && (
                 <RadixDialog.Close className="mrs-dialog__close" aria-label={closeLabel}>
-                  <svg
-                    width={16}
-                    height={16}
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth={2}
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    aria-hidden="true"
-                  >
-                    <path d="M18 6 6 18" />
-                    <path d="m6 6 12 12" />
-                  </svg>
+                  <CloseGlyph iconMode={iconMode} />
                 </RadixDialog.Close>
               )}
             </div>

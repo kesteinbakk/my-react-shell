@@ -984,6 +984,11 @@
   outline: 2px solid var(--color-focus);
   outline-offset: 1px;
 }
+/* Shared close-affordance emoji (Dialog / Sheet) — shown in emoji display mode. */
+.mrs-close-emoji {
+  font-size: 1rem;
+  line-height: 1;
+}
 
 /* ── Chip ────────────────────────────────────────────────────────────────── */
 .mrs-chip-group {

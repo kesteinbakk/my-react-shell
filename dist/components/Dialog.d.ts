@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import type { Tone } from './tone';
+import type { IconMode } from '../icons/iconModeContext';
 export interface DialogButtonConfig {
     /** The button label. */
     label: ReactNode;
@@ -48,6 +49,13 @@ export interface DialogProps {
     showClose?: boolean;
     /** Accessible label for the ✕ close button — **required**; pass a translated string. */
     closeLabel: string;
+    /**
+     * The app's icons↔emojis display mode. Pass the consumer's `iconMode` (from the
+     * icons seam) to make the ✕ close button follow it — the lucide-style icon in
+     * `'icon'` mode, the ✖️ emoji in `'emoji'` mode — matching `UserPreferences`.
+     * Omit to always render the icon (non-breaking default).
+     */
+    iconMode?: IconMode;
     /** Close when the backdrop is clicked. Defaults to `true`; set `false` to guard unsaved edits. */
     closeOnBackdrop?: boolean;
     /** Close when Esc is pressed. Defaults to `true`. */
@@ -88,4 +96,4 @@ export interface DialogProps {
  * </Dialog>
  * ```
  */
-export declare function Dialog({ open, onOpenChange, title, titleActions, headerActions, description, children, footer, useCancel, usePrimary, size, bleed, showClose, closeLabel, closeOnBackdrop, closeOnEsc, onOpenAutoFocus, className, }: DialogProps): import("react").JSX.Element;
+export declare function Dialog({ open, onOpenChange, title, titleActions, headerActions, description, children, footer, useCancel, usePrimary, size, bleed, showClose, closeLabel, iconMode, closeOnBackdrop, closeOnEsc, onOpenAutoFocus, className, }: DialogProps): import("react").JSX.Element;
