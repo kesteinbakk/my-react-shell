@@ -63,12 +63,18 @@ Convex backend, and the demo is deliberately no-auth / no-backend.
 
 ## How an agent uses it
 
-- **Never start the dev server.** The user owns it (project [CLAUDE.md](../CLAUDE.md)
-  → *Dev servers*); if it's down, report and stop — don't run `pnpm dev`. Its dev port
-  is in the registry (`~/Developer/scripts/projects.toml`, the `port` field for
-  `my-react-shell-demo`); the agent-preview port is that + 500.
-- **Browser tools are user-instruction only** (root `CLAUDE.md`) — open the preview /
-  screenshot only when the user asks you to look.
+- **Never start the shared dev server.** The user owns it (project [CLAUDE.md](../CLAUDE.md)
+  → *Dev servers*); if it's down, report and stop — don't run `pnpm dev` / `vite`. Its
+  dev port is in the registry (`~/Developer/scripts/projects.toml`, the `port` field for
+  `my-react-shell-demo`).
+- **Verify in the sandboxed preview — freely, on your own initiative.** The Claude
+  Desktop preview (`mcp__Claude_Preview__*`) spawns its *own* dev server on the
+  agent-preview port (dev port + 500) and attaches a headless browser — isolated from
+  the user's `dev start` and their Chrome. It is not the shared server the bullet above
+  protects, so the "never run vite" rule does **not** apply to it: use it to check your
+  own work without waiting to be asked. Never `preview_stop`; the user owns shutdown.
+  Only `mcp__chrome-devtools__*` (which steals the user's real Chrome) is
+  user-instruction only. See the `browser-tools` skill.
 - **To verify a change:** navigate to the route that renders the affected module and
   confirm the new surface; for anything theme-touching, eyeball light + dark and at
   least one non-default palette.
