@@ -1440,11 +1440,20 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.mrs-prefs__content {
+.mrs-prefs--sectioned .mrs-prefs__content {
   min-width: 0;
   /* The theme pane's first section has its own top margin; pull the pane up so
      the content aligns with the first nav item rather than sitting a row lower. */
   margin-top: -0.75rem;
+  /* Fix the content pane to the tallest section's height (the Theme pane: a
+     ~3-row palette grid + a 3-button and a 2-button segmented control, each with
+     a heading). This keeps the dialog height constant when switching between
+     sections so it doesn't reflow. Scoped to the sectioned modifier so theme-only
+     (single-column) consumers are unaffected. The value must be >= the Theme
+     pane's intrinsic height (measured ~330px live) or the pane grows past the
+     floor on Theme and the dialog still reflows; 21rem (336px) contains it with a
+     hair of margin. */
+  min-height: 21rem;
 }
 /* Narrow viewports: stack the nav on top of the content. */
 @media (max-width: 34rem) {
