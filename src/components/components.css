@@ -4629,6 +4629,28 @@
   opacity: 0.5;
   cursor: not-allowed;
 }
+/* `plain` — a truly bare icon: no border, background, or press/hover fill, and
+   no padding/min-width chrome. The on-state keeps only a subtle color shift so
+   the toggle still reads as active. Focus ring is intentionally preserved for
+   keyboard a11y. Scoped entirely under `.mrs-toggle--plain` so `ghost`/`outline`
+   are unaffected. */
+.mrs-toggle--plain {
+  border-color: transparent;
+  background: transparent;
+  padding: 0;
+  min-width: 0;
+}
+.mrs-toggle--plain:hover:not([data-disabled]):not(:disabled) {
+  background: transparent;
+}
+.mrs-toggle--plain[data-state='on'] {
+  background: transparent;
+  border-color: transparent;
+  color: var(--color-primary);
+}
+.mrs-toggle--plain[data-state='on']:hover:not([data-disabled]):not(:disabled) {
+  background: transparent;
+}
 .mrs-toggle-group {
   display: inline-flex;
   align-items: center;

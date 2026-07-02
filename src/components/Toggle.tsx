@@ -2,8 +2,12 @@ import type { ReactNode } from 'react'
 import * as RadixToggle from '@radix-ui/react-toggle'
 import { cn } from './cn'
 
-/** Structural style: `ghost` is fill-on-press, `outline` keeps a bordered box. */
-export type ToggleVariant = 'ghost' | 'outline'
+/**
+ * Structural style: `ghost` is fill-on-press, `outline` keeps a bordered box,
+ * `plain` is a bare icon — no border, background, or press/hover fill (keeps the
+ * focus ring for a11y).
+ */
+export type ToggleVariant = 'ghost' | 'outline' | 'plain'
 export type ToggleSize = 'sm' | 'md' | 'lg'
 
 export interface ToggleProps {
