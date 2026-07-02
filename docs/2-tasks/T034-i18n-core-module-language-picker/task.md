@@ -1,6 +1,6 @@
 # T034 — i18n as a core module: built-in component chrome copy + language picker
 
-**Status:** in-progress
+**Status:** finished
 **Supersedes:** T032 (no-default-text-props) for *chrome* copy — see below.
 
 ## Problem
