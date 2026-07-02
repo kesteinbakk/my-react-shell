@@ -4,6 +4,7 @@ import { cn } from './cn'
 import type { DialogButtonProp, DialogButtonConfig } from './Dialog'
 import type { Tone } from './tone'
 import { TONE_COLOR } from './tone'
+import { useShellText } from './useShellText'
 import { useDialogDismissGuard } from './useDialogDismissGuard'
 
 const iconProps = {
@@ -77,13 +78,12 @@ export interface ConfirmDialogProps {
    */
   icon?: ReactNode | false
   /**
-   * Confirm button label or configuration. Defaults to `OK` — this component may ship
-   * that hardcoded English default (an approved exception to the no-hardcoded-text
-   * rule); pass a translated string for any other label. A `DialogButtonConfig`
-   * overrides the tone-derived button colour.
+   * Confirm button label or configuration. Defaults to the shell's built-in,
+   * locale-aware "OK" (`mrs.action.ok`); pass a string for any other label. A
+   * `DialogButtonConfig` overrides the tone-derived button colour.
    */
   useConfirm?: DialogButtonProp
-  /** Confirm button label. Defaults to `OK`. Superseded by `useConfirm` when set. */
+  /** Confirm button label. Defaults to the built-in `mrs.action.ok`. Superseded by `useConfirm`. */
   confirmLabel?: string
   /**
    * Cancel button label or configuration. Its presence renders the cancel button — see
@@ -107,10 +107,11 @@ export interface ConfirmDialogProps {
  * Pre-built confirmation dialog on Radix Dialog (overlay, focus trap, Esc/backdrop
  * close, portal). Styled with the theme tokens; renders its own confirm/cancel buttons.
  *
- * The confirm button defaults to `OK` and always shows on the right. The cancel button
- * is opt-in on the left — it renders only when at least one of `showCancel`, `onCancel`,
- * `cancelLabel`, or `useCancel` is provided. `tone` colours a leading icon and the
- * confirm button.
+ * The confirm button defaults to the built-in, locale-aware "OK" (`mrs.action.ok`) and
+ * always shows on the right. The cancel button is opt-in on the left — it renders only
+ * when at least one of `showCancel`, `onCancel`, `cancelLabel`, or `useCancel` is
+ * provided (label defaulting to `mrs.action.cancel`). `tone` colours a leading icon and
+ * the confirm button.
  */
 export function ConfirmDialog({
   open,
@@ -121,7 +122,7 @@ export function ConfirmDialog({
   tone = 'neutral',
   icon,
   useConfirm,
-  confirmLabel = 'OK',
+  confirmLabel,
   cancelLabel,
   useCancel,
   showCancel = false,
@@ -130,6 +131,7 @@ export function ConfirmDialog({
   loading = false,
   className,
 }: ConfirmDialogProps) {
+  const st = useShellText()
   const getButtonClass = (t: Tone) => {
     switch (t) {
       case 'danger':
@@ -155,7 +157,7 @@ export function ConfirmDialog({
     if (useCancel != null) {
       return typeof useCancel === 'string' ? { label: useCancel } : useCancel
     }
-    return { label: cancelLabel ?? 'Cancel' }
+    return { label: cancelLabel ?? st('mrs.action.cancel') }
   })()
   const cancelClick = cancelConfig.onClick ?? onCancel ?? (() => onOpenChange(false))
   const cancelLoading = cancelConfig.loading ?? loading
@@ -165,7 +167,7 @@ export function ConfirmDialog({
     if (useConfirm != null) {
       return typeof useConfirm === 'string' ? { label: useConfirm } : useConfirm
     }
-    return { label: confirmLabel }
+    return { label: confirmLabel ?? st('mrs.action.ok') }
   })()
   const confirmClick = confirmConfig.onClick ?? onConfirm ?? (() => onOpenChange(false))
   const confirmLoading = confirmConfig.loading ?? loading

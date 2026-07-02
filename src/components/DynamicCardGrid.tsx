@@ -1,5 +1,5 @@
 import { useState, useMemo, type ReactNode, Fragment } from 'react'
-import { useTranslation } from '../i18n'
+import { useShellText } from './useShellText'
 import { SearchInput } from './SearchInput'
 import { SectionSpinner } from './Spinner'
 import { Select, type SelectOption } from './Select'
@@ -91,7 +91,7 @@ export function DynamicCardGrid<T>({
   cardSize,
   minColumnWidth,
 }: DynamicCardGridProps<T>) {
-  const { t } = useTranslation()
+  const t = useShellText()
 
   const showFilterToolbar = filterThreshold === 0 || items.length >= filterThreshold
 

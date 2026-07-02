@@ -2,6 +2,7 @@ import { jsx as _jsx, Fragment as _Fragment, jsxs as _jsxs } from "react/jsx-run
 import * as RadixDialog from '@radix-ui/react-dialog';
 import { cn } from './cn';
 import { CloseGlyph } from './CloseGlyph';
+import { useShellText } from './useShellText';
 import { useDialogDismissGuard } from './useDialogDismissGuard';
 /**
  * Overlay sheet that slides in from any edge — for navigation menus, filters, detail
@@ -25,6 +26,7 @@ import { useDialogDismissGuard } from './useDialogDismissGuard';
  * ```
  */
 export function Sheet({ children, trigger, open, onOpenChange, defaultOpen, title, header, headerActions, description, side = 'right', size = 'md', showClose = true, closeLabel, iconMode, scrim = true, modal = true, bare = false, className, overlayClass, panelTestId, }) {
+    const st = useShellText();
     const showHeader = !bare && (header != null || title != null || showClose || headerActions != null);
     // Keep a nested popper (Select, DropdownMenu, Popover, …) dismissal from tearing down the
     // whole sheet. See useDialogDismissGuard for the full mechanism.
@@ -40,5 +42,5 @@ export function Sheet({ children, trigger, open, onOpenChange, defaultOpen, titl
                                 return;
                             if (!modal)
                                 e.preventDefault();
-                        }, children: bare ? (_jsxs(_Fragment, { children: [title != null && (_jsx(RadixDialog.Title, { className: "mrs-sr-only", children: title })), description != null && (_jsx(RadixDialog.Description, { className: "mrs-sr-only", children: description })), children] })) : (_jsxs(_Fragment, { children: [header != null && title != null && (_jsx(RadixDialog.Title, { className: "mrs-sr-only", children: title })), showHeader && (_jsxs("div", { className: "mrs-sheet__header", children: [header != null ? (header) : (title != null && (_jsx(RadixDialog.Title, { className: "mrs-sheet__title", children: title }))), (showClose || headerActions != null) && (_jsxs("div", { className: "mrs-sheet__header-actions", children: [headerActions, showClose && (_jsx(RadixDialog.Close, { className: "mrs-sheet__close", "aria-label": closeLabel, children: _jsx(CloseGlyph, { iconMode: iconMode }) }))] }))] })), description != null && (_jsx(RadixDialog.Description, { className: "mrs-sheet__desc", children: description })), _jsx("div", { className: "mrs-sheet__body", children: children })] })) })] })] }));
+                        }, children: bare ? (_jsxs(_Fragment, { children: [title != null && (_jsx(RadixDialog.Title, { className: "mrs-sr-only", children: title })), description != null && (_jsx(RadixDialog.Description, { className: "mrs-sr-only", children: description })), children] })) : (_jsxs(_Fragment, { children: [header != null && title != null && (_jsx(RadixDialog.Title, { className: "mrs-sr-only", children: title })), showHeader && (_jsxs("div", { className: "mrs-sheet__header", children: [header != null ? (header) : (title != null && (_jsx(RadixDialog.Title, { className: "mrs-sheet__title", children: title }))), (showClose || headerActions != null) && (_jsxs("div", { className: "mrs-sheet__header-actions", children: [headerActions, showClose && (_jsx(RadixDialog.Close, { className: "mrs-sheet__close", "aria-label": closeLabel ?? st('mrs.action.close'), children: _jsx(CloseGlyph, { iconMode: iconMode }) }))] }))] })), description != null && (_jsx(RadixDialog.Description, { className: "mrs-sheet__desc", children: description })), _jsx("div", { className: "mrs-sheet__body", children: children })] })) })] })] }));
 }

@@ -4,10 +4,10 @@ import type { I18nProviderProps } from './I18nProvider'
 import { createTypedI18n } from './createTypedI18n'
 import { flattenMessages, interpolate } from './translate'
 import type { Messages, DotPaths } from './translate'
-import commonEn from './locales/common-en.json'
-import commonNb from './locales/common-nb.json'
+import commonEnUS from './locales/common-en-US.json'
+import { SHELL_CATALOG, DEFAULT_SHELL_LOCALE } from './shellCatalog'
 
-type CommonDictKey = DotPaths<typeof commonEn>
+type CommonDictKey = DotPaths<typeof commonEnUS>
 
 export function createProjectI18n<LocalDict extends Messages>(config: {
   /** Project-specific message catalogs. Locale code -> nested catalog. */
@@ -22,11 +22,13 @@ export function createProjectI18n<LocalDict extends Messages>(config: {
 }) {
   type CombinedKey = DotPaths<LocalDict> | CommonDictKey
 
-  const mergedDicts: Record<string, any> = {}
+  const mergedDicts: Record<string, Record<string, string>> = {}
   for (const lang of Object.keys(config.localMessages)) {
     const local = config.localMessages[lang]
-    // Default to English common if the language isn't nb/no
-    const common = lang === 'nb' || lang === 'no' ? commonNb : commonEn
+    // Layer the project catalog over the shell's bundled chrome catalog for this
+    // locale (the project wins). A locale the shell doesn't ship falls back to the
+    // default-locale chrome so `mrs.*` still resolves.
+    const common = SHELL_CATALOG[lang] ?? SHELL_CATALOG[DEFAULT_SHELL_LOCALE]
     mergedDicts[lang] = { ...flattenMessages(common), ...flattenMessages(local as Messages) }
   }
 

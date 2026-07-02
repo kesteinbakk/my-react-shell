@@ -12,8 +12,13 @@ export { I18nProvider } from './I18nProvider'
 export type { I18nProviderProps } from './I18nProvider'
 export { useTranslation, useI18n } from './useTranslation'
 export type { NamespacedKeys, UseTranslationResult } from './useTranslation'
-export { useI18nContext } from './i18nContext'
+export { useI18nContext, useI18nContextOptional } from './i18nContext'
 export type { I18nContextValue, Locale, LocaleInfo, TFunction } from './i18nContext'
+
+// ── locale metadata + bundled shell chrome catalog ────────────────────────────
+export { LOCALE_META, localeMetaFor } from './localeMeta'
+export type { LocaleMeta } from './localeMeta'
+export { SHELL_CATALOG, DEFAULT_SHELL_LOCALE, withShellCatalog } from './shellCatalog'
 
 // ── typed keys (opt-in, compile-time) ─────────────────────────────────────────
 export { createTypedI18n } from './createTypedI18n'

@@ -1,0 +1,57 @@
+{
+    "mrs": {
+        "action": {
+            "ok": "OK",
+            "cancel": "Avbryt",
+            "confirm": "Bekreft",
+            "close": "Lukk",
+            "dismiss": "Avvis",
+            "remove": "Fjern",
+            "clear": "Tøm",
+            "add": "Legg til",
+            "save": "Lagre",
+            "edit": "Rediger",
+            "delete": "Slett",
+            "rename": "Gi nytt navn",
+            "copy": "Kopier",
+            "copied": "Kopiert",
+            "back": "Tilbake",
+            "next": "Neste",
+            "previous": "Forrige",
+            "retry": "Prøv igjen",
+            "reset": "Tilbakestill",
+            "apply": "Bruk",
+            "search": "Søk…",
+            "more": "Mer",
+            "moreActions": "Flere handlinger",
+            "actions": "Handlinger",
+            "expand": "Vis",
+            "collapse": "Skjul",
+            "moveUp": "Flytt opp",
+            "moveDown": "Flytt ned",
+            "selectLanguage": "Velg språk"
+        },
+        "state": {
+            "loading": "Laster…",
+            "noData": "Ingen data tilgjengelig",
+            "noResults": "Ingen treff",
+            "error": "Feil",
+            "saving": "Lagrer…",
+            "saved": "Lagret"
+        },
+        "cardGrid": {
+            "searchPlaceholder": "Søk…",
+            "noResults": "Ingen treff",
+            "empty": "Ingenting her ennå",
+            "sortAsc": "Stigende",
+            "sortDesc": "Synkende"
+        },
+        "emoji": {
+            "categories": "Kategorier",
+            "frequent": "Ofte brukt"
+        },
+        "prefs": {
+            "language": "Språk"
+        }
+    }
+}

@@ -12,9 +12,10 @@ import { jsx as _jsx } from "react/jsx-runtime";
  * while keeping this provider's locale state, persistence, and missing-key
  * surface; or ignore this provider entirely and satisfy the exported contract.
  */
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { I18nContext } from './i18nContext';
 import { flattenMessages, interpolate } from './translate';
+import { localeMetaFor } from './localeMeta';
 import { missingKeyStore } from './missingKeys';
 import { setActiveTranslator } from './translateNow';
 const DEFAULT_STORAGE_KEY = 'my-react-shell.locale';
@@ -38,7 +39,7 @@ function detectBrowser(available) {
     const match = available.find((l) => l === prefix || l.split('-')[0] === prefix);
     return match ?? null;
 }
-export function I18nProvider({ children, messages, locales: localesProp, defaultLocale, fallbackLocale: fallbackLocaleProp, detectBrowserLocale = true, storageKey = DEFAULT_STORAGE_KEY, resolve, onMissingKey, debug, }) {
+export function I18nProvider({ children, messages, locales: localesProp, defaultLocale, fallbackLocale: fallbackLocaleProp, detectBrowserLocale = true, storageKey = DEFAULT_STORAGE_KEY, resolve, onChange, onMissingKey, debug, }) {
     const localeCodes = Object.keys(messages);
     if (localeCodes.length === 0) {
         throw new Error('my-react-shell: <I18nProvider> requires at least one locale in `messages`.');
@@ -62,7 +63,12 @@ export function I18nProvider({ children, messages, locales: localesProp, default
         }
         return out;
     }, [messages]);
-    const locales = useMemo(() => localesProp ?? Object.keys(messages).map((code) => ({ code, label: code })), [localesProp, messages]);
+    // Default each locale's picker label to its native name (endonym) from the
+    // shell's locale registry — so bare `messages={{ 'nb-NO':…, 'en-US':… }}`
+    // yields a properly-labelled picker with no `locales` prop. Unknown codes fall
+    // back to the raw code.
+    const locales = useMemo(() => localesProp ??
+        Object.keys(messages).map((code) => ({ code, label: localeMetaFor(code)?.nativeName ?? code })), [localesProp, messages]);
     const [locale, setLocaleState] = useState(() => {
         const persisted = readPersistedLocale(storageKey);
         if (persisted !== null && persisted in messages)
@@ -83,6 +89,22 @@ export function I18nProvider({ children, messages, locales: localesProp, default
             /* ignore */
         }
     }, [locale, storageKey]);
+    // Notify the consumer of locale changes (skipping initial mount) so it can
+    // mirror the choice to a backend. Read `onChange` from a ref so this effect
+    // depends only on `locale` — a new callback identity each render won't re-fire
+    // it. Mirrors <ThemeProvider>.
+    const onChangeRef = useRef(onChange);
+    useEffect(() => {
+        onChangeRef.current = onChange;
+    }, [onChange]);
+    const mountedRef = useRef(false);
+    useEffect(() => {
+        if (!mountedRef.current) {
+            mountedRef.current = true;
+            return;
+        }
+        onChangeRef.current?.(locale);
+    }, [locale]);
     const t = useCallback((key, params) => {
         if (!key) {
             if (isDebug)

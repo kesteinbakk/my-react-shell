@@ -12,12 +12,13 @@
  * surface; or ignore this provider entirely and satisfy the exported contract.
  */
 
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type { ReactNode } from 'react'
 import { I18nContext } from './i18nContext'
 import type { I18nContextValue, Locale, LocaleInfo, TFunction } from './i18nContext'
 import { flattenMessages, interpolate } from './translate'
 import type { FlatMessages, Messages, TranslateParams } from './translate'
+import { localeMetaFor } from './localeMeta'
 import { missingKeyStore } from './missingKeys'
 import { setActiveTranslator } from './translateNow'
 
@@ -46,6 +47,12 @@ export interface I18nProviderProps {
    * missing-key handling). Overrides the built-in catalog lookup.
    */
   resolve?: (locale: Locale, key: string, params?: TranslateParams) => string | undefined
+  /**
+   * Called whenever the user switches locale (not on initial mount). Use it to
+   * mirror the choice to a backend or per-user account; the provider keeps
+   * persisting to localStorage regardless. Mirrors `<ThemeProvider onChange>`.
+   */
+  onChange?: (locale: Locale) => void
   /** Called for every missing key (in addition to the built-in dev tracker). */
   onMissingKey?: (key: string, locale: Locale) => void
   /** Force dev behaviors (missing-key tracking + console warnings). Defaults to `import.meta.env.DEV`. */
@@ -79,6 +86,7 @@ export function I18nProvider({
   detectBrowserLocale = true,
   storageKey = DEFAULT_STORAGE_KEY,
   resolve,
+  onChange,
   onMissingKey,
   debug,
 }: I18nProviderProps) {
@@ -111,8 +119,14 @@ export function I18nProvider({
     return out
   }, [messages])
 
+  // Default each locale's picker label to its native name (endonym) from the
+  // shell's locale registry — so bare `messages={{ 'nb-NO':…, 'en-US':… }}`
+  // yields a properly-labelled picker with no `locales` prop. Unknown codes fall
+  // back to the raw code.
   const locales = useMemo<readonly LocaleInfo[]>(
-    () => localesProp ?? Object.keys(messages).map((code) => ({ code, label: code })),
+    () =>
+      localesProp ??
+      Object.keys(messages).map((code) => ({ code, label: localeMetaFor(code)?.nativeName ?? code })),
     [localesProp, messages],
   )
 
@@ -134,6 +148,23 @@ export function I18nProvider({
       /* ignore */
     }
   }, [locale, storageKey])
+
+  // Notify the consumer of locale changes (skipping initial mount) so it can
+  // mirror the choice to a backend. Read `onChange` from a ref so this effect
+  // depends only on `locale` — a new callback identity each render won't re-fire
+  // it. Mirrors <ThemeProvider>.
+  const onChangeRef = useRef(onChange)
+  useEffect(() => {
+    onChangeRef.current = onChange
+  }, [onChange])
+  const mountedRef = useRef(false)
+  useEffect(() => {
+    if (!mountedRef.current) {
+      mountedRef.current = true
+      return
+    }
+    onChangeRef.current?.(locale)
+  }, [locale])
 
   const t = useCallback<TFunction>(
     (key, params) => {

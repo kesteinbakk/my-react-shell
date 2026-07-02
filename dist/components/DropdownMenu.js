@@ -1,6 +1,7 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import * as RadixMenu from '@radix-ui/react-dropdown-menu';
 import { cn } from './cn';
+import { useShellText } from './useShellText';
 /** Leading icon slot — keeps labels aligned whether or not an icon is present. */
 function MenuIcon({ icon }) {
     return icon != null ? _jsx("span", { className: "mrs-menu__icon", children: icon }) : null;
@@ -65,5 +66,6 @@ function renderItem(item, key) {
  * ```
  */
 export function DropdownMenu({ trigger, iconTrigger, iconTriggerLabel, open, defaultOpen, onOpenChange, items, align = 'center', side = 'bottom', sideOffset = 8, className, }) {
-    return (_jsxs(RadixMenu.Root, { open: open, defaultOpen: defaultOpen, onOpenChange: onOpenChange, children: [iconTrigger != null ? (_jsx(RadixMenu.Trigger, { asChild: true, children: _jsx("button", { type: "button", className: "mrs-menu__icon-trigger", "aria-label": iconTriggerLabel, children: iconTrigger }) })) : (_jsx(RadixMenu.Trigger, { asChild: true, children: trigger })), _jsx(RadixMenu.Portal, { children: _jsx(RadixMenu.Content, { className: cn('mrs-menu', className), align: align, side: side, sideOffset: sideOffset, children: items.map((item, i) => renderItem(item, String(i))) }) })] }));
+    const st = useShellText();
+    return (_jsxs(RadixMenu.Root, { open: open, defaultOpen: defaultOpen, onOpenChange: onOpenChange, children: [iconTrigger != null ? (_jsx(RadixMenu.Trigger, { asChild: true, children: _jsx("button", { type: "button", className: "mrs-menu__icon-trigger", "aria-label": iconTriggerLabel ?? st('mrs.action.actions'), children: iconTrigger }) })) : (_jsx(RadixMenu.Trigger, { asChild: true, children: trigger })), _jsx(RadixMenu.Portal, { children: _jsx(RadixMenu.Content, { className: cn('mrs-menu', className), align: align, side: side, sideOffset: sideOffset, children: items.map((item, i) => renderItem(item, String(i))) }) })] }));
 }

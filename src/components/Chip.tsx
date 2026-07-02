@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import { cn } from './cn'
+import { useShellText } from './useShellText'
 
 interface ChipBaseProps {
   children?: ReactNode
@@ -11,11 +12,12 @@ interface ChipBaseProps {
 }
 
 /**
- * Remove-button props: when `onRemove` is set, `removeLabel` (the accessible label) is
- * **required** — pass a translated string. Omit both for a non-removable chip.
+ * Remove-button props: when `onRemove` is set the ✕ renders, its accessible label
+ * defaulting to the shell's built-in "Remove" (`mrs.action.remove`); pass
+ * `removeLabel` to override. Omit both for a non-removable chip.
  */
 type ChipRemoveProps =
-  | { onRemove: () => void; removeLabel: string }
+  | { onRemove: () => void; removeLabel?: string }
   | { onRemove?: undefined; removeLabel?: undefined }
 
 export type ChipProps = ChipBaseProps & ChipRemoveProps
@@ -33,6 +35,7 @@ export function Chip({
   removeLabel,
   className,
 }: ChipProps) {
+  const st = useShellText()
   const interactive = onClick != null
   return (
     <span
@@ -59,7 +62,7 @@ export function Chip({
         <button
           type="button"
           className="mrs-chip__remove"
-          aria-label={removeLabel}
+          aria-label={removeLabel ?? st('mrs.action.remove')}
           onClick={onRemove}
         >
           <svg

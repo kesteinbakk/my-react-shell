@@ -2,6 +2,7 @@ import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import * as Dialog from '@radix-ui/react-dialog';
 import { cn } from './cn';
 import { TONE_COLOR } from './tone';
+import { useShellText } from './useShellText';
 import { useDialogDismissGuard } from './useDialogDismissGuard';
 const iconProps = {
     width: 22,
@@ -30,12 +31,14 @@ const DEFAULT_TONE_ICONS = {
  * Pre-built confirmation dialog on Radix Dialog (overlay, focus trap, Esc/backdrop
  * close, portal). Styled with the theme tokens; renders its own confirm/cancel buttons.
  *
- * The confirm button defaults to `OK` and always shows on the right. The cancel button
- * is opt-in on the left — it renders only when at least one of `showCancel`, `onCancel`,
- * `cancelLabel`, or `useCancel` is provided. `tone` colours a leading icon and the
- * confirm button.
+ * The confirm button defaults to the built-in, locale-aware "OK" (`mrs.action.ok`) and
+ * always shows on the right. The cancel button is opt-in on the left — it renders only
+ * when at least one of `showCancel`, `onCancel`, `cancelLabel`, or `useCancel` is
+ * provided (label defaulting to `mrs.action.cancel`). `tone` colours a leading icon and
+ * the confirm button.
  */
-export function ConfirmDialog({ open, onOpenChange, title, description, children, tone = 'neutral', icon, useConfirm, confirmLabel = 'OK', cancelLabel, useCancel, showCancel = false, onConfirm, onCancel, loading = false, className, }) {
+export function ConfirmDialog({ open, onOpenChange, title, description, children, tone = 'neutral', icon, useConfirm, confirmLabel, cancelLabel, useCancel, showCancel = false, onConfirm, onCancel, loading = false, className, }) {
+    const st = useShellText();
     const getButtonClass = (t) => {
         switch (t) {
             case 'danger':
@@ -58,7 +61,7 @@ export function ConfirmDialog({ open, onOpenChange, title, description, children
         if (useCancel != null) {
             return typeof useCancel === 'string' ? { label: useCancel } : useCancel;
         }
-        return { label: cancelLabel ?? 'Cancel' };
+        return { label: cancelLabel ?? st('mrs.action.cancel') };
     })();
     const cancelClick = cancelConfig.onClick ?? onCancel ?? (() => onOpenChange(false));
     const cancelLoading = cancelConfig.loading ?? loading;
@@ -67,7 +70,7 @@ export function ConfirmDialog({ open, onOpenChange, title, description, children
         if (useConfirm != null) {
             return typeof useConfirm === 'string' ? { label: useConfirm } : useConfirm;
         }
-        return { label: confirmLabel };
+        return { label: confirmLabel ?? st('mrs.action.ok') };
     })();
     const confirmClick = confirmConfig.onClick ?? onConfirm ?? (() => onOpenChange(false));
     const confirmLoading = confirmConfig.loading ?? loading;

@@ -24,13 +24,12 @@ export interface ConfirmDialogProps {
      */
     icon?: ReactNode | false;
     /**
-     * Confirm button label or configuration. Defaults to `OK` — this component may ship
-     * that hardcoded English default (an approved exception to the no-hardcoded-text
-     * rule); pass a translated string for any other label. A `DialogButtonConfig`
-     * overrides the tone-derived button colour.
+     * Confirm button label or configuration. Defaults to the shell's built-in,
+     * locale-aware "OK" (`mrs.action.ok`); pass a string for any other label. A
+     * `DialogButtonConfig` overrides the tone-derived button colour.
      */
     useConfirm?: DialogButtonProp;
-    /** Confirm button label. Defaults to `OK`. Superseded by `useConfirm` when set. */
+    /** Confirm button label. Defaults to the built-in `mrs.action.ok`. Superseded by `useConfirm`. */
     confirmLabel?: string;
     /**
      * Cancel button label or configuration. Its presence renders the cancel button — see
@@ -53,9 +52,10 @@ export interface ConfirmDialogProps {
  * Pre-built confirmation dialog on Radix Dialog (overlay, focus trap, Esc/backdrop
  * close, portal). Styled with the theme tokens; renders its own confirm/cancel buttons.
  *
- * The confirm button defaults to `OK` and always shows on the right. The cancel button
- * is opt-in on the left — it renders only when at least one of `showCancel`, `onCancel`,
- * `cancelLabel`, or `useCancel` is provided. `tone` colours a leading icon and the
- * confirm button.
+ * The confirm button defaults to the built-in, locale-aware "OK" (`mrs.action.ok`) and
+ * always shows on the right. The cancel button is opt-in on the left — it renders only
+ * when at least one of `showCancel`, `onCancel`, `cancelLabel`, or `useCancel` is
+ * provided (label defaulting to `mrs.action.cancel`). `tone` colours a leading icon and
+ * the confirm button.
  */
 export declare function ConfirmDialog({ open, onOpenChange, title, description, children, tone, icon, useConfirm, confirmLabel, cancelLabel, useCancel, showCancel, onConfirm, onCancel, loading, className, }: ConfirmDialogProps): import("react").JSX.Element;

@@ -39,3 +39,12 @@ export interface I18nContextValue<K extends string = string> {
 export declare const I18nContext: import("react").Context<I18nContextValue<string> | null>;
 /** Read the i18n context. Throws if used outside <I18nProvider>. */
 export declare function useI18nContext(): I18nContextValue;
+/**
+ * Read the i18n context, returning `null` outside a provider (never throws).
+ *
+ * The null-safe variant powers **soft optional integration**: a component can
+ * follow the app's locale when an `<I18nProvider>` is mounted and degrade
+ * gracefully when it isn't (see `components/useShellText`, which falls back to
+ * the shell's bundled catalog). Mirrors `useIconModeContextOptional`.
+ */
+export declare function useI18nContextOptional(): I18nContextValue | null;

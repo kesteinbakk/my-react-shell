@@ -1,6 +1,6 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import { useState, useMemo, Fragment } from 'react';
-import { useTranslation } from '../i18n';
+import { useShellText } from './useShellText';
 import { SearchInput } from './SearchInput';
 import { SectionSpinner } from './Spinner';
 import { Select } from './Select';
@@ -35,7 +35,7 @@ function defaultSearchMatch(item, query, fields) {
     });
 }
 export function DynamicCardGrid({ items, renderCard, getKey, searchFields, searchFn, searchPlaceholder, filterThreshold = FILTER_VISIBILITY_MIN_ITEMS, filters, filterFn, sortOptions, defaultSort, sortFn, align = 'start', loading, emptyState, noResultsMessage, noResultsDescription, cardSize, minColumnWidth, }) {
-    const { t } = useTranslation();
+    const t = useShellText();
     const showFilterToolbar = filterThreshold === 0 || items.length >= filterThreshold;
     const [searchQuery, setSearchQuery] = useState('');
     const hasSearch = !!(searchFields?.length || searchFn);

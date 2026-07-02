@@ -113,12 +113,13 @@ interface DropdownMenuBaseProps {
 }
 /**
  * Icon-trigger props: when `iconTrigger` is given the kit renders its own square ghost
- * icon button, and `iconTriggerLabel` (its accessible label) is **required** — pass a
- * translated string. Omit both to use a custom `trigger` instead.
+ * icon button, and `iconTriggerLabel` (its accessible label) defaults to the shell's
+ * built-in "Actions" (`mrs.action.actions`) — pass a string to override. Omit both to use
+ * a custom `trigger` instead.
  */
 type DropdownIconTriggerProps = {
     iconTrigger: ReactNode;
-    iconTriggerLabel: string;
+    iconTriggerLabel?: string;
 } | {
     iconTrigger?: undefined;
     iconTriggerLabel?: undefined;

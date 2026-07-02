@@ -19,12 +19,13 @@ interface AlertBaseProps {
     className?: string;
 }
 /**
- * Dismiss-button props: when `onDismiss` is set, `dismissLabel` (the accessible label) is
- * **required** — pass a translated string. Omit both for a non-dismissible alert.
+ * Dismiss-button props: when `onDismiss` is set the ✕ renders, its accessible label
+ * defaulting to the shell's built-in "Dismiss" (`mrs.action.dismiss`); pass
+ * `dismissLabel` to override. Omit both for a non-dismissible alert.
  */
 type AlertDismissProps = {
     onDismiss: () => void;
-    dismissLabel: string;
+    dismissLabel?: string;
 } | {
     onDismiss?: undefined;
     dismissLabel?: undefined;

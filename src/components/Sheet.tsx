@@ -3,6 +3,7 @@ import * as RadixDialog from '@radix-ui/react-dialog'
 import { cn } from './cn'
 import type { IconMode } from '../icons/iconModeContext'
 import { CloseGlyph } from './CloseGlyph'
+import { useShellText } from './useShellText'
 import { useDialogDismissGuard } from './useDialogDismissGuard'
 
 /** Which edge the panel slides in from. */
@@ -35,8 +36,11 @@ export interface SheetProps {
   size?: SheetSize
   /** Render the ✕ close button in the header. Defaults to `true`. */
   showClose?: boolean
-  /** Accessible label for the ✕ close button — **required**; pass a translated string. */
-  closeLabel: string
+  /**
+   * Accessible label for the ✕ close button. Optional — defaults to the shell's
+   * built-in, locale-aware "Close" (`mrs.action.close`). Pass a string to override.
+   */
+  closeLabel?: string
   /**
    * Override the display mode of the ✕ close button. By default the ✕ **follows the
    * app's icons↔emojis seam automatically** (the lucide-style icon in `'icon'` mode,
@@ -113,6 +117,7 @@ export function Sheet({
   overlayClass,
   panelTestId,
 }: SheetProps) {
+  const st = useShellText()
   const showHeader = !bare && (header != null || title != null || showClose || headerActions != null)
   // Keep a nested popper (Select, DropdownMenu, Popover, …) dismissal from tearing down the
   // whole sheet. See useDialogDismissGuard for the full mechanism.
@@ -169,7 +174,7 @@ export function Sheet({
                     <div className="mrs-sheet__header-actions">
                       {headerActions}
                       {showClose && (
-                        <RadixDialog.Close className="mrs-sheet__close" aria-label={closeLabel}>
+                        <RadixDialog.Close className="mrs-sheet__close" aria-label={closeLabel ?? st('mrs.action.close')}>
                           <CloseGlyph iconMode={iconMode} />
                         </RadixDialog.Close>
                       )}

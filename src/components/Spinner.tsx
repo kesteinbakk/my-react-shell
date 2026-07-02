@@ -1,21 +1,23 @@
 import { cn } from './cn'
+import { useShellText } from './useShellText'
 
 export type SpinnerSize = 'sm' | 'md' | 'lg'
 
 export interface SpinnerProps {
   /** Visual size. Defaults to `md`. */
   size?: SpinnerSize
-  /** Accessible label. Defaults to `"Loading"`. */
+  /** Accessible label. Defaults to the built-in, locale-aware `mrs.state.loading`. */
   label?: string
   className?: string
 }
 
 /** Inline loading indicator — a rotating ring on the current text color. */
-export function Spinner({ size = 'md', label = 'Loading', className }: SpinnerProps) {
+export function Spinner({ size = 'md', label, className }: SpinnerProps) {
+  const st = useShellText()
   return (
     <span
       role="status"
-      aria-label={label}
+      aria-label={label ?? st('mrs.state.loading')}
       className={cn('mrs-spinner', `mrs-spinner--${size}`, className)}
     />
   )

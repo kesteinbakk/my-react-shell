@@ -77,7 +77,7 @@ preview, and only chrome-devtools is user-instruction-only. Here that means:
 
 The library and its showcase ship together — a consumer-visible change that never
 reaches the demo is unfinished. The operational lockstep rules live in this repo's
-[CLAUDE.md](../CLAUDE.md) (*Demos & visual showcasing*); in short:
+[AGENTS.md](../AGENTS.md) (*Demos & visual showcasing*); in short:
 
 - **A new or changed kit component** → add or update its `PageSection` in the relevant
   kit page's `sections` array (see `my-react-shell-demo/src/pages/` — one page per kit

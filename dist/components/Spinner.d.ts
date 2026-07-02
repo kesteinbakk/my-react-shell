@@ -2,7 +2,7 @@ export type SpinnerSize = 'sm' | 'md' | 'lg';
 export interface SpinnerProps {
     /** Visual size. Defaults to `md`. */
     size?: SpinnerSize;
-    /** Accessible label. Defaults to `"Loading"`. */
+    /** Accessible label. Defaults to the built-in, locale-aware `mrs.state.loading`. */
     label?: string;
     className?: string;
 }

@@ -25,14 +25,14 @@ export interface EmojiPickerProps {
     locale?: string;
     /** Show the search input. Default `true`. */
     showSearch?: boolean;
-    /** Placeholder text for the search field. Default `'🔍'`. Pass a translated string via your i18n seam. */
+    /** Placeholder text for the search field. Defaults to the built-in `mrs.action.search`. */
     searchPlaceholder?: string;
-    /** Label shown when search returns no results. Default `'🤷'`. Pass a translated string via your i18n seam. */
+    /** Label shown when search returns no results. Defaults to the built-in `mrs.state.noResults`. */
     noResultsLabel?: string;
-    /** Accessible label for the category tablist — **required**; pass a translated string. */
-    categoriesLabel: string;
-    /** Accessible label + tooltip for the frequently-used tab — **required**; pass a translated string. */
-    frequentLabel: string;
+    /** Accessible label for the category tablist. Defaults to the built-in `mrs.emoji.categories`. */
+    categoriesLabel?: string;
+    /** Accessible label + tooltip for the frequently-used tab. Defaults to the built-in `mrs.emoji.frequent`. */
+    frequentLabel?: string;
     /** Extra classes on the root element. */
     className?: string;
 }

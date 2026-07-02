@@ -74,8 +74,8 @@ type _StatCardInfoBase = {
     title: string;
     /** Accessible label for the info icon button itself — required; pass a translated string (e.g. `"Information"`). */
     label: string;
-    /** Accessible label for the dialog close ✕ button — required; pass a translated string. */
-    closeLabel: string;
+    /** Accessible label for the dialog close ✕ button. Optional — defaults to the built-in `mrs.action.close`. */
+    closeLabel?: string;
     /** Which lower corner the info button appears in. Default `'right'`. */
     corner?: 'right' | 'left';
     /** Whether to show numbered badges next to section headings when `content` is an array. Default `true`. */

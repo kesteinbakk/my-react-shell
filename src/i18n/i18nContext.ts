@@ -56,3 +56,15 @@ export function useI18nContext(): I18nContextValue {
   }
   return ctx
 }
+
+/**
+ * Read the i18n context, returning `null` outside a provider (never throws).
+ *
+ * The null-safe variant powers **soft optional integration**: a component can
+ * follow the app's locale when an `<I18nProvider>` is mounted and degrade
+ * gracefully when it isn't (see `components/useShellText`, which falls back to
+ * the shell's bundled catalog). Mirrors `useIconModeContextOptional`.
+ */
+export function useI18nContextOptional(): I18nContextValue | null {
+  return useContext(I18nContext)
+}

@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import { cva, type VariantProps } from 'class-variance-authority'
 import { cn } from './cn'
+import { useShellText } from './useShellText'
 
 const alertVariants = cva('mrs-alert', {
   variants: {
@@ -32,11 +33,12 @@ interface AlertBaseProps {
 }
 
 /**
- * Dismiss-button props: when `onDismiss` is set, `dismissLabel` (the accessible label) is
- * **required** — pass a translated string. Omit both for a non-dismissible alert.
+ * Dismiss-button props: when `onDismiss` is set the ✕ renders, its accessible label
+ * defaulting to the shell's built-in "Dismiss" (`mrs.action.dismiss`); pass
+ * `dismissLabel` to override. Omit both for a non-dismissible alert.
  */
 type AlertDismissProps =
-  | { onDismiss: () => void; dismissLabel: string }
+  | { onDismiss: () => void; dismissLabel?: string }
   | { onDismiss?: undefined; dismissLabel?: undefined }
 
 export type AlertProps = AlertBaseProps & AlertDismissProps
@@ -98,6 +100,7 @@ export function Alert({
   role = 'alert',
   className,
 }: AlertProps) {
+  const st = useShellText()
   const leading = icon === false ? null : (icon ?? DEFAULT_ICONS[tone])
   return (
     <div role={role} className={cn(alertVariants({ tone }), className)}>
@@ -115,7 +118,7 @@ export function Alert({
           type="button"
           className="mrs-alert__dismiss"
           onClick={onDismiss}
-          aria-label={dismissLabel}
+          aria-label={dismissLabel ?? st('mrs.action.dismiss')}
         >
           <svg {...iconProps} width={16} height={16}>
             <path d="M18 6 6 18" />

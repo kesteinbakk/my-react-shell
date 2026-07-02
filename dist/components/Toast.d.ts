@@ -25,8 +25,11 @@ export interface ToastProviderProps {
     children: ReactNode;
     /** Default auto-dismiss in ms (a per-toast `duration` overrides). Defaults to 3000. */
     duration?: number;
-    /** Accessible label for a dismissible toast's ✕ button — **required**; pass a translated string. */
-    dismissLabel: string;
+    /**
+     * Accessible label for a dismissible toast's ✕ button. Optional — defaults to the
+     * shell's built-in, locale-aware "Dismiss" (`mrs.action.dismiss`); pass to override.
+     */
+    dismissLabel?: string;
 }
 /**
  * Mounts the toast store and a fixed viewport (portaled to `document.body`), and

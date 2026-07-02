@@ -1,8 +1,10 @@
 import { jsx as _jsx } from "react/jsx-runtime";
 import { cn } from './cn';
+import { useShellText } from './useShellText';
 /** Inline loading indicator — a rotating ring on the current text color. */
-export function Spinner({ size = 'md', label = 'Loading', className }) {
-    return (_jsx("span", { role: "status", "aria-label": label, className: cn('mrs-spinner', `mrs-spinner--${size}`, className) }));
+export function Spinner({ size = 'md', label, className }) {
+    const st = useShellText();
+    return (_jsx("span", { role: "status", "aria-label": label ?? st('mrs.state.loading'), className: cn('mrs-spinner', `mrs-spinner--${size}`, className) }));
 }
 /** Full-height centered spinner for a page / route loading state. */
 export function PageSpinner({ size = 'lg', label, className }) {

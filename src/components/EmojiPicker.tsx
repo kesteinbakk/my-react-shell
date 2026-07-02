@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo, useCallback } from 'react'
 import { cn } from './cn'
 import { SectionSpinner } from './Spinner'
 import { Input } from './Input'
+import { useShellText } from './useShellText'
 
 // ── Internal types ────────────────────────────────────────────────────────
 
@@ -118,14 +119,14 @@ export interface EmojiPickerProps {
   locale?: string
   /** Show the search input. Default `true`. */
   showSearch?: boolean
-  /** Placeholder text for the search field. Default `'🔍'`. Pass a translated string via your i18n seam. */
+  /** Placeholder text for the search field. Defaults to the built-in `mrs.action.search`. */
   searchPlaceholder?: string
-  /** Label shown when search returns no results. Default `'🤷'`. Pass a translated string via your i18n seam. */
+  /** Label shown when search returns no results. Defaults to the built-in `mrs.state.noResults`. */
   noResultsLabel?: string
-  /** Accessible label for the category tablist — **required**; pass a translated string. */
-  categoriesLabel: string
-  /** Accessible label + tooltip for the frequently-used tab — **required**; pass a translated string. */
-  frequentLabel: string
+  /** Accessible label for the category tablist. Defaults to the built-in `mrs.emoji.categories`. */
+  categoriesLabel?: string
+  /** Accessible label + tooltip for the frequently-used tab. Defaults to the built-in `mrs.emoji.frequent`. */
+  frequentLabel?: string
   /** Extra classes on the root element. */
   className?: string
 }
@@ -155,12 +156,17 @@ export function EmojiPicker({
   onSelect,
   locale = 'en',
   showSearch = true,
-  searchPlaceholder = '🔍',
-  noResultsLabel = '🤷',
+  searchPlaceholder,
+  noResultsLabel,
   categoriesLabel,
   frequentLabel,
   className,
 }: EmojiPickerProps) {
+  const st = useShellText()
+  const searchText = searchPlaceholder ?? st('mrs.action.search')
+  const noResultsText = noResultsLabel ?? st('mrs.state.noResults')
+  const categoriesText = categoriesLabel ?? st('mrs.emoji.categories')
+  const frequentText = frequentLabel ?? st('mrs.emoji.frequent')
   const [data, setData] = useState<CompactEmoji[]>([])
   const [groups, setGroups] = useState<EmojiGroup[]>([])
   const [loading, setLoading] = useState(true)
@@ -246,9 +252,9 @@ export function EmojiPicker({
           <Input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder={searchPlaceholder}
+            placeholder={searchText}
             inputSize="sm"
-            aria-label={searchPlaceholder}
+            aria-label={searchText}
           />
         </div>
       )}
@@ -263,14 +269,14 @@ export function EmojiPicker({
             <div
               className="mrs-emoji-picker__tabs"
               role="tablist"
-              aria-label={categoriesLabel}
+              aria-label={categoriesText}
             >
               <button
                 type="button"
                 role="tab"
                 aria-selected={activeTab === FREQUENT_TAB}
-                aria-label={frequentLabel}
-                title={frequentLabel}
+                aria-label={frequentText}
+                title={frequentText}
                 className={cn(
                   'mrs-emoji-picker__tab',
                   activeTab === FREQUENT_TAB && 'mrs-emoji-picker__tab--active',
@@ -301,7 +307,7 @@ export function EmojiPicker({
 
           <div className="mrs-emoji-picker__body">
             {isSearchMode && currentEmojis.length === 0 ? (
-              <div className="mrs-emoji-picker__empty">{noResultsLabel}</div>
+              <div className="mrs-emoji-picker__empty">{noResultsText}</div>
             ) : (
               <div className="mrs-emoji-picker__grid">
                 {currentEmojis.map((emoji, i) => (

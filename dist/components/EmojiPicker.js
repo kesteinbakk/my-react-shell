@@ -3,6 +3,7 @@ import { useState, useEffect, useMemo, useCallback } from 'react';
 import { cn } from './cn';
 import { SectionSpinner } from './Spinner';
 import { Input } from './Input';
+import { useShellText } from './useShellText';
 // ── Module-level caches (survive re-mounts) ───────────────────────────────
 const dataCache = new Map();
 const groupsCache = new Map();
@@ -99,7 +100,12 @@ const FREQUENT_TAB = '__frequent__';
  * </Popover>
  * ```
  */
-export function EmojiPicker({ onSelect, locale = 'en', showSearch = true, searchPlaceholder = '🔍', noResultsLabel = '🤷', categoriesLabel, frequentLabel, className, }) {
+export function EmojiPicker({ onSelect, locale = 'en', showSearch = true, searchPlaceholder, noResultsLabel, categoriesLabel, frequentLabel, className, }) {
+    const st = useShellText();
+    const searchText = searchPlaceholder ?? st('mrs.action.search');
+    const noResultsText = noResultsLabel ?? st('mrs.state.noResults');
+    const categoriesText = categoriesLabel ?? st('mrs.emoji.categories');
+    const frequentText = frequentLabel ?? st('mrs.emoji.frequent');
     const [data, setData] = useState([]);
     const [groups, setGroups] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -177,5 +183,5 @@ export function EmojiPicker({ onSelect, locale = 'en', showSearch = true, search
         onSelect(unicode);
         setQuery('');
     }, [onSelect]);
-    return (_jsxs("div", { className: cn('mrs-emoji-picker', className), children: [showSearch && (_jsx("div", { className: "mrs-emoji-picker__search", children: _jsx(Input, { value: query, onChange: (e) => setQuery(e.target.value), placeholder: searchPlaceholder, inputSize: "sm", "aria-label": searchPlaceholder }) })), loading ? (_jsx("div", { className: "mrs-emoji-picker__loading", children: _jsx(SectionSpinner, {}) })) : (_jsxs(_Fragment, { children: [!isSearchMode && (_jsxs("div", { className: "mrs-emoji-picker__tabs", role: "tablist", "aria-label": categoriesLabel, children: [_jsx("button", { type: "button", role: "tab", "aria-selected": activeTab === FREQUENT_TAB, "aria-label": frequentLabel, title: frequentLabel, className: cn('mrs-emoji-picker__tab', activeTab === FREQUENT_TAB && 'mrs-emoji-picker__tab--active'), onClick: () => setActiveTab(FREQUENT_TAB), children: "\u23F1\uFE0F" }), groups.map((g) => (_jsx("button", { type: "button", role: "tab", "aria-selected": activeTab === g.key, "aria-label": g.message, title: g.message, className: cn('mrs-emoji-picker__tab', activeTab === g.key && 'mrs-emoji-picker__tab--active'), onClick: () => setActiveTab(g.key), children: GROUP_ICONS[g.key] ?? '📦' }, g.key)))] })), _jsx("div", { className: "mrs-emoji-picker__body", children: isSearchMode && currentEmojis.length === 0 ? (_jsx("div", { className: "mrs-emoji-picker__empty", children: noResultsLabel })) : (_jsx("div", { className: "mrs-emoji-picker__grid", children: currentEmojis.map((emoji, i) => (_jsx("button", { type: "button", className: "mrs-emoji-picker__btn", onClick: () => handleSelect(emoji.unicode), title: emoji.label || emoji.unicode, "aria-label": emoji.label || emoji.unicode, children: emoji.unicode }, `${emoji.unicode}-${i}`))) })) })] }))] }));
+    return (_jsxs("div", { className: cn('mrs-emoji-picker', className), children: [showSearch && (_jsx("div", { className: "mrs-emoji-picker__search", children: _jsx(Input, { value: query, onChange: (e) => setQuery(e.target.value), placeholder: searchText, inputSize: "sm", "aria-label": searchText }) })), loading ? (_jsx("div", { className: "mrs-emoji-picker__loading", children: _jsx(SectionSpinner, {}) })) : (_jsxs(_Fragment, { children: [!isSearchMode && (_jsxs("div", { className: "mrs-emoji-picker__tabs", role: "tablist", "aria-label": categoriesText, children: [_jsx("button", { type: "button", role: "tab", "aria-selected": activeTab === FREQUENT_TAB, "aria-label": frequentText, title: frequentText, className: cn('mrs-emoji-picker__tab', activeTab === FREQUENT_TAB && 'mrs-emoji-picker__tab--active'), onClick: () => setActiveTab(FREQUENT_TAB), children: "\u23F1\uFE0F" }), groups.map((g) => (_jsx("button", { type: "button", role: "tab", "aria-selected": activeTab === g.key, "aria-label": g.message, title: g.message, className: cn('mrs-emoji-picker__tab', activeTab === g.key && 'mrs-emoji-picker__tab--active'), onClick: () => setActiveTab(g.key), children: GROUP_ICONS[g.key] ?? '📦' }, g.key)))] })), _jsx("div", { className: "mrs-emoji-picker__body", children: isSearchMode && currentEmojis.length === 0 ? (_jsx("div", { className: "mrs-emoji-picker__empty", children: noResultsText })) : (_jsx("div", { className: "mrs-emoji-picker__grid", children: currentEmojis.map((emoji, i) => (_jsx("button", { type: "button", className: "mrs-emoji-picker__btn", onClick: () => handleSelect(emoji.unicode), title: emoji.label || emoji.unicode, "aria-label": emoji.label || emoji.unicode, children: emoji.unicode }, `${emoji.unicode}-${i}`))) })) })] }))] }));
 }

@@ -4,6 +4,7 @@ import { cn } from './cn'
 import type { Tone } from './tone'
 import type { IconMode } from '../icons/iconModeContext'
 import { CloseGlyph } from './CloseGlyph'
+import { useShellText } from './useShellText'
 import { useDialogDismissGuard } from './useDialogDismissGuard'
 
 export interface DialogButtonConfig {
@@ -55,8 +56,11 @@ export interface DialogProps {
   bleed?: boolean
   /** Render the top-right ✕ close button. Defaults to `true`. */
   showClose?: boolean
-  /** Accessible label for the ✕ close button — **required**; pass a translated string. */
-  closeLabel: string
+  /**
+   * Accessible label for the ✕ close button. Optional — defaults to the shell's
+   * built-in, locale-aware "Close" (`mrs.action.close`). Pass a string to override.
+   */
+  closeLabel?: string
   /**
    * Override the display mode of the ✕ close button. By default the ✕ **follows the
    * app's icons↔emojis seam automatically** (the lucide-style icon in `'icon'` mode,
@@ -127,6 +131,7 @@ export function Dialog({
   onOpenAutoFocus,
   className,
 }: DialogProps) {
+  const st = useShellText()
   const getButtonClass = (tone: Tone) => {
     switch (tone) {
       case 'danger':
@@ -237,7 +242,7 @@ export function Dialog({
             <div className="mrs-dialog__close-container">
               {headerActions}
               {showClose && (
-                <RadixDialog.Close className="mrs-dialog__close" aria-label={closeLabel}>
+                <RadixDialog.Close className="mrs-dialog__close" aria-label={closeLabel ?? st('mrs.action.close')}>
                   <CloseGlyph iconMode={iconMode} />
                 </RadixDialog.Close>
               )}

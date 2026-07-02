@@ -9,7 +9,10 @@
 // ── provider + hook ───────────────────────────────────────────────────────────
 export { I18nProvider } from './I18nProvider';
 export { useTranslation, useI18n } from './useTranslation';
-export { useI18nContext } from './i18nContext';
+export { useI18nContext, useI18nContextOptional } from './i18nContext';
+// ── locale metadata + bundled shell chrome catalog ────────────────────────────
+export { LOCALE_META, localeMetaFor } from './localeMeta';
+export { SHELL_CATALOG, DEFAULT_SHELL_LOCALE, withShellCatalog } from './shellCatalog';
 // ── typed keys (opt-in, compile-time) ─────────────────────────────────────────
 export { createTypedI18n } from './createTypedI18n';
 export { createProjectI18n } from './createProjectI18n';

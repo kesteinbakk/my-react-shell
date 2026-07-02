@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import * as RadixMenu from '@radix-ui/react-dropdown-menu'
 import { cn } from './cn'
+import { useShellText } from './useShellText'
 import type { PopoverAlign, PopoverSide } from './Popover'
 
 /** A plain action row — the default entry. Closes the menu when chosen. */
@@ -124,11 +125,12 @@ interface DropdownMenuBaseProps {
 
 /**
  * Icon-trigger props: when `iconTrigger` is given the kit renders its own square ghost
- * icon button, and `iconTriggerLabel` (its accessible label) is **required** — pass a
- * translated string. Omit both to use a custom `trigger` instead.
+ * icon button, and `iconTriggerLabel` (its accessible label) defaults to the shell's
+ * built-in "Actions" (`mrs.action.actions`) — pass a string to override. Omit both to use
+ * a custom `trigger` instead.
  */
 type DropdownIconTriggerProps =
-  | { iconTrigger: ReactNode; iconTriggerLabel: string }
+  | { iconTrigger: ReactNode; iconTriggerLabel?: string }
   | { iconTrigger?: undefined; iconTriggerLabel?: undefined }
 
 export type DropdownMenuProps = DropdownMenuBaseProps & DropdownIconTriggerProps
@@ -277,11 +279,12 @@ export function DropdownMenu({
   sideOffset = 8,
   className,
 }: DropdownMenuProps) {
+  const st = useShellText()
   return (
     <RadixMenu.Root open={open} defaultOpen={defaultOpen} onOpenChange={onOpenChange}>
       {iconTrigger != null ? (
         <RadixMenu.Trigger asChild>
-          <button type="button" className="mrs-menu__icon-trigger" aria-label={iconTriggerLabel}>
+          <button type="button" className="mrs-menu__icon-trigger" aria-label={iconTriggerLabel ?? st('mrs.action.actions')}>
             {iconTrigger}
           </button>
         </RadixMenu.Trigger>

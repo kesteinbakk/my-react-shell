@@ -47,8 +47,11 @@ export interface DialogProps {
     bleed?: boolean;
     /** Render the top-right ✕ close button. Defaults to `true`. */
     showClose?: boolean;
-    /** Accessible label for the ✕ close button — **required**; pass a translated string. */
-    closeLabel: string;
+    /**
+     * Accessible label for the ✕ close button. Optional — defaults to the shell's
+     * built-in, locale-aware "Close" (`mrs.action.close`). Pass a string to override.
+     */
+    closeLabel?: string;
     /**
      * Override the display mode of the ✕ close button. By default the ✕ **follows the
      * app's icons↔emojis seam automatically** (the lucide-style icon in `'icon'` mode,

@@ -2,14 +2,16 @@ import { jsx as _jsx } from "react/jsx-runtime";
 import { I18nProvider } from './I18nProvider';
 import { createTypedI18n } from './createTypedI18n';
 import { flattenMessages, interpolate } from './translate';
-import commonEn from './locales/common-en.json';
-import commonNb from './locales/common-nb.json';
+import commonEnUS from './locales/common-en-US.json';
+import { SHELL_CATALOG, DEFAULT_SHELL_LOCALE } from './shellCatalog';
 export function createProjectI18n(config) {
     const mergedDicts = {};
     for (const lang of Object.keys(config.localMessages)) {
         const local = config.localMessages[lang];
-        // Default to English common if the language isn't nb/no
-        const common = lang === 'nb' || lang === 'no' ? commonNb : commonEn;
+        // Layer the project catalog over the shell's bundled chrome catalog for this
+        // locale (the project wins). A locale the shell doesn't ship falls back to the
+        // default-locale chrome so `mrs.*` still resolves.
+        const common = SHELL_CATALOG[lang] ?? SHELL_CATALOG[DEFAULT_SHELL_LOCALE];
         mergedDicts[lang] = { ...flattenMessages(common), ...flattenMessages(local) };
     }
     const typed = createTypedI18n();

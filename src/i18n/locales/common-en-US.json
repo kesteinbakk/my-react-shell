@@ -1,0 +1,57 @@
+{
+  "mrs": {
+    "action": {
+      "ok": "OK",
+      "cancel": "Cancel",
+      "confirm": "Confirm",
+      "close": "Close",
+      "dismiss": "Dismiss",
+      "remove": "Remove",
+      "clear": "Clear",
+      "add": "Add",
+      "save": "Save",
+      "edit": "Edit",
+      "delete": "Delete",
+      "rename": "Rename",
+      "copy": "Copy",
+      "copied": "Copied",
+      "back": "Back",
+      "next": "Next",
+      "previous": "Previous",
+      "retry": "Retry",
+      "reset": "Reset",
+      "apply": "Apply",
+      "search": "Search…",
+      "more": "More",
+      "moreActions": "More actions",
+      "actions": "Actions",
+      "expand": "Expand",
+      "collapse": "Collapse",
+      "moveUp": "Move up",
+      "moveDown": "Move down",
+      "selectLanguage": "Select language"
+    },
+    "state": {
+      "loading": "Loading…",
+      "noData": "No data available",
+      "noResults": "No results",
+      "error": "Error",
+      "saving": "Saving…",
+      "saved": "Saved"
+    },
+    "cardGrid": {
+      "searchPlaceholder": "Search…",
+      "noResults": "No results",
+      "empty": "Nothing here yet",
+      "sortAsc": "Ascending",
+      "sortDesc": "Descending"
+    },
+    "emoji": {
+      "categories": "Categories",
+      "frequent": "Frequently used"
+    },
+    "prefs": {
+      "language": "Language"
+    }
+  }
+}

@@ -8,12 +8,13 @@ interface ChipBaseProps {
     className?: string;
 }
 /**
- * Remove-button props: when `onRemove` is set, `removeLabel` (the accessible label) is
- * **required** — pass a translated string. Omit both for a non-removable chip.
+ * Remove-button props: when `onRemove` is set the ✕ renders, its accessible label
+ * defaulting to the shell's built-in "Remove" (`mrs.action.remove`); pass
+ * `removeLabel` to override. Omit both for a non-removable chip.
  */
 type ChipRemoveProps = {
     onRemove: () => void;
-    removeLabel: string;
+    removeLabel?: string;
 } | {
     onRemove?: undefined;
     removeLabel?: undefined;
