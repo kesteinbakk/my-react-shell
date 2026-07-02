@@ -1,5 +1,5 @@
 import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "react/jsx-runtime";
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import * as Dialog from '@radix-ui/react-dialog';
 import { cn } from './cn';
 const svg = {
@@ -58,7 +58,7 @@ function Segment({ active, onClick, children, }) {
  * **required, no-default prop** — pass translated strings via your t() seam, so the
  * kit never imports i18n and never renders a hardcoded language.
  */
-export function UserPreferences({ theme, themes, onThemeChange, mode, onModeChange, followSystem, onFollowSystemChange, iconMode, onIconModeChange, accountActions, trigger, open, onOpenChange, triggerLabel, title, description, themeHeading, modeHeading, displayHeading, lightLabel, darkLabel, systemLabel, iconsLabel, emojisLabel, closeLabel, className, }) {
+export function UserPreferences({ theme, themes, onThemeChange, mode, onModeChange, followSystem, onFollowSystemChange, iconMode, onIconModeChange, accountActions, trigger, open, onOpenChange, sections, themeSectionLabel, themeSectionIcon, triggerLabel, title, description, themeHeading, modeHeading, displayHeading, lightLabel, darkLabel, systemLabel, iconsLabel, emojisLabel, closeLabel, className, }) {
     const [internalOpen, setInternalOpen] = useState(false);
     const isControlled = open !== undefined;
     const isOpen = isControlled ? open : internalOpen;
@@ -67,14 +67,43 @@ export function UserPreferences({ theme, themes, onThemeChange, mode, onModeChan
             setInternalOpen(next);
         onOpenChange?.(next);
     };
+    // Two-pane layout is engaged only when the consumer supplies sections. Absent
+    // (or empty) → the single-column body below renders exactly as before.
+    const sectioned = sections != null && sections.length > 0;
+    const [activeSection, setActiveSection] = useState('theme');
+    // The dialog always opens on the built-in "Theme" section — the default section
+    // is a per-open contract, not just the initial mount value. Reset whenever the
+    // dialog transitions to open, so a user who last viewed another section still
+    // lands on Theme on the next open. No-op in the single-column layout (there is
+    // no nav to reset).
+    useEffect(() => {
+        if (isOpen)
+            setActiveSection('theme');
+    }, [isOpen]);
     const showSystem = onFollowSystemChange !== undefined;
     const sys = followSystem === true;
     const showDisplay = iconMode !== undefined && onIconModeChange !== undefined;
     // The modal's own glyphs follow the app's display mode when the consumer wires
     // the icons seam (passes `iconMode`); otherwise they stay icons.
     const emojiMode = iconMode === 'emoji';
-    return (_jsxs(Dialog.Root, { open: isOpen, onOpenChange: setOpen, children: [_jsx(Dialog.Trigger, { asChild: true, children: trigger ?? (_jsx("button", { type: "button", className: "mrs-prefs-trigger", "aria-label": triggerLabel, title: triggerLabel, children: _jsx(ModeGlyph, { icon: PaletteGlyph, emoji: "\uD83C\uDFA8", emojiMode: emojiMode }) })) }), _jsxs(Dialog.Portal, { children: [_jsx(Dialog.Overlay, { className: "mrs-dialog__overlay" }), _jsxs(Dialog.Content, { className: cn('mrs-prefs', className), children: [_jsxs("div", { className: "mrs-prefs__header", children: [_jsx(Dialog.Title, { className: "mrs-prefs__title", children: title }), _jsx(Dialog.Close, { className: "mrs-prefs__close", "aria-label": closeLabel, children: _jsx(ModeGlyph, { icon: CloseGlyph, emoji: "\u2716\uFE0F", emojiMode: emojiMode }) })] }), description != null && (_jsx(Dialog.Description, { className: "mrs-prefs__desc", children: description })), _jsxs("section", { className: "mrs-prefs__section", children: [_jsx("h3", { className: "mrs-prefs__heading", children: themeHeading }), _jsx("div", { className: "mrs-prefs__grid", role: "group", "aria-label": typeof themeHeading === 'string' ? themeHeading : undefined, children: themes.map((info) => {
-                                            const glyph = PALETTE_GLYPHS[info.name] ?? FALLBACK_PALETTE_GLYPH;
-                                            return (_jsxs("button", { type: "button", className: "mrs-prefs__option", "aria-pressed": theme === info.name, onClick: () => onThemeChange(info.name), children: [_jsx(ModeGlyph, { icon: glyph.icon, emoji: glyph.emoji, emojiMode: emojiMode }), info.label] }, info.name));
-                                        }) })] }), _jsxs("section", { className: "mrs-prefs__section", children: [_jsx("h3", { className: "mrs-prefs__heading", children: modeHeading }), _jsxs("div", { className: "mrs-prefs__seg", role: "group", "aria-label": typeof modeHeading === 'string' ? modeHeading : undefined, children: [_jsxs(Segment, { active: !sys && mode === 'light', onClick: () => onModeChange('light'), children: [_jsx(ModeGlyph, { icon: SunGlyph, emoji: "\u2600\uFE0F", emojiMode: emojiMode }), lightLabel] }), _jsxs(Segment, { active: !sys && mode === 'dark', onClick: () => onModeChange('dark'), children: [_jsx(ModeGlyph, { icon: MoonGlyph, emoji: "\uD83C\uDF19", emojiMode: emojiMode }), darkLabel] }), showSystem && (_jsxs(Segment, { active: sys, onClick: () => onFollowSystemChange(true), children: [_jsx(ModeGlyph, { icon: MonitorGlyph, emoji: "\uD83D\uDDA5\uFE0F", emojiMode: emojiMode }), systemLabel] }))] })] }), showDisplay && (_jsxs("section", { className: "mrs-prefs__section", children: [_jsx("h3", { className: "mrs-prefs__heading", children: displayHeading }), _jsxs("div", { className: "mrs-prefs__seg", role: "group", "aria-label": typeof displayHeading === 'string' ? displayHeading : undefined, children: [_jsxs(Segment, { active: iconMode === 'icon', onClick: () => onIconModeChange('icon'), children: [SmileGlyph, iconsLabel] }), _jsxs(Segment, { active: iconMode === 'emoji', onClick: () => onIconModeChange('emoji'), children: [_jsx("span", { className: "mrs-prefs__emoji", "aria-hidden": "true", children: "\uD83D\uDE00" }), emojisLabel] })] })] })), accountActions != null && _jsx("div", { className: "mrs-prefs__account", children: accountActions })] })] })] }));
+    // The three built-in theme controls (palette / mode / display). In the
+    // single-column layout they render inline; in the sectioned layout they are
+    // the right pane shown while the built-in "Theme" nav item is active.
+    const themePane = (_jsxs(_Fragment, { children: [_jsxs("section", { className: "mrs-prefs__section", children: [_jsx("h3", { className: "mrs-prefs__heading", children: themeHeading }), _jsx("div", { className: "mrs-prefs__grid", role: "group", "aria-label": typeof themeHeading === 'string' ? themeHeading : undefined, children: themes.map((info) => {
+                            const glyph = PALETTE_GLYPHS[info.name] ?? FALLBACK_PALETTE_GLYPH;
+                            return (_jsxs("button", { type: "button", className: "mrs-prefs__option", "aria-pressed": theme === info.name, onClick: () => onThemeChange(info.name), children: [_jsx(ModeGlyph, { icon: glyph.icon, emoji: glyph.emoji, emojiMode: emojiMode }), info.label] }, info.name));
+                        }) })] }), _jsxs("section", { className: "mrs-prefs__section", children: [_jsx("h3", { className: "mrs-prefs__heading", children: modeHeading }), _jsxs("div", { className: "mrs-prefs__seg", role: "group", "aria-label": typeof modeHeading === 'string' ? modeHeading : undefined, children: [_jsxs(Segment, { active: !sys && mode === 'light', onClick: () => onModeChange('light'), children: [_jsx(ModeGlyph, { icon: SunGlyph, emoji: "\u2600\uFE0F", emojiMode: emojiMode }), lightLabel] }), _jsxs(Segment, { active: !sys && mode === 'dark', onClick: () => onModeChange('dark'), children: [_jsx(ModeGlyph, { icon: MoonGlyph, emoji: "\uD83C\uDF19", emojiMode: emojiMode }), darkLabel] }), showSystem && (_jsxs(Segment, { active: sys, onClick: () => onFollowSystemChange(true), children: [_jsx(ModeGlyph, { icon: MonitorGlyph, emoji: "\uD83D\uDDA5\uFE0F", emojiMode: emojiMode }), systemLabel] }))] })] }), showDisplay && (_jsxs("section", { className: "mrs-prefs__section", children: [_jsx("h3", { className: "mrs-prefs__heading", children: displayHeading }), _jsxs("div", { className: "mrs-prefs__seg", role: "group", "aria-label": typeof displayHeading === 'string' ? displayHeading : undefined, children: [_jsxs(Segment, { active: iconMode === 'icon', onClick: () => onIconModeChange('icon'), children: [SmileGlyph, iconsLabel] }), _jsxs(Segment, { active: iconMode === 'emoji', onClick: () => onIconModeChange('emoji'), children: [_jsx("span", { className: "mrs-prefs__emoji", "aria-hidden": "true", children: "\uD83D\uDE00" }), emojisLabel] })] })] }))] }));
+    // The left-nav item list: the built-in theme item first, then consumer sections.
+    const navItems = sectioned
+        ? [{ id: 'theme', icon: themeSectionIcon, label: themeSectionLabel }, ...sections]
+        : [];
+    // Guard against a consumer id that no longer exists (e.g. a section removed
+    // while open) — fall back to the always-present theme pane.
+    const activeContent = activeSection === 'theme'
+        ? themePane
+        : sections?.find((s) => s.id === activeSection)?.content ?? themePane;
+    return (_jsxs(Dialog.Root, { open: isOpen, onOpenChange: setOpen, children: [_jsx(Dialog.Trigger, { asChild: true, children: trigger ?? (_jsx("button", { type: "button", className: "mrs-prefs-trigger", "aria-label": triggerLabel, title: triggerLabel, children: _jsx(ModeGlyph, { icon: PaletteGlyph, emoji: "\uD83C\uDFA8", emojiMode: emojiMode }) })) }), _jsxs(Dialog.Portal, { children: [_jsx(Dialog.Overlay, { className: "mrs-dialog__overlay" }), _jsxs(Dialog.Content, { className: cn('mrs-prefs', sectioned && 'mrs-prefs--sectioned', className), children: [_jsxs("div", { className: "mrs-prefs__header", children: [_jsx(Dialog.Title, { className: "mrs-prefs__title", children: title }), _jsx(Dialog.Close, { className: "mrs-prefs__close", "aria-label": closeLabel, children: _jsx(ModeGlyph, { icon: CloseGlyph, emoji: "\u2716\uFE0F", emojiMode: emojiMode }) })] }), description != null && (_jsx(Dialog.Description, { className: "mrs-prefs__desc", children: description })), sectioned ? (_jsxs("div", { className: "mrs-prefs__panes", children: [_jsx("nav", { className: "mrs-prefs__nav", "aria-label": typeof title === 'string' ? title : undefined, children: navItems.map((item) => {
+                                            const active = item.id === activeSection;
+                                            return (_jsxs("button", { type: "button", className: "mrs-prefs__nav-item", "aria-pressed": active, "aria-current": active ? 'page' : undefined, onClick: () => setActiveSection(item.id), children: [_jsx("span", { className: "mrs-prefs__nav-icon", "aria-hidden": "true", children: item.icon }), _jsx("span", { className: "mrs-prefs__nav-label", children: item.label })] }, item.id));
+                                        }) }), _jsx("div", { className: "mrs-prefs__content", children: activeContent })] })) : (themePane), accountActions != null && _jsx("div", { className: "mrs-prefs__account", children: accountActions })] })] })] }));
 }

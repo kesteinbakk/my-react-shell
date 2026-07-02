@@ -938,7 +938,10 @@ mechanics + examples: [card guide → PaperCard](../guides/card-grid.md#papercar
 A fully **controlled** theme/display panel in a Radix dialog (palette + light/dark/system +
 an optional icons↔emojis switch). It **persists nothing** — emits `onChange`; the consumer
 owns storage. Auth-free (`accountActions` slot); every label is a **required, no-default**
-prop — pass translated strings. Notes: [components guide → UserPreferences](../guides/components.md#userpreferences).
+prop — pass translated strings. Pass `sections` to grow it into a **two-pane sectioned
+dialog** (left icon+label nav, swappable right pane) with Theme as the default-selected
+section; omit `sections` and it renders exactly the single-column panel it always has.
+Notes: [components guide → UserPreferences](../guides/components.md#userpreferences).
 
 | Prop | Default | Meaning |
 |---|---|---|
@@ -949,8 +952,12 @@ prop — pass translated strings. Notes: [components guide → UserPreferences](
 | `accountActions` | — | Rows below a divider — e.g. a sign-out button. Keeps the kit auth-free. |
 | `trigger` | icon button | Override the dialog trigger. |
 | `open` / `onOpenChange` | self-managed | Control the open state if you need to. |
+| `sections` | — | `UserPreferencesSection[]`. Extra sections appended after the built-in **Theme** section. **Omit (or empty) → today's single-column, no-nav body, unchanged.** Non-empty → the dialog widens into a **two-pane** grid: a left icon+label nav and a swappable right pane. Default-active section is `'theme'`. |
+| `themeSectionLabel` / `themeSectionIcon` | — | `ReactNode`. Left-nav label + icon for the built-in Theme section. Pass both when `sections` is non-empty (the nav needs a name for the theme pane); ignored otherwise. |
 | label props | — | **Required** (no default): `triggerLabel`, `title`, `themeHeading`, `modeHeading`, `displayHeading`, `lightLabel`, `darkLabel`, `systemLabel`, `iconsLabel`, `emojisLabel`, `closeLabel`. Only `description` is optional. Pass translated strings. |
 | `className` | — | Extra classes on the dialog, merged via `cn()`. |
+
+`UserPreferencesSection` (exported): `{ id: string; icon: ReactNode; label: ReactNode; content: ReactNode }` — one extra left-nav item + its right-pane content. The shell stays icon- and language-neutral: the consumer passes already-resolved icon nodes (e.g. `<AppIcon…>`) and translated labels. The nav renders `[{ id: 'theme', … }, ...sections]`; the theme item shows the built-in palette/mode/display controls.
 
 ```tsx
 // wire to useTheme() + useIconMode() — every label is required:
@@ -962,6 +969,14 @@ prop — pass translated strings. Notes: [components guide → UserPreferences](
   themeHeading={t('prefs.theme')} modeHeading={t('prefs.appearance')} displayHeading={t('prefs.display')}
   lightLabel={t('prefs.light')} darkLabel={t('prefs.dark')} systemLabel={t('prefs.system')}
   iconsLabel={t('prefs.icons')} emojisLabel={t('prefs.emojis')} closeLabel={t('common.close')} />
+
+// Two-pane sectioned dialog — Theme is built in and default-selected; add your own:
+<UserPreferences /* …all the props above… */
+  themeSectionLabel={t('prefs.theme')} themeSectionIcon={<AppIcon name="theme" />}
+  sections={[
+    { id: 'sound', icon: <AppIcon name="sound" />, label: t('prefs.sound'),
+      content: <SoundSettings /> },
+  ]} />
 ```
 
 ### `EmojiPicker` / `EmojiBar`

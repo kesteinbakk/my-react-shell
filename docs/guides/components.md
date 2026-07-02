@@ -252,12 +252,28 @@ The kit **never imports i18n or the icons module**: pass translated label text v
 (all labels have English defaults), and wire the icons↔emojis swap yourself via
 `useIconMode().isEmoji`.
 
+**Sectioned (two-pane) mode.** Pass a `sections` array and the panel grows into a wider
+two-pane dialog: a left icon+label nav and a swappable right pane. The built-in theme
+controls become a default-selected **Theme** section; each `UserPreferencesSection`
+(`{ id, icon, label, content }`) you pass is appended as another nav item. Omit `sections`
+and nothing changes — the single-column panel renders exactly as before. The shell stays
+icon- and language-neutral: pass already-resolved icon nodes and translated labels, plus
+`themeSectionLabel` / `themeSectionIcon` for the built-in Theme item.
+
 ```tsx
 // wire to useTheme() + useIconMode():
 <UserPreferences theme={theme} themes={themes} onThemeChange={setTheme}
   mode={mode} onModeChange={setMode}
   followSystem={isSystemMode} onFollowSystemChange={setSystemMode}
   iconMode={iconMode} onIconModeChange={setIconMode} />
+
+// …or as a sectioned dialog with your own extra section:
+<UserPreferences /* …theme/mode/icon props + labels… */
+  themeSectionLabel={t('prefs.theme')} themeSectionIcon={<AppIcon name="theme" />}
+  sections={[
+    { id: 'sound', icon: <AppIcon name="sound" />, label: t('prefs.sound'),
+      content: <SoundSettings /> },
+  ]} />
 ```
 
 ## `EmojiPicker` / `EmojiBar`

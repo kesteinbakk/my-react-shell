@@ -1,9 +1,25 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import type { ReactNode } from 'react'
 import * as Dialog from '@radix-ui/react-dialog'
 import type { ThemeInfo, ThemeMode, ThemeName } from '../theme/themeContext'
 import type { IconMode } from '../icons/iconModeContext'
 import { cn } from './cn'
+
+/**
+ * A consumer-supplied section rendered as an extra left-nav item + right pane in
+ * the two-pane (sectioned) layout. Provide one or more via {@link UserPreferencesProps.sections}
+ * to switch `<UserPreferences>` from its single-column body to a category rail.
+ */
+export interface UserPreferencesSection {
+  /** Stable id — used as the nav key and the selected-state value. Reserved: `'theme'`. */
+  id: string
+  /** Left-nav icon node (already mode-resolved by the consumer, e.g. `<AppIcon…>`). */
+  icon: ReactNode
+  /** Left-nav text label (translated by the consumer). */
+  label: ReactNode
+  /** Right-pane content shown when this section is active. */
+  content: ReactNode
+}
 
 export interface UserPreferencesProps {
   // ── Theme palette ────────────────────────────────────────────────────────
@@ -39,6 +55,23 @@ export interface UserPreferencesProps {
   open?: boolean
   /** Open-state change handler. */
   onOpenChange?: (open: boolean) => void
+
+  // ── Sectioned (two-pane) layout ──────────────────────────────────────────
+  /**
+   * Extra sections appended after the built-in **Theme** section. Omit (or pass
+   * an empty array) → today's single-column, no-nav body is preserved exactly
+   * (backward compatible). Pass one or more → the dialog widens into a two-pane
+   * grid with a left icon+label nav and a swappable right pane.
+   */
+  sections?: UserPreferencesSection[]
+  /**
+   * Left-nav label for the built-in Theme section. Required in practice when
+   * `sections` is non-empty (the two-pane nav needs a name for the theme pane);
+   * ignored when `sections` is omitted.
+   */
+  themeSectionLabel?: ReactNode
+  /** Left-nav icon for the built-in Theme section. Same conditionality as `themeSectionLabel`. */
+  themeSectionIcon?: ReactNode
 
   // ── Labels (all **required** — pass translated strings via your t() seam) ──
   triggerLabel: string
@@ -232,6 +265,9 @@ export function UserPreferences({
   trigger,
   open,
   onOpenChange,
+  sections,
+  themeSectionLabel,
+  themeSectionIcon,
   triggerLabel,
   title,
   description,
@@ -254,12 +290,106 @@ export function UserPreferences({
     onOpenChange?.(next)
   }
 
+  // Two-pane layout is engaged only when the consumer supplies sections. Absent
+  // (or empty) → the single-column body below renders exactly as before.
+  const sectioned = sections != null && sections.length > 0
+  const [activeSection, setActiveSection] = useState('theme')
+
+  // The dialog always opens on the built-in "Theme" section — the default section
+  // is a per-open contract, not just the initial mount value. Reset whenever the
+  // dialog transitions to open, so a user who last viewed another section still
+  // lands on Theme on the next open. No-op in the single-column layout (there is
+  // no nav to reset).
+  useEffect(() => {
+    if (isOpen) setActiveSection('theme')
+  }, [isOpen])
+
   const showSystem = onFollowSystemChange !== undefined
   const sys = followSystem === true
   const showDisplay = iconMode !== undefined && onIconModeChange !== undefined
   // The modal's own glyphs follow the app's display mode when the consumer wires
   // the icons seam (passes `iconMode`); otherwise they stay icons.
   const emojiMode = iconMode === 'emoji'
+
+  // The three built-in theme controls (palette / mode / display). In the
+  // single-column layout they render inline; in the sectioned layout they are
+  // the right pane shown while the built-in "Theme" nav item is active.
+  const themePane = (
+    <>
+      {/* Theme palette */}
+      <section className="mrs-prefs__section">
+        <h3 className="mrs-prefs__heading">{themeHeading}</h3>
+        <div className="mrs-prefs__grid" role="group" aria-label={typeof themeHeading === 'string' ? themeHeading : undefined}>
+          {themes.map((info) => {
+            const glyph = PALETTE_GLYPHS[info.name] ?? FALLBACK_PALETTE_GLYPH
+            return (
+              <button
+                key={info.name}
+                type="button"
+                className="mrs-prefs__option"
+                aria-pressed={theme === info.name}
+                onClick={() => onThemeChange(info.name)}
+              >
+                <ModeGlyph icon={glyph.icon} emoji={glyph.emoji} emojiMode={emojiMode} />
+                {info.label}
+              </button>
+            )
+          })}
+        </div>
+      </section>
+
+      {/* Color mode */}
+      <section className="mrs-prefs__section">
+        <h3 className="mrs-prefs__heading">{modeHeading}</h3>
+        <div className="mrs-prefs__seg" role="group" aria-label={typeof modeHeading === 'string' ? modeHeading : undefined}>
+          <Segment active={!sys && mode === 'light'} onClick={() => onModeChange('light')}>
+            <ModeGlyph icon={SunGlyph} emoji="☀️" emojiMode={emojiMode} />
+            {lightLabel}
+          </Segment>
+          <Segment active={!sys && mode === 'dark'} onClick={() => onModeChange('dark')}>
+            <ModeGlyph icon={MoonGlyph} emoji="🌙" emojiMode={emojiMode} />
+            {darkLabel}
+          </Segment>
+          {showSystem && (
+            <Segment active={sys} onClick={() => onFollowSystemChange!(true)}>
+              <ModeGlyph icon={MonitorGlyph} emoji="🖥️" emojiMode={emojiMode} />
+              {systemLabel}
+            </Segment>
+          )}
+        </div>
+      </section>
+
+      {/* Icons vs emojis */}
+      {showDisplay && (
+        <section className="mrs-prefs__section">
+          <h3 className="mrs-prefs__heading">{displayHeading}</h3>
+          <div className="mrs-prefs__seg" role="group" aria-label={typeof displayHeading === 'string' ? displayHeading : undefined}>
+            {/* This toggle is exempt from the mode swap — it always shows an icon
+                on the left and an emoji on the right, to demonstrate the switch. */}
+            <Segment active={iconMode === 'icon'} onClick={() => onIconModeChange!('icon')}>
+              {SmileGlyph}
+              {iconsLabel}
+            </Segment>
+            <Segment active={iconMode === 'emoji'} onClick={() => onIconModeChange!('emoji')}>
+              <span className="mrs-prefs__emoji" aria-hidden="true">😀</span>
+              {emojisLabel}
+            </Segment>
+          </div>
+        </section>
+      )}
+    </>
+  )
+
+  // The left-nav item list: the built-in theme item first, then consumer sections.
+  const navItems: { id: string; icon: ReactNode; label: ReactNode }[] = sectioned
+    ? [{ id: 'theme', icon: themeSectionIcon, label: themeSectionLabel }, ...sections!]
+    : []
+  // Guard against a consumer id that no longer exists (e.g. a section removed
+  // while open) — fall back to the always-present theme pane.
+  const activeContent =
+    activeSection === 'theme'
+      ? themePane
+      : sections?.find((s) => s.id === activeSection)?.content ?? themePane
 
   return (
     <Dialog.Root open={isOpen} onOpenChange={setOpen}>
@@ -272,7 +402,7 @@ export function UserPreferences({
       </Dialog.Trigger>
       <Dialog.Portal>
         <Dialog.Overlay className="mrs-dialog__overlay" />
-        <Dialog.Content className={cn('mrs-prefs', className)}>
+        <Dialog.Content className={cn('mrs-prefs', sectioned && 'mrs-prefs--sectioned', className)}>
           <div className="mrs-prefs__header">
             <Dialog.Title className="mrs-prefs__title">{title}</Dialog.Title>
             <Dialog.Close className="mrs-prefs__close" aria-label={closeLabel}>
@@ -283,66 +413,30 @@ export function UserPreferences({
             <Dialog.Description className="mrs-prefs__desc">{description}</Dialog.Description>
           )}
 
-          {/* Theme palette */}
-          <section className="mrs-prefs__section">
-            <h3 className="mrs-prefs__heading">{themeHeading}</h3>
-            <div className="mrs-prefs__grid" role="group" aria-label={typeof themeHeading === 'string' ? themeHeading : undefined}>
-              {themes.map((info) => {
-                const glyph = PALETTE_GLYPHS[info.name] ?? FALLBACK_PALETTE_GLYPH
-                return (
-                  <button
-                    key={info.name}
-                    type="button"
-                    className="mrs-prefs__option"
-                    aria-pressed={theme === info.name}
-                    onClick={() => onThemeChange(info.name)}
-                  >
-                    <ModeGlyph icon={glyph.icon} emoji={glyph.emoji} emojiMode={emojiMode} />
-                    {info.label}
-                  </button>
-                )
-              })}
+          {sectioned ? (
+            <div className="mrs-prefs__panes">
+              <nav className="mrs-prefs__nav" aria-label={typeof title === 'string' ? title : undefined}>
+                {navItems.map((item) => {
+                  const active = item.id === activeSection
+                  return (
+                    <button
+                      key={item.id}
+                      type="button"
+                      className="mrs-prefs__nav-item"
+                      aria-pressed={active}
+                      aria-current={active ? 'page' : undefined}
+                      onClick={() => setActiveSection(item.id)}
+                    >
+                      <span className="mrs-prefs__nav-icon" aria-hidden="true">{item.icon}</span>
+                      <span className="mrs-prefs__nav-label">{item.label}</span>
+                    </button>
+                  )
+                })}
+              </nav>
+              <div className="mrs-prefs__content">{activeContent}</div>
             </div>
-          </section>
-
-          {/* Color mode */}
-          <section className="mrs-prefs__section">
-            <h3 className="mrs-prefs__heading">{modeHeading}</h3>
-            <div className="mrs-prefs__seg" role="group" aria-label={typeof modeHeading === 'string' ? modeHeading : undefined}>
-              <Segment active={!sys && mode === 'light'} onClick={() => onModeChange('light')}>
-                <ModeGlyph icon={SunGlyph} emoji="☀️" emojiMode={emojiMode} />
-                {lightLabel}
-              </Segment>
-              <Segment active={!sys && mode === 'dark'} onClick={() => onModeChange('dark')}>
-                <ModeGlyph icon={MoonGlyph} emoji="🌙" emojiMode={emojiMode} />
-                {darkLabel}
-              </Segment>
-              {showSystem && (
-                <Segment active={sys} onClick={() => onFollowSystemChange!(true)}>
-                  <ModeGlyph icon={MonitorGlyph} emoji="🖥️" emojiMode={emojiMode} />
-                  {systemLabel}
-                </Segment>
-              )}
-            </div>
-          </section>
-
-          {/* Icons vs emojis */}
-          {showDisplay && (
-            <section className="mrs-prefs__section">
-              <h3 className="mrs-prefs__heading">{displayHeading}</h3>
-              <div className="mrs-prefs__seg" role="group" aria-label={typeof displayHeading === 'string' ? displayHeading : undefined}>
-                {/* This toggle is exempt from the mode swap — it always shows an icon
-                    on the left and an emoji on the right, to demonstrate the switch. */}
-                <Segment active={iconMode === 'icon'} onClick={() => onIconModeChange!('icon')}>
-                  {SmileGlyph}
-                  {iconsLabel}
-                </Segment>
-                <Segment active={iconMode === 'emoji'} onClick={() => onIconModeChange!('emoji')}>
-                  <span className="mrs-prefs__emoji" aria-hidden="true">😀</span>
-                  {emojisLabel}
-                </Segment>
-              </div>
-            </section>
+          ) : (
+            themePane
           )}
 
           {accountActions != null && <div className="mrs-prefs__account">{accountActions}</div>}
