@@ -112,30 +112,31 @@ browser. `Input`, `Textarea`, `InputField`, and `Select` take a **`required`** p
 
 The red asterisk is a static "this is mandatory" marker; it is **not** an error state — an
 empty required field is not painted red on load (the classic native `:invalid` anti-pattern).
-The error border is separate and **controlled**: you flip `invalid` (`Input`/`Textarea`) or
-`error` (`InputField`) from your own validation, typically on submit.
+Instead, the shell shows the red border the moment the user **leaves an empty required field**:
+the **`validateOnBlur`** behaviour is **on by default whenever `required` is set**, so `required`
+alone gives you asterisk + `aria-required` + red-border-on-blur with no extra wiring. It mirrors
+the CSS `:user-invalid` timing — the border turns red only *after* a blur on an empty field, and
+clears the instant a value is typed — but is implemented in the shell (no native constraint, no
+bubble). It is **OR-ed** with the controlled `invalid`/`error`, which always wins, so it never
+fights a form library that owns the error state.
 
-For the common "**red border once the user leaves an empty required field**" behaviour, opt in
-with **`validateOnBlur`** instead of wiring it yourself. It mirrors the CSS `:user-invalid`
-timing — the border turns red only *after* a blur on an empty field, and clears the instant a
-value is typed — but is implemented in the shell (no native constraint, no bubble). It is
-**OR-ed** with the controlled `invalid`/`error`, which always wins, so it never fights a form
-library that owns the error state.
+Pass **`validateOnBlur={false}`** to opt out and keep the asterisk only — e.g. when a form
+library owns the error state entirely and you don't want the shell's blur border on top.
 
 ```tsx
-// Mandatory field: red asterisk + aria-required, no native bubble, red border on blur-empty:
-<Input label={t('field.email')} required validateOnBlur fullWidth />
-<Textarea label={t('field.bio')} required validateOnBlur fullWidth />
-<Select label={t('field.role')} required validateOnBlur placeholder={t('field.pickRole')}
+// Mandatory field — `required` alone: asterisk + aria-required + red border on blur-empty:
+<Input label={t('field.email')} required fullWidth />
+<Textarea label={t('field.bio')} required fullWidth />
+<Select label={t('field.role')} required placeholder={t('field.pickRole')}
   options={roleOptions} value={role} onValueChange={setRole} />
 
-// Marker only — you own the error state (e.g. a form library sets `invalid` on submit):
-<Input label={t('field.email')} required invalid={submitted && !email} fullWidth />
+// Opt out of the blur border — marker only, you own the error state (e.g. on submit):
+<Input label={t('field.email')} required validateOnBlur={false} invalid={submitted && !email} fullWidth />
 ```
 
-`InputField`'s `validateOnBlur` shows only the red border (no message text — the shell can't
-hardcode language); pass `error` for a translated message. Toggles (`Checkbox`/`Switch`) accept
-native `required` for form wiring but render no asterisk — a marker on a single toggle reads oddly.
+`InputField`'s blur border shows no message text (the shell can't hardcode language); pass `error`
+for a translated message. Toggles (`Checkbox`/`Switch`) accept native `required` for form wiring
+but render no asterisk — a marker on a single toggle reads oddly.
 
 ## Surfaces & elevation
 

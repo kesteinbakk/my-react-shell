@@ -47,9 +47,10 @@ export interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 
    */
   required?: boolean
   /**
-   * Opt in to shell-owned validation: once the user blurs an empty `required` field,
-   * the invalid (red-border) state shows and clears the moment a value is typed.
-   * OR-ed with the controlled `invalid`, which always takes precedence. Default `false`.
+   * Shell-owned validation: once the user blurs an empty `required` field, the invalid
+   * (red-border) state shows and clears the moment a value is typed. **Enabled by
+   * default when `required` is set** — pass `false` to opt out (asterisk only). OR-ed
+   * with the controlled `invalid`, which always takes precedence.
    */
   validateOnBlur?: boolean
 }
@@ -104,7 +105,7 @@ export function Input({
   onBlur,
   label,
   required = false,
-  validateOnBlur = false,
+  validateOnBlur = true,
   id: passedId,
   ...rest
 }: InputProps) {

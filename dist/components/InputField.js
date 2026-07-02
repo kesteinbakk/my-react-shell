@@ -10,7 +10,7 @@ const ErrorIcon = () => (_jsxs("svg", { xmlns: "http://www.w3.org/2000/svg", vie
  * Full field: label + input + helper + error, a11y-wired (`htmlFor`/`aria-invalid`/`aria-describedby`).
  * Spreads native input props; pass `error` to switch on error styling.
  */
-export function InputField({ label, description, error, containerClassName, inputSize = 'md', fullWidth = false, className, onDebouncedChange, debounceMs = 500, onChange, saveStatus, onBlur, required = false, validateOnBlur = false, ...inputProps }) {
+export function InputField({ label, description, error, containerClassName, inputSize = 'md', fullWidth = false, className, onDebouncedChange, debounceMs = 500, onChange, saveStatus, onBlur, required = false, validateOnBlur = true, ...inputProps }) {
     const id = useId();
     const descId = `${id}-desc`;
     const errId = `${id}-err`;

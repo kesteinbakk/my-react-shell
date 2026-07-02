@@ -12,7 +12,7 @@ const ErrorIcon = () => (_jsxs("svg", { xmlns: "http://www.w3.org/2000/svg", vie
  * the only additions are `invalid` (error styling + `aria-invalid`) and
  * `onDebouncedChange` / `debounceMs` for stop-typing callbacks.
  */
-export function Textarea({ invalid = false, fullWidth = false, className, onDebouncedChange, debounceMs = 500, onChange, saveStatus, onBlur, label, required = false, validateOnBlur = false, id: passedId, ...rest }) {
+export function Textarea({ invalid = false, fullWidth = false, className, onDebouncedChange, debounceMs = 500, onChange, saveStatus, onBlur, label, required = false, validateOnBlur = true, id: passedId, ...rest }) {
     const [localStatus, setLocalStatus] = useState(saveStatus);
     const generatedId = useId();
     const id = passedId ?? generatedId;

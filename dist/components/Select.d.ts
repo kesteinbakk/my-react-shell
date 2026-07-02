@@ -32,9 +32,10 @@ export interface SelectProps {
      */
     required?: boolean;
     /**
-     * Opt in to shell-owned validation: once the user blurs the trigger with no value
-     * selected, the invalid (red-border) state shows and clears on selection. OR-ed
-     * with `saveStatus === 'error'`, which always takes precedence. Default `false`.
+     * Shell-owned validation: once the user blurs the trigger with no value selected, the
+     * invalid (red-border) state shows and clears on selection. **Enabled by default when
+     * `required` is set** — pass `false` to opt out (asterisk only). OR-ed with
+     * `saveStatus === 'error'`, which always takes precedence.
      */
     validateOnBlur?: boolean;
     id?: string;

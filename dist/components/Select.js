@@ -11,7 +11,7 @@ const check = (_jsx("svg", { width: 16, height: 16, viewBox: "0 0 24 24", fill: 
  * handling), styled on the theme tokens. Pass an `options` list; controlled via
  * `value` / `onValueChange`.
  */
-export function Select({ options, value, onValueChange, placeholder, disabled, size = 'md', fullWidth = false, className, style, saveStatus, label, required = false, validateOnBlur = false, id: passedId, ...rest }) {
+export function Select({ options, value, onValueChange, placeholder, disabled, size = 'md', fullWidth = false, className, style, saveStatus, label, required = false, validateOnBlur = true, id: passedId, ...rest }) {
     const generatedId = useId();
     const id = passedId ?? generatedId;
     const { autoInvalid, markTouched } = useRequiredValidation({ required, validateOnBlur, value });
