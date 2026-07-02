@@ -253,12 +253,22 @@ The kit **never imports i18n or the icons module**: pass translated label text v
 `useIconMode().isEmoji`.
 
 **Sectioned (two-pane) mode.** Pass a `sections` array and the panel grows into a wider
-two-pane dialog: a left icon+label nav and a swappable right pane. The built-in theme
-controls become a default-selected **Theme** section; each `UserPreferencesSection`
-(`{ id, icon, label, content }`) you pass is appended as another nav item. Omit `sections`
-and nothing changes — the single-column panel renders exactly as before. The shell stays
-icon- and language-neutral: pass already-resolved icon nodes and translated labels, plus
-`themeSectionLabel` / `themeSectionIcon` for the built-in Theme item.
+two-pane dialog: a left icon+label nav and a swappable right pane. **The nav is exactly the
+sections you pass, in order** — there is no auto-inserted Theme item. The built-in
+palette/mode/display controls are themselves a section: include an entry with
+`id: 'theme'` (your own `icon`/`label`, `content` omitted) wherever you want it in the
+order, and the shell injects the theme pane there; leave the entry out to render no theme
+section at all. Every other `UserPreferencesSection` (`{ id, icon, label, content }`)
+supplies its own `content`. Omit `sections` entirely and nothing changes — the
+single-column panel renders exactly as before. The shell stays icon- and
+language-neutral: pass already-resolved icon nodes and translated labels.
+
+The selected section is **controlled-or-internal**, like `open`: pass
+`activeSection` + `onActiveSectionChange` to own it — e.g. persist to `sessionStorage`
+so the dialog reopens where the user left off — or omit both and the component remembers
+the last-viewed section across close→reopen within its lifetime (seeded to the first nav
+item). A stale or removed id falls back to the first item; the shell never resets to a
+fixed section on open.
 
 ```tsx
 // wire to useTheme() + useIconMode():
@@ -267,10 +277,13 @@ icon- and language-neutral: pass already-resolved icon nodes and translated labe
   followSystem={isSystemMode} onFollowSystemChange={setSystemMode}
   iconMode={iconMode} onIconModeChange={setIconMode} />
 
-// …or as a sectioned dialog with your own extra section:
+// …or as a sectioned dialog — you compose the whole order. Language leads here,
+// the built-in Theme pane is second (id: 'theme', no content), Sound last:
 <UserPreferences /* …theme/mode/icon props + labels… */
-  themeSectionLabel={t('prefs.theme')} themeSectionIcon={<AppIcon name="theme" />}
   sections={[
+    { id: 'language', icon: <AppIcon name="language" />, label: t('prefs.language'),
+      content: <LanguageSettings /> },
+    { id: 'theme', icon: <AppIcon name="theme" />, label: t('prefs.appearance') },
     { id: 'sound', icon: <AppIcon name="sound" />, label: t('prefs.sound'),
       content: <SoundSettings /> },
   ]} />

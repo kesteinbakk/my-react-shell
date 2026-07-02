@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import type { ReactNode } from 'react'
 import * as Dialog from '@radix-ui/react-dialog'
 import type { ThemeInfo, ThemeMode, ThemeName } from '../theme/themeContext'
@@ -6,19 +6,25 @@ import type { IconMode } from '../icons/iconModeContext'
 import { cn } from './cn'
 
 /**
- * A consumer-supplied section rendered as an extra left-nav item + right pane in
- * the two-pane (sectioned) layout. Provide one or more via {@link UserPreferencesProps.sections}
- * to switch `<UserPreferences>` from its single-column body to a category rail.
+ * A section rendered as one left-nav item + right pane in the two-pane
+ * (sectioned) layout. Provide the full, ordered list via
+ * {@link UserPreferencesProps.sections} to switch `<UserPreferences>` from its
+ * single-column body to a category rail.
+ *
+ * The built-in palette/mode/display controls are themselves a section: include an
+ * entry with `id: 'theme'` (with your own `icon`/`label`) wherever you want them in
+ * the order, and omit its `content` — the shell injects the built-in theme pane
+ * there. Leave the entry out entirely to render no theme section at all.
  */
 export interface UserPreferencesSection {
-  /** Stable id — used as the nav key and the selected-state value. Reserved: `'theme'`. */
+  /** Stable id — the nav key and selected-state value. The reserved `'theme'` id renders the built-in theme pane. */
   id: string
   /** Left-nav icon node (already mode-resolved by the consumer, e.g. `<AppIcon…>`). */
   icon: ReactNode
   /** Left-nav text label (translated by the consumer). */
   label: ReactNode
-  /** Right-pane content shown when this section is active. */
-  content: ReactNode
+  /** Right-pane content shown when this section is active. Omit **only** for the reserved `'theme'` entry (the shell injects the built-in pane); required for every other section. */
+  content?: ReactNode
 }
 
 export interface UserPreferencesProps {
@@ -58,20 +64,24 @@ export interface UserPreferencesProps {
 
   // ── Sectioned (two-pane) layout ──────────────────────────────────────────
   /**
-   * Extra sections appended after the built-in **Theme** section. Omit (or pass
-   * an empty array) → today's single-column, no-nav body is preserved exactly
-   * (backward compatible). Pass one or more → the dialog widens into a two-pane
-   * grid with a left icon+label nav and a swappable right pane.
+   * The **full, ordered** left-nav. Omit (or pass an empty array) → the
+   * single-column, no-nav body. Pass one or more → the dialog widens into a
+   * two-pane grid with a left icon+label nav and a swappable right pane, in
+   * exactly the order given. Include an `{ id: 'theme' }` entry to place the
+   * built-in palette/mode/display pane wherever you want it (or leave it out to
+   * omit the theme section); every other entry supplies its own `content`.
    */
   sections?: UserPreferencesSection[]
   /**
-   * Left-nav label for the built-in Theme section. Required in practice when
-   * `sections` is non-empty (the two-pane nav needs a name for the theme pane);
-   * ignored when `sections` is omitted.
+   * The active section id (controlled). Pass this + `onActiveSectionChange` to
+   * own the selection — e.g. persist it to `sessionStorage` so the dialog
+   * reopens where the user left off. Omit both and the component remembers the
+   * last-viewed section across close→reopen within its lifetime. An id absent
+   * from `sections` falls back to the first nav item.
    */
-  themeSectionLabel?: ReactNode
-  /** Left-nav icon for the built-in Theme section. Same conditionality as `themeSectionLabel`. */
-  themeSectionIcon?: ReactNode
+  activeSection?: string
+  /** Called with the newly-selected section id when the user picks a nav item. */
+  onActiveSectionChange?: (id: string) => void
 
   // ── Labels (all **required** — pass translated strings via your t() seam) ──
   triggerLabel: string
@@ -266,8 +276,8 @@ export function UserPreferences({
   open,
   onOpenChange,
   sections,
-  themeSectionLabel,
-  themeSectionIcon,
+  activeSection,
+  onActiveSectionChange,
   triggerLabel,
   title,
   description,
@@ -293,16 +303,22 @@ export function UserPreferences({
   // Two-pane layout is engaged only when the consumer supplies sections. Absent
   // (or empty) → the single-column body below renders exactly as before.
   const sectioned = sections != null && sections.length > 0
-  const [activeSection, setActiveSection] = useState('theme')
 
-  // The dialog always opens on the built-in "Theme" section — the default section
-  // is a per-open contract, not just the initial mount value. Reset whenever the
-  // dialog transitions to open, so a user who last viewed another section still
-  // lands on Theme on the next open. No-op in the single-column layout (there is
-  // no nav to reset).
-  useEffect(() => {
-    if (isOpen) setActiveSection('theme')
-  }, [isOpen])
+  // Active section is controlled-or-internal, mirroring `open`/`onOpenChange`.
+  // Uncontrolled, it seeds to the first nav item and is NOT reset on open, so the
+  // dialog reopens where the user left off within its lifetime. A consumer wanting
+  // that to survive reloads passes `activeSection`/`onActiveSectionChange` and
+  // persists it (e.g. sessionStorage). Whatever the source, a stale/absent id
+  // resolves to the first nav item below.
+  const [internalSection, setInternalSection] = useState(() => sections?.[0]?.id ?? 'theme')
+  const activeControlled = activeSection !== undefined
+  const rawSection = activeControlled ? activeSection : internalSection
+  const activeId =
+    sectioned && sections!.some((s) => s.id === rawSection) ? rawSection! : sections?.[0]?.id ?? 'theme'
+  const setActiveSection = (id: string) => {
+    if (!activeControlled) setInternalSection(id)
+    onActiveSectionChange?.(id)
+  }
 
   const showSystem = onFollowSystemChange !== undefined
   const sys = followSystem === true
@@ -380,16 +396,13 @@ export function UserPreferences({
     </>
   )
 
-  // The left-nav item list: the built-in theme item first, then consumer sections.
-  const navItems: { id: string; icon: ReactNode; label: ReactNode }[] = sectioned
-    ? [{ id: 'theme', icon: themeSectionIcon, label: themeSectionLabel }, ...sections!]
-    : []
-  // Guard against a consumer id that no longer exists (e.g. a section removed
-  // while open) — fall back to the always-present theme pane.
+  // The left-nav is exactly the sections the consumer passes, in order — the
+  // built-in theme controls are just the entry whose id is `'theme'`.
+  const navItems = sectioned ? sections! : []
+  // The reserved `'theme'` id renders the built-in pane; every other id renders
+  // its section's own content. `activeId` is already guarded to a present id.
   const activeContent =
-    activeSection === 'theme'
-      ? themePane
-      : sections?.find((s) => s.id === activeSection)?.content ?? themePane
+    activeId === 'theme' ? themePane : sections?.find((s) => s.id === activeId)?.content ?? null
 
   return (
     <Dialog.Root open={isOpen} onOpenChange={setOpen}>
@@ -417,7 +430,7 @@ export function UserPreferences({
             <div className="mrs-prefs__panes">
               <nav className="mrs-prefs__nav" aria-label={typeof title === 'string' ? title : undefined}>
                 {navItems.map((item) => {
-                  const active = item.id === activeSection
+                  const active = item.id === activeId
                   return (
                     <button
                       key={item.id}

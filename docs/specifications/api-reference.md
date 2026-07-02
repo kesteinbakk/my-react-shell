@@ -939,8 +939,10 @@ A fully **controlled** theme/display panel in a Radix dialog (palette + light/da
 an optional icons↔emojis switch). It **persists nothing** — emits `onChange`; the consumer
 owns storage. Auth-free (`accountActions` slot); every label is a **required, no-default**
 prop — pass translated strings. Pass `sections` to grow it into a **two-pane sectioned
-dialog** (left icon+label nav, swappable right pane) with Theme as the default-selected
-section; omit `sections` and it renders exactly the single-column panel it always has.
+dialog** (left icon+label nav, swappable right pane): the nav is exactly the ordered
+sections you pass, and the built-in palette/mode/display controls are the entry whose
+`id` is `'theme'` — place it anywhere, or omit it to drop the theme section. Omit
+`sections` and it renders the single-column panel it always has.
 Notes: [components guide → UserPreferences](../guides/components.md#userpreferences).
 
 | Prop | Default | Meaning |
@@ -952,12 +954,12 @@ Notes: [components guide → UserPreferences](../guides/components.md#userprefer
 | `accountActions` | — | Rows below a divider — e.g. a sign-out button. Keeps the kit auth-free. |
 | `trigger` | icon button | Override the dialog trigger. |
 | `open` / `onOpenChange` | self-managed | Control the open state if you need to. |
-| `sections` | — | `UserPreferencesSection[]`. Extra sections appended after the built-in **Theme** section. **Omit (or empty) → today's single-column, no-nav body, unchanged.** Non-empty → the dialog widens into a **two-pane** grid: a left icon+label nav and a swappable right pane. Default-active section is `'theme'`. |
-| `themeSectionLabel` / `themeSectionIcon` | — | `ReactNode`. Left-nav label + icon for the built-in Theme section. Pass both when `sections` is non-empty (the nav needs a name for the theme pane); ignored otherwise. |
+| `sections` | — | `UserPreferencesSection[]`. **The full, ordered left-nav.** Omit (or empty) → the single-column, no-nav body. Non-empty → a **two-pane** grid (left icon+label nav, swappable right pane) in exactly this order. Include an `{ id: 'theme' }` entry to place the built-in palette/mode/display pane; leave it out to omit the theme section. |
+| `activeSection` / `onActiveSectionChange` | self-managed | Control the selected section id. Pass both to own it (e.g. persist to `sessionStorage` so the dialog reopens where the user left off); omit both and the component remembers the last-viewed section within its lifetime. A stale/absent id falls back to the first nav item. |
 | label props | — | **Required** (no default): `triggerLabel`, `title`, `themeHeading`, `modeHeading`, `displayHeading`, `lightLabel`, `darkLabel`, `systemLabel`, `iconsLabel`, `emojisLabel`, `closeLabel`. Only `description` is optional. Pass translated strings. |
 | `className` | — | Extra classes on the dialog, merged via `cn()`. |
 
-`UserPreferencesSection` (exported): `{ id: string; icon: ReactNode; label: ReactNode; content: ReactNode }` — one extra left-nav item + its right-pane content. The shell stays icon- and language-neutral: the consumer passes already-resolved icon nodes (e.g. `<AppIcon…>`) and translated labels. The nav renders `[{ id: 'theme', … }, ...sections]`; the theme item shows the built-in palette/mode/display controls.
+`UserPreferencesSection` (exported): `{ id: string; icon: ReactNode; label: ReactNode; content?: ReactNode }` — one left-nav item + its right-pane content. The shell stays icon- and language-neutral: the consumer passes already-resolved icon nodes (e.g. `<AppIcon…>`) and translated labels. The nav renders the array verbatim; the reserved `id: 'theme'` entry (whose `content` you omit) shows the built-in palette/mode/display controls, so you choose its position — first, last, or anywhere between your own sections.
 
 ```tsx
 // wire to useTheme() + useIconMode() — every label is required:
@@ -970,10 +972,13 @@ Notes: [components guide → UserPreferences](../guides/components.md#userprefer
   lightLabel={t('prefs.light')} darkLabel={t('prefs.dark')} systemLabel={t('prefs.system')}
   iconsLabel={t('prefs.icons')} emojisLabel={t('prefs.emojis')} closeLabel={t('common.close')} />
 
-// Two-pane sectioned dialog — Theme is built in and default-selected; add your own:
+// Two-pane sectioned dialog — you compose the whole nav order. Here Language leads,
+// the built-in Theme pane sits second (id: 'theme', no content), Sound last:
 <UserPreferences /* …all the props above… */
-  themeSectionLabel={t('prefs.theme')} themeSectionIcon={<AppIcon name="theme" />}
   sections={[
+    { id: 'language', icon: <AppIcon name="language" />, label: t('prefs.language'),
+      content: <LanguageSettings /> },
+    { id: 'theme', icon: <AppIcon name="theme" />, label: t('prefs.appearance') },
     { id: 'sound', icon: <AppIcon name="sound" />, label: t('prefs.sound'),
       content: <SoundSettings /> },
   ]} />
