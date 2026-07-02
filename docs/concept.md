@@ -55,11 +55,17 @@ Each is one capability an app can opt into:
   `useTranslation`, a central-key catalog, `{{param}}` interpolation, opt-in
   compile-time typed keys (`createTypedI18n`, defaulting to `string` so it stays
   non-breaking), and a dev-only missing-key overlay. Convex- and router-free;
-  bring-your-own engine via `resolve`.
+  bring-your-own engine via `resolve`. Unlike the other modules it is **core**: it
+  ships the shell's own `mrs.*` chrome catalog (per-locale, regioned codes) that
+  components read for their built-in copy, a `LOCALE_META` registry (native name +
+  flag), and a shipped `<LanguagePicker>` — so language selection is as smooth as
+  theme selection.
 - **components** — the **complete, opinionated component surface** at
   `my-react-shell/components`: un-opinionated primitives **and** opinionated composites,
-  all on Radix + the theme tokens. Includes **`UserPreferences`**, a controlled
-  theme/display settings panel.
+  all on Radix + the theme tokens. Components ship **built-in translated chrome copy**
+  (Close, Cancel, …) from the i18n core, so obvious labels are optional props with
+  defaults; app-specific content stays a mandatory prop. Includes **`UserPreferences`**
+  (a controlled theme/language/display panel) and **`LanguagePicker`**.
 - **icons** — the icons↔emojis display-mode seam: a preference (`IconModeProvider` /
   `useIconMode`) plus a thin `<Icon>` that swaps a glyph for its emoji, and an optional
   `createIconRenderer` that wires a consumer's maps into one `renderIcon` with a
@@ -94,7 +100,10 @@ The base offers both ready-made drop-ins *and* contracts to implement:
    context to follow it automatically, but only via a `…Optional()` hook that returns
    `null` with no provider mounted, with a sensible default when absent and an explicit
    prop that overrides — so it still stands alone (e.g. the `Dialog`/`Sheet` close ✕
-   following the icons↔emojis mode). See `docs/maintainers/module-authoring.md`.
+   following the icons↔emojis mode). The other exception is that **i18n is core**:
+   `components` may depend on it at runtime for built-in chrome copy (Close, Cancel, …)
+   — a soft context read plus the shell's bundled `mrs.*` catalog. See
+   `docs/maintainers/module-authoring.md`.
 3. **Optional/heavy peers behind sub-paths** — anything pulling an optional dependency
    lives at `my-react-shell/<module>[/<impl>]`, keeping the barrel dependency-light.
 4. **Documented** — every export is in the single API reference

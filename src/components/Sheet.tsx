@@ -44,7 +44,7 @@ export interface SheetProps {
   /**
    * Override the display mode of the ✕ close button. By default the ✕ **follows the
    * app's icons↔emojis seam automatically** (the lucide-style icon in `'icon'` mode,
-   * the ✖️ emoji in `'emoji'` mode) with no wiring — reading the icons context softly
+   * the ❌ emoji in `'emoji'` mode) with no wiring — reading the icons context softly
    * and falling back to the icon when the icons module isn't installed. Pass this only
    * to force a specific mode regardless of the app setting.
    */

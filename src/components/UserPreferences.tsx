@@ -3,7 +3,10 @@ import type { ReactNode } from 'react'
 import * as Dialog from '@radix-ui/react-dialog'
 import type { ThemeInfo, ThemeMode, ThemeName } from '../theme/themeContext'
 import type { IconMode } from '../icons/iconModeContext'
+import { useI18nContextOptional } from '../i18n/i18nContext'
 import { cn } from './cn'
+import { Flag } from './Flag'
+import { useShellText } from './useShellText'
 
 /**
  * A section rendered as one left-nav item + right pane in the two-pane
@@ -11,19 +14,20 @@ import { cn } from './cn'
  * {@link UserPreferencesProps.sections} to switch `<UserPreferences>` from its
  * single-column body to a category rail.
  *
- * The built-in palette/mode/display controls are themselves a section: include an
- * entry with `id: 'theme'` (with your own `icon`/`label`) wherever you want them in
- * the order, and omit its `content` — the shell injects the built-in theme pane
- * there. Leave the entry out entirely to render no theme section at all.
+ * Two ids are **reserved** and render built-in panes when their `content` is omitted:
+ * `'theme'` (palette/mode/display controls) and `'language'` (the language switcher,
+ * driven off the mounted `<I18nProvider>`). Include an entry with that `id` (and your
+ * own `icon`/`label`) wherever you want it in the order; leave the entry out entirely
+ * to render no such section.
  */
 export interface UserPreferencesSection {
-  /** Stable id — the nav key and selected-state value. The reserved `'theme'` id renders the built-in theme pane. */
+  /** Stable id — the nav key and selected-state value. The reserved `'theme'` / `'language'` ids render built-in panes. */
   id: string
   /** Left-nav icon node (already mode-resolved by the consumer, e.g. `<AppIcon…>`). */
   icon: ReactNode
   /** Left-nav text label (translated by the consumer). */
   label: ReactNode
-  /** Right-pane content shown when this section is active. Omit **only** for the reserved `'theme'` entry (the shell injects the built-in pane); required for every other section. */
+  /** Right-pane content shown when this section is active. Omit **only** for a reserved (`'theme'` / `'language'`) entry (the shell injects the pane); required for every other section. */
   content?: ReactNode
 }
 
@@ -96,7 +100,8 @@ export interface UserPreferencesProps {
   systemLabel: ReactNode
   iconsLabel: ReactNode
   emojisLabel: ReactNode
-  closeLabel: string
+  /** Accessible label for the close ✕. Optional — defaults to the built-in `mrs.action.close`. */
+  closeLabel?: string
   className?: string
 }
 
@@ -292,6 +297,8 @@ export function UserPreferences({
   closeLabel,
   className,
 }: UserPreferencesProps) {
+  const st = useShellText()
+  const i18n = useI18nContextOptional()
   const [internalOpen, setInternalOpen] = useState(false)
   const isControlled = open !== undefined
   const isOpen = isControlled ? open : internalOpen
@@ -396,13 +403,43 @@ export function UserPreferences({
     </>
   )
 
+  // The built-in language pane (reserved `'language'` section id). Driven off the
+  // i18n seam read *softly* — present only when an `<I18nProvider>` is mounted, so
+  // a consumer adds `{ id: 'language', … }` to `sections` and it just works with no
+  // wiring, exactly like the palette pane. Inline option buttons (flag + native
+  // name), mirroring the theme palette grid.
+  const languagePane =
+    i18n != null && i18n.locales.length > 0 ? (
+      <section className="mrs-prefs__section">
+        <h3 className="mrs-prefs__heading">{st('mrs.prefs.language')}</h3>
+        <div className="mrs-prefs__grid" role="group" aria-label={st('mrs.prefs.language')}>
+          {i18n.locales.map((l) => (
+            <button
+              key={l.code}
+              type="button"
+              className="mrs-prefs__option"
+              aria-pressed={i18n.locale === l.code}
+              onClick={() => i18n.setLocale(l.code)}
+            >
+              <Flag code={l.code} />
+              {l.label}
+            </button>
+          ))}
+        </div>
+      </section>
+    ) : null
+
   // The left-nav is exactly the sections the consumer passes, in order — the
   // built-in theme controls are just the entry whose id is `'theme'`.
   const navItems = sectioned ? sections! : []
-  // The reserved `'theme'` id renders the built-in pane; every other id renders
-  // its section's own content. `activeId` is already guarded to a present id.
+  // The reserved `'theme'` / `'language'` ids render built-in panes; every other id
+  // renders its section's own content. `activeId` is already guarded to a present id.
   const activeContent =
-    activeId === 'theme' ? themePane : sections?.find((s) => s.id === activeId)?.content ?? null
+    activeId === 'theme'
+      ? themePane
+      : activeId === 'language'
+        ? languagePane
+        : sections?.find((s) => s.id === activeId)?.content ?? null
 
   return (
     <Dialog.Root open={isOpen} onOpenChange={setOpen}>
@@ -418,8 +455,8 @@ export function UserPreferences({
         <Dialog.Content className={cn('mrs-prefs', sectioned && 'mrs-prefs--sectioned', className)}>
           <div className="mrs-prefs__header">
             <Dialog.Title className="mrs-prefs__title">{title}</Dialog.Title>
-            <Dialog.Close className="mrs-prefs__close" aria-label={closeLabel}>
-              <ModeGlyph icon={CloseGlyph} emoji="✖️" emojiMode={emojiMode} />
+            <Dialog.Close className="mrs-prefs__close" aria-label={closeLabel ?? st('mrs.action.close')}>
+              <ModeGlyph icon={CloseGlyph} emoji="❌" emojiMode={emojiMode} />
             </Dialog.Close>
           </div>
           {description != null && (

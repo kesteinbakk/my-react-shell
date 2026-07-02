@@ -27,7 +27,11 @@ modules** an app picks from:
   a central-key catalog, `{{param}}` interpolation, opt-in compile-time typed keys
   (`createTypedI18n`, generics default to `string` so it's non-breaking), and a
   dev-only missing-translation overlay. Convex- and router-free; bring-your-own
-  engine via `resolve`.
+  engine via `resolve`. **A core module:** it ships the shell's own `mrs.*` **chrome
+  catalog** (per-locale `common-<code>.json`, en-US + nb-NO today, regioned codes) that
+  components read for their built-in copy, a `LOCALE_META` registry (native name + flag)
+  and a shipped **`<LanguagePicker>`**, so language selection is as smooth as theme
+  selection. `AppProviders({ i18n })` composes it and auto-merges the shell catalog.
 - **icons** — an icons↔emojis display-mode seam (`my-react-shell/icons`): a preference
   (`IconModeProvider` / `useIconMode`) + a thin `<Icon>` glyph↔emoji swap, plus an
   optional `createIconRenderer(icons, emojis)` that wires a consumer's maps into one
@@ -228,17 +232,34 @@ foundation source and match it; don't reconstruct from memory or the happy path.
   Convex client providers at `my-react-shell/providers` (`convex` optional), the
   Convex Auth default at `my-react-shell/auth/convex` (`@convex-dev/auth` optional).
   The barrel (`my-react-shell`) is the Convex-free theme core.
-- **i18n:** every user-facing string through the `t()` seam; central-key policy;
-  missing-key dev surface. Code / comments / docs in English.
-- **No hardcoded user-facing text in components (STRICT RULE).** Shell components cannot call
-  `t()` — they have no access to a consumer's i18n instance. Therefore every
-  visible or audible string a component emits (placeholder, empty-state label,
-  status message, loading/error state, ARIA label, button title, …) must be either a
-  **prop with an emoji or icon-only default**, or a **mandatory consumer prop**
-  (no default — the consumer must supply a translated string).
-  * **Any agent that comes across any hardcoded user-facing text MUST fix it immediately** by removing the hardcoded string and introducing a mandatory prop.
-  * A hardcoded string in any language (English, Norwegian, etc.) is never acceptable, even temporarily.
-  * The component must add required/mandatory props for all user-facing content needed. The consumer passes translated strings via its own i18n seam.
+- **i18n is a core module.** Unlike the other à-la-carte modules, i18n is
+  foundational: the `components` module depends on it for built-in chrome copy (a
+  soft context read + a hard dependency on the shell's bundled `mrs.*` catalog — the
+  one sanctioned cross-module runtime dependency; see module-authoring). Consumer
+  strings still go through the `t()` seam; central-key policy; missing-key dev
+  surface. Code / comments / docs in English.
+- **Built-in chrome copy vs. consumer content (STRICT RULE).** i18n is a **core**
+  module (see the i18n bullet above), so components ship *translated defaults for
+  their own chrome*. Split every user-facing string a component emits into two kinds:
+  * **Chrome** — the shell's own generic UI vocabulary (Close, Cancel, OK, Dismiss,
+    Remove, a search placeholder, loading/empty/no-results states, a generic ARIA
+    label like "Actions"/"Select language", …). Chrome resolves through the internal
+    **`useShellText()`** hook against the shell's shipped **`mrs.*`** catalog: a *soft*
+    i18n read that falls back to the bundled default-locale (English) catalog, so it
+    renders even with no `<I18nProvider>` and localizes when one is mounted (the shell
+    catalog is auto-merged by `AppProviders({ i18n })` / `createProjectI18n` /
+    `withShellCatalog`). Such a string is an **optional prop defaulting to its `mrs.*`
+    key** (`closeLabel ?? st('mrs.action.close')`) — the prop still overrides.
+  * **Content** — anything app-specific the shell can't know: titles, subtitles, data
+    labels, entity/domain copy. This stays a **mandatory consumer prop** (no default);
+    the consumer passes a translated string via its own i18n seam.
+  * **Never write a bare string literal** in a component (`'Close'`, `'Lukk'`, …), in
+    any language, even temporarily. Chrome → add a `mrs.*` key to **every** shipped
+    `src/i18n/locales/common-<locale>.json` (en-US + nb-NO today) and default the prop
+    to it via `useShellText()`. Content → a mandatory prop. Any agent that finds a bare
+    literal MUST fix it that way immediately.
+  * This **reverses T032's** "every string is a mandatory prop" for chrome only;
+    content still follows T032.
 - **Semantic tokens only** — no hardcoded colors/shadows; render in light *and* dark.
   **Never invent token names** (no `--color-base-root`, `--radius-lg`, `--shadow-xl`
   and the like) — the token set is strictly defined; confirm the exact supported

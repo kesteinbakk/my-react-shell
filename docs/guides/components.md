@@ -34,43 +34,39 @@ The kit exports a canonical **`Tone`** type
 Components are themed **only through the semantic tokens**: change a token in your palette
 and the whole kit follows, with no component edits. Never hardcode a colour.
 
-## No hardcoded user-facing text — every string is a consumer prop
+## Built-in chrome copy vs. consumer content
 
-A shell component **never** renders a hardcoded language. It has no access to a consumer's
-i18n, so **every** visible or audible string it emits — button text, placeholders,
-empty-state labels, `aria-label`s, `title` tooltips — comes from the consumer as a prop,
-with **no language default and no language fallback**. If a string isn't supplied, the
-component shows **nothing, or an icon/emoji** — never an English word. This is why you saw
-`confirmLabel`/`cancelLabel`, `closeLabel`, `placeholder`, `dismissLabel` and friends become
-**props you must pass**. The rule, in three shapes:
+i18n is a **core** module, so components ship translated defaults for their own *chrome*.
+Split every string a component emits into two kinds — and never write a bare literal for
+either.
 
-- **Visible reading text, and the accessible name of an always-rendered button** → a
-  **required** prop (TypeScript flags a missing one). Examples: `Dialog`/`Sheet`
-  `closeLabel`, `Select`/`DatePicker` `placeholder`, every `UserPreferences` label,
-  `ColorPicker` `hexLabel`, `EmojiPicker` `categoriesLabel`/`frequentLabel`,
-  `ToastProvider` `dismissLabel`.
-- **The accessible name of an *opt-in* button** (rendered only when you enable a feature)
-  → **required only when that feature is on**, via a discriminated union — so you can't
-  enable the button without naming it, and you're never forced to name a button that isn't
-  there. Examples: `Chip` `removeLabel` (with `onRemove`), `Alert` `dismissLabel` (with
-  `onDismiss`), `DropdownMenu` `iconTriggerLabel` (with `iconTrigger`).
-- **A supplementary `aria-label` on a control whose meaning a visible icon already carries**
-  → an **optional** prop, no default; if you omit it the icon stands alone (no language).
-  Examples: the cards' `dragHandleLabel`, `PhiCard` `menuLabel`. Pass them anyway to keep
-  the control accessible.
+- **Chrome** — the shell's own generic UI vocabulary: Close, Cancel, OK, Dismiss, Remove,
+  a search placeholder, loading / no-results states, a generic `aria-label` like "Actions"
+  / "Select language". Chrome resolves through the internal **`useShellText()`** hook
+  against the shell's shipped **`mrs.*`** catalog — a *soft* i18n read that falls back to
+  the bundled default-locale (English) catalog. So it renders even with no
+  `<I18nProvider>` and **localizes** when one is mounted with the shell catalog merged
+  (`AppProviders({ i18n })` / `createProjectI18n` / `withShellCatalog`). Every such label
+  is an **optional prop that defaults to its `mrs.*` key** — `closeLabel ??
+  st('mrs.action.close')` — the prop still overrides. This is why `closeLabel`,
+  `dismissLabel`, `confirmLabel`/`cancelLabel`, `removeLabel`, `iconTriggerLabel`,
+  `EmojiPicker` search / no-results / category labels, `Spinner` label, `ToastProvider`
+  `dismissLabel`, and `DynamicCardGrid`'s chrome are all **optional now**.
 
-The **only** kind of default a component may carry is a non-language one: an **emoji or
-icon** (e.g. `EmojiPicker`'s `searchPlaceholder` defaults to `🔍`, `noResultsLabel` to `🤷`).
-Those props stay optional. A hardcoded English (or any-language) default is **never**
-acceptable — a missing translation must surface as a type error or a silent icon, never as
-the wrong language leaking through (e.g. an English "Cancel" under Norwegian copy).
+- **Content** — anything app-specific the shell can't know: titles, subtitles, data
+  labels, entity/domain copy. This stays a **mandatory consumer prop** (no default);
+  the consumer passes a translated string via its i18n seam. Examples: `Dialog`/`Sheet`
+  `title`, the cards' `title`/`subtitle`, `Select`/`DatePicker` `placeholder` (what to
+  pick is app-specific), every `UserPreferences` *heading* (`themeHeading`, `lightLabel`,
+  …). A supplementary `aria-label` on an icon control whose meaning the icon already
+  carries (`dragHandleLabel`, `PhiCard` `menuLabel`) stays an optional, no-default prop —
+  pass it anyway for accessibility.
 
-> **Sole exception — `ConfirmDialog`'s button labels.** `ConfirmDialog` may ship a
-> hardcoded English `OK` (confirm) and `Cancel` (opt-in cancel). It's the one deliberately
-> approved carve-out: a bare acknowledgement is universal enough to warrant a batteries-
-> included default, so `confirmLabel` and `cancelLabel` are **optional**. Pass a translated
-> `confirmLabel`/`cancelLabel` for any localised app; the defaults exist only so a quick
-> confirm needs zero wiring. No other component may hardcode language text.
+**Adding a new chrome string:** add its `mrs.*` key to **every** shipped
+`src/i18n/locales/common-<locale>.json` (en-US + nb-NO today), then default the prop to it
+via `useShellText()`. **Never** write a bare string literal (`'Close'`, `'Lukk'`) in a
+component, in any language, even temporarily — chrome goes through `mrs.*`, content goes
+through a mandatory prop. This **reverses T032** for chrome only; content still follows it.
 
 > **`ActionButton` carries no preset text.** The presets (`add`, `delete`, …) ship a glyph,
 > an emoji, and a colour — **no label**. Pass a translated `label` (visible) and/or
@@ -192,7 +188,7 @@ tone goes `success` for `copiedDuration` (default 1500 ms), then it returns to i
 `ActionButton`'s styling wholesale — no new tokens, no new CSS — so `size`, `layout`,
 `showEmoji`, and `tone` behave exactly as they do there.
 
-It follows the kit's **no-hardcoded-text** rule (above): the `label` is optional (icon-only when
+It follows the kit's **chrome-vs-content** rule (above): the `label` is optional (icon-only when
 omitted — pass an `aria-label`/`hint` for a non-decorative action), and there is no language
 default. Pass a `copiedLabel` to swap the visible text on success; omit it and the check alone is
 the confirmation. Because a shell component can't reach your i18n or raise a toast, a **failed**

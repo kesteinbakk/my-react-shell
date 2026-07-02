@@ -50,6 +50,12 @@ export type { SkeletonProps } from './Skeleton'
 export { Dialog } from './Dialog'
 export type { DialogProps, DialogSize } from './Dialog'
 
+export { LanguagePicker } from './LanguagePicker'
+export type { LanguagePickerProps, LanguageTrigger } from './LanguagePicker'
+
+export { Flag } from './Flag'
+export type { FlagProps } from './Flag'
+
 export { Popover } from './Popover'
 export type { PopoverProps, PopoverAlign, PopoverSide } from './Popover'
 

@@ -7,19 +7,20 @@ import type { IconMode } from '../icons/iconModeContext';
  * {@link UserPreferencesProps.sections} to switch `<UserPreferences>` from its
  * single-column body to a category rail.
  *
- * The built-in palette/mode/display controls are themselves a section: include an
- * entry with `id: 'theme'` (with your own `icon`/`label`) wherever you want them in
- * the order, and omit its `content` — the shell injects the built-in theme pane
- * there. Leave the entry out entirely to render no theme section at all.
+ * Two ids are **reserved** and render built-in panes when their `content` is omitted:
+ * `'theme'` (palette/mode/display controls) and `'language'` (the language switcher,
+ * driven off the mounted `<I18nProvider>`). Include an entry with that `id` (and your
+ * own `icon`/`label`) wherever you want it in the order; leave the entry out entirely
+ * to render no such section.
  */
 export interface UserPreferencesSection {
-    /** Stable id — the nav key and selected-state value. The reserved `'theme'` id renders the built-in theme pane. */
+    /** Stable id — the nav key and selected-state value. The reserved `'theme'` / `'language'` ids render built-in panes. */
     id: string;
     /** Left-nav icon node (already mode-resolved by the consumer, e.g. `<AppIcon…>`). */
     icon: ReactNode;
     /** Left-nav text label (translated by the consumer). */
     label: ReactNode;
-    /** Right-pane content shown when this section is active. Omit **only** for the reserved `'theme'` entry (the shell injects the built-in pane); required for every other section. */
+    /** Right-pane content shown when this section is active. Omit **only** for a reserved (`'theme'` / `'language'`) entry (the shell injects the pane); required for every other section. */
     content?: ReactNode;
 }
 export interface UserPreferencesProps {
@@ -80,7 +81,8 @@ export interface UserPreferencesProps {
     systemLabel: ReactNode;
     iconsLabel: ReactNode;
     emojisLabel: ReactNode;
-    closeLabel: string;
+    /** Accessible label for the close ✕. Optional — defaults to the built-in `mrs.action.close`. */
+    closeLabel?: string;
     className?: string;
 }
 /**

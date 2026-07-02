@@ -1,6 +1,13 @@
 # T032 — no-default-text props
 
-**Status:** in-progress · **Branch:** main
+**Status:** archived · **Branch:** main
+**Superseded (for chrome) by [T034](../T034-i18n-core-module-language-picker/task.md):**
+T034 makes i18n a core module and gives components built-in *translated* chrome defaults
+(Close/Cancel/OK/… via the shell `mrs.*` catalog), so those labels are optional-with-default
+again. T032's guarantee still holds for **content** (titles, data labels — still mandatory
+props); it is only reversed for **chrome**, which now defaults to a translated string, never
+raw English. The bug T032 fixed (English "Cancel" under Norwegian copy) stays fixed: chrome
+follows the active locale when a provider is mounted.
 
 ## Why
 

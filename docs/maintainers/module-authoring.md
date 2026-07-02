@@ -39,6 +39,15 @@ Every module satisfies three rules:
     `UserPreferences`. What stays **forbidden**: importing a sibling's provider-*required*
     hook (one that throws without its provider), or any import that makes the module
     fail to render standalone.
+  - **i18n is the one *core* module (the second exception).** Because components must
+    ship translated defaults for their own chrome (Close, Cancel, OK, …), the
+    `components` module is allowed a **hard** dependency on the i18n module — but only on
+    its **pure translator core + bundled `mrs.*` catalog** (`i18n/shellCatalog.ts`,
+    `i18n/translate.ts`), never on a mounted `<I18nProvider>`. Chrome resolves through
+    `components/useShellText.ts`, which reads the i18n context *softly* (per the rule
+    above) and **falls back to the bundled default-locale catalog**, so components still
+    render standalone. Net: components depend on i18n *data*, not on i18n being
+    *provided*. No other module may take a hard runtime dependency on another.
 - **Contract + default + bring-your-own.** Where an app must supply something, the
   module exports a TypeScript **contract** and — where sensible — a shipped default,
   with optional or heavy peers behind a sub-path.

@@ -111,7 +111,7 @@ import type { AppProvidersProps, ConvexClientProviderProps, AuthProvider, AuthPr
 
 | Export | Kind | Summary |
 |---|---|---|
-| `AppProviders` | component | Mount once above your router. Composes `ThemeProvider` + Convex client + optional auth. |
+| `AppProviders` | component | Mount once above your router. Composes `ThemeProvider` + Convex client + optional auth + optional i18n. |
 | `ConvexClientProvider` | component | Plain (unauthenticated) Convex provider; creates the client once. |
 | `createConvexClient(url?)` | function | Builds a `ConvexReactClient` from `VITE_CONVEX_URL`. **Throws** if absent/empty; **rejects** a trailing slash. |
 | `AppProvidersProps` | type | Props below. |
@@ -121,10 +121,17 @@ import type { AppProvidersProps, ConvexClientProviderProps, AuthProvider, AuthPr
 
 **`<AppProviders>` props:** `authProvider` (omit → plain unauthenticated Convex app),
 `client` (pre-created client; default reads `VITE_CONVEX_URL`), `theme`
-(`Omit<ThemeProviderProps, 'children'>`, default `{}`), `children`.
+(`Omit<ThemeProviderProps, 'children'>`, default `{}`), `i18n`
+(`Omit<I18nProviderProps, 'children'>` — when given, mounts `<I18nProvider>` and
+**auto-merges the shell's `mrs.*` chrome catalog** under each locale; omit → components
+fall back to bundled English chrome), `children`.
 
 ```tsx
-<AppProviders authProvider={ConvexAuthDefaultProvider} theme={{ defaultTheme: 'ocean' }}>
+<AppProviders
+  authProvider={ConvexAuthDefaultProvider}
+  theme={{ defaultTheme: 'ocean' }}
+  i18n={{ messages, defaultLocale: 'en-US' }}
+>
   <RouterProvider router={router} />
 </AppProviders>
 ```
@@ -175,10 +182,16 @@ Convex- and router-free. **Guide:** [i18n.md](../guides/i18n.md).
 
 ```ts
 import { I18nProvider, useTranslation, useI18n, translateNow, createTypedI18n,
-         createProjectI18n, mergeMessages, MissingTranslationsOverlay, missingKeyStore } from 'my-react-shell/i18n'
-import type { TFunction, I18nContextValue, Locale, LocaleInfo, Messages, DotPaths,
+         createProjectI18n, mergeMessages, MissingTranslationsOverlay, missingKeyStore,
+         LOCALE_META, localeMetaFor, SHELL_CATALOG, DEFAULT_SHELL_LOCALE, withShellCatalog } from 'my-react-shell/i18n'
+import type { TFunction, I18nContextValue, Locale, LocaleInfo, LocaleMeta, Messages, DotPaths,
               TranslateParams, UseTranslationResult, TypedI18n } from 'my-react-shell/i18n'
 ```
+
+> **i18n is a core module.** It ships the shell's own **`mrs.*` chrome catalog** (per
+> locale, `common-<code>.json`, en-US + nb-NO today — **regioned** codes) that the
+> component kit reads for its built-in copy. Consumers merge their own catalogs on top
+> and may override any `mrs.*` key. See also `<LanguagePicker>` in the components kit.
 
 | Export | Kind | Summary |
 |---|---|---|
@@ -186,9 +199,15 @@ import type { TFunction, I18nContextValue, Locale, LocaleInfo, Messages, DotPath
 | `useTranslation(namespace?)` | hook | Returns `{ t, locale, locales, setLocale }`. `namespace` prefixes keys. |
 | `useI18n` | hook | Alias of `useTranslation` (foundation-style naming). |
 | `useI18nContext()` | hook | Raw context read; throws outside provider. |
+| `useI18nContextOptional()` | hook | Raw context read; returns `null` outside a provider (never throws) — powers soft optional integration (e.g. `<LanguagePicker>`, the kit's built-in chrome copy). |
 | `translateNow(key, params?)` | function | Imperative translate for non-render callers (event handlers, toasts). |
 | `createTypedI18n<K>()` | function | Returns typed `{ useTranslation, useT, translateNow }` bound to key union `K`. Pure typing sugar — no new runtime. |
-| `createProjectI18n(config)` | function | Batteries-included factory: merges a consumer's per-locale catalogs with the shell's built-in `common-*` catalog and returns `{ useTranslation, useT, translateNow, LanguageProvider }` — the `createTypedI18n` surface typed to the combined keys, plus a pre-wired `LanguageProvider` (an `I18nProvider` with `messages`/`defaultLocale`/`resolve` already supplied). `config`: `localMessages` (`Record<locale, nested catalog>`), `defaultLanguage` (must be a `localMessages` key), `interpolation` (`'single-brace'` `{name}` · `'double-brace'` `{{name}}`, default `'double-brace'`). |
+| `createProjectI18n(config)` | function | Batteries-included factory: merges a consumer's per-locale catalogs with the shell's bundled `mrs.*` chrome catalog (via `SHELL_CATALOG`, keyed by regioned code, defaulting to `en-US` for an unshipped locale) and returns `{ useTranslation, useT, translateNow, LanguageProvider }` — the `createTypedI18n` surface typed to the combined keys, plus a pre-wired `LanguageProvider`. `config`: `localMessages` (`Record<locale, nested catalog>`), `defaultLanguage` (must be a `localMessages` key), `interpolation` (`'single-brace'` `{name}` · `'double-brace'` `{{name}}`, default `'double-brace'`). |
+| `LOCALE_META` | object | Registry `Record<Locale, LocaleMeta>` — `{ code, nativeName, flagSvg }` per shipped locale (`nb-NO`, `en-US`). Drives `<LanguagePicker>` and the `I18nProvider` endonym default label. |
+| `localeMetaFor(code)` | function | `LOCALE_META[code]` lookup (`undefined` for an unknown locale). |
+| `SHELL_CATALOG` | object | `Record<Locale, Messages>` — the shell's bundled `mrs.*` chrome catalogs, per shipped locale. |
+| `DEFAULT_SHELL_LOCALE` | const | `'en-US'` — the fallback locale for `mrs.*` chrome. |
+| `withShellCatalog(messages)` | function | Merge the shell's `mrs.*` chrome catalog **under** a consumer's `messages`, per locale (consumer wins). Use when mounting `<I18nProvider>` directly and you want the kit's chrome to localize. `AppProviders({ i18n })` and `createProjectI18n` apply it for you. |
 | `mergeMessages(base, override)` | function | Deep-merge catalogs (override wins) — compose a module's strings under a consumer catalog. |
 | `flattenMessages(msgs)` | function | Nested catalog → flat dotted map. |
 | `interpolate(str, params)` | function | Fill `{{param}}` placeholders. |
@@ -198,8 +217,9 @@ import type { TFunction, I18nContextValue, Locale, LocaleInfo, Messages, DotPath
 | `I18nContextValue<K=string>` | type | `{ t, locale, locales, setLocale }`. |
 | `UseTranslationResult<K=string>` | type | Return of `useTranslation`. |
 | `NamespacedKeys<K, NS>` | type | Sub-keys of `K` under namespace `NS`. |
-| `Locale` | type | `string` (consumer-defined codes: `'en'`, `'nb-NO'`, …). |
-| `LocaleInfo` | type | `{ code: Locale; label: string }`. |
+| `Locale` | type | `string` (regioned codes: `'en-US'`, `'nb-NO'`, …). |
+| `LocaleInfo` | type | `{ code: Locale; label: string }`. When `locales` is omitted, `I18nProvider` defaults each `label` to the locale's `nativeName` from `LOCALE_META` (endonym), falling back to the raw code. |
+| `LocaleMeta` | type | `{ code: string; nativeName: string; flagSvg: string }` — a `LOCALE_META` entry. |
 | `Messages` | type | Nested catalog: `Record<Locale, nested object>`. |
 | `FlatMessages` | type | Flat dotted catalog. |
 | `DotPaths<T>` | type | Union of dotted key paths of a catalog object — derive a typed key union from your catalog. |
@@ -209,14 +229,16 @@ import type { TFunction, I18nContextValue, Locale, LocaleInfo, Messages, DotPath
 | `I18nProviderProps`, `MissingTranslationsOverlayProps` | type | Component props. |
 
 **`<I18nProvider>` props:** `messages` **(required**, `Record<locale, nested catalog>`),
-`locales`, `defaultLocale` (must be a `messages` key — **throws** otherwise),
-`fallbackLocale`, `detectBrowserLocale` (default `true`), `storageKey`, `resolve`
-(BYO engine), `onMissingKey`, `debug`, `children`.
+`locales` (omit → labels default to `LOCALE_META` endonyms), `defaultLocale` (must be a
+`messages` key — **throws** otherwise), `fallbackLocale`, `detectBrowserLocale` (default
+`true`), `storageKey`, `resolve` (BYO engine), `onChange` (fires on locale switch, not on
+mount — mirror to a backend), `onMissingKey`, `debug`, `children`. To also localize the
+kit's built-in chrome, wrap `messages` with `withShellCatalog(...)` (or use
+`AppProviders({ i18n })` / `createProjectI18n`, which do it for you).
 
 ```tsx
-<I18nProvider messages={{ en: { greeting: 'Hi {{name}}' }, no: { greeting: 'Hei {{name}}' } }}
-              locales={[{ code: 'en', label: 'English' }, { code: 'no', label: 'Norsk' }]}
-              defaultLocale="en">
+<I18nProvider messages={{ 'en-US': { greeting: 'Hi {{name}}' }, 'nb-NO': { greeting: 'Hei {{name}}' } }}
+              defaultLocale="en-US">
   <App />
 </I18nProvider>
 // inside:
@@ -252,8 +274,18 @@ import { Alert, cn /* … */ } from 'my-react-shell/components'
 import 'my-react-shell/components/styles.css' // REQUIRED (plain prebuilt CSS; also import the theme tokens via my-react-shell/styles.css)
 ```
 
+> **Built-in chrome copy.** Components ship translated defaults for their own chrome from
+> the i18n core (the `mrs.*` catalog). So obvious labels — `closeLabel`, `dismissLabel`,
+> `confirmLabel`/`cancelLabel`, `removeLabel`, `iconTriggerLabel`, search placeholders,
+> loading/no-results states — are **optional props that default to their `mrs.*` key** and
+> localize when an `<I18nProvider>` (with the shell catalog merged) is mounted, else render
+> in English. Pass the prop only to override. App-specific **content** (titles, data
+> labels) stays a **mandatory** prop.
+
 | Export(s) | Kind | Summary |
 |---|---|---|
+| `LanguagePicker` | component | Language switcher on `DropdownMenu` — a menu of the app's configured locales by native name (endonym) + flag, checkmark on the active one. Reads the i18n seam **softly**: renders nothing with no `<I18nProvider>` or <2 locales. `trigger` (`'flag'` default · `'code'` · `'globe'`), `showFlags` (default `true`), `label` (trigger a11y label, defaults to `mrs.action.selectLanguage`), `align`/`side`. |
+| `Flag` | component | Renders a locale's vendored flag SVG (3:2), from `LOCALE_META`. `code` (locale), `className`. Decorative (`aria-hidden`); renders nothing for a locale the shell ships no flag for. |
 | `Button` | component | The kit's button. `variant` (solid·soft·outline·ghost·link) × `tone` × `size` (sm·md·lg); native `<button>` props pass through and the `ref` is forwarded to the `<button>`, so it works as a Radix `asChild` trigger (Popover / Tooltip / Dropdown). `leadingIcon`/`trailingIcon` slots for icon+text layouts. |
 | `HeaderMenuButton` | component | Ghost neutral small button for the header action zone — a `<DropdownMenu trigger>` with visible label text and an automatic trailing chevron. `leadingIcon` slot for a view/mode icon before the label. All native `<button>` attributes (`aria-label`, `title`, `disabled`, …) pass through. |
 | `Input` | component | Un-opinionated native `<input>`. `invalid` (sets `aria-invalid` + error styling), `inputSize` (sm·md·lg; named so it never clashes with native `size`), `onDebouncedChange(value)` (fires `debounceMs` after the user stops typing; default 500 ms), `saveStatus` (visual status `'idle'`·`'pending'`·`'saving'`·`'saved'`·`'error'`), optional `label` (renders above the input); native input props pass through. **`required`** is shell-managed — it renders the red asterisk on the built-in `label` and sets `aria-required`, but does **not** set the native `required` attribute (no native validation bubble), and turns an empty field's border red once blurred (clearing the moment a value is typed). **`validateOnBlur`** is **on by default when `required` is set** — pass `validateOnBlur={false}` to opt out (asterisk only); the blur-invalid state is OR-ed with the controlled `invalid`, which wins. |
@@ -262,17 +294,17 @@ import 'my-react-shell/components/styles.css' // REQUIRED (plain prebuilt CSS; a
 | `Card`, `CardHeader`, `CardTitle`, `CardDescription`, `CardContent`, `CardFooter` | component | Un-opinionated surface container + parts (`CardTitle` → `<h3>`, `CardDescription` → `<p>`); each spreads native `<div>` props. `--color-surface-primary` panel, bordered, rounded, card elevation. |
 | `Separator` | component | Un-opinionated divider. `role="separator"` with `orientation` (`horizontal`·`vertical`) + `aria-orientation`; native `<div>` props pass through. |
 | `Skeleton` | component | Un-opinionated pulsing loading placeholder (decorative, `aria-hidden`). Size it with `style`/`className`; native `<div>` props pass through. |
-| `Dialog` | component | General controlled dialog on Radix Dialog (overlay, focus trap, portal). `title`/`description`, `children` body, `footer` actions, `showClose` ✕, `headerActions` (icon buttons rendered next to close ✕). Supports optional default footer buttons via `useCancel` and `usePrimary` (accepting a string label or `DialogButtonConfig` configuration object), which can be combined with the custom `footer` content (rendered sequentially as Cancel -> custom footer -> Primary); `size` (`sm`·`md`·`lg`·`xl`·`full`); the body scrolls within a viewport-capped card. `titleActions` puts a control on the heading row; `bleed` drops the kit chrome for a full-bleed / custom-layout dialog; `closeOnBackdrop`/`closeOnEsc` (default `true`) guard dismissal. The ✕ close button **follows the app's icons↔emojis mode automatically** (lucide icon → ✖️ emoji) with no wiring — via the icons seam, read softly so it falls back to the icon when that module isn't installed; the optional `iconMode` (`'icon'`·`'emoji'`) prop overrides it. A nested Radix popper (`Select`, `DropdownMenu`, `Popover`, combobox) is handled automatically — opening it and clicking elsewhere inside the dialog dismisses only the popper, never the dialog. |
+| `Dialog` | component | General controlled dialog on Radix Dialog (overlay, focus trap, portal). `title`/`description`, `children` body, `footer` actions, `showClose` ✕, `headerActions` (icon buttons rendered next to close ✕). Supports optional default footer buttons via `useCancel` and `usePrimary` (accepting a string label or `DialogButtonConfig` configuration object), which can be combined with the custom `footer` content (rendered sequentially as Cancel -> custom footer -> Primary); `size` (`sm`·`md`·`lg`·`xl`·`full`); the body scrolls within a viewport-capped card. `titleActions` puts a control on the heading row; `bleed` drops the kit chrome for a full-bleed / custom-layout dialog; `closeOnBackdrop`/`closeOnEsc` (default `true`) guard dismissal. The ✕ close button **follows the app's icons↔emojis mode automatically** (lucide icon → ❌ emoji) with no wiring — via the icons seam, read softly so it falls back to the icon when that module isn't installed; the optional `iconMode` (`'icon'`·`'emoji'`) prop overrides it. A nested Radix popper (`Select`, `DropdownMenu`, `Popover`, combobox) is handled automatically — opening it and clicking elsewhere inside the dialog dismisses only the popper, never the dialog. |
 | `Popover` | component | Simple, opinionated floating panel on Radix Popover (focus management, outside-click / Esc close, portal). `trigger` anchor + `children` panel; controlled (`open`/`onOpenChange`) or uncontrolled (`defaultOpen`); `side`/`align`/`sideOffset` placement. Uses the `@radix-ui/react-popover` optional peer. |
-| `DropdownMenu` | component | Data-driven menu on Radix DropdownMenu (keyboard nav, outside-click / Esc close, portal). Anchor via `trigger` (any node, `asChild`) **or** `iconTrigger` (an icon element; the kit renders its own square ghost button — `iconTriggerLabel`, its accessible name, is **required** when `iconTrigger` is used; no default). Uncontrolled by default; pass `open` + `onOpenChange` (and optionally `defaultOpen`) to drive it programmatically. `onOpenChange(open)` fires on open/close. `items` — a discriminated union of `item` (plain action, closes on select; carries `icon`/`disabled`/`danger`) · `separator` · `label` · `checkbox` (independent toggle, controlled `checked`/`onCheckedChange`) · `radio-group` (one-of-a-group, controlled `value`/`onValueChange` + `options`) · `submenu` (nested `items`, arbitrary depth). Checkbox/radio rows keep the menu open by default (per-item `closeOnSelect` to close); selected/checked state is fully consumer-controlled. `side`/`align`/`sideOffset` placement. Uses the `@radix-ui/react-dropdown-menu` optional peer. |
+| `DropdownMenu` | component | Data-driven menu on Radix DropdownMenu (keyboard nav, outside-click / Esc close, portal). Anchor via `trigger` (any node, `asChild`) **or** `iconTrigger` (an icon element; the kit renders its own square ghost button — `iconTriggerLabel`, its accessible name, defaults to the built-in `mrs.action.actions`; pass to override). Uncontrolled by default; pass `open` + `onOpenChange` (and optionally `defaultOpen`) to drive it programmatically. `onOpenChange(open)` fires on open/close. `items` — a discriminated union of `item` (plain action, closes on select; carries `icon`/`disabled`/`danger`) · `separator` · `label` · `checkbox` (independent toggle, controlled `checked`/`onCheckedChange`) · `radio-group` (one-of-a-group, controlled `value`/`onValueChange` + `options`) · `submenu` (nested `items`, arbitrary depth). Checkbox/radio rows keep the menu open by default (per-item `closeOnSelect` to close); selected/checked state is fully consumer-controlled. `side`/`align`/`sideOffset` placement. Uses the `@radix-ui/react-dropdown-menu` optional peer. |
 | `ContextMenu` | component | Cursor-anchored right-click menu, built on `DropdownMenu` (same `items` union — action rows, `separator` dividers, `label`, `checkbox`, `radio-group`, `submenu` — same hover/keyboard/select behavior and theme styling). Optional `title` renders as a non-interactive heading above the items. Two modes: **wrapping** — pass a single `children` element; the kit clones it to attach `onContextMenu`, capturing the pointer position, suppressing the browser's native menu, and opening at the cursor (`disabled` skips this); **controlled** — omit `children` and drive `open` / `position` (`{ x, y }`, typically `event.clientX/clientY`) / `onOpenChange` yourself, for a trigger that isn't one DOM node (e.g. one slice of an SVG/canvas chart, a virtualized row). |
 | `Alert` | component | Inline alert/callout. `tone`: `info`·`success`·`warning`·`danger`; `title`, `icon`, `onDismiss`, `role`. |
 | `InfoBox` | component | Neutral, tone-free contextual note (icon + title + body). Use `Alert` when the message carries a semantic tone. |
 | `EmptyState` | component | Centered zero-state: optional icon, required `title`, `description`, action slot. |
 | `EmptyStateAddButton` | component | Add button for empty states. This is a replacement for the typical "You do not have any items yet" text that agents often put on empty lists — when using this button such text must be replaced by the button, not kept in addition to the button. Two shapes: `showBorder` (default `true`) → full-width dashed rectangle (in-list / sidebar); `showBorder={false}` → bare button + label (hero / full-page void). `label` is required (displayed below the button and used as `aria-label`). Optional `description` for a secondary line (hero shape). `icon` defaults to a plus sign. `tone` defaults to `success`. `size`: `sm`·`md`·`lg`. |
 | `Spinner`, `PageSpinner`, `SectionSpinner` | component | Rotating indicator on the current text color; block variants center it for page/section loading. |
-| `ConfirmDialog` | component | Controlled confirm dialog on Radix Dialog (overlay, focus trap, Esc/backdrop close). The confirm button (right) defaults to `OK` — this component may ship that hardcoded English label (an **approved exception** to the no-hardcoded-text rule); pass a translated `confirmLabel` for anything else. The cancel button (left) is **opt-in** — rendered only when at least one of `showCancel`, `onCancel`, `cancelLabel`, or `useCancel` is set (default cancel label `Cancel`). `tone` accepts the full `Tone` vocabulary (`primary`/`neutral`/`info`/`success`/`warning`/`danger`): it colours a leading tone icon and the confirm button, which stays `primary` for every tone except `danger`/`warning` (which adopt the tone). Override or drop the icon via `icon` (`ReactNode` \| `false`). Buttons can also be configured via `useCancel`/`useConfirm` (a string label or `DialogButtonConfig`, whose `tone` supports all `Tone`s). A nested Radix popper in a custom `children` body (e.g. a `Select`) won't dismiss the dialog when clicked away from. |
-| `ToastProvider`, `useToast` | component + hook | Mount provider once; fire toasts via `useToast()` (`.success`/`.error`/…). Each renders as an `Alert`; auto-dismiss (3s; `duration:0` sticky). `dismissLabel` is **required** on `ToastProvider` — the accessible name for a dismissible toast's ✕ (no default). |
+| `ConfirmDialog` | component | Controlled confirm dialog on Radix Dialog (overlay, focus trap, Esc/backdrop close). The confirm button (right) label defaults to the built-in, locale-aware `mrs.action.ok`; pass `confirmLabel` for anything else. The cancel button (left) is **opt-in** — rendered only when at least one of `showCancel`, `onCancel`, `cancelLabel`, or `useCancel` is set (default cancel label `mrs.action.cancel`). `tone` accepts the full `Tone` vocabulary (`primary`/`neutral`/`info`/`success`/`warning`/`danger`): it colours a leading tone icon and the confirm button, which stays `primary` for every tone except `danger`/`warning` (which adopt the tone). Override or drop the icon via `icon` (`ReactNode` \| `false`). Buttons can also be configured via `useCancel`/`useConfirm` (a string label or `DialogButtonConfig`, whose `tone` supports all `Tone`s). A nested Radix popper in a custom `children` body (e.g. a `Select`) won't dismiss the dialog when clicked away from. |
+| `ToastProvider`, `useToast` | component + hook | Mount provider once; fire toasts via `useToast()` (`.success`/`.error`/…). Each renders as an `Alert`; auto-dismiss (3s; `duration:0` sticky). `dismissLabel` (the accessible name for a dismissible toast's ✕) defaults to the built-in `mrs.action.dismiss`; pass to override. |
 | `ActionButton`, `ActionButtonGroup`, `actionPresets` | component + const | Icon/emoji + label action button with presets (table below). `actionPresets` is the `{ tone, emoji }` map — presets carry **no text**; pass a translated `label` (visible) and/or `aria-label`/`hint` (accessible name). With none, the button is icon-only and **unnamed**. |
 | `CopyButton` | component | Copy-to-clipboard action button on `ActionButton`. Click writes `value` to the clipboard, then shows a transient green **check** (`success` tone; ✅ in emoji mode) confirmation. `label` is **optional** (absent → icon only — give it an `aria-label`/`hint`); optional `copiedLabel`, `onCopy(ok)` callback (surface failures via your own toast — the kit can't), `copiedDuration` (default `1500`ms). Carries no text default; pass translated strings. See [below](#copybutton). |
 | `Badge` | component | Status/category badge; tones `primary`·`neutral`·`success`·`warning`·`danger`·`info` (`primary` is a solid pill); optional status `dot`. Forwards standard `<span>` attributes (`title`, `aria-*`, `data-*`, `id`, events) to the root. |
@@ -306,7 +338,7 @@ import 'my-react-shell/components/styles.css' // REQUIRED (plain prebuilt CSS; a
 | `Progress` | component | Un-opinionated progress bar on Radix Progress; fill paints with `tone` (default `primary`), `size` (`sm`·`md`·`lg`). Pass numeric `value` (`0…max`) for a determinate bar or `null`/omit for an indeterminate loop. Radix wires the ARIA. Uses the `@radix-ui/react-progress` optional peer. |
 | `Toggle` | component | Un-opinionated two-state button on Radix Toggle; pressed fills `--color-primary-bg`. `variant` (`ghost`·`outline`·`plain`), `size` (`sm`·`md`·`lg`). `plain` is a bare icon — no border/background/press/hover fill (keeps the focus ring) — for an unadorned icon toggle. Controlled (`pressed`/`onPressedChange`) or uncontrolled (`defaultPressed`). Uses the `@radix-ui/react-toggle` optional peer. |
 | `ToggleGroup` | component | Un-opinionated set of toggle buttons on Radix ToggleGroup; data-driven via `options`. `type="single"` (value is the chosen string, or `undefined`) or `type="multiple"` (value is an array); shared `variant`/`size`. Controlled (`value`/`onValueChange`) or uncontrolled (`defaultValue`). Uses the `@radix-ui/react-toggle-group` optional peer. |
-| `Sheet` | component | Overlay panel that slides in from any edge on Radix Dialog (focus trap, Esc/outside-click close, portal). `side` (`left`·`right`·`top`·`bottom`), `size` (`sm`·`md`·`lg`·`xl`·`full` — width for left/right, height for top/bottom). Optional `trigger`; built-in header (`title`/`header`/`description` + ✕ `showClose` + `headerActions` next to ✕) or `bare` (child owns the panel). The ✕ close button **follows the app's icons↔emojis mode automatically** (lucide icon → ✖️ emoji) with no wiring — via the icons seam, read softly so it falls back to the icon when that module isn't installed; the optional `iconMode` (`'icon'`·`'emoji'`) prop overrides it. `scrim={false}` + `modal={false}` for a non-blocking float over a still-interactive page. Controlled (`open`/`onOpenChange`) or uncontrolled (`defaultOpen`). A nested Radix popper (`Select`, `DropdownMenu`, `Popover`) is handled automatically — opening it and clicking elsewhere inside the sheet dismisses only the popper, never the sheet. Uses the `@radix-ui/react-dialog` optional peer. |
+| `Sheet` | component | Overlay panel that slides in from any edge on Radix Dialog (focus trap, Esc/outside-click close, portal). `side` (`left`·`right`·`top`·`bottom`), `size` (`sm`·`md`·`lg`·`xl`·`full` — width for left/right, height for top/bottom). Optional `trigger`; built-in header (`title`/`header`/`description` + ✕ `showClose` + `headerActions` next to ✕) or `bare` (child owns the panel). The ✕ close button **follows the app's icons↔emojis mode automatically** (lucide icon → ❌ emoji) with no wiring — via the icons seam, read softly so it falls back to the icon when that module isn't installed; the optional `iconMode` (`'icon'`·`'emoji'`) prop overrides it. `scrim={false}` + `modal={false}` for a non-blocking float over a still-interactive page. Controlled (`open`/`onOpenChange`) or uncontrolled (`defaultOpen`). A nested Radix popper (`Select`, `DropdownMenu`, `Popover`) is handled automatically — opening it and clicking elsewhere inside the sheet dismisses only the popper, never the sheet. Uses the `@radix-ui/react-dialog` optional peer. |
 | `Calendar` | component | Themed month-grid calendar on `react-day-picker`; single/multiple/range selection (`mode`/`selected`/`onSelect`), full keyboard nav + ARIA, rendered against the tokens via `mrs-` classes (no react-day-picker stylesheet needed). Forwards every react-day-picker prop (`disabled`, `startMonth`/`endMonth`, `numberOfMonths`, `captionLayout`, …). Uses the `react-day-picker` + `date-fns` optional peers. |
 | `DatePicker` | component | Single-date field — a trigger button (showing the picked date, `displayFormat` via date-fns) that opens a `Calendar` in a Radix Popover; closes on pick. `disabledDays` (a react-day-picker matcher), `startMonth`/`endMonth`. Controlled (`value`/`onChange`) or uncontrolled (`defaultValue`). Uses the `react-day-picker` + `date-fns` + `@radix-ui/react-popover` optional peers. Supports custom `className` and `style` on the trigger. |
 | `EmojiPicker` | component | Full emoji picker panel — search input, scrollable category tabs (with a frequently-used tab), and an 8-column emoji grid. Ships no popover or trigger; embed inline or drop into a `<Popover>`. `onSelect(emoji)` receives the emoji character string. `locale` (default `'en'`; `'nb'` also bundled, others fall back to `'en'`), `showSearch` (default `true`), `searchPlaceholder` (default `'🔍'`), `noResultsLabel` (default `'🤷'`) — both optional with emoji defaults; `categoriesLabel` and `frequentLabel` (the tablist + frequently-used-tab accessible names) are **required** — pass translated strings. Requires the `emojibase-data` optional peer. |
@@ -393,8 +425,8 @@ and `style` on their root / trigger element for custom sizing. Examples:
 [components guide → Width & styling](../guides/components.md#width--styling).
 
 **`Alert` props:** `tone` (`'info'`), `title`, `children`, `icon` (per-tone; `false`
-drops it), `onDismiss` (renders a dismiss button), `dismissLabel` (**required when
-`onDismiss` is set** — a translated accessible name; no default), role (`'alert'` |
+drops it), `onDismiss` (renders a dismiss button), `dismissLabel` (its accessible name; defaults to
+the built-in `mrs.action.dismiss`, pass to override), role (`'alert'` |
 `'status'`), className.
 
 ### `ActionButton`
@@ -665,7 +697,7 @@ whole-card link via `renderLink`. Medallion, gauge (`sideBarCompleteness`,
 | `showDragHandle` / `dragHandle` / `dragHandleProps` / `dragHandleLabel` | — | Drag-reorder grip. `showDragHandle` (boolean) renders the built-in vertical-stripes grip (right-edge, vertically centred); `dragHandle` instead takes a **custom** handle `ReactNode` (implies a visible handle). Spread your DND library's listeners via `dragHandleProps`. `dragHandleLabel` is the handle's accessible name — **no default**; pass a translated string when a handle is shown (or supply `aria-label` via `dragHandleProps`); absent → the grip glyph stands alone. |
 | `dragWholeCard` | `false` | Binds DND listeners on the card root so the whole body is the drag trigger. **Cursor:** an open hand (`grab`) when the card is drag-only, or the normal `pointer` when it's also clickable (`onClick`/`hoverable`); a short press-and-hold engages the closed hand (`grabbing`), so a quick click never changes the cursor. Can coexist with a focusable `showDragHandle` grip for keyboard/screen-reader sorting. |
 | `renderLink` | — | Interactive-root seam — `(linkProps) => ReactNode`. The consumer renders its router `<Link>` spreading `linkProps` (`className` + auto-wired `aria-labelledby` from the title), adding `to`/`params`. The card mounts it as a **full-bleed block-link overlay** so the whole tile is a real, keyboard-activatable anchor while the root owns its hover/border/focus states; the medallion button (`onMedallionPress`) and drag handle stay raised above it. The shell imports no router; `to`/`params` type-safety lives at the call site. |
-| `info` | — | `StatCardInfo` — shows a blue `ⓘ` icon button in a lower corner (default lower-right). Clicking opens a `Dialog` with `title`, optional `description`, and optional `content`. `content` as a `string` renders a plain paragraph; as a `StatCardInfoSection[]` renders numbered-badge sections (badge shows the number only; the section title is separate). TypeScript requires at least one of `description` / `content`. Required fields: `label` (accessible name for the icon button), `closeLabel` (accessible name for the dialog ✕), `title` (dialog heading). Optional: `corner` (`'right'` · `'left'`, default `'right'`). |
+| `info` | — | `StatCardInfo` — shows a blue `ⓘ` icon button in a lower corner (default lower-right). Clicking opens a `Dialog` with `title`, optional `description`, and optional `content`. `content` as a `string` renders a plain paragraph; as a `StatCardInfoSection[]` renders numbered-badge sections (badge shows the number only; the section title is separate). TypeScript requires at least one of `description` / `content`. Required fields: `label` (accessible name for the icon button), `title` (dialog heading). Optional: `closeLabel` (accessible name for the dialog ✕; defaults to the built-in `mrs.action.close`), `corner` (`'right'` · `'left'`, default `'right'`). |
 | `className` | — | Extra classes. |
 
 ```tsx
@@ -940,9 +972,11 @@ an optional icons↔emojis switch). It **persists nothing** — emits `onChange`
 owns storage. Auth-free (`accountActions` slot); every label is a **required, no-default**
 prop — pass translated strings. Pass `sections` to grow it into a **two-pane sectioned
 dialog** (left icon+label nav, swappable right pane): the nav is exactly the ordered
-sections you pass, and the built-in palette/mode/display controls are the entry whose
-`id` is `'theme'` — place it anywhere, or omit it to drop the theme section. Omit
-`sections` and it renders the single-column panel it always has.
+sections you pass. **Two ids are reserved** and render built-in panes when their `content`
+is omitted: `'theme'` (palette/mode/display controls) and `'language'` (the built-in
+language switcher — inline flag + native-name buttons, driven off the mounted
+`<I18nProvider>` read softly; renders empty if no provider). Place them anywhere, or omit
+to drop that section. Omit `sections` and it renders the single-column panel it always has.
 Notes: [components guide → UserPreferences](../guides/components.md#userpreferences).
 
 | Prop | Default | Meaning |
@@ -956,7 +990,7 @@ Notes: [components guide → UserPreferences](../guides/components.md#userprefer
 | `open` / `onOpenChange` | self-managed | Control the open state if you need to. |
 | `sections` | — | `UserPreferencesSection[]`. **The full, ordered left-nav.** Omit (or empty) → the single-column, no-nav body. Non-empty → a **two-pane** grid (left icon+label nav, swappable right pane) in exactly this order. Include an `{ id: 'theme' }` entry to place the built-in palette/mode/display pane; leave it out to omit the theme section. |
 | `activeSection` / `onActiveSectionChange` | self-managed | Control the selected section id. Pass both to own it (e.g. persist to `sessionStorage` so the dialog reopens where the user left off); omit both and the component remembers the last-viewed section within its lifetime. A stale/absent id falls back to the first nav item. |
-| label props | — | **Required** (no default): `triggerLabel`, `title`, `themeHeading`, `modeHeading`, `displayHeading`, `lightLabel`, `darkLabel`, `systemLabel`, `iconsLabel`, `emojisLabel`, `closeLabel`. Only `description` is optional. Pass translated strings. |
+| label props | — | **Required** (no default): `triggerLabel`, `title`, `themeHeading`, `modeHeading`, `displayHeading`, `lightLabel`, `darkLabel`, `systemLabel`, `iconsLabel`, `emojisLabel`. `description` and `closeLabel` are optional (`closeLabel` defaults to the built-in `mrs.action.close`; the reserved `'language'` pane heading uses `mrs.prefs.language`). Pass translated strings. |
 | `className` | — | Extra classes on the dialog, merged via `cn()`. |
 
 `UserPreferencesSection` (exported): `{ id: string; icon: ReactNode; label: ReactNode; content?: ReactNode }` — one left-nav item + its right-pane content. The shell stays icon- and language-neutral: the consumer passes already-resolved icon nodes (e.g. `<AppIcon…>`) and translated labels. The nav renders the array verbatim; the reserved `id: 'theme'` entry (whose `content` you omit) shows the built-in palette/mode/display controls, so you choose its position — first, last, or anywhere between your own sections.
@@ -1182,7 +1216,6 @@ import { createRoot } from 'react-dom/client'
 import { RouterProvider, createRouter } from '@tanstack/react-router'
 import { AppProviders } from 'my-react-shell/providers'
 import { ConvexAuthDefaultProvider } from 'my-react-shell/auth/convex'
-import { I18nProvider } from 'my-react-shell/i18n'
 import { IconModeProvider } from 'my-react-shell/icons'
 import { ToastProvider } from 'my-react-shell/components'
 import 'my-react-shell/styles.css'
@@ -1192,20 +1225,23 @@ import { routeTree } from './routeTree.gen'
 const router = createRouter({ routeTree })
 
 createRoot(document.getElementById('root')!).render(
-  <AppProviders authProvider={ConvexAuthDefaultProvider} theme={{ defaultTheme: 'ocean' }}>
-    <I18nProvider messages={messages} defaultLocale="en">
-      <IconModeProvider>
-        <ToastProvider dismissLabel={t('common.dismiss')}>
-          <RouterProvider router={router} />
-        </ToastProvider>
-      </IconModeProvider>
-    </I18nProvider>
+  <AppProviders
+    authProvider={ConvexAuthDefaultProvider}
+    theme={{ defaultTheme: 'ocean' }}
+    i18n={{ messages, defaultLocale: 'en-US' }}
+  >
+    <IconModeProvider>
+      <ToastProvider>
+        <RouterProvider router={router} />
+      </ToastProvider>
+    </IconModeProvider>
   </AppProviders>,
 )
 ```
 
-`AppProviders` already mounts `<ThemeProvider>`. The app-shell (`<AppShell>`) goes
-inside your router, at the root route's layout — not here.
+`AppProviders` already mounts `<ThemeProvider>` and (given `i18n`) `<I18nProvider>` with
+the shell's chrome catalog merged, so the kit's built-in copy localizes with the app. The
+app-shell (`<AppShell>`) goes inside your router, at the root route's layout — not here.
 
 ## Gotchas (the time-sinks)
 

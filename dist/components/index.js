@@ -21,6 +21,8 @@ export { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter }
 export { Separator } from './Separator';
 export { Skeleton } from './Skeleton';
 export { Dialog } from './Dialog';
+export { LanguagePicker } from './LanguagePicker';
+export { Flag } from './Flag';
 export { Popover } from './Popover';
 export { DropdownMenu } from './DropdownMenu';
 export { ContextMenu } from './ContextMenu';

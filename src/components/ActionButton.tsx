@@ -203,7 +203,7 @@ export const actionPresets: Record<ActionType, ActionPreset> = {
   refresh: { tone: 'neutral', emoji: '🔄' },
   settings: { tone: 'neutral', emoji: '⚙️' },
   star: { tone: 'warning', emoji: '⭐' },
-  close: { tone: 'neutral', emoji: '✖️' },
+  close: { tone: 'neutral', emoji: '❌' },
   more: { tone: 'neutral', emoji: '⋯' },
 }
 

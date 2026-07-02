@@ -1,7 +1,10 @@
 import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "react/jsx-runtime";
 import { useState } from 'react';
 import * as Dialog from '@radix-ui/react-dialog';
+import { useI18nContextOptional } from '../i18n/i18nContext';
 import { cn } from './cn';
+import { Flag } from './Flag';
+import { useShellText } from './useShellText';
 const svg = {
     viewBox: '0 0 24 24',
     fill: 'none',
@@ -59,6 +62,8 @@ function Segment({ active, onClick, children, }) {
  * kit never imports i18n and never renders a hardcoded language.
  */
 export function UserPreferences({ theme, themes, onThemeChange, mode, onModeChange, followSystem, onFollowSystemChange, iconMode, onIconModeChange, accountActions, trigger, open, onOpenChange, sections, activeSection, onActiveSectionChange, triggerLabel, title, description, themeHeading, modeHeading, displayHeading, lightLabel, darkLabel, systemLabel, iconsLabel, emojisLabel, closeLabel, className, }) {
+    const st = useShellText();
+    const i18n = useI18nContextOptional();
     const [internalOpen, setInternalOpen] = useState(false);
     const isControlled = open !== undefined;
     const isOpen = isControlled ? open : internalOpen;
@@ -98,13 +103,23 @@ export function UserPreferences({ theme, themes, onThemeChange, mode, onModeChan
                             const glyph = PALETTE_GLYPHS[info.name] ?? FALLBACK_PALETTE_GLYPH;
                             return (_jsxs("button", { type: "button", className: "mrs-prefs__option", "aria-pressed": theme === info.name, onClick: () => onThemeChange(info.name), children: [_jsx(ModeGlyph, { icon: glyph.icon, emoji: glyph.emoji, emojiMode: emojiMode }), info.label] }, info.name));
                         }) })] }), _jsxs("section", { className: "mrs-prefs__section", children: [_jsx("h3", { className: "mrs-prefs__heading", children: modeHeading }), _jsxs("div", { className: "mrs-prefs__seg", role: "group", "aria-label": typeof modeHeading === 'string' ? modeHeading : undefined, children: [_jsxs(Segment, { active: !sys && mode === 'light', onClick: () => onModeChange('light'), children: [_jsx(ModeGlyph, { icon: SunGlyph, emoji: "\u2600\uFE0F", emojiMode: emojiMode }), lightLabel] }), _jsxs(Segment, { active: !sys && mode === 'dark', onClick: () => onModeChange('dark'), children: [_jsx(ModeGlyph, { icon: MoonGlyph, emoji: "\uD83C\uDF19", emojiMode: emojiMode }), darkLabel] }), showSystem && (_jsxs(Segment, { active: sys, onClick: () => onFollowSystemChange(true), children: [_jsx(ModeGlyph, { icon: MonitorGlyph, emoji: "\uD83D\uDDA5\uFE0F", emojiMode: emojiMode }), systemLabel] }))] })] }), showDisplay && (_jsxs("section", { className: "mrs-prefs__section", children: [_jsx("h3", { className: "mrs-prefs__heading", children: displayHeading }), _jsxs("div", { className: "mrs-prefs__seg", role: "group", "aria-label": typeof displayHeading === 'string' ? displayHeading : undefined, children: [_jsxs(Segment, { active: iconMode === 'icon', onClick: () => onIconModeChange('icon'), children: [SmileGlyph, iconsLabel] }), _jsxs(Segment, { active: iconMode === 'emoji', onClick: () => onIconModeChange('emoji'), children: [_jsx("span", { className: "mrs-prefs__emoji", "aria-hidden": "true", children: "\uD83D\uDE00" }), emojisLabel] })] })] }))] }));
+    // The built-in language pane (reserved `'language'` section id). Driven off the
+    // i18n seam read *softly* — present only when an `<I18nProvider>` is mounted, so
+    // a consumer adds `{ id: 'language', … }` to `sections` and it just works with no
+    // wiring, exactly like the palette pane. Inline option buttons (flag + native
+    // name), mirroring the theme palette grid.
+    const languagePane = i18n != null && i18n.locales.length > 0 ? (_jsxs("section", { className: "mrs-prefs__section", children: [_jsx("h3", { className: "mrs-prefs__heading", children: st('mrs.prefs.language') }), _jsx("div", { className: "mrs-prefs__grid", role: "group", "aria-label": st('mrs.prefs.language'), children: i18n.locales.map((l) => (_jsxs("button", { type: "button", className: "mrs-prefs__option", "aria-pressed": i18n.locale === l.code, onClick: () => i18n.setLocale(l.code), children: [_jsx(Flag, { code: l.code }), l.label] }, l.code))) })] })) : null;
     // The left-nav is exactly the sections the consumer passes, in order — the
     // built-in theme controls are just the entry whose id is `'theme'`.
     const navItems = sectioned ? sections : [];
-    // The reserved `'theme'` id renders the built-in pane; every other id renders
-    // its section's own content. `activeId` is already guarded to a present id.
-    const activeContent = activeId === 'theme' ? themePane : sections?.find((s) => s.id === activeId)?.content ?? null;
-    return (_jsxs(Dialog.Root, { open: isOpen, onOpenChange: setOpen, children: [_jsx(Dialog.Trigger, { asChild: true, children: trigger ?? (_jsx("button", { type: "button", className: "mrs-prefs-trigger", "aria-label": triggerLabel, title: triggerLabel, children: _jsx(ModeGlyph, { icon: PaletteGlyph, emoji: "\uD83C\uDFA8", emojiMode: emojiMode }) })) }), _jsxs(Dialog.Portal, { children: [_jsx(Dialog.Overlay, { className: "mrs-dialog__overlay" }), _jsxs(Dialog.Content, { className: cn('mrs-prefs', sectioned && 'mrs-prefs--sectioned', className), children: [_jsxs("div", { className: "mrs-prefs__header", children: [_jsx(Dialog.Title, { className: "mrs-prefs__title", children: title }), _jsx(Dialog.Close, { className: "mrs-prefs__close", "aria-label": closeLabel, children: _jsx(ModeGlyph, { icon: CloseGlyph, emoji: "\u2716\uFE0F", emojiMode: emojiMode }) })] }), description != null && (_jsx(Dialog.Description, { className: "mrs-prefs__desc", children: description })), sectioned ? (_jsxs("div", { className: "mrs-prefs__panes", children: [_jsx("nav", { className: "mrs-prefs__nav", "aria-label": typeof title === 'string' ? title : undefined, children: navItems.map((item) => {
+    // The reserved `'theme'` / `'language'` ids render built-in panes; every other id
+    // renders its section's own content. `activeId` is already guarded to a present id.
+    const activeContent = activeId === 'theme'
+        ? themePane
+        : activeId === 'language'
+            ? languagePane
+            : sections?.find((s) => s.id === activeId)?.content ?? null;
+    return (_jsxs(Dialog.Root, { open: isOpen, onOpenChange: setOpen, children: [_jsx(Dialog.Trigger, { asChild: true, children: trigger ?? (_jsx("button", { type: "button", className: "mrs-prefs-trigger", "aria-label": triggerLabel, title: triggerLabel, children: _jsx(ModeGlyph, { icon: PaletteGlyph, emoji: "\uD83C\uDFA8", emojiMode: emojiMode }) })) }), _jsxs(Dialog.Portal, { children: [_jsx(Dialog.Overlay, { className: "mrs-dialog__overlay" }), _jsxs(Dialog.Content, { className: cn('mrs-prefs', sectioned && 'mrs-prefs--sectioned', className), children: [_jsxs("div", { className: "mrs-prefs__header", children: [_jsx(Dialog.Title, { className: "mrs-prefs__title", children: title }), _jsx(Dialog.Close, { className: "mrs-prefs__close", "aria-label": closeLabel ?? st('mrs.action.close'), children: _jsx(ModeGlyph, { icon: CloseGlyph, emoji: "\u274C", emojiMode: emojiMode }) })] }), description != null && (_jsx(Dialog.Description, { className: "mrs-prefs__desc", children: description })), sectioned ? (_jsxs("div", { className: "mrs-prefs__panes", children: [_jsx("nav", { className: "mrs-prefs__nav", "aria-label": typeof title === 'string' ? title : undefined, children: navItems.map((item) => {
                                             const active = item.id === activeId;
                                             return (_jsxs("button", { type: "button", className: "mrs-prefs__nav-item", "aria-pressed": active, "aria-current": active ? 'page' : undefined, onClick: () => setActiveSection(item.id), children: [_jsx("span", { className: "mrs-prefs__nav-icon", "aria-hidden": "true", children: item.icon }), _jsx("span", { className: "mrs-prefs__nav-label", children: item.label })] }, item.id));
                                         }) }), _jsx("div", { className: "mrs-prefs__content", children: activeContent })] })) : (themePane), accountActions != null && _jsx("div", { className: "mrs-prefs__account", children: accountActions })] })] })] }));
