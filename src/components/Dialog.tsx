@@ -1,6 +1,7 @@
 import type { ReactNode, CSSProperties } from 'react'
 import * as RadixDialog from '@radix-ui/react-dialog'
 import { cn } from './cn'
+import type { Tone } from './tone'
 import { useDialogDismissGuard } from './useDialogDismissGuard'
 
 export interface DialogButtonConfig {
@@ -9,7 +10,7 @@ export interface DialogButtonConfig {
   /** Click callback. If omitted, defaults to closing the dialog via onOpenChange(false). */
   onClick?: () => void
   /** Style tone. */
-  tone?: 'primary' | 'neutral' | 'danger'
+  tone?: Tone
   /** Shows loading state and disables the button. */
   loading?: boolean
 }
@@ -115,15 +116,26 @@ export function Dialog({
   onOpenAutoFocus,
   className,
 }: DialogProps) {
-  const getButtonClass = (tone: 'primary' | 'neutral' | 'danger') => {
-    if (tone === 'danger') return 'mrs-dialog__btn--danger'
-    if (tone === 'primary') return 'mrs-dialog__btn--primary'
-    return 'mrs-dialog__btn--ghost'
+  const getButtonClass = (tone: Tone) => {
+    switch (tone) {
+      case 'danger':
+        return 'mrs-dialog__btn--danger'
+      case 'warning':
+        return 'mrs-dialog__btn--warning'
+      case 'info':
+        return 'mrs-dialog__btn--info'
+      case 'success':
+        return 'mrs-dialog__btn--success'
+      case 'primary':
+        return 'mrs-dialog__btn--primary'
+      case 'neutral':
+        return 'mrs-dialog__btn--ghost'
+    }
   }
 
   const renderButton = (
     prop: DialogButtonProp,
-    defaultTone: 'primary' | 'neutral' | 'danger',
+    defaultTone: Tone,
     style?: CSSProperties
   ) => {
     const config: DialogButtonConfig = typeof prop === 'string' ? { label: prop } : prop
@@ -152,9 +164,9 @@ export function Dialog({
   const hasActions = useCancel != null || usePrimary != null || footer != null
   const renderedFooter = hasActions ? (
     <>
-      {useCancel != null && renderButton(useCancel, 'neutral', { marginRight: 'auto' })}
       {footer}
       {usePrimary != null && renderButton(usePrimary, 'primary')}
+      {useCancel != null && renderButton(useCancel, 'neutral', { marginRight: 'auto', order: -1 })}
     </>
   ) : null
 

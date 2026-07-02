@@ -26,7 +26,8 @@ The kit exports a canonical **`Tone`** type
 
 - **`tone`** carries *semantic colour*. Every `tone` prop uses `Tone` or a documented
   narrowing of it — `Alert` and `Toast` drop `primary`/`neutral` (a neutral note is
-  `InfoBox`; `ConfirmDialog` is `neutral`/`danger`).
+  `InfoBox`). `ConfirmDialog` takes the full `Tone` set: the tone colours a leading icon
+  and the confirm button (which stays `primary` except for `danger`/`warning`).
 - **`variant`** is reserved for *structural* style only (e.g. `Collapsible`, `Accordion`,
   `Button`) — never colour.
 
@@ -44,10 +45,10 @@ component shows **nothing, or an icon/emoji** — never an English word. This is
 **props you must pass**. The rule, in three shapes:
 
 - **Visible reading text, and the accessible name of an always-rendered button** → a
-  **required** prop (TypeScript flags a missing one). Examples: `ConfirmDialog`'s
-  `confirmLabel`/`cancelLabel`, `Dialog`/`Sheet` `closeLabel`, `Select`/`DatePicker`
-  `placeholder`, every `UserPreferences` label, `ColorPicker` `hexLabel`, `EmojiPicker`
-  `categoriesLabel`/`frequentLabel`, `ToastProvider` `dismissLabel`.
+  **required** prop (TypeScript flags a missing one). Examples: `Dialog`/`Sheet`
+  `closeLabel`, `Select`/`DatePicker` `placeholder`, every `UserPreferences` label,
+  `ColorPicker` `hexLabel`, `EmojiPicker` `categoriesLabel`/`frequentLabel`,
+  `ToastProvider` `dismissLabel`.
 - **The accessible name of an *opt-in* button** (rendered only when you enable a feature)
   → **required only when that feature is on**, via a discriminated union — so you can't
   enable the button without naming it, and you're never forced to name a button that isn't
@@ -63,6 +64,13 @@ icon** (e.g. `EmojiPicker`'s `searchPlaceholder` defaults to `🔍`, `noResultsL
 Those props stay optional. A hardcoded English (or any-language) default is **never**
 acceptable — a missing translation must surface as a type error or a silent icon, never as
 the wrong language leaking through (e.g. an English "Cancel" under Norwegian copy).
+
+> **Sole exception — `ConfirmDialog`'s button labels.** `ConfirmDialog` may ship a
+> hardcoded English `OK` (confirm) and `Cancel` (opt-in cancel). It's the one deliberately
+> approved carve-out: a bare acknowledgement is universal enough to warrant a batteries-
+> included default, so `confirmLabel` and `cancelLabel` are **optional**. Pass a translated
+> `confirmLabel`/`cancelLabel` for any localised app; the defaults exist only so a quick
+> confirm needs zero wiring. No other component may hardcode language text.
 
 > **`ActionButton` carries no preset text.** The presets (`add`, `delete`, …) ship a glyph,
 > an emoji, and a colour — **no label**. Pass a translated `label` (visible) and/or

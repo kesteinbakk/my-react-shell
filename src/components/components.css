@@ -350,6 +350,37 @@
 .mrs-dialog__btn--danger:hover:not(:disabled) {
   background: var(--color-danger-hover);
 }
+.mrs-dialog__btn--warning {
+  background: var(--color-warning);
+  color: var(--color-warning-on);
+}
+.mrs-dialog__btn--warning:hover:not(:disabled) {
+  background: var(--color-warning-hover);
+}
+.mrs-dialog__btn--info {
+  background: var(--color-info);
+  color: var(--color-info-on);
+}
+.mrs-dialog__btn--info:hover:not(:disabled) {
+  background: var(--color-info-hover);
+}
+.mrs-dialog__btn--success {
+  background: var(--color-success);
+  color: var(--color-success-on);
+}
+.mrs-dialog__btn--success:hover:not(:disabled) {
+  background: var(--color-success-hover);
+}
+/* Confirm-dialog title row: leading tone icon beside the heading. */
+.mrs-dialog__title-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.mrs-dialog__tone-icon {
+  display: inline-flex;
+  flex-shrink: 0;
+}
 
 /* ── Toast ───────────────────────────────────────────────────────────────── */
 .mrs-toast-viewport {

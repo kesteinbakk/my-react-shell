@@ -32,11 +32,20 @@ import { useDialogDismissGuard } from './useDialogDismissGuard';
  */
 export function Dialog({ open, onOpenChange, title, titleActions, headerActions, description, children, footer, useCancel, usePrimary, size = 'md', bleed = false, showClose = true, closeLabel, closeOnBackdrop = true, closeOnEsc = true, onOpenAutoFocus, className, }) {
     const getButtonClass = (tone) => {
-        if (tone === 'danger')
-            return 'mrs-dialog__btn--danger';
-        if (tone === 'primary')
-            return 'mrs-dialog__btn--primary';
-        return 'mrs-dialog__btn--ghost';
+        switch (tone) {
+            case 'danger':
+                return 'mrs-dialog__btn--danger';
+            case 'warning':
+                return 'mrs-dialog__btn--warning';
+            case 'info':
+                return 'mrs-dialog__btn--info';
+            case 'success':
+                return 'mrs-dialog__btn--success';
+            case 'primary':
+                return 'mrs-dialog__btn--primary';
+            case 'neutral':
+                return 'mrs-dialog__btn--ghost';
+        }
     };
     const renderButton = (prop, defaultTone, style) => {
         const config = typeof prop === 'string' ? { label: prop } : prop;
@@ -49,7 +58,7 @@ export function Dialog({ open, onOpenChange, title, titleActions, headerActions,
     // whole dialog. See useDialogDismissGuard for the full mechanism.
     const guardPopperOutside = useDialogDismissGuard(open);
     const hasActions = useCancel != null || usePrimary != null || footer != null;
-    const renderedFooter = hasActions ? (_jsxs(_Fragment, { children: [useCancel != null && renderButton(useCancel, 'neutral', { marginRight: 'auto' }), footer, usePrimary != null && renderButton(usePrimary, 'primary')] })) : null;
+    const renderedFooter = hasActions ? (_jsxs(_Fragment, { children: [footer, usePrimary != null && renderButton(usePrimary, 'primary'), useCancel != null && renderButton(useCancel, 'neutral', { marginRight: 'auto', order: -1 })] })) : null;
     return (_jsx(RadixDialog.Root, { open: open, onOpenChange: onOpenChange, children: _jsxs(RadixDialog.Portal, { children: [_jsx(RadixDialog.Overlay, { className: "mrs-dialog__overlay" }), _jsxs(RadixDialog.Content, { className: cn('mrs-dialog', `mrs-dialog--${size}`, bleed && 'mrs-dialog--bleed', className), onPointerDownOutside: (e) => {
                         if (guardPopperOutside(e))
                             return;

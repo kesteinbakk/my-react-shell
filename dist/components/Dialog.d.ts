@@ -1,11 +1,12 @@
 import type { ReactNode } from 'react';
+import type { Tone } from './tone';
 export interface DialogButtonConfig {
     /** The button label. */
     label: ReactNode;
     /** Click callback. If omitted, defaults to closing the dialog via onOpenChange(false). */
     onClick?: () => void;
     /** Style tone. */
-    tone?: 'primary' | 'neutral' | 'danger';
+    tone?: Tone;
     /** Shows loading state and disables the button. */
     loading?: boolean;
 }

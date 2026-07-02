@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import type { DialogButtonProp } from './Dialog';
+import type { Tone } from './tone';
 export interface ConfirmDialogProps {
     /** Controlled open state. */
     open: boolean;
@@ -11,25 +12,50 @@ export interface ConfirmDialogProps {
     description?: ReactNode;
     /** Optional custom body, rendered below the description. */
     children?: ReactNode;
-    /** Confirm button label or configuration. If omitted, uses confirmLabel / onConfirm / tone. */
+    /**
+     * Semantic tone. Drives the leading tone icon and the confirm button colour: the
+     * confirm button stays `primary` for every tone **except** `danger` and `warning`,
+     * which adopt the tone. Defaults to `neutral` (primary button, no icon).
+     */
+    tone?: Tone;
+    /**
+     * Override the tone's leading icon, or pass `false` to drop it. Defaults to the
+     * per-tone glyph (`info`/`success`/`warning`/`danger`; none for `primary`/`neutral`).
+     */
+    icon?: ReactNode | false;
+    /**
+     * Confirm button label or configuration. Defaults to `OK` — this component may ship
+     * that hardcoded English default (an approved exception to the no-hardcoded-text
+     * rule); pass a translated string for any other label. A `DialogButtonConfig`
+     * overrides the tone-derived button colour.
+     */
     useConfirm?: DialogButtonProp;
-    /** Cancel button label or configuration. If omitted, uses cancelLabel. */
+    /** Confirm button label. Defaults to `OK`. Superseded by `useConfirm` when set. */
+    confirmLabel?: string;
+    /**
+     * Cancel button label or configuration. Its presence renders the cancel button — see
+     * `showCancel`. Superseded by `useCancel` when set.
+     */
+    cancelLabel?: string;
+    /** Cancel button label or configuration. Its presence renders the cancel button. */
     useCancel?: DialogButtonProp;
-    /** Confirm button label — **required**; pass a translated string via your i18n seam. */
-    confirmLabel: string;
-    /** Cancel button label — **required**; pass a translated string via your i18n seam. */
-    cancelLabel: string;
-    /** `danger` makes the confirm button destructive. */
-    tone?: 'neutral' | 'danger';
+    /** Force-render the cancel button even when no `cancelLabel`/`onCancel`/`useCancel` is set. */
+    showCancel?: boolean;
     /** Called when the confirm button is pressed. */
     onConfirm?: () => void;
+    /** Called when the cancel button is pressed. Its presence renders the cancel button. */
+    onCancel?: () => void;
     /** Disables both buttons while an async confirm is in flight. */
     loading?: boolean;
     className?: string;
 }
 /**
  * Pre-built confirmation dialog on Radix Dialog (overlay, focus trap, Esc/backdrop
- * close, portal). Styled with the theme tokens; renders its own confirm/cancel
- * buttons.
+ * close, portal). Styled with the theme tokens; renders its own confirm/cancel buttons.
+ *
+ * The confirm button defaults to `OK` and always shows on the right. The cancel button
+ * is opt-in on the left — it renders only when at least one of `showCancel`, `onCancel`,
+ * `cancelLabel`, or `useCancel` is provided. `tone` colours a leading icon and the
+ * confirm button.
  */
-export declare function ConfirmDialog({ open, onOpenChange, title, description, children, useConfirm, useCancel, confirmLabel, cancelLabel, tone, onConfirm, loading, className, }: ConfirmDialogProps): import("react").JSX.Element;
+export declare function ConfirmDialog({ open, onOpenChange, title, description, children, tone, icon, useConfirm, confirmLabel, cancelLabel, useCancel, showCancel, onConfirm, onCancel, loading, className, }: ConfirmDialogProps): import("react").JSX.Element;
