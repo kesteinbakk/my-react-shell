@@ -363,14 +363,12 @@ self-contained for agents with no context).
 
 Read and follow that file exactly when asked to perform a release.
 
-## Dev servers (agent rules)
+## Dev servers
 
-- **The user owns dev servers.** Never run `pnpm dev`, `vite`, `convex dev`, or the
-  `build:lib:watch` sidecar (long-running, shared; the watcher is started by the
-  dev-manager's `dev start` via `watch = true` in the registry). If one is down,
-  report and stop.
-- Get approval before installing/changing any dependency or editing any `.env*`
-  file — state the exact change first.
+Governed by root `AGENTS.md` (*Dev Servers*, *Mandatory User Approval*). Project
+residue only: the shared watcher is the **`rs:watch` / `build:lib:watch`** sidecar
+(rebuilds `dist/` on save; started by `dev start` via `watch = true`). Verify UI in
+the sandboxed preview per the `browser-tools` skill.
 
 ## How consumers use my-react-shell
 
