@@ -160,21 +160,24 @@ kit-internal (`--mrs-elevation-*`), not a public token.
 ## Nested layers don't tear down their host dialog
 
 `Dialog`, `Sheet`, and `ConfirmDialog` guard against a **nested layer collapsing the whole
-surface** when that nested layer is dismissed — so you can freely open a `Select`,
-`DropdownMenu`, or `Popover` inside a dialog, or **stack a second `Dialog` on top of the
-first**, and dismissing the nested thing dismisses only *it*.
+surface** — so you can freely open a `Select`, `DropdownMenu`, or `Popover` inside a dialog,
+or **stack a second `Dialog` on top of the first**, and interacting with (or dismissing) the
+nested thing affects only *it*.
 
-Two Radix quirks make this necessary, both handled for you:
+Radix quirks make this necessary, all handled for you:
 
 - **Nested popper.** While a `Select`/menu/`Popover` is open, Radix locks the host content to
   `pointer-events: none`; a click inside the host but outside the popper would otherwise be
   re-read as an outside interaction and dismiss the host. Guarded by judging the gesture at
   its *pointerdown* start.
-- **Stacked `Dialog`.** Closing an inner dialog by its ✕ unmounts its content and the browser
-  drops focus to `<body>`; that focus-out used to fire the *outer* dialog's dismiss. The guard
-  recognises focus falling to the document root and suppresses only that path — so the inner
-  dialog's own backdrop/Esc/✕ all still work, and so does the outer's genuine backdrop
-  dismissal.
+- **Stacked `Dialog` (including React siblings).** A second dialog opened on top — even one
+  rendered as a React *sibling* rather than nested in the first's JSX, which Radix's own branch
+  mechanism does not link — lives outside the first dialog's React tree. So interacting with it
+  (clicking its ✕, focusing its fields) fires the *outer* dialog's outside-interaction handlers
+  and used to dismiss it. The guard recognises that the interaction's target sits inside another
+  `[role="dialog"]` and suppresses it (plus the trailing focus-to-`<body>` after the inner
+  unmounts). A genuine backdrop dismissal targets the overlay — outside any dialog content — so
+  the inner dialog's own backdrop/Esc/✕ and the outer's genuine backdrop click all still work.
 
 You get this automatically; there is nothing to wire. (A `closeOnBackdrop={false}` dialog is
 still the right call when you additionally want to protect in-progress edits from a genuine
