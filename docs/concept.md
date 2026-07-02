@@ -89,7 +89,12 @@ The base offers both ready-made drop-ins *and* contracts to implement:
    lives behind a sub-path so a theme-only app never installs it.
 2. **Self-contained** — a module never hard-depends on another module's *runtime*; only
    small pure types are shared. `theme` works without `i18n`; `auth` without `theme`.
-   `AppProviders` *composes* them for convenience, but each stands alone.
+   `AppProviders` *composes* them for convenience, but each stands alone. The one
+   sanctioned exception is **soft optional integration**: a module may read a sibling's
+   context to follow it automatically, but only via a `…Optional()` hook that returns
+   `null` with no provider mounted, with a sensible default when absent and an explicit
+   prop that overrides — so it still stands alone (e.g. the `Dialog`/`Sheet` close ✕
+   following the icons↔emojis mode). See `docs/maintainers/module-authoring.md`.
 3. **Optional/heavy peers behind sub-paths** — anything pulling an optional dependency
    lives at `my-react-shell/<module>[/<impl>]`, keeping the barrel dependency-light.
 4. **Documented** — every export is in the single API reference

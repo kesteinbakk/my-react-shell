@@ -38,10 +38,11 @@ export interface SheetProps {
   /** Accessible label for the ✕ close button — **required**; pass a translated string. */
   closeLabel: string
   /**
-   * The app's icons↔emojis display mode. Pass the consumer's `iconMode` (from the
-   * icons seam) to make the ✕ close button follow it — the lucide-style icon in
-   * `'icon'` mode, the ✖️ emoji in `'emoji'` mode — matching `UserPreferences`.
-   * Omit to always render the icon (non-breaking default).
+   * Override the display mode of the ✕ close button. By default the ✕ **follows the
+   * app's icons↔emojis seam automatically** (the lucide-style icon in `'icon'` mode,
+   * the ✖️ emoji in `'emoji'` mode) with no wiring — reading the icons context softly
+   * and falling back to the icon when the icons module isn't installed. Pass this only
+   * to force a specific mode regardless of the app setting.
    */
   iconMode?: IconMode
   /**

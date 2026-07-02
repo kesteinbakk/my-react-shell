@@ -21,6 +21,24 @@ Every module satisfies three rules:
   `theme` works without `i18n`; `auth` without `theme`. `AppProviders` *composes*
   modules for convenience, but each stands alone. The only thing a module may share
   with another is a small **pure type** (see The shared `core`).
+  - **Soft optional integration (the sanctioned exception).** A module *may* read a
+    sibling module's context to participate automatically when that sibling is
+    present — but only as a **soft, degrading** dependency, never a hard one. All
+    three conditions must hold:
+    1. **Read through a `…Optional()` hook** that returns `null` outside its provider
+       (e.g. `useIconModeContextOptional()`), so **no provider is ever required** — the
+       consuming module still mounts and works entirely on its own.
+    2. **Default sensibly when absent**, so a consumer that never installs the sibling
+       module is completely unaffected (no crash, no visual change).
+    3. **Accept an explicit prop that overrides** the context, so the automatic
+       behavior is never a trap.
+    This buys "just works everywhere" without a hard runtime coupling. **Canonical
+    example:** the `Dialog` / `Sheet` close ✕ (`components/CloseGlyph.tsx`) reads
+    `useIconModeContextOptional()` so it follows the app's icons↔emojis mode with zero
+    wiring — resolving `iconMode` prop → context → `'icon'` fallback — matching
+    `UserPreferences`. What stays **forbidden**: importing a sibling's provider-*required*
+    hook (one that throws without its provider), or any import that makes the module
+    fail to render standalone.
 - **Contract + default + bring-your-own.** Where an app must supply something, the
   module exports a TypeScript **contract** and — where sensible — a shipped default,
   with optional or heavy peers behind a sub-path.

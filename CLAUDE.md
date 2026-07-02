@@ -212,7 +212,14 @@ foundation source and match it; don't reconstruct from memory or the happy path.
 
 - **Self-contained modules.** A module is importable on its own and never
   hard-depends on another module's *runtime*; shared pure types live in a small
-  internal core. An app takes only the modules it wants.
+  internal core. An app takes only the modules it wants. **Soft optional integration
+  (sanctioned exception):** a module *may* read a sibling's context to follow it
+  automatically — but only when it (1) reads through a `…Optional()` hook that returns
+  `null` with no provider mounted, (2) defaults sensibly when absent so a standalone
+  consumer is unaffected, and (3) still accepts an explicit prop that overrides. The
+  canonical example is the `Dialog`/`Sheet` close ✕ following the icons↔emojis mode via
+  `useIconModeContextOptional()`. A provider-*required* hook (one that throws without its
+  provider) stays forbidden. Full contract: `docs/maintainers/module-authoring.md`.
 - **Contract + default + bring-your-own.** Where an app must supply something, the
   module exports a TS **contract** and (where sensible) a shipped default. The
   `auth` seam is the template: `AuthProvider` type + Convex Auth default + BYO.
