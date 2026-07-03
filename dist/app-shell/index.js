@@ -18,6 +18,7 @@ export { AppBottomNav } from './AppBottomNav';
 // ── page header + config ──────────────────────────────────────────────────────
 export { usePageHeader } from './usePageHeader';
 export { usePageAlert } from './usePageAlert';
+export { useDocumentTitlePrefix } from './useDocumentTitlePrefix';
 export { findActiveChain } from './ShellPageHeader';
 export { useDynamicPages } from './useDynamicPages';
 export { defineShellConfig, ShellConfigError } from './defineShellConfig';

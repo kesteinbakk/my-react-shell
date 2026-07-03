@@ -24,6 +24,7 @@ export type { AppBottomNavProps } from './AppBottomNav'
 // ── page header + config ──────────────────────────────────────────────────────
 export { usePageHeader } from './usePageHeader'
 export { usePageAlert } from './usePageAlert'
+export { useDocumentTitlePrefix } from './useDocumentTitlePrefix'
 export { findActiveChain } from './ShellPageHeader'
 export type { ChainLevel } from './ShellPageHeader'
 export { useDynamicPages } from './useDynamicPages'

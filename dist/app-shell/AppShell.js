@@ -55,6 +55,11 @@ export function AppShell({ config, useMenu, actions, subtitle, titleAdornment, f
     }, []);
     const [alertStack, setAlertStack] = useState([]);
     const pageAlertSpec = alertStack.at(-1)?.spec ?? null;
+    // A plain-string prefix prepended to `document.title` (e.g. an unread badge
+    // `(3)`). A single reactive slot — one intended producer — set via
+    // `useDocumentTitlePrefix`; `null`/'' means no prefix. Folded into
+    // `documentTitleText` below so the single title-owner effect writes it.
+    const [documentTitlePrefix, setDocumentTitlePrefix] = useState(null);
     const registerPageAlert = useCallback((spec) => {
         const id = Symbol('shell-page-alert');
         setAlertStack((prev) => [...prev, { id, spec }]);
@@ -106,28 +111,37 @@ export function AppShell({ config, useMenu, actions, subtitle, titleAdornment, f
         registerPageAlert,
         pageHeaderSpec,
         registerPageHeader,
+        setDocumentTitlePrefix,
     }), [config, scrollEl, flatDynamicPages, registerDynamicPages, pageAlertSpec, registerPageAlert, pageHeaderSpec, registerPageHeader]);
     const apiCtx = useMemo(() => ({
         setScrollContainer: setScrollEl,
         registerDynamicPages,
         registerPageAlert,
         registerPageHeader,
+        setDocumentTitlePrefix,
     }), [setScrollEl, registerDynamicPages, registerPageAlert, registerPageHeader]);
     // Document title — single owner; routes without a header fall through to appName.
+    // An optional `documentTitlePrefix` (e.g. an unread badge `(3)`) is prepended with
+    // a single space, so a producer never has to touch `document.title` directly (any
+    // direct write would be clobbered on the next title recompute — this is the only
+    // safe seam for a prefix).
     const documentTitleText = useMemo(() => {
         const spec = pageHeaderSpec;
-        if (spec && typeof spec.documentTitle === 'function')
-            return spec.documentTitle();
-        const mode = (typeof spec?.documentTitle === 'string' ? spec.documentTitle : undefined) ??
-            config.shellPageHeader?.documentTitle ??
-            'composed';
-        if (mode === 'app')
-            return config.appName;
-        const leaf = spec?.title?.() ?? activeChain.at(-1)?.entry.label() ?? config.appName;
-        if (mode === 'leaf')
-            return leaf;
-        return leaf === config.appName ? config.appName : `${leaf} · ${config.appName}`;
-    }, [config, pageHeaderSpec, activeChain]);
+        const base = (() => {
+            if (spec && typeof spec.documentTitle === 'function')
+                return spec.documentTitle();
+            const mode = (typeof spec?.documentTitle === 'string' ? spec.documentTitle : undefined) ??
+                config.shellPageHeader?.documentTitle ??
+                'composed';
+            if (mode === 'app')
+                return config.appName;
+            const leaf = spec?.title?.() ?? activeChain.at(-1)?.entry.label() ?? config.appName;
+            if (mode === 'leaf')
+                return leaf;
+            return leaf === config.appName ? config.appName : `${leaf} · ${config.appName}`;
+        })();
+        return documentTitlePrefix ? `${documentTitlePrefix} ${base}` : base;
+    }, [config, pageHeaderSpec, activeChain, documentTitlePrefix]);
     useEffect(() => {
         document.title = documentTitleText;
     }, [documentTitleText]);

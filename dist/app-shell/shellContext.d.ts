@@ -47,6 +47,13 @@ export interface ShellContextValue {
         update: (next: ShellPageHeaderSpec) => void;
         unregister: () => void;
     };
+    /**
+     * Set (or clear) a plain-string prefix prepended to `document.title`, separated
+     * from the composed title by a single space (`"(3) Leaf · App"`). `null` clears
+     * it. A single reactive slot with exactly one intended producer (e.g. an unread
+     * badge) — not a register/unregister stack. Wired via `useDocumentTitlePrefix`.
+     */
+    setDocumentTitlePrefix: (prefix: string | null) => void;
 }
 export interface ShellAPIContextValue {
     setScrollContainer: (el: HTMLElement | null) => void;
@@ -59,6 +66,8 @@ export interface ShellAPIContextValue {
         update: (next: ShellPageHeaderSpec) => void;
         unregister: () => void;
     };
+    /** Set (or clear, with `null`) the `document.title` prefix. See {@link ShellContextValue.setDocumentTitlePrefix}. */
+    setDocumentTitlePrefix: (prefix: string | null) => void;
 }
 export declare const ShellAPIContext: import("react").Context<ShellAPIContextValue | null>;
 export declare function useShellAPIContext(): ShellAPIContextValue;
