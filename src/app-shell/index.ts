@@ -33,12 +33,12 @@ export { defineShellConfig, ShellConfigError } from './defineShellConfig'
 export { useShellContext, useShellContextOptional } from './shellContext'
 export type { ShellContextValue } from './shellContext'
 
-// ── large-menu preference (enlarged header chrome) ─────────────────────────────
-export { LargeMenuProvider } from './LargeMenuProvider'
-export type { LargeMenuProviderProps } from './LargeMenuProvider'
-export { useLargeMenu, useLargeMenuOptional } from './useLargeMenu'
-export type { UseLargeMenuResult } from './useLargeMenu'
-export type { LargeMenuContextValue } from './largeMenuContext'
+// ── menu-size preference (header-chrome size: small · medium · large) ──────────
+export { MenuSizeProvider } from './MenuSizeProvider'
+export type { MenuSizeProviderProps } from './MenuSizeProvider'
+export { useMenuSize, useMenuSizeOptional } from './useMenuSize'
+export type { UseMenuSizeResult } from './useMenuSize'
+export type { MenuSize, MenuSizeContextValue } from './menuSizeContext'
 
 // ── page tabs ─────────────────────────────────────────────────────────────────
 export { PageTabs } from './PageTabs'

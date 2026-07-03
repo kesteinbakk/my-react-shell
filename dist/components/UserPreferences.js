@@ -18,9 +18,10 @@ const MoonGlyph = (_jsx("svg", { ...svg, width: 16, height: 16, "aria-hidden": "
 const MonitorGlyph = (_jsxs("svg", { ...svg, width: 16, height: 16, "aria-hidden": "true", children: [_jsx("rect", { width: "20", height: "14", x: "2", y: "3", rx: "2" }), _jsx("line", { x1: "8", x2: "16", y1: "21", y2: "21" }), _jsx("line", { x1: "12", x2: "12", y1: "17", y2: "21" })] }));
 const SmileGlyph = (_jsxs("svg", { ...svg, width: 16, height: 16, "aria-hidden": "true", children: [_jsx("circle", { cx: "12", cy: "12", r: "10" }), _jsx("path", { d: "M8 14s1.5 2 4 2 4-2 4-2" }), _jsx("line", { x1: "9", x2: "9.01", y1: "9", y2: "9" }), _jsx("line", { x1: "15", x2: "15.01", y1: "9", y2: "9" })] }));
 const CloseGlyph = (_jsxs("svg", { ...svg, width: 16, height: 16, "aria-hidden": "true", children: [_jsx("path", { d: "M18 6 6 18" }), _jsx("path", { d: "m6 6 12 12" })] }));
-// ── Menu-size glyphs (large-menu toggle) ─────────────────────────────────────
-const MinimizeGlyph = (_jsxs("svg", { ...svg, width: 16, height: 16, "aria-hidden": "true", children: [_jsx("path", { d: "M8 3v3a2 2 0 0 1-2 2H3" }), _jsx("path", { d: "M21 8h-3a2 2 0 0 1-2-2V3" }), _jsx("path", { d: "M3 16h3a2 2 0 0 1 2 2v3" }), _jsx("path", { d: "M16 21v-3a2 2 0 0 1 2-2h3" })] }));
-const MaximizeGlyph = (_jsxs("svg", { ...svg, width: 16, height: 16, "aria-hidden": "true", children: [_jsx("path", { d: "M8 3H5a2 2 0 0 0-2 2v3" }), _jsx("path", { d: "M21 8V5a2 2 0 0 0-2-2h-3" }), _jsx("path", { d: "M3 16v3a2 2 0 0 0 2 2h3" }), _jsx("path", { d: "M16 21h3a2 2 0 0 0 2-2v-3" })] }));
+// ── Menu-size glyph (the "A" grows across the small/medium/large segments) ────
+function SizeGlyph({ size }) {
+    return (_jsxs("svg", { ...svg, width: size, height: size, "aria-hidden": "true", children: [_jsx("path", { d: "M5 20 12 5l7 15" }), _jsx("path", { d: "M8.5 14h7" })] }));
+}
 // ── Palette glyphs (icon mode) ───────────────────────────────────────────────
 const WavesGlyph = (_jsxs("svg", { ...svg, width: 16, height: 16, "aria-hidden": "true", children: [_jsx("path", { d: "M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5c2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1" }), _jsx("path", { d: "M2 12c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1" }), _jsx("path", { d: "M2 18c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1" })] }));
 const TreeGlyph = (_jsxs("svg", { ...svg, width: 16, height: 16, "aria-hidden": "true", children: [_jsx("path", { d: "m17 14 3 3.3a1 1 0 0 1-.7 1.7H4.7a1 1 0 0 1-.7-1.7L7 14h-.3a1 1 0 0 1-.7-1.7L9 9h-.2A1 1 0 0 1 8 7.3L12 3l4 4.3a1 1 0 0 1-.8 1.7H15l3 3.3a1 1 0 0 1-.7 1.7H17Z" }), _jsx("path", { d: "M12 22v-3" })] }));
@@ -56,9 +57,9 @@ function Segment({ active, onClick, children, }) {
 /**
  * <UserPreferences> — a drop-in user-options panel in a Radix dialog opened from an
  * icon button. Two built-in control groups: **theme** (palette + light/dark/system)
- * and **display** (an optional icons↔emojis switch + an optional large-menu toggle
- * that enlarges the app-shell header chrome). In the single-column layout both groups
- * stack; in the sectioned layout they are the reserved `'theme'` and `'display'` panes.
+ * and **display** (an optional icons↔emojis switch + an optional menu-size control
+ * that sizes the app-shell header chrome — small/medium/large). In the single-column
+ * layout both groups stack; in the sectioned layout they are the reserved `'theme'` and `'display'` panes.
  *
  * Fully **controlled** — it reads the current values and emits an `onChange` for each
  * preference, and persists nothing itself, so the consumer decides where state lives
@@ -67,7 +68,7 @@ function Segment({ active, onClick, children, }) {
  * **required, no-default prop** — pass translated strings via your t() seam, so the
  * kit never imports i18n and never renders a hardcoded language.
  */
-export function UserPreferences({ theme, themes, onThemeChange, mode, onModeChange, followSystem, onFollowSystemChange, iconMode, onIconModeChange, largeMenu, onLargeMenuChange, accountActions, trigger, open, onOpenChange, sections, activeSection, onActiveSectionChange, triggerLabel, title, description, themeHeading, modeHeading, displayHeading, lightLabel, darkLabel, systemLabel, iconsLabel, emojisLabel, largeMenuHeading, largeMenuOffLabel, largeMenuOnLabel, closeLabel, className, }) {
+export function UserPreferences({ theme, themes, onThemeChange, mode, onModeChange, followSystem, onFollowSystemChange, iconMode, onIconModeChange, menuSize, onMenuSizeChange, accountActions, trigger, open, onOpenChange, sections, activeSection, onActiveSectionChange, triggerLabel, title, description, themeHeading, modeHeading, displayHeading, lightLabel, darkLabel, systemLabel, iconsLabel, emojisLabel, menuSizeHeading, menuSizeSmallLabel, menuSizeMediumLabel, menuSizeLargeLabel, closeLabel, className, }) {
     const st = useShellText();
     const i18n = useI18nContextOptional();
     const [internalOpen, setInternalOpen] = useState(false);
@@ -99,24 +100,24 @@ export function UserPreferences({ theme, themes, onThemeChange, mode, onModeChan
     const showSystem = onFollowSystemChange !== undefined;
     const sys = followSystem === true;
     const showDisplay = iconMode !== undefined && onIconModeChange !== undefined;
-    const showLargeMenu = largeMenu !== undefined && onLargeMenuChange !== undefined;
+    const showMenuSize = menuSize !== undefined && onMenuSizeChange !== undefined;
     // The modal's own glyphs follow the app's display mode when the consumer wires
     // the icons seam (passes `iconMode`); otherwise they stay icons.
     const emojiMode = iconMode === 'emoji';
     // The two built-in theme controls (palette + light/dark/system). In the
     // single-column layout they render inline; in the sectioned layout they are
     // the right pane shown while the built-in "Theme" nav item is active. The
-    // display controls (icons↔emojis + large menu) live in their own `displayPane`
+    // display controls (icons↔emojis + menu size) live in their own `displayPane`
     // (reserved `'display'` section) so themes and visuals are separate sections.
     const themePane = (_jsxs(_Fragment, { children: [_jsxs("section", { className: "mrs-prefs__section", children: [_jsx("h3", { className: "mrs-prefs__heading", children: themeHeading }), _jsx("div", { className: "mrs-prefs__grid", role: "group", "aria-label": typeof themeHeading === 'string' ? themeHeading : undefined, children: themes.map((info) => {
                             const glyph = PALETTE_GLYPHS[info.name] ?? FALLBACK_PALETTE_GLYPH;
                             return (_jsxs("button", { type: "button", className: "mrs-prefs__option", "aria-pressed": theme === info.name, onClick: () => onThemeChange(info.name), children: [_jsx(ModeGlyph, { icon: glyph.icon, emoji: glyph.emoji, emojiMode: emojiMode }), info.label] }, info.name));
                         }) })] }), _jsxs("section", { className: "mrs-prefs__section", children: [_jsx("h3", { className: "mrs-prefs__heading", children: modeHeading }), _jsxs("div", { className: "mrs-prefs__seg", role: "group", "aria-label": typeof modeHeading === 'string' ? modeHeading : undefined, children: [_jsxs(Segment, { active: !sys && mode === 'light', onClick: () => onModeChange('light'), children: [_jsx(ModeGlyph, { icon: SunGlyph, emoji: "\u2600\uFE0F", emojiMode: emojiMode }), lightLabel] }), _jsxs(Segment, { active: !sys && mode === 'dark', onClick: () => onModeChange('dark'), children: [_jsx(ModeGlyph, { icon: MoonGlyph, emoji: "\uD83C\uDF19", emojiMode: emojiMode }), darkLabel] }), showSystem && (_jsxs(Segment, { active: sys, onClick: () => onFollowSystemChange(true), children: [_jsx(ModeGlyph, { icon: MonitorGlyph, emoji: "\uD83D\uDDA5\uFE0F", emojiMode: emojiMode }), systemLabel] }))] })] })] }));
     // The built-in display controls (reserved `'display'` section id): the
-    // icons↔emojis switch and the large-menu (enlarged header chrome) toggle. Each
+    // icons↔emojis switch and the menu-size (header-chrome size) control. Each
     // control renders only when the consumer wires it; the pane is empty (renders
     // nothing) if neither is wired.
-    const displayPane = showDisplay || showLargeMenu ? (_jsxs(_Fragment, { children: [showDisplay && (_jsxs("section", { className: "mrs-prefs__section", children: [_jsx("h3", { className: "mrs-prefs__heading", children: displayHeading }), _jsxs("div", { className: "mrs-prefs__seg", role: "group", "aria-label": typeof displayHeading === 'string' ? displayHeading : undefined, children: [_jsxs(Segment, { active: iconMode === 'emoji', onClick: () => onIconModeChange('emoji'), children: [_jsx("span", { className: "mrs-prefs__emoji", "aria-hidden": "true", children: "\uD83D\uDE00" }), emojisLabel] }), _jsxs(Segment, { active: iconMode === 'icon', onClick: () => onIconModeChange('icon'), children: [SmileGlyph, iconsLabel] })] })] })), showLargeMenu && (_jsxs("section", { className: "mrs-prefs__section", children: [_jsx("h3", { className: "mrs-prefs__heading", children: largeMenuHeading ?? st('mrs.prefs.largeMenuHeading') }), _jsxs("div", { className: "mrs-prefs__seg", role: "group", "aria-label": typeof largeMenuHeading === 'string' ? largeMenuHeading : st('mrs.prefs.largeMenuHeading'), children: [_jsxs(Segment, { active: largeMenu === false, onClick: () => onLargeMenuChange(false), children: [MinimizeGlyph, largeMenuOffLabel ?? st('mrs.prefs.largeMenuOff')] }), _jsxs(Segment, { active: largeMenu === true, onClick: () => onLargeMenuChange(true), children: [MaximizeGlyph, largeMenuOnLabel ?? st('mrs.prefs.largeMenuOn')] })] })] }))] })) : null;
+    const displayPane = showDisplay || showMenuSize ? (_jsxs(_Fragment, { children: [showDisplay && (_jsxs("section", { className: "mrs-prefs__section", children: [_jsx("h3", { className: "mrs-prefs__heading", children: displayHeading }), _jsxs("div", { className: "mrs-prefs__seg", role: "group", "aria-label": typeof displayHeading === 'string' ? displayHeading : undefined, children: [_jsxs(Segment, { active: iconMode === 'emoji', onClick: () => onIconModeChange('emoji'), children: [_jsx("span", { className: "mrs-prefs__emoji", "aria-hidden": "true", children: "\uD83D\uDE00" }), emojisLabel] }), _jsxs(Segment, { active: iconMode === 'icon', onClick: () => onIconModeChange('icon'), children: [SmileGlyph, iconsLabel] })] })] })), showMenuSize && (_jsxs("section", { className: "mrs-prefs__section", children: [_jsx("h3", { className: "mrs-prefs__heading", children: menuSizeHeading ?? st('mrs.prefs.menuSizeHeading') }), _jsxs("div", { className: "mrs-prefs__seg", role: "group", "aria-label": typeof menuSizeHeading === 'string' ? menuSizeHeading : st('mrs.prefs.menuSizeHeading'), children: [_jsxs(Segment, { active: menuSize === 'small', onClick: () => onMenuSizeChange('small'), children: [_jsx(SizeGlyph, { size: 13 }), menuSizeSmallLabel ?? st('mrs.prefs.menuSizeSmall')] }), _jsxs(Segment, { active: menuSize === 'medium', onClick: () => onMenuSizeChange('medium'), children: [_jsx(SizeGlyph, { size: 16 }), menuSizeMediumLabel ?? st('mrs.prefs.menuSizeMedium')] }), _jsxs(Segment, { active: menuSize === 'large', onClick: () => onMenuSizeChange('large'), children: [_jsx(SizeGlyph, { size: 19 }), menuSizeLargeLabel ?? st('mrs.prefs.menuSizeLarge')] })] })] }))] })) : null;
     // The built-in language pane (reserved `'language'` section id). Driven off the
     // i18n seam read *softly* — present only when an `<I18nProvider>` is mounted, so
     // a consumer adds `{ id: 'language', … }` to `sections` and it just works with no

@@ -52,9 +52,10 @@
     },
     "prefs": {
       "language": "Språk",
-      "largeMenuHeading": "Menystørrelse",
-      "largeMenuOff": "Normal",
-      "largeMenuOn": "Stor"
+      "menuSizeHeading": "Menystørrelse",
+      "menuSizeSmall": "Liten",
+      "menuSizeMedium": "Middels",
+      "menuSizeLarge": "Stor"
     }
   }
 }

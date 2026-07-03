@@ -273,20 +273,21 @@
   text-decoration: none;
 }
 
-/* ── Large-menu display preference (LargeMenuProvider / useLargeMenu) ─────────
-   Opt-in "large menu" mode. <AppShell> sets `data-large-menu='true'` on the root
-   when the preference is on; here we scale the page-header band (breadcrumbs +
-   actions + search + tabs) and the top-header action cluster to ~2×, leaving the
-   app-header brand/title at its normal size. `zoom` reflows layout properly, so
-   heterogeneous fixed-px icons, text, and spacing all scale uniformly and stay
-   aligned (a `transform: scale` would not reserve layout box). Attribute absent
-   (the default) → no rule applies → normal size. */
-.mrs-shell[data-large-menu='true'] {
-  --mrs-large-menu-scale: 1.75;
+/* ── Menu-size display preference (MenuSizeProvider / useMenuSize) ────────────
+   Header-chrome size: `small` · `medium` · `large`. <AppShell> sets
+   `data-menu-size` on the root; here `medium`/`large` scale the page-header band
+   (breadcrumbs + actions + search + tabs) and the top-header action cluster,
+   leaving the app-header brand/title at its normal size. `small` (the default)
+   matches no rule → normal size. `zoom` reflows layout properly, so heterogeneous
+   fixed-px icons, text, and spacing all scale uniformly and stay aligned (a
+   `transform: scale` would not reserve layout box). Tune each step via its var. */
+.mrs-shell[data-menu-size='medium'] .mrs-page-header,
+.mrs-shell[data-menu-size='medium'] .mrs-app-header__actions {
+  zoom: var(--mrs-menu-scale-medium, 1.375);
 }
-.mrs-shell[data-large-menu='true'] .mrs-page-header,
-.mrs-shell[data-large-menu='true'] .mrs-app-header__actions {
-  zoom: var(--mrs-large-menu-scale, 1.75);
+.mrs-shell[data-menu-size='large'] .mrs-page-header,
+.mrs-shell[data-menu-size='large'] .mrs-app-header__actions {
+  zoom: var(--mrs-menu-scale-large, 1.75);
 }
 
 /* ── Page header chrome (ShellPageHeaderUI) ──────────────────────────────── */

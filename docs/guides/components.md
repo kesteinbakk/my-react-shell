@@ -306,20 +306,21 @@ const items = [
 
 A fully **controlled** settings panel in a Radix dialog with two built-in control groups:
 a **theme** group (palette + light/dark/system) and a **display** group (an optional
-icons↔emojis switch + an optional **large-menu** toggle that enlarges the app-shell header
-chrome ~1.75×). It **persists nothing** — reads each value, emits `onChange` — so the consumer
-owns storage. Auth-free; surface sign-out/profile via the `accountActions` slot.
+icons↔emojis switch + an optional **menu-size** control that sizes the app-shell header
+chrome — `small`·`medium`·`large`). It **persists nothing** — reads each value, emits
+`onChange` — so the consumer owns storage. Auth-free; surface sign-out/profile via the
+`accountActions` slot.
 
 The kit **never imports i18n or the icons/app-shell modules' state**: pass translated label
-text via props (the theme/mode/icons labels are required; the large-menu labels default to
-the shell's `mrs.*` chrome catalog), and wire the toggles yourself — icons↔emojis via
-`useIconMode()`, the large menu via `useLargeMenu()` (`my-react-shell/app-shell`).
+text via props (the theme/mode/icons labels are required; the menu-size labels default to
+the shell's `mrs.*` chrome catalog), and wire the controls yourself — icons↔emojis via
+`useIconMode()`, the menu size via `useMenuSize()` (`my-react-shell/app-shell`).
 
 **Sectioned (two-pane) mode.** Pass a `sections` array and the panel grows into a wider
 two-pane dialog: a left icon+label nav and a swappable right pane. **The nav is exactly the
 sections you pass, in order** — there are no auto-inserted items. The built-in controls are
 two reserved sections: include an entry with `id: 'theme'` (palette + light/dark/system)
-and/or `id: 'display'` (icons↔emojis + large menu) — your own `icon`/`label`, `content`
+and/or `id: 'display'` (icons↔emojis + menu size) — your own `icon`/`label`, `content`
 omitted — wherever you want them in the order, and the shell injects each pane there; leave
 an entry out to render no such section. Every other `UserPreferencesSection`
 (`{ id, icon, label, content }`) supplies its own `content`. Omit `sections` entirely and
@@ -334,16 +335,16 @@ item). A stale or removed id falls back to the first item; the shell never reset
 fixed section on open.
 
 ```tsx
-// wire to useTheme() + useIconMode() + useLargeMenu():
+// wire to useTheme() + useIconMode() + useMenuSize():
 <UserPreferences theme={theme} themes={themes} onThemeChange={setTheme}
   mode={mode} onModeChange={setMode}
   followSystem={isSystemMode} onFollowSystemChange={setSystemMode}
   iconMode={iconMode} onIconModeChange={setIconMode}
-  largeMenu={largeMenu} onLargeMenuChange={setLargeMenu} />
+  menuSize={menuSize} onMenuSizeChange={setMenuSize} />
 
 // …or as a sectioned dialog — you compose the whole order. Language leads here,
 // then the built-in Theme (id: 'theme') and Display (id: 'display') panes, Sound last:
-<UserPreferences /* …theme/mode/icon/large-menu props + labels… */
+<UserPreferences /* …theme/mode/icon/menu-size props + labels… */
   sections={[
     { id: 'language', icon: <AppIcon name="language" />, label: t('prefs.language'),
       content: <LanguageSettings /> },

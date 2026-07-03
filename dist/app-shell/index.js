@@ -23,9 +23,9 @@ export { findActiveChain } from './ShellPageHeader';
 export { useDynamicPages } from './useDynamicPages';
 export { defineShellConfig, ShellConfigError } from './defineShellConfig';
 export { useShellContext, useShellContextOptional } from './shellContext';
-// ── large-menu preference (enlarged header chrome) ─────────────────────────────
-export { LargeMenuProvider } from './LargeMenuProvider';
-export { useLargeMenu, useLargeMenuOptional } from './useLargeMenu';
+// ── menu-size preference (header-chrome size: small · medium · large) ──────────
+export { MenuSizeProvider } from './MenuSizeProvider';
+export { useMenuSize, useMenuSizeOptional } from './useMenuSize';
 // ── page tabs ─────────────────────────────────────────────────────────────────
 export { PageTabs } from './PageTabs';
 export { PageSections } from './PageSections';

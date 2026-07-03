@@ -373,6 +373,16 @@ docs/
   token) hits link consumers' dev immediately, so migrate them in the same change. Full
   mechanics + the release chain: `docs/guides/distribution-model.md` +
   `docs/maintainers/release-runbook.md`.
+- **Never call a shell change "done" until you've checked the consumer projects — their
+  code AND their TypeScript.** A rename, removed/renamed export, changed prop, or any
+  API-surface edit breaks every `link:` consumer (the demos, `offansk-ev`, any live-linked
+  app) the instant `dist/` rebuilds — a `does not provide an export named …` at their dev
+  server, not in this repo. So a shell change isn't finished when *this* repo typechecks;
+  it's finished when **every consumer you touched (or that imports the changed surface)
+  also typechecks and runs.** After any API-surface change: rebuild `dist/`, then run each
+  consumer's `pnpm typecheck` (and load its dev/preview) — don't assume the shell passing
+  means the consumers do. Migrate consumers in the *same* change; verify them before
+  reporting done.
 
 ## Releases (agent-handled — never hand steps to the user)
 

@@ -27,7 +27,7 @@ import {
   type ShellContextValue,
 } from './shellContext'
 import { ShellPageHeaderUI, findActiveChain } from './ShellPageHeader'
-import { useLargeMenuOptional } from './useLargeMenu'
+import { useMenuSizeOptional } from './useMenuSize'
 import { AppHeader } from './AppHeader'
 import { AppMenu } from './AppMenu'
 import { AppBottomNav } from './AppBottomNav'
@@ -107,9 +107,9 @@ export function AppShell({
 
   const pathname = useRouterState({ select: (s) => s.location.pathname })
 
-  // Soft read of the large-menu preference (enlarged header chrome). Absent
-  // provider → null → normal size, so a standalone consumer is unaffected.
-  const largeMenu = useLargeMenuOptional()?.largeMenu ?? false
+  // Soft read of the menu-size preference (header-chrome size). Absent provider →
+  // null → 'small' (normal), so a standalone consumer is unaffected.
+  const menuSize = useMenuSizeOptional()?.menuSize ?? 'small'
 
   const [scrollEl, setScrollEl] = useState<HTMLElement | null>(null)
 
@@ -311,7 +311,7 @@ export function AppShell({
           className="mrs-shell"
           data-content-padding={containerPadding}
           data-max-width={maxWidth}
-          data-large-menu={largeMenu ? 'true' : undefined}
+          data-menu-size={menuSize}
         >
           {!showMenu && (
             <div className="mrs-shell__header-row">
