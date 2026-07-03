@@ -14,7 +14,7 @@ Pick the card by what it holds; pick the grid by whether the card has a fixed si
 | **`ContentCard`** | A freeform-text tile: title + a `content` string (optional `html`), optional gauge. The text counterpart to `StatCard`. | Fixed-width, golden-ratio. |
 | **`PaperCard`** | A small preview / thumbnail styled as a dog-eared A4 sheet. | Fixed-width, A4 portrait (`height = width × √2`). |
 | **`DynamicGridCard`** | A size-less tile that should **stretch** to fill its grid column. The card to reach for inside a `DynamicCardGrid` (e.g. navigation tiles). | Fluid — fills its column, golden-ratio shape. |
-| **`NavCard`** | A **navigation tile** — a thin variant of `DynamicGridCard` fixed at `sm`, with no `icon` and only a `title` (rendered centred as the card's main content). Reach for a grid of plain nav links. | Fluid — self-caps at the `sm` width (min 180 / max 210 px). |
+| **`NavCard`** | A **navigation tile** — a thin variant of `DynamicGridCard` fixed at `md`, with no `icon` and only a `title` (rendered centred as the card's main content). Reach for a grid of plain nav links. | Fluid — self-caps at the `md` width (min 240 / max 320 px). |
 | **`PhiCard`** *(legacy)* | The original golden-ratio card. **Being phased out** — prefer `StatCard` / `ContentCard` for new work; it ships only so existing consumers keep building. | Fixed-width, golden-ratio. |
 
 > **Navigation — any card can be a real link.** `StatCard`, `ContentCard`, `PaperCard`, and
@@ -245,8 +245,8 @@ function SortableCard({ item }: { item: Item }) {
 navigation links**. It removes the props you don't want on a nav tile and repurposes the one
 you do:
 
-- **Fixed `sm`** — there is no `size` prop. It self-caps at the `sm` width (min 180 / max
-  210 px), so it stays small even inside a larger `DynamicCardGrid`.
+- **Fixed `md`** — there is no `size` prop. It self-caps at the `md` width (min 240 / max
+  320 px), so it stays a consistent size even inside a larger `DynamicCardGrid`.
 - **No `icon`.**
 - **Only a `title`** (required) — no `subtitle`, no `children`. The `title` renders as the
   card's **centred main content** (both axes), not a header. It's user-facing text with no
@@ -263,7 +263,7 @@ import { Link } from '@tanstack/react-router'
 <DynamicCardGrid
   items={areas}
   getKey={(a) => a.id}
-  cardSize="sm"
+  cardSize="md"
   renderCard={(a) => (
     <NavCard
       title={a.label}

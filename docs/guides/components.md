@@ -361,7 +361,10 @@ fixed section on open.
   frequently-used tab, an 8-column grid). Ships no popover or trigger of its own; embed it
   inline or nest it inside a `<Popover>`. Requires the `emojibase-data` optional peer
   (`pnpm add emojibase-data`). `locale` `'en'`/`'nb'` are bundled; others fall back to
-  `'en'`. `searchPlaceholder` / `noResultsLabel` accept translated strings.
+  `'en'`. `searchPlaceholder` / `noResultsLabel` accept translated strings. `EmojiPicker`
+  carries no "value" of its own — pass `onClear` to show a clear button next to the
+  search input and wire it to your own `setValue(undefined)`; omit it and the button
+  stays hidden.
 - **`EmojiBar`** — a compact strip of quick-access emoji buttons; no search, no categories.
   `emojis` defaults to `EMOJI_FREQUENT` (👍 ❤️ 😂 😮 😢 😡 🎉 👏 🔥 💯 ✨ 🙏). No peer dependency.
 - **`EmojiEmpty`** — a muted rounded-box placeholder (`+`) sized to one emoji slot. Use as
@@ -385,6 +388,9 @@ const [open, setOpen] = useState(false)
 
 // Norwegian locale:
 <EmojiPicker locale="nb" onSelect={onSelect} />
+
+// With a clear button (sets the value back to undefined):
+<EmojiPicker onSelect={setReaction} onClear={() => setReaction(undefined)} />
 
 // EmojiBar — default frequent set, custom set, subset:
 <EmojiBar onSelect={(emoji) => appendToMessage(emoji)} />

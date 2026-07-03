@@ -3,6 +3,7 @@ import { cn } from './cn'
 import { SectionSpinner } from './Spinner'
 import { Input } from './Input'
 import { useShellText } from './useShellText'
+import { CloseGlyph } from './CloseGlyph'
 
 // ── Internal types ────────────────────────────────────────────────────────
 
@@ -121,6 +122,13 @@ export interface EmojiPickerProps {
   showSearch?: boolean
   /** Placeholder text for the search field. Defaults to the built-in `mrs.action.search`. */
   searchPlaceholder?: string
+  /**
+   * Called when the clear button is clicked — use it to set your selected-emoji
+   * value back to `undefined`. Omit to hide the clear button (default: hidden).
+   */
+  onClear?: () => void
+  /** Accessible label + tooltip for the clear button. Defaults to the built-in `mrs.action.clear`. */
+  clearLabel?: string
   /** Label shown when search returns no results. Defaults to the built-in `mrs.state.noResults`. */
   noResultsLabel?: string
   /** Accessible label for the category tablist. Defaults to the built-in `mrs.emoji.categories`. */
@@ -150,6 +158,9 @@ export interface EmojiPickerProps {
  * <Popover trigger={<Button>Pick emoji</Button>}>
  *   <EmojiPicker onSelect={(emoji) => { setEmoji(emoji); setOpen(false) }} />
  * </Popover>
+ *
+ * // With a clear button (sets the value back to undefined):
+ * <EmojiPicker onSelect={setEmoji} onClear={() => setEmoji(undefined)} />
  * ```
  */
 export function EmojiPicker({
@@ -157,6 +168,8 @@ export function EmojiPicker({
   locale = 'en',
   showSearch = true,
   searchPlaceholder,
+  onClear,
+  clearLabel,
   noResultsLabel,
   categoriesLabel,
   frequentLabel,
@@ -164,6 +177,7 @@ export function EmojiPicker({
 }: EmojiPickerProps) {
   const st = useShellText()
   const searchText = searchPlaceholder ?? st('mrs.action.search')
+  const clearText = clearLabel ?? st('mrs.action.clear')
   const noResultsText = noResultsLabel ?? st('mrs.state.noResults')
   const categoriesText = categoriesLabel ?? st('mrs.emoji.categories')
   const frequentText = frequentLabel ?? st('mrs.emoji.frequent')
@@ -247,15 +261,28 @@ export function EmojiPicker({
 
   return (
     <div className={cn('mrs-emoji-picker', className)}>
-      {showSearch && (
+      {(showSearch || onClear) && (
         <div className="mrs-emoji-picker__search">
-          <Input
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder={searchText}
-            inputSize="sm"
-            aria-label={searchText}
-          />
+          {showSearch && (
+            <Input
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder={searchText}
+              inputSize="sm"
+              aria-label={searchText}
+            />
+          )}
+          {onClear && (
+            <button
+              type="button"
+              className="mrs-emoji-picker__clear"
+              onClick={onClear}
+              aria-label={clearText}
+              title={clearText}
+            >
+              <CloseGlyph />
+            </button>
+          )}
         </div>
       )}
 

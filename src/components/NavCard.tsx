@@ -23,7 +23,7 @@ export type NavCardLinkProps = DynamicGridCardLinkProps
 
 /**
  * Props for {@link NavCard}. The full {@link DynamicGridCardProps} surface **minus**
- * `size` (fixed at `sm`), `icon` (unsupported), and `subtitle`/`children` (its only
+ * `size` (fixed at `md`), `icon` (unsupported), and `subtitle`/`children` (its only
  * content is `title`). Everything else — `renderLink`, `footer`, `corner`, `tone`/
  * `color` accent, `watermark`, the drag seam, `hoverable`/`lift`, `shape` — is inherited.
  */
@@ -38,7 +38,7 @@ export interface NavCardProps
 }
 
 /**
- * A small **navigation-tile** variant of {@link DynamicGridCard}. It is fixed at the `sm`
+ * A small **navigation-tile** variant of {@link DynamicGridCard}. It is fixed at the `md`
  * size (there is no `size` prop) and carries no `icon`; its single `title` renders as the
  * card's centred main content rather than a header. Reach for it to build a grid of
  * navigation links — pair it with `renderLink` for whole-card navigation.
@@ -64,7 +64,7 @@ export const NavCard = forwardRef<HTMLDivElement, NavCardProps>(function NavCard
     <DynamicGridCard
       ref={ref}
       {...props}
-      size="sm"
+      size="md"
       className={cn('mrs-nav-card', className)}
       renderLink={wrappedRenderLink}
     >

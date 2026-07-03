@@ -27,6 +27,13 @@ export interface EmojiPickerProps {
     showSearch?: boolean;
     /** Placeholder text for the search field. Defaults to the built-in `mrs.action.search`. */
     searchPlaceholder?: string;
+    /**
+     * Called when the clear button is clicked — use it to set your selected-emoji
+     * value back to `undefined`. Omit to hide the clear button (default: hidden).
+     */
+    onClear?: () => void;
+    /** Accessible label + tooltip for the clear button. Defaults to the built-in `mrs.action.clear`. */
+    clearLabel?: string;
     /** Label shown when search returns no results. Defaults to the built-in `mrs.state.noResults`. */
     noResultsLabel?: string;
     /** Accessible label for the category tablist. Defaults to the built-in `mrs.emoji.categories`. */
@@ -53,6 +60,9 @@ export interface EmojiPickerProps {
  * <Popover trigger={<Button>Pick emoji</Button>}>
  *   <EmojiPicker onSelect={(emoji) => { setEmoji(emoji); setOpen(false) }} />
  * </Popover>
+ *
+ * // With a clear button (sets the value back to undefined):
+ * <EmojiPicker onSelect={setEmoji} onClear={() => setEmoji(undefined)} />
  * ```
  */
-export declare function EmojiPicker({ onSelect, locale, showSearch, searchPlaceholder, noResultsLabel, categoriesLabel, frequentLabel, className, }: EmojiPickerProps): import("react").JSX.Element;
+export declare function EmojiPicker({ onSelect, locale, showSearch, searchPlaceholder, onClear, clearLabel, noResultsLabel, categoriesLabel, frequentLabel, className, }: EmojiPickerProps): import("react").JSX.Element;

@@ -5116,8 +5116,37 @@
   overflow: hidden;
 }
 .mrs-emoji-picker__search {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
   padding: 0.5rem;
   border-bottom: 1px solid var(--color-border-primary);
+}
+.mrs-emoji-picker__search .mrs-input-wrapper {
+  flex: 1;
+  min-width: 0;
+}
+.mrs-emoji-picker__clear {
+  flex-shrink: 0;
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  color: var(--color-text-secondary);
+  transition: background 100ms ease;
+}
+.mrs-emoji-picker__clear:hover {
+  background: var(--color-surface-sunken);
+  color: var(--color-text-primary);
+}
+.mrs-emoji-picker__clear:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--color-focus);
 }
 
 /* Category tab strip — scrolls horizontally when there are more categories

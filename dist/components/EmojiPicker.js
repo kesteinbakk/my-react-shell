@@ -4,6 +4,7 @@ import { cn } from './cn';
 import { SectionSpinner } from './Spinner';
 import { Input } from './Input';
 import { useShellText } from './useShellText';
+import { CloseGlyph } from './CloseGlyph';
 // ── Module-level caches (survive re-mounts) ───────────────────────────────
 const dataCache = new Map();
 const groupsCache = new Map();
@@ -98,11 +99,15 @@ const FREQUENT_TAB = '__frequent__';
  * <Popover trigger={<Button>Pick emoji</Button>}>
  *   <EmojiPicker onSelect={(emoji) => { setEmoji(emoji); setOpen(false) }} />
  * </Popover>
+ *
+ * // With a clear button (sets the value back to undefined):
+ * <EmojiPicker onSelect={setEmoji} onClear={() => setEmoji(undefined)} />
  * ```
  */
-export function EmojiPicker({ onSelect, locale = 'en', showSearch = true, searchPlaceholder, noResultsLabel, categoriesLabel, frequentLabel, className, }) {
+export function EmojiPicker({ onSelect, locale = 'en', showSearch = true, searchPlaceholder, onClear, clearLabel, noResultsLabel, categoriesLabel, frequentLabel, className, }) {
     const st = useShellText();
     const searchText = searchPlaceholder ?? st('mrs.action.search');
+    const clearText = clearLabel ?? st('mrs.action.clear');
     const noResultsText = noResultsLabel ?? st('mrs.state.noResults');
     const categoriesText = categoriesLabel ?? st('mrs.emoji.categories');
     const frequentText = frequentLabel ?? st('mrs.emoji.frequent');
@@ -183,5 +188,5 @@ export function EmojiPicker({ onSelect, locale = 'en', showSearch = true, search
         onSelect(unicode);
         setQuery('');
     }, [onSelect]);
-    return (_jsxs("div", { className: cn('mrs-emoji-picker', className), children: [showSearch && (_jsx("div", { className: "mrs-emoji-picker__search", children: _jsx(Input, { value: query, onChange: (e) => setQuery(e.target.value), placeholder: searchText, inputSize: "sm", "aria-label": searchText }) })), loading ? (_jsx("div", { className: "mrs-emoji-picker__loading", children: _jsx(SectionSpinner, {}) })) : (_jsxs(_Fragment, { children: [!isSearchMode && (_jsxs("div", { className: "mrs-emoji-picker__tabs", role: "tablist", "aria-label": categoriesText, children: [_jsx("button", { type: "button", role: "tab", "aria-selected": activeTab === FREQUENT_TAB, "aria-label": frequentText, title: frequentText, className: cn('mrs-emoji-picker__tab', activeTab === FREQUENT_TAB && 'mrs-emoji-picker__tab--active'), onClick: () => setActiveTab(FREQUENT_TAB), children: "\u23F1\uFE0F" }), groups.map((g) => (_jsx("button", { type: "button", role: "tab", "aria-selected": activeTab === g.key, "aria-label": g.message, title: g.message, className: cn('mrs-emoji-picker__tab', activeTab === g.key && 'mrs-emoji-picker__tab--active'), onClick: () => setActiveTab(g.key), children: GROUP_ICONS[g.key] ?? '📦' }, g.key)))] })), _jsx("div", { className: "mrs-emoji-picker__body", children: isSearchMode && currentEmojis.length === 0 ? (_jsx("div", { className: "mrs-emoji-picker__empty", children: noResultsText })) : (_jsx("div", { className: "mrs-emoji-picker__grid", children: currentEmojis.map((emoji, i) => (_jsx("button", { type: "button", className: "mrs-emoji-picker__btn", onClick: () => handleSelect(emoji.unicode), title: emoji.label || emoji.unicode, "aria-label": emoji.label || emoji.unicode, children: emoji.unicode }, `${emoji.unicode}-${i}`))) })) })] }))] }));
+    return (_jsxs("div", { className: cn('mrs-emoji-picker', className), children: [(showSearch || onClear) && (_jsxs("div", { className: "mrs-emoji-picker__search", children: [showSearch && (_jsx(Input, { value: query, onChange: (e) => setQuery(e.target.value), placeholder: searchText, inputSize: "sm", "aria-label": searchText })), onClear && (_jsx("button", { type: "button", className: "mrs-emoji-picker__clear", onClick: onClear, "aria-label": clearText, title: clearText, children: _jsx(CloseGlyph, {}) }))] })), loading ? (_jsx("div", { className: "mrs-emoji-picker__loading", children: _jsx(SectionSpinner, {}) })) : (_jsxs(_Fragment, { children: [!isSearchMode && (_jsxs("div", { className: "mrs-emoji-picker__tabs", role: "tablist", "aria-label": categoriesText, children: [_jsx("button", { type: "button", role: "tab", "aria-selected": activeTab === FREQUENT_TAB, "aria-label": frequentText, title: frequentText, className: cn('mrs-emoji-picker__tab', activeTab === FREQUENT_TAB && 'mrs-emoji-picker__tab--active'), onClick: () => setActiveTab(FREQUENT_TAB), children: "\u23F1\uFE0F" }), groups.map((g) => (_jsx("button", { type: "button", role: "tab", "aria-selected": activeTab === g.key, "aria-label": g.message, title: g.message, className: cn('mrs-emoji-picker__tab', activeTab === g.key && 'mrs-emoji-picker__tab--active'), onClick: () => setActiveTab(g.key), children: GROUP_ICONS[g.key] ?? '📦' }, g.key)))] })), _jsx("div", { className: "mrs-emoji-picker__body", children: isSearchMode && currentEmojis.length === 0 ? (_jsx("div", { className: "mrs-emoji-picker__empty", children: noResultsText })) : (_jsx("div", { className: "mrs-emoji-picker__grid", children: currentEmojis.map((emoji, i) => (_jsx("button", { type: "button", className: "mrs-emoji-picker__btn", onClick: () => handleSelect(emoji.unicode), title: emoji.label || emoji.unicode, "aria-label": emoji.label || emoji.unicode, children: emoji.unicode }, `${emoji.unicode}-${i}`))) })) })] }))] }));
 }
