@@ -51,7 +51,10 @@
       "frequent": "Ofte brukt"
     },
     "prefs": {
-      "language": "Språk"
+      "language": "Språk",
+      "largeMenuHeading": "Menystørrelse",
+      "largeMenuOff": "Normal",
+      "largeMenuOn": "Stor"
     }
   }
 }

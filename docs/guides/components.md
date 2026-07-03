@@ -304,25 +304,27 @@ const items = [
 
 ## `UserPreferences`
 
-A fully **controlled** theme/display panel in a Radix dialog (palette + light/dark/system
-+ an optional icons↔emojis switch). It **persists nothing** — reads each value, emits
-`onChange` — so the consumer owns storage. Auth-free; surface sign-out/profile via the
-`accountActions` slot.
+A fully **controlled** settings panel in a Radix dialog with two built-in control groups:
+a **theme** group (palette + light/dark/system) and a **display** group (an optional
+icons↔emojis switch + an optional **large-menu** toggle that enlarges the app-shell header
+chrome ~2×). It **persists nothing** — reads each value, emits `onChange` — so the consumer
+owns storage. Auth-free; surface sign-out/profile via the `accountActions` slot.
 
-The kit **never imports i18n or the icons module**: pass translated label text via props
-(all labels have English defaults), and wire the icons↔emojis swap yourself via
-`useIconMode().isEmoji`.
+The kit **never imports i18n or the icons/app-shell modules' state**: pass translated label
+text via props (the theme/mode/icons labels are required; the large-menu labels default to
+the shell's `mrs.*` chrome catalog), and wire the toggles yourself — icons↔emojis via
+`useIconMode()`, the large menu via `useLargeMenu()` (`my-react-shell/app-shell`).
 
 **Sectioned (two-pane) mode.** Pass a `sections` array and the panel grows into a wider
 two-pane dialog: a left icon+label nav and a swappable right pane. **The nav is exactly the
-sections you pass, in order** — there is no auto-inserted Theme item. The built-in
-palette/mode/display controls are themselves a section: include an entry with
-`id: 'theme'` (your own `icon`/`label`, `content` omitted) wherever you want it in the
-order, and the shell injects the theme pane there; leave the entry out to render no theme
-section at all. Every other `UserPreferencesSection` (`{ id, icon, label, content }`)
-supplies its own `content`. Omit `sections` entirely and nothing changes — the
-single-column panel renders exactly as before. The shell stays icon- and
-language-neutral: pass already-resolved icon nodes and translated labels.
+sections you pass, in order** — there are no auto-inserted items. The built-in controls are
+two reserved sections: include an entry with `id: 'theme'` (palette + light/dark/system)
+and/or `id: 'display'` (icons↔emojis + large menu) — your own `icon`/`label`, `content`
+omitted — wherever you want them in the order, and the shell injects each pane there; leave
+an entry out to render no such section. Every other `UserPreferencesSection`
+(`{ id, icon, label, content }`) supplies its own `content`. Omit `sections` entirely and
+the single-column panel renders both the theme and display groups stacked. The shell stays
+icon- and language-neutral: pass already-resolved icon nodes and translated labels.
 
 The selected section is **controlled-or-internal**, like `open`: pass
 `activeSection` + `onActiveSectionChange` to own it — e.g. persist to `sessionStorage`
@@ -332,19 +334,21 @@ item). A stale or removed id falls back to the first item; the shell never reset
 fixed section on open.
 
 ```tsx
-// wire to useTheme() + useIconMode():
+// wire to useTheme() + useIconMode() + useLargeMenu():
 <UserPreferences theme={theme} themes={themes} onThemeChange={setTheme}
   mode={mode} onModeChange={setMode}
   followSystem={isSystemMode} onFollowSystemChange={setSystemMode}
-  iconMode={iconMode} onIconModeChange={setIconMode} />
+  iconMode={iconMode} onIconModeChange={setIconMode}
+  largeMenu={largeMenu} onLargeMenuChange={setLargeMenu} />
 
 // …or as a sectioned dialog — you compose the whole order. Language leads here,
-// the built-in Theme pane is second (id: 'theme', no content), Sound last:
-<UserPreferences /* …theme/mode/icon props + labels… */
+// then the built-in Theme (id: 'theme') and Display (id: 'display') panes, Sound last:
+<UserPreferences /* …theme/mode/icon/large-menu props + labels… */
   sections={[
     { id: 'language', icon: <AppIcon name="language" />, label: t('prefs.language'),
       content: <LanguageSettings /> },
     { id: 'theme', icon: <AppIcon name="theme" />, label: t('prefs.appearance') },
+    { id: 'display', icon: <AppIcon name="display" />, label: t('prefs.display') },
     { id: 'sound', icon: <AppIcon name="sound" />, label: t('prefs.sound'),
       content: <SoundSettings /> },
   ]} />

@@ -145,6 +145,37 @@ Only the body cell scrolls (`[data-shell-content]`) — the chrome, sidebar, and
 stay pinned. On mobile the sidebar collapses to a Radix drawer (or a bottom tab bar of
 the `tabBar: true` pages when `mobileNav='tabBar'`).
 
+## Large menu (enlarged header chrome)
+
+An opt-in display/accessibility preference that enlarges the shell's **header chrome** —
+the page-header band (breadcrumbs + action buttons + search) and the top-header
+(`AppHeader`) action cluster — to ~2×, leaving the app **title/brand** at its normal size.
+It changes no data and no routing.
+
+Mount `<LargeMenuProvider>` above the shell (mirrors `<IconModeProvider>`): uncontrolled it
+seeds from and persists to `localStorage` (`defaultLarge` is `false`, so it is **off** by
+default); pass `value` + `onChange` to own the state yourself (e.g. a per-user preference).
+`<AppShell>` reads it **softly** via `useLargeMenuOptional()` — with no provider mounted the
+shell simply renders at normal size, so a standalone consumer is unaffected. Give users the
+toggle by feeding `useLargeMenu()` into `<UserPreferences>`'s `largeMenu` /
+`onLargeMenuChange` (the built-in **Display** section).
+
+```tsx
+import { LargeMenuProvider, useLargeMenu } from 'my-react-shell/app-shell'
+
+// above the router / shell:
+<LargeMenuProvider>{/* … <AppShell> … */}</LargeMenuProvider>
+
+// in your preferences control:
+const { largeMenu, setLargeMenu } = useLargeMenu()
+<UserPreferences /* … */ largeMenu={largeMenu} onLargeMenuChange={setLargeMenu} />
+```
+
+Mechanically, `<AppShell>` sets `data-large-menu='true'` on its root when the preference is
+on, and app-shell.css scales the two chrome regions with `zoom` (so heterogeneous fixed-px
+icons, text, and spacing scale uniformly and stay aligned). Tune the factor with the
+`--mrs-large-menu-scale` CSS var (default `1.9`).
+
 ## Not-found (404)
 
 404 handling is **router config, not a shell prop** — and the router is yours, so the

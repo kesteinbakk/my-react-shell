@@ -273,6 +273,22 @@
   text-decoration: none;
 }
 
+/* ── Large-menu display preference (LargeMenuProvider / useLargeMenu) ─────────
+   Opt-in "large menu" mode. <AppShell> sets `data-large-menu='true'` on the root
+   when the preference is on; here we scale the page-header band (breadcrumbs +
+   actions + search + tabs) and the top-header action cluster to ~2×, leaving the
+   app-header brand/title at its normal size. `zoom` reflows layout properly, so
+   heterogeneous fixed-px icons, text, and spacing all scale uniformly and stay
+   aligned (a `transform: scale` would not reserve layout box). Attribute absent
+   (the default) → no rule applies → normal size. */
+.mrs-shell[data-large-menu='true'] {
+  --mrs-large-menu-scale: 1.9;
+}
+.mrs-shell[data-large-menu='true'] .mrs-page-header,
+.mrs-shell[data-large-menu='true'] .mrs-app-header__actions {
+  zoom: var(--mrs-large-menu-scale, 1.9);
+}
+
 /* ── Page header chrome (ShellPageHeaderUI) ──────────────────────────────── */
 .mrs-page-header {
   padding-top: 0.25rem;

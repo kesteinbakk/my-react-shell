@@ -14,11 +14,12 @@ import { useShellText } from './useShellText'
  * {@link UserPreferencesProps.sections} to switch `<UserPreferences>` from its
  * single-column body to a category rail.
  *
- * Two ids are **reserved** and render built-in panes when their `content` is omitted:
- * `'theme'` (palette/mode/display controls) and `'language'` (the language switcher,
- * driven off the mounted `<I18nProvider>`). Include an entry with that `id` (and your
- * own `icon`/`label`) wherever you want it in the order; leave the entry out entirely
- * to render no such section.
+ * Three ids are **reserved** and render built-in panes when their `content` is omitted:
+ * `'theme'` (palette + light/dark/system), `'display'` (icons↔emojis + the large-menu
+ * toggle) and `'language'` (the language switcher, driven off the mounted
+ * `<I18nProvider>`). Include an entry with that `id` (and your own `icon`/`label`)
+ * wherever you want it in the order; leave the entry out entirely to render no such
+ * section.
  */
 export interface UserPreferencesSection {
   /** Stable id — the nav key and selected-state value. The reserved `'theme'` / `'language'` ids render built-in panes. */
@@ -51,10 +52,20 @@ export interface UserPreferencesProps {
   onFollowSystemChange?: (follow: boolean) => void
 
   // ── Icons vs emojis ──────────────────────────────────────────────────────
-  /** Active display mode. Omit (with `onIconModeChange`) to hide the section. */
+  /** Active display mode. Omit (with `onIconModeChange`) to hide the control. */
   iconMode?: IconMode
-  /** Called when icons/emojis is chosen. Omit to hide the section. */
+  /** Called when icons/emojis is chosen. Omit to hide the control. */
   onIconModeChange?: (mode: IconMode) => void
+
+  // ── Large menu (enlarged header chrome) ──────────────────────────────────
+  /**
+   * Active large-menu preference — enlarges the app-shell header chrome (`~2×`).
+   * Wire it to `useLargeMenu()` (my-react-shell/app-shell). Omit (with
+   * `onLargeMenuChange`) to hide the control.
+   */
+  largeMenu?: boolean
+  /** Called when the large-menu preference is toggled. Omit to hide the control. */
+  onLargeMenuChange?: (large: boolean) => void
 
   // ── Extension + presentation ─────────────────────────────────────────────
   /** Optional rows rendered below a divider — e.g. sign out / profile. The kit stays auth-free; you wire identity here. */
@@ -100,6 +111,12 @@ export interface UserPreferencesProps {
   systemLabel: ReactNode
   iconsLabel: ReactNode
   emojisLabel: ReactNode
+  /** Heading for the large-menu control. Optional — defaults to `mrs.prefs.largeMenuHeading`. */
+  largeMenuHeading?: ReactNode
+  /** Label for the "off" (normal) large-menu segment. Optional — defaults to `mrs.prefs.largeMenuOff`. */
+  largeMenuOffLabel?: ReactNode
+  /** Label for the "on" (large) large-menu segment. Optional — defaults to `mrs.prefs.largeMenuOn`. */
+  largeMenuOnLabel?: ReactNode
   /** Accessible label for the close ✕. Optional — defaults to the built-in `mrs.action.close`. */
   closeLabel?: string
   className?: string
@@ -155,6 +172,25 @@ const CloseGlyph = (
   <svg {...svg} width={16} height={16} aria-hidden="true">
     <path d="M18 6 6 18" />
     <path d="m6 6 12 12" />
+  </svg>
+)
+
+// ── Menu-size glyphs (large-menu toggle) ─────────────────────────────────────
+const MinimizeGlyph = (
+  <svg {...svg} width={16} height={16} aria-hidden="true">
+    <path d="M8 3v3a2 2 0 0 1-2 2H3" />
+    <path d="M21 8h-3a2 2 0 0 1-2-2V3" />
+    <path d="M3 16h3a2 2 0 0 1 2 2v3" />
+    <path d="M16 21v-3a2 2 0 0 1 2-2h3" />
+  </svg>
+)
+
+const MaximizeGlyph = (
+  <svg {...svg} width={16} height={16} aria-hidden="true">
+    <path d="M8 3H5a2 2 0 0 0-2 2v3" />
+    <path d="M21 8V5a2 2 0 0 0-2-2h-3" />
+    <path d="M3 16v3a2 2 0 0 0 2 2h3" />
+    <path d="M16 21h3a2 2 0 0 0 2-2v-3" />
   </svg>
 )
 
@@ -256,8 +292,11 @@ function Segment({
 }
 
 /**
- * <UserPreferences> — a drop-in user-options panel: theme palette + light/dark/system
- * + an optional icons↔emojis switch, in a Radix dialog opened from an icon button.
+ * <UserPreferences> — a drop-in user-options panel in a Radix dialog opened from an
+ * icon button. Two built-in control groups: **theme** (palette + light/dark/system)
+ * and **display** (an optional icons↔emojis switch + an optional large-menu toggle
+ * that enlarges the app-shell header chrome). In the single-column layout both groups
+ * stack; in the sectioned layout they are the reserved `'theme'` and `'display'` panes.
  *
  * Fully **controlled** — it reads the current values and emits an `onChange` for each
  * preference, and persists nothing itself, so the consumer decides where state lives
@@ -276,6 +315,8 @@ export function UserPreferences({
   onFollowSystemChange,
   iconMode,
   onIconModeChange,
+  largeMenu,
+  onLargeMenuChange,
   accountActions,
   trigger,
   open,
@@ -294,6 +335,9 @@ export function UserPreferences({
   systemLabel,
   iconsLabel,
   emojisLabel,
+  largeMenuHeading,
+  largeMenuOffLabel,
+  largeMenuOnLabel,
   closeLabel,
   className,
 }: UserPreferencesProps) {
@@ -330,13 +374,16 @@ export function UserPreferences({
   const showSystem = onFollowSystemChange !== undefined
   const sys = followSystem === true
   const showDisplay = iconMode !== undefined && onIconModeChange !== undefined
+  const showLargeMenu = largeMenu !== undefined && onLargeMenuChange !== undefined
   // The modal's own glyphs follow the app's display mode when the consumer wires
   // the icons seam (passes `iconMode`); otherwise they stay icons.
   const emojiMode = iconMode === 'emoji'
 
-  // The three built-in theme controls (palette / mode / display). In the
+  // The two built-in theme controls (palette + light/dark/system). In the
   // single-column layout they render inline; in the sectioned layout they are
-  // the right pane shown while the built-in "Theme" nav item is active.
+  // the right pane shown while the built-in "Theme" nav item is active. The
+  // display controls (icons↔emojis + large menu) live in their own `displayPane`
+  // (reserved `'display'` section) so themes and visuals are separate sections.
   const themePane = (
     <>
       {/* Theme palette */}
@@ -381,27 +428,57 @@ export function UserPreferences({
           )}
         </div>
       </section>
-
-      {/* Icons vs emojis */}
-      {showDisplay && (
-        <section className="mrs-prefs__section">
-          <h3 className="mrs-prefs__heading">{displayHeading}</h3>
-          <div className="mrs-prefs__seg" role="group" aria-label={typeof displayHeading === 'string' ? displayHeading : undefined}>
-            {/* This toggle is exempt from the mode swap — it always shows an icon
-                on the left and an emoji on the right, to demonstrate the switch. */}
-            <Segment active={iconMode === 'icon'} onClick={() => onIconModeChange!('icon')}>
-              {SmileGlyph}
-              {iconsLabel}
-            </Segment>
-            <Segment active={iconMode === 'emoji'} onClick={() => onIconModeChange!('emoji')}>
-              <span className="mrs-prefs__emoji" aria-hidden="true">😀</span>
-              {emojisLabel}
-            </Segment>
-          </div>
-        </section>
-      )}
     </>
   )
+
+  // The built-in display controls (reserved `'display'` section id): the
+  // icons↔emojis switch and the large-menu (enlarged header chrome) toggle. Each
+  // control renders only when the consumer wires it; the pane is empty (renders
+  // nothing) if neither is wired.
+  const displayPane =
+    showDisplay || showLargeMenu ? (
+      <>
+        {/* Icons vs emojis */}
+        {showDisplay && (
+          <section className="mrs-prefs__section">
+            <h3 className="mrs-prefs__heading">{displayHeading}</h3>
+            <div className="mrs-prefs__seg" role="group" aria-label={typeof displayHeading === 'string' ? displayHeading : undefined}>
+              {/* This toggle is exempt from the mode swap — it always shows an icon
+                  on the left and an emoji on the right, to demonstrate the switch. */}
+              <Segment active={iconMode === 'icon'} onClick={() => onIconModeChange!('icon')}>
+                {SmileGlyph}
+                {iconsLabel}
+              </Segment>
+              <Segment active={iconMode === 'emoji'} onClick={() => onIconModeChange!('emoji')}>
+                <span className="mrs-prefs__emoji" aria-hidden="true">😀</span>
+                {emojisLabel}
+              </Segment>
+            </div>
+          </section>
+        )}
+
+        {/* Large menu (enlarged header chrome) */}
+        {showLargeMenu && (
+          <section className="mrs-prefs__section">
+            <h3 className="mrs-prefs__heading">{largeMenuHeading ?? st('mrs.prefs.largeMenuHeading')}</h3>
+            <div
+              className="mrs-prefs__seg"
+              role="group"
+              aria-label={typeof largeMenuHeading === 'string' ? largeMenuHeading : st('mrs.prefs.largeMenuHeading')}
+            >
+              <Segment active={largeMenu === false} onClick={() => onLargeMenuChange!(false)}>
+                {MinimizeGlyph}
+                {largeMenuOffLabel ?? st('mrs.prefs.largeMenuOff')}
+              </Segment>
+              <Segment active={largeMenu === true} onClick={() => onLargeMenuChange!(true)}>
+                {MaximizeGlyph}
+                {largeMenuOnLabel ?? st('mrs.prefs.largeMenuOn')}
+              </Segment>
+            </div>
+          </section>
+        )}
+      </>
+    ) : null
 
   // The built-in language pane (reserved `'language'` section id). Driven off the
   // i18n seam read *softly* — present only when an `<I18nProvider>` is mounted, so
@@ -432,14 +509,17 @@ export function UserPreferences({
   // The left-nav is exactly the sections the consumer passes, in order — the
   // built-in theme controls are just the entry whose id is `'theme'`.
   const navItems = sectioned ? sections! : []
-  // The reserved `'theme'` / `'language'` ids render built-in panes; every other id
-  // renders its section's own content. `activeId` is already guarded to a present id.
+  // The reserved `'theme'` / `'display'` / `'language'` ids render built-in panes;
+  // every other id renders its section's own content. `activeId` is already guarded
+  // to a present id.
   const activeContent =
     activeId === 'theme'
       ? themePane
-      : activeId === 'language'
-        ? languagePane
-        : sections?.find((s) => s.id === activeId)?.content ?? null
+      : activeId === 'display'
+        ? displayPane
+        : activeId === 'language'
+          ? languagePane
+          : sections?.find((s) => s.id === activeId)?.content ?? null
 
   return (
     <Dialog.Root open={isOpen} onOpenChange={setOpen}>
@@ -486,7 +566,10 @@ export function UserPreferences({
               <div className="mrs-prefs__content">{activeContent}</div>
             </div>
           ) : (
-            themePane
+            <>
+              {themePane}
+              {displayPane}
+            </>
           )}
 
           {accountActions != null && <div className="mrs-prefs__account">{accountActions}</div>}

@@ -51,7 +51,10 @@
       "frequent": "Frequently used"
     },
     "prefs": {
-      "language": "Language"
+      "language": "Language",
+      "largeMenuHeading": "Menu size",
+      "largeMenuOff": "Normal",
+      "largeMenuOn": "Large"
     }
   }
 }
