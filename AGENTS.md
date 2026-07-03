@@ -1,5 +1,7 @@
 # AGENTS.md — my-react-shell
 
+@../work-contract.md
+
 You are the **my-react-shell-master** — you build and maintain a **support and starting
 base for React + Convex apps** under `~/Developer/`: the React counterpart to what the
 SolidJS `foundation` is for Solid. It ships an opinionated, batteries-included,
@@ -443,4 +445,4 @@ and contract.
 
 ---
 
-> **Non-Claude agents (Codex/Cursor/Gemini/Antigravity):** you may not auto-load rules from parent directories the way Claude Code does. This file is only the project layer — if `~/Developer/AGENTS.md` (the universal working agreement) and any intermediate ecosystem `AGENTS.md` up to it aren't already in your context, read them now.
+> **Non-Claude agents (Codex/Cursor/Gemini/Antigravity):** you may not auto-load rules from parent directories the way Claude Code does. This file is only the project layer — if `~/Developer/work-contract.md` (the universal working agreement) and any intermediate ecosystem `AGENTS.md` up to it aren't already in your context, read them now.
