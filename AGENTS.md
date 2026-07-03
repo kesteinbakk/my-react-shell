@@ -420,3 +420,7 @@ stack-level scaffolding sequence is the `react-framework` skill's guide
 ([.claude/skills/react-framework/react-framework-notes.md](.claude/skills/react-framework/react-framework-notes.md));
 my-react-shell's `docs/guides/` are the authority for each module's exact exports
 and contract.
+
+---
+
+> **Non-Claude agents (Codex/Cursor/Gemini/Antigravity):** you may not auto-load rules from parent directories the way Claude Code does. This file is only the project layer — if `~/Developer/AGENTS.md` (the universal working agreement) and any intermediate ecosystem `AGENTS.md` up to it aren't already in your context, read them now.
