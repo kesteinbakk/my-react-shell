@@ -4,6 +4,14 @@ import { Link, useNavigate, useRouterState } from '@tanstack/react-router';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { SearchInput as SearchInputComponent, ActionButton } from '../components';
 /**
+ * How long the "no registered page" DEV warning waits before firing. Long enough
+ * to outlast a backing query + its `useDynamicPages` registration commit on a
+ * hard-load / deep-link (so a data-driven crumb that registers late never
+ * false-positives), short enough that a genuine config bug still surfaces
+ * promptly. DEV-only; never runs in production.
+ */
+const UNREGISTERED_ROUTE_WARN_DELAY_MS = 1500;
+/**
  * Resolve the breadcrumb chain for a pathname. PURE — a function of the URL
  * pathname plus the static `roots` tree and the runtime `dynamicByParent` map.
  * At each level it merges the parent's dynamic children into the candidate pool,
@@ -51,10 +59,19 @@ export function ShellPageHeaderUI(props) {
     // The resolved leaf truly matches the current path (not just an ancestor).
     const leafMatchesPath = leaf !== undefined && leaf.entry.route === pathname;
     // DEV warning when the route resolves to no registered leaf: the breadcrumb
-    // can only show ancestors, never this page. Surfaced once per resolution.
-    // Exempt: dynamic parents (the child is transient/data-driven, not a config
-    // bug) and the site root (a chrome-only header at "/" is the correct pattern
-    // since registering "/" as a page now throws).
+    // can only show ancestors, never this page. Exempt: dynamic parents (the child
+    // is transient/data-driven, not a config bug) and the site root (a chrome-only
+    // header at "/" is the correct pattern since registering "/" as a page now
+    // throws).
+    //
+    // DEFERRED so a transient load race doesn't false-positive: a page that
+    // registers its own crumb via `useDynamicPages` after a backing query resolves
+    // legitimately has no leaf for the first render(s) of a hard-load / deep-link —
+    // nothing is registered under its parent yet. We arm a timer instead of warning
+    // synchronously; when the registration finally commits, `shell.dynamicPages`
+    // (an effect dep) changes, this effect re-runs, and the cleanup clears the
+    // pending timer before it fires. A genuine config bug never resolves, so the
+    // timer survives and the warning still surfaces (just after the settle window).
     useEffect(() => {
         if (!import.meta.env.DEV)
             return;
@@ -65,8 +82,11 @@ export function ShellPageHeaderUI(props) {
         if (!leaf && pathname === '/')
             return;
         const ancestor = leaf ? leaf.entry.route : '(none)';
-        console.warn(`[AppShell] No registered page for "${pathname}" (nearest ancestor: ${ancestor}). ` +
-            'Register it in shell config `pages` or via useDynamicPages.');
+        const timer = setTimeout(() => {
+            console.warn(`[AppShell] No registered page for "${pathname}" (nearest ancestor: ${ancestor}). ` +
+                'Register it in shell config `pages` or via useDynamicPages.');
+        }, UNREGISTERED_ROUTE_WARN_DELAY_MS);
+        return () => clearTimeout(timer);
     }, [pathname, leafMatchesPath, leaf, shell.dynamicPages]);
     const alertAction = shell.pageAlertSpec;
     const hideOther = alertAction?.hideOtherActions === true;
