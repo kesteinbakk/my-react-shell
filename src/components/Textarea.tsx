@@ -1,4 +1,4 @@
-import { useId, type ChangeEvent, type TextareaHTMLAttributes, useState, useEffect, type FocusEvent, type ReactNode } from 'react'
+import { useId, type ChangeEvent, type TextareaHTMLAttributes, useState, useEffect, type FocusEvent, type ReactNode, type Ref } from 'react'
 import { cn } from './cn'
 import { useDebounce } from './useDebounce'
 import { useRequiredValidation } from './useRequiredValidation'
@@ -32,6 +32,13 @@ export interface TextareaProps extends Omit<TextareaHTMLAttributes<HTMLTextAreaE
    * with the controlled `invalid`, which always takes precedence.
    */
   validateOnBlur?: boolean
+  /**
+   * Forwarded to the underlying `<textarea>` element. Lets a caller reach the DOM
+   * node for imperative needs (focus, `selectionStart`/`selectionEnd`,
+   * `setSelectionRange`) — e.g. inserting text at the caret. React-19 ref-as-prop
+   * (no `forwardRef` wrapper needed).
+   */
+  ref?: Ref<HTMLTextAreaElement>
 }
 
 const CheckIcon = () => (
@@ -85,6 +92,7 @@ export function Textarea({
   required = false,
   validateOnBlur = true,
   id: passedId,
+  ref,
   ...rest
 }: TextareaProps) {
   const [localStatus, setLocalStatus] = useState<typeof saveStatus>(saveStatus)
@@ -125,6 +133,7 @@ export function Textarea({
   const textareaEl = (
     <div className={cn('mrs-textarea-wrapper', fullWidth && 'mrs-textarea-wrapper--full')}>
       <textarea
+        ref={ref}
         id={id}
         className={cn(
           'mrs-textarea',

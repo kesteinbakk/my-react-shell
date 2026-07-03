@@ -12,7 +12,7 @@ const ErrorIcon = () => (_jsxs("svg", { xmlns: "http://www.w3.org/2000/svg", vie
  * the only additions are `invalid` (error styling + `aria-invalid`) and
  * `onDebouncedChange` / `debounceMs` for stop-typing callbacks.
  */
-export function Textarea({ invalid = false, fullWidth = false, className, onDebouncedChange, debounceMs = 500, onChange, saveStatus, onBlur, label, required = false, validateOnBlur = true, id: passedId, ...rest }) {
+export function Textarea({ invalid = false, fullWidth = false, className, onDebouncedChange, debounceMs = 500, onChange, saveStatus, onBlur, label, required = false, validateOnBlur = true, id: passedId, ref, ...rest }) {
     const [localStatus, setLocalStatus] = useState(saveStatus);
     const generatedId = useId();
     const id = passedId ?? generatedId;
@@ -42,7 +42,7 @@ export function Textarea({ invalid = false, fullWidth = false, className, onDebo
         onBlur?.(e);
     };
     const isInvalid = invalid || localStatus === 'error' || autoInvalid;
-    const textareaEl = (_jsxs("div", { className: cn('mrs-textarea-wrapper', fullWidth && 'mrs-textarea-wrapper--full'), children: [_jsx("textarea", { id: id, className: cn('mrs-textarea', isInvalid && 'mrs-textarea--invalid', fullWidth && 'mrs-textarea--full', localStatus === 'saved' && 'mrs-textarea--saved-icon', localStatus === 'error' && 'mrs-textarea--error-icon', localStatus === 'saving' && 'mrs-textarea--saving', className), "aria-invalid": isInvalid || undefined, "aria-required": required || undefined, onChange: handleChange, onBlur: handleBlur, ...rest }), localStatus === 'saved' && (_jsx("span", { className: "mrs-textarea-icon-saved", children: _jsx(CheckIcon, {}) })), localStatus === 'error' && (_jsx("span", { className: "mrs-textarea-icon-error", children: _jsx(ErrorIcon, {}) }))] }));
+    const textareaEl = (_jsxs("div", { className: cn('mrs-textarea-wrapper', fullWidth && 'mrs-textarea-wrapper--full'), children: [_jsx("textarea", { ref: ref, id: id, className: cn('mrs-textarea', isInvalid && 'mrs-textarea--invalid', fullWidth && 'mrs-textarea--full', localStatus === 'saved' && 'mrs-textarea--saved-icon', localStatus === 'error' && 'mrs-textarea--error-icon', localStatus === 'saving' && 'mrs-textarea--saving', className), "aria-invalid": isInvalid || undefined, "aria-required": required || undefined, onChange: handleChange, onBlur: handleBlur, ...rest }), localStatus === 'saved' && (_jsx("span", { className: "mrs-textarea-icon-saved", children: _jsx(CheckIcon, {}) })), localStatus === 'error' && (_jsx("span", { className: "mrs-textarea-icon-error", children: _jsx(ErrorIcon, {}) }))] }));
     if (label != null) {
         return (_jsxs("div", { className: cn('mrs-field', fullWidth && 'mrs-field--full'), children: [_jsx(Label, { htmlFor: id, required: required, className: "mrs-field__label", children: label }), textareaEl] }));
     }

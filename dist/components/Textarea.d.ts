@@ -1,4 +1,4 @@
-import { type ChangeEvent, type TextareaHTMLAttributes, type ReactNode } from 'react';
+import { type ChangeEvent, type TextareaHTMLAttributes, type ReactNode, type Ref } from 'react';
 export interface TextareaProps extends Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, 'onChange'> {
     /** Error state — sets `aria-invalid` and the error styling. */
     invalid?: boolean;
@@ -27,6 +27,13 @@ export interface TextareaProps extends Omit<TextareaHTMLAttributes<HTMLTextAreaE
      * with the controlled `invalid`, which always takes precedence.
      */
     validateOnBlur?: boolean;
+    /**
+     * Forwarded to the underlying `<textarea>` element. Lets a caller reach the DOM
+     * node for imperative needs (focus, `selectionStart`/`selectionEnd`,
+     * `setSelectionRange`) — e.g. inserting text at the caret. React-19 ref-as-prop
+     * (no `forwardRef` wrapper needed).
+     */
+    ref?: Ref<HTMLTextAreaElement>;
 }
 /**
  * Un-opinionated native `<textarea>` wrapper. All native textarea props (`value`,
@@ -34,4 +41,4 @@ export interface TextareaProps extends Omit<TextareaHTMLAttributes<HTMLTextAreaE
  * the only additions are `invalid` (error styling + `aria-invalid`) and
  * `onDebouncedChange` / `debounceMs` for stop-typing callbacks.
  */
-export declare function Textarea({ invalid, fullWidth, className, onDebouncedChange, debounceMs, onChange, saveStatus, onBlur, label, required, validateOnBlur, id: passedId, ...rest }: TextareaProps): import("react").JSX.Element;
+export declare function Textarea({ invalid, fullWidth, className, onDebouncedChange, debounceMs, onChange, saveStatus, onBlur, label, required, validateOnBlur, id: passedId, ref, ...rest }: TextareaProps): import("react").JSX.Element;
