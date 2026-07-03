@@ -383,6 +383,16 @@ docs/
   consumer's `pnpm typecheck` (and load its dev/preview) — don't assume the shell passing
   means the consumers do. Migrate consumers in the *same* change; verify them before
   reporting done.
+- **Keep the consumer-broken window as short as possible.** The moment a breaking shell
+  edit rebuilds `dist/` (the `rs:watch` sidecar rebuilds on *save*; the pre-commit guard
+  at commit), every live `link:` consumer's dev server is down until its own source is
+  migrated. So sequence a breaking change as one tight code step — **edit the shell
+  source AND migrate every consumer, then let `dist/` rebuild once, then typecheck/verify
+  all repos** — and only *after* that do the slow, dev-server-irrelevant work (docs, the
+  API reference, guides, comments). NEVER rebuild `dist/` and then sit in a long docs pass
+  with consumers still on the old names: that leaves their dev servers broken for the whole
+  detour (the failure the user caught here). Code first (shell + consumers, migrated
+  together) → rebuild → verify → **then** docs.
 
 ## Releases (agent-handled — never hand steps to the user)
 

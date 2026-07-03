@@ -98,6 +98,18 @@ local checkout — this is a **dev-only** redirect:
   `dev start` session, run `pnpm build:lib:watch` in the shell checkout yourself. The
   pre-commit guard still rebuilds `dist/` at commit time — the watcher only covers the
   in-between iteration.
+- **A breaking change breaks every link consumer's dev *the instant `dist/` rebuilds* —
+  keep that window short.** Because a `link:` consumer reads `dist/` live (previous
+  bullet), a rename or removed/renamed export takes down every running consumer dev server
+  (`does not provide an export named …`) the moment the `rs:watch` sidecar rebuilds on
+  save — not at release, *now*. So sequence a breaking change as one tight code step:
+  **edit the shell source AND migrate every consumer that imports the changed surface
+  (the demos, `offansk-ev`, any live-linked app) together, let `dist/` rebuild once, then
+  typecheck + load all of them.** Do the slow, dev-server-irrelevant polish — docs, the
+  API reference, guides, comments — *only after* the code is migrated and green. The
+  anti-pattern is rebuilding `dist/` and then spending a long docs pass while consumers
+  still reference the old names: their dev servers sit broken for that entire detour. Code
+  (shell + consumers, migrated together) → rebuild → verify → **then** docs.
 - **Dedupe React (and the shared Convex-React layer) in the consumer's bundler.**
   This step applies **only to the `link:` loop** — not the tag-pinned git-dep path.
   A `link:` symlinks the shell's checkout, which carries its **own**
