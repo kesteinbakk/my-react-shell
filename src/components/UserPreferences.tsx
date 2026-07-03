@@ -59,7 +59,7 @@ export interface UserPreferencesProps {
 
   // ── Large menu (enlarged header chrome) ──────────────────────────────────
   /**
-   * Active large-menu preference — enlarges the app-shell header chrome (`~2×`).
+   * Active large-menu preference — enlarges the app-shell header chrome (`~1.75×`).
    * Wire it to `useLargeMenu()` (my-react-shell/app-shell). Omit (with
    * `onLargeMenuChange`) to hide the control.
    */
@@ -443,15 +443,15 @@ export function UserPreferences({
           <section className="mrs-prefs__section">
             <h3 className="mrs-prefs__heading">{displayHeading}</h3>
             <div className="mrs-prefs__seg" role="group" aria-label={typeof displayHeading === 'string' ? displayHeading : undefined}>
-              {/* This toggle is exempt from the mode swap — it always shows an icon
-                  on the left and an emoji on the right, to demonstrate the switch. */}
-              <Segment active={iconMode === 'icon'} onClick={() => onIconModeChange!('icon')}>
-                {SmileGlyph}
-                {iconsLabel}
-              </Segment>
+              {/* This toggle is exempt from the mode swap — it always shows the emoji
+                  on the left and an icon on the right, to demonstrate the switch. */}
               <Segment active={iconMode === 'emoji'} onClick={() => onIconModeChange!('emoji')}>
                 <span className="mrs-prefs__emoji" aria-hidden="true">😀</span>
                 {emojisLabel}
+              </Segment>
+              <Segment active={iconMode === 'icon'} onClick={() => onIconModeChange!('icon')}>
+                {SmileGlyph}
+                {iconsLabel}
               </Segment>
             </div>
           </section>

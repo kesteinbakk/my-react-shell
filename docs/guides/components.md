@@ -307,7 +307,7 @@ const items = [
 A fully **controlled** settings panel in a Radix dialog with two built-in control groups:
 a **theme** group (palette + light/dark/system) and a **display** group (an optional
 icons↔emojis switch + an optional **large-menu** toggle that enlarges the app-shell header
-chrome ~2×). It **persists nothing** — reads each value, emits `onChange` — so the consumer
+chrome ~1.75×). It **persists nothing** — reads each value, emits `onChange` — so the consumer
 owns storage. Auth-free; surface sign-out/profile via the `accountActions` slot.
 
 The kit **never imports i18n or the icons/app-shell modules' state**: pass translated label

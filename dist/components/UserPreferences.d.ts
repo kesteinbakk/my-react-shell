@@ -44,7 +44,7 @@ export interface UserPreferencesProps {
     /** Called when icons/emojis is chosen. Omit to hide the control. */
     onIconModeChange?: (mode: IconMode) => void;
     /**
-     * Active large-menu preference — enlarges the app-shell header chrome (`~2×`).
+     * Active large-menu preference — enlarges the app-shell header chrome (`~1.75×`).
      * Wire it to `useLargeMenu()` (my-react-shell/app-shell). Omit (with
      * `onLargeMenuChange`) to hide the control.
      */

@@ -969,7 +969,7 @@ mechanics + examples: [card guide → PaperCard](../guides/card-grid.md#papercar
 
 A fully **controlled** theme/display panel in a Radix dialog: a **theme** group (palette +
 light/dark/system) and a **display** group (an optional icons↔emojis switch + an optional
-large-menu toggle that enlarges the app-shell header chrome ~2×). It **persists nothing** —
+large-menu toggle that enlarges the app-shell header chrome ~1.75×). It **persists nothing** —
 emits `onChange`; the consumer owns storage. Auth-free (`accountActions` slot); the
 theme/mode/icons labels are **required, no-default** props — pass translated strings.
 Pass `sections` to grow it into a **two-pane sectioned dialog** (left icon+label nav,
@@ -1144,10 +1144,10 @@ import 'my-react-shell/app-shell/styles.css'
 
 **Large menu (enlarged header chrome).** When on, `<AppShell>` sets `data-large-menu='true'`
 on its root and app-shell.css scales the page-header band (breadcrumbs + actions + search)
-and the top-header action cluster to ~2× (via `zoom`, so icons, text, and spacing scale
+and the top-header action cluster to ~1.75× (via `zoom`, so icons, text, and spacing scale
 uniformly) — the app title/brand is left untouched. Purely a display/accessibility
 preference; it changes no data or routing. Tune the factor with the `--mrs-large-menu-scale`
-CSS var (default `1.9`).
+CSS var (default `1.75`).
 
 **Contract types:** `PageEntry`, `ShellConfig`, `ShellConfigInput`, `PageContainerMaxWidth`,
 `ShellPageContainerConfig`, `ShellTabsConfig`, `ShellTabsVariant`, `ShellPageHeaderConfig`,

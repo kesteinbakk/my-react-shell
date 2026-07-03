@@ -149,7 +149,7 @@ the `tabBar: true` pages when `mobileNav='tabBar'`).
 
 An opt-in display/accessibility preference that enlarges the shell's **header chrome** —
 the page-header band (breadcrumbs + action buttons + search) and the top-header
-(`AppHeader`) action cluster — to ~2×, leaving the app **title/brand** at its normal size.
+(`AppHeader`) action cluster — to ~1.75×, leaving the app **title/brand** at its normal size.
 It changes no data and no routing.
 
 Mount `<LargeMenuProvider>` above the shell (mirrors `<IconModeProvider>`): uncontrolled it
@@ -174,7 +174,7 @@ const { largeMenu, setLargeMenu } = useLargeMenu()
 Mechanically, `<AppShell>` sets `data-large-menu='true'` on its root when the preference is
 on, and app-shell.css scales the two chrome regions with `zoom` (so heterogeneous fixed-px
 icons, text, and spacing scale uniformly and stay aligned). Tune the factor with the
-`--mrs-large-menu-scale` CSS var (default `1.9`).
+`--mrs-large-menu-scale` CSS var (default `1.75`).
 
 ## Not-found (404)
 

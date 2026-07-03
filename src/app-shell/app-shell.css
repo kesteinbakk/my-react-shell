@@ -282,11 +282,11 @@
    aligned (a `transform: scale` would not reserve layout box). Attribute absent
    (the default) → no rule applies → normal size. */
 .mrs-shell[data-large-menu='true'] {
-  --mrs-large-menu-scale: 1.9;
+  --mrs-large-menu-scale: 1.75;
 }
 .mrs-shell[data-large-menu='true'] .mrs-page-header,
 .mrs-shell[data-large-menu='true'] .mrs-app-header__actions {
-  zoom: var(--mrs-large-menu-scale, 1.9);
+  zoom: var(--mrs-large-menu-scale, 1.75);
 }
 
 /* ── Page header chrome (ShellPageHeaderUI) ──────────────────────────────── */
