@@ -33,7 +33,7 @@ export { defineShellConfig, ShellConfigError } from './defineShellConfig'
 export { useShellContext, useShellContextOptional } from './shellContext'
 export type { ShellContextValue } from './shellContext'
 
-// ── menu-size preference (header-chrome size: small · medium · large) ──────────
+// ── menu-size preference (header-chrome size: medium · large · xlarge) ─────────
 export { MenuSizeProvider } from './MenuSizeProvider'
 export type { MenuSizeProviderProps } from './MenuSizeProvider'
 export { useMenuSize, useMenuSizeOptional } from './useMenuSize'

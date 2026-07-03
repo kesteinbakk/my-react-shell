@@ -46,7 +46,7 @@ export interface UserPreferencesProps {
     onIconModeChange?: (mode: IconMode) => void;
     /**
      * Active menu-size preference — the app-shell header-chrome size
-     * (`'small'` = normal · `'medium'` · `'large'`). Wire it to `useMenuSize()`
+     * (`'medium'` = normal · `'large'` · `'xlarge'`). Wire it to `useMenuSize()`
      * (my-react-shell/app-shell). Omit (with `onMenuSizeChange`) to hide the control.
      */
     menuSize?: MenuSize;
@@ -93,12 +93,12 @@ export interface UserPreferencesProps {
     emojisLabel: ReactNode;
     /** Heading for the menu-size control. Optional — defaults to `mrs.prefs.menuSizeHeading`. */
     menuSizeHeading?: ReactNode;
-    /** Label for the `small` (normal) menu-size segment. Optional — defaults to `mrs.prefs.menuSizeSmall`. */
-    menuSizeSmallLabel?: ReactNode;
-    /** Label for the `medium` menu-size segment. Optional — defaults to `mrs.prefs.menuSizeMedium`. */
+    /** Label for the `medium` (normal) menu-size segment. Optional — defaults to `mrs.prefs.menuSizeMedium`. */
     menuSizeMediumLabel?: ReactNode;
     /** Label for the `large` menu-size segment. Optional — defaults to `mrs.prefs.menuSizeLarge`. */
     menuSizeLargeLabel?: ReactNode;
+    /** Label for the `xlarge` (extra large) menu-size segment. Optional — defaults to `mrs.prefs.menuSizeXlarge`. */
+    menuSizeXlargeLabel?: ReactNode;
     /** Accessible label for the close ✕. Optional — defaults to the built-in `mrs.action.close`. */
     closeLabel?: string;
     className?: string;
@@ -107,7 +107,7 @@ export interface UserPreferencesProps {
  * <UserPreferences> — a drop-in user-options panel in a Radix dialog opened from an
  * icon button. Two built-in control groups: **theme** (palette + light/dark/system)
  * and **display** (an optional icons↔emojis switch + an optional menu-size control
- * that sizes the app-shell header chrome — small/medium/large). In the single-column
+ * that sizes the app-shell header chrome — medium/large/xlarge). In the single-column
  * layout both groups stack; in the sectioned layout they are the reserved `'theme'` and `'display'` panes.
  *
  * Fully **controlled** — it reads the current values and emits an `onChange` for each
@@ -117,4 +117,4 @@ export interface UserPreferencesProps {
  * **required, no-default prop** — pass translated strings via your t() seam, so the
  * kit never imports i18n and never renders a hardcoded language.
  */
-export declare function UserPreferences({ theme, themes, onThemeChange, mode, onModeChange, followSystem, onFollowSystemChange, iconMode, onIconModeChange, menuSize, onMenuSizeChange, accountActions, trigger, open, onOpenChange, sections, activeSection, onActiveSectionChange, triggerLabel, title, description, themeHeading, modeHeading, displayHeading, lightLabel, darkLabel, systemLabel, iconsLabel, emojisLabel, menuSizeHeading, menuSizeSmallLabel, menuSizeMediumLabel, menuSizeLargeLabel, closeLabel, className, }: UserPreferencesProps): import("react").JSX.Element;
+export declare function UserPreferences({ theme, themes, onThemeChange, mode, onModeChange, followSystem, onFollowSystemChange, iconMode, onIconModeChange, menuSize, onMenuSizeChange, accountActions, trigger, open, onOpenChange, sections, activeSection, onActiveSectionChange, triggerLabel, title, description, themeHeading, modeHeading, displayHeading, lightLabel, darkLabel, systemLabel, iconsLabel, emojisLabel, menuSizeHeading, menuSizeMediumLabel, menuSizeLargeLabel, menuSizeXlargeLabel, closeLabel, className, }: UserPreferencesProps): import("react").JSX.Element;

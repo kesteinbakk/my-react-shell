@@ -1,6 +1,6 @@
 /**
- * useMenuSize — read and set the header-chrome size preference (`small` ·
- * `medium` · `large`).
+ * useMenuSize — read and set the header-chrome size preference (`medium` ·
+ * `large` · `xlarge`).
  *
  * A thin, stable wrapper over the menu-size context. Throws outside
  * <MenuSizeProvider>. Feed its value + setter into <UserPreferences>
@@ -18,7 +18,7 @@ export function useMenuSize() {
 /**
  * Non-throwing read of the menu-size preference — returns `null` outside a
  * <MenuSizeProvider>. This is the soft read <AppShell> uses, so a shell mounted
- * without the provider simply renders at the normal (`small`) size.
+ * without the provider simply renders at the normal (`medium`) size.
  */
 export function useMenuSizeOptional() {
     return useMenuSizeContextOptional();

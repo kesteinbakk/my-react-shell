@@ -38,8 +38,8 @@ export function AppShell({ config, useMenu, actions, subtitle, titleAdornment, f
     }
     const pathname = useRouterState({ select: (s) => s.location.pathname });
     // Soft read of the menu-size preference (header-chrome size). Absent provider →
-    // null → 'small' (normal), so a standalone consumer is unaffected.
-    const menuSize = useMenuSizeOptional()?.menuSize ?? 'small';
+    // null → 'medium' (normal), so a standalone consumer is unaffected.
+    const menuSize = useMenuSizeOptional()?.menuSize ?? 'medium';
     const [scrollEl, setScrollEl] = useState(null);
     // Page-chrome contributors (`usePageHeader`), keyed by a stable id + a render-order
     // token. The band renders the chrome of the entry with the HIGHEST order — the

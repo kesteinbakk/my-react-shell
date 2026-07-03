@@ -61,7 +61,7 @@ export interface UserPreferencesProps {
   // ── Menu size (header-chrome size) ───────────────────────────────────────
   /**
    * Active menu-size preference — the app-shell header-chrome size
-   * (`'small'` = normal · `'medium'` · `'large'`). Wire it to `useMenuSize()`
+   * (`'medium'` = normal · `'large'` · `'xlarge'`). Wire it to `useMenuSize()`
    * (my-react-shell/app-shell). Omit (with `onMenuSizeChange`) to hide the control.
    */
   menuSize?: MenuSize
@@ -114,12 +114,12 @@ export interface UserPreferencesProps {
   emojisLabel: ReactNode
   /** Heading for the menu-size control. Optional — defaults to `mrs.prefs.menuSizeHeading`. */
   menuSizeHeading?: ReactNode
-  /** Label for the `small` (normal) menu-size segment. Optional — defaults to `mrs.prefs.menuSizeSmall`. */
-  menuSizeSmallLabel?: ReactNode
-  /** Label for the `medium` menu-size segment. Optional — defaults to `mrs.prefs.menuSizeMedium`. */
+  /** Label for the `medium` (normal) menu-size segment. Optional — defaults to `mrs.prefs.menuSizeMedium`. */
   menuSizeMediumLabel?: ReactNode
   /** Label for the `large` menu-size segment. Optional — defaults to `mrs.prefs.menuSizeLarge`. */
   menuSizeLargeLabel?: ReactNode
+  /** Label for the `xlarge` (extra large) menu-size segment. Optional — defaults to `mrs.prefs.menuSizeXlarge`. */
+  menuSizeXlargeLabel?: ReactNode
   /** Accessible label for the close ✕. Optional — defaults to the built-in `mrs.action.close`. */
   closeLabel?: string
   className?: string
@@ -178,7 +178,7 @@ const CloseGlyph = (
   </svg>
 )
 
-// ── Menu-size glyph (the "A" grows across the small/medium/large segments) ────
+// ── Menu-size glyph (the "A" grows across the medium/large/xlarge segments) ───
 function SizeGlyph({ size }: { size: number }) {
   return (
     <svg {...svg} width={size} height={size} aria-hidden="true">
@@ -289,7 +289,7 @@ function Segment({
  * <UserPreferences> — a drop-in user-options panel in a Radix dialog opened from an
  * icon button. Two built-in control groups: **theme** (palette + light/dark/system)
  * and **display** (an optional icons↔emojis switch + an optional menu-size control
- * that sizes the app-shell header chrome — small/medium/large). In the single-column
+ * that sizes the app-shell header chrome — medium/large/xlarge). In the single-column
  * layout both groups stack; in the sectioned layout they are the reserved `'theme'` and `'display'` panes.
  *
  * Fully **controlled** — it reads the current values and emits an `onChange` for each
@@ -330,9 +330,9 @@ export function UserPreferences({
   iconsLabel,
   emojisLabel,
   menuSizeHeading,
-  menuSizeSmallLabel,
   menuSizeMediumLabel,
   menuSizeLargeLabel,
+  menuSizeXlargeLabel,
   closeLabel,
   className,
 }: UserPreferencesProps) {
@@ -461,17 +461,17 @@ export function UserPreferences({
               role="group"
               aria-label={typeof menuSizeHeading === 'string' ? menuSizeHeading : st('mrs.prefs.menuSizeHeading')}
             >
-              <Segment active={menuSize === 'small'} onClick={() => onMenuSizeChange!('small')}>
-                <SizeGlyph size={13} />
-                {menuSizeSmallLabel ?? st('mrs.prefs.menuSizeSmall')}
-              </Segment>
               <Segment active={menuSize === 'medium'} onClick={() => onMenuSizeChange!('medium')}>
-                <SizeGlyph size={16} />
+                <SizeGlyph size={13} />
                 {menuSizeMediumLabel ?? st('mrs.prefs.menuSizeMedium')}
               </Segment>
               <Segment active={menuSize === 'large'} onClick={() => onMenuSizeChange!('large')}>
-                <SizeGlyph size={19} />
+                <SizeGlyph size={16} />
                 {menuSizeLargeLabel ?? st('mrs.prefs.menuSizeLarge')}
+              </Segment>
+              <Segment active={menuSize === 'xlarge'} onClick={() => onMenuSizeChange!('xlarge')}>
+                <SizeGlyph size={19} />
+                {menuSizeXlargeLabel ?? st('mrs.prefs.menuSizeXlarge')}
               </Segment>
             </div>
           </section>

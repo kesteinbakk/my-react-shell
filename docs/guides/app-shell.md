@@ -149,15 +149,15 @@ the `tabBar: true` pages when `mobileNav='tabBar'`).
 
 An opt-in display/accessibility preference that sizes the shell's **header chrome** —
 the page-header band (breadcrumbs + action buttons + search) and the top-header
-(`AppHeader`) action cluster — across three steps: `small` (normal), `medium` (~1.375×) and
-`large` (~1.75×), always leaving the app **title/brand** at its normal size. It changes no
+(`AppHeader`) action cluster — across three steps: `medium` (normal), `large` (~1.375×) and
+`xlarge` (~1.75×), always leaving the app **title/brand** at its normal size. It changes no
 data and no routing.
 
 Mount `<MenuSizeProvider>` above the shell (mirrors `<IconModeProvider>`): uncontrolled it
-seeds from and persists to `localStorage` (`defaultSize` is `'small'`, so it is normal by
+seeds from and persists to `localStorage` (`defaultSize` is `'medium'`, so it is normal by
 default); pass `value` + `onChange` to own the state yourself (e.g. a per-user preference).
 `<AppShell>` reads it **softly** via `useMenuSizeOptional()` — with no provider mounted the
-shell simply renders at `small`, so a standalone consumer is unaffected. Give users the
+shell simply renders at `medium`, so a standalone consumer is unaffected. Give users the
 control by feeding `useMenuSize()` into `<UserPreferences>`'s `menuSize` /
 `onMenuSizeChange` (the built-in **Display** section).
 
@@ -172,10 +172,10 @@ const { menuSize, setMenuSize } = useMenuSize()
 <UserPreferences /* … */ menuSize={menuSize} onMenuSizeChange={setMenuSize} />
 ```
 
-Mechanically, `<AppShell>` sets `data-menu-size` (`small`·`medium`·`large`) on its root, and
-for `medium`/`large` app-shell.css scales the two chrome regions with `zoom` (so
+Mechanically, `<AppShell>` sets `data-menu-size` (`medium`·`large`·`xlarge`) on its root, and
+for `large`/`xlarge` app-shell.css scales the two chrome regions with `zoom` (so
 heterogeneous fixed-px icons, text, and spacing scale uniformly and stay aligned). Tune each
-step with the `--mrs-menu-scale-medium` (default `1.375`) / `--mrs-menu-scale-large`
+step with the `--mrs-menu-scale-large` (default `1.375`) / `--mrs-menu-scale-xlarge`
 (default `1.75`) CSS vars.
 
 ## Not-found (404)

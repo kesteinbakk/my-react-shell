@@ -1,12 +1,12 @@
 /**
- * MenuSizeProvider — owns the header-chrome size preference (`small` · `medium` ·
- * `large`). Mirrors <IconModeProvider>: uncontrolled by default (seeds from
+ * MenuSizeProvider — owns the header-chrome size preference (`medium` · `large` ·
+ * `xlarge`). Mirrors <IconModeProvider>: uncontrolled by default (seeds from
  * localStorage and persists there, zero-config) and controllable via `value` +
  * `onChange` (own the state yourself, e.g. mirror it to a per-user account /
  * Convex; the provider then stops touching localStorage). SPA-only (no SSR).
  *
  * <AppShell> reads this softly (`useMenuSizeOptional`), so a consumer that never
- * mounts the provider is entirely unaffected — the size is `small` (normal). Pair
+ * mounts the provider is entirely unaffected — the size is `medium` (normal). Pair
  * it with <UserPreferences> (`menuSize` / `onMenuSizeChange`) to give users the
  * control.
  */
@@ -29,7 +29,7 @@ export interface MenuSizeProviderProps {
    * it fires alongside the internal update (so a consumer can additionally sync).
    */
   onChange?: (size: MenuSize) => void
-  /** Initial size when uncontrolled and nothing is persisted. Default `'small'`. */
+  /** Initial size when uncontrolled and nothing is persisted. Default `'medium'`. */
   defaultSize?: MenuSize
   /** localStorage key for uncontrolled persistence. Default `'my-react-shell.menu-size'`. */
   storageKey?: string
@@ -42,14 +42,14 @@ function readPersisted(storageKey: string): MenuSize | null {
   } catch {
     return null // storage blocked (e.g. privacy mode)
   }
-  return raw === 'small' || raw === 'medium' || raw === 'large' ? raw : null
+  return raw === 'medium' || raw === 'large' || raw === 'xlarge' ? raw : null
 }
 
 export function MenuSizeProvider({
   children,
   value,
   onChange,
-  defaultSize = 'small',
+  defaultSize = 'medium',
   storageKey = DEFAULT_STORAGE_KEY,
 }: MenuSizeProviderProps) {
   const controlled = value !== undefined

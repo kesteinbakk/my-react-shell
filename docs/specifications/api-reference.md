@@ -329,7 +329,7 @@ import 'my-react-shell/components/styles.css' // REQUIRED (plain prebuilt CSS; a
 | `Switch` | component | Un-opinionated toggle on Radix Switch; track + sliding thumb (checked track `--color-primary`). Controlled (`checked`/`onCheckedChange`) or uncontrolled (`defaultChecked`); form-aware (`name`/`value`). Optional `label`, `labelPlacement` (`left`·`right`, default `right`), and `fullWidth` (places label and toggle on opposite sides without stretching the track). Uses the `@radix-ui/react-switch` optional peer. Supports custom `className` and `style` on the root/wrapper. |
 | `RadioGroup` | component | Single-select set on Radix RadioGroup with roving arrow-key focus; data-driven via `options`; selected dot fills `--color-primary`; `orientation` (`vertical`·`horizontal`). Controlled (`value`/`onValueChange`) or uncontrolled (`defaultValue`); form-aware (`name`). Uses the `@radix-ui/react-radio-group` optional peer. Supports custom `className` and `style` on the root. |
 | `ColorPicker` | component | General popover color picker. **Free** by default — a full hue/saturation range (via the `react-colorful` optional peer); `onChange` emits in `format` (`hex`·`rgb`·`hsl`). Pass a `colors` set to **constrain** it to a swatch grid. Controlled; `value` is a directly-usable CSS color string. `placeholder` and `hexLabel` are **required** — pass translated strings. See [below](#colorpicker). Supports custom `className` and `style` on the root. |
-| `UserPreferences` | component | Controlled settings panel: a **theme** group (palette + light/dark/system) and a **display** group (optional icons↔emojis + optional menu-size control `small·medium·large`, the latter wired to `useMenuSize()`). Persists nothing — emits `onChange`. Auth-free (`accountActions` slot). Theme/mode/icons label props are **required**; the menu-size labels default to `mrs.*` chrome keys; `description` is optional. |
+| `UserPreferences` | component | Controlled settings panel: a **theme** group (palette + light/dark/system) and a **display** group (optional icons↔emojis + optional menu-size control `medium·large·xlarge`, the latter wired to `useMenuSize()`). Persists nothing — emits `onChange`. Auth-free (`accountActions` slot). Theme/mode/icons label props are **required**; the menu-size labels default to `mrs.*` chrome keys; `description` is optional. |
 | `Collapsible` | component | Single disclosure on Radix Collapsible: one trigger toggles one region. Controlled (`expanded`) / uncontrolled (`defaultExpanded`); static `trigger` or `renderTrigger(expanded)`; rotating chevron; `variant` (`default`·`bordered`·`ghost`·`filled`), `size`, `inlineChevron`, `animationDuration`. Uses the `@radix-ui/react-collapsible` optional peer. See [below](#collapsible). |
 | `Accordion` | component | Grouped disclosures on Radix Accordion: roving arrow-key focus, single (one-open) or `multiple` open. Data-driven via `items`; controlled `value`/`onValueChange` or `defaultValue`; `variant` (`default`·`bordered`·`separated`), `size`. Uses the `@radix-ui/react-accordion` optional peer. See [below](#accordion). |
 | `Tabs` | component | General content tabs on Radix Tabs (roving arrow-key focus, `aria` wiring): a trigger list over swappable panels, active trigger marked with a `--color-primary` indicator. Data-driven via `tabs`; controlled (`value`/`onValueChange`) or uncontrolled (`defaultValue`, defaults to first); `orientation` (`horizontal`·`vertical`). Distinct from the app-shell page tabs. Uses the `@radix-ui/react-tabs` optional peer. |
@@ -969,7 +969,7 @@ mechanics + examples: [card guide → PaperCard](../guides/card-grid.md#papercar
 
 A fully **controlled** theme/display panel in a Radix dialog: a **theme** group (palette +
 light/dark/system) and a **display** group (an optional icons↔emojis switch + an optional
-menu-size control that sizes the app-shell header chrome — `small` · `medium` · `large`).
+menu-size control that sizes the app-shell header chrome — `medium` · `large` · `xlarge`).
 It **persists nothing** — emits `onChange`; the consumer owns storage. Auth-free
 (`accountActions` slot); the theme/mode/icons labels are **required, no-default** props —
 pass translated strings. Pass `sections` to grow it into a **two-pane sectioned dialog**
@@ -988,13 +988,13 @@ panel, with both the theme and display groups stacked. Wire the menu-size contro
 | `mode` / `onModeChange` | — | Active color mode and its handler. **Required.** |
 | `followSystem` / `onFollowSystemChange` | — | Pass both to show a **System** option that follows the OS. |
 | `iconMode` / `onIconModeChange` | — | Pass both to show the **icons↔emojis** switch (from `my-react-shell/icons`), in the display group. |
-| `menuSize` / `onMenuSizeChange` | — | Pass both to show the **menu-size** control (`small`·`medium`·`large` header chrome) in the display group. Wire to `useMenuSize()` (`my-react-shell/app-shell`). |
+| `menuSize` / `onMenuSizeChange` | — | Pass both to show the **menu-size** control (`medium`·`large`·`xlarge` header chrome) in the display group. Wire to `useMenuSize()` (`my-react-shell/app-shell`). |
 | `accountActions` | — | Rows below a divider — e.g. a sign-out button. Keeps the kit auth-free. |
 | `trigger` | icon button | Override the dialog trigger. |
 | `open` / `onOpenChange` | self-managed | Control the open state if you need to. |
 | `sections` | — | `UserPreferencesSection[]`. **The full, ordered left-nav.** Omit (or empty) → the single-column, no-nav body. Non-empty → a **two-pane** grid (left icon+label nav, swappable right pane) in exactly this order. Include `{ id: 'theme' }` (palette + mode) and/or `{ id: 'display' }` (icons↔emojis + menu size) entries to place the built-in panes; leave one out to omit that section. |
 | `activeSection` / `onActiveSectionChange` | self-managed | Control the selected section id. Pass both to own it (e.g. persist to `sessionStorage` so the dialog reopens where the user left off); omit both and the component remembers the last-viewed section within its lifetime. A stale/absent id falls back to the first nav item. |
-| label props | — | **Required** (no default): `triggerLabel`, `title`, `themeHeading`, `modeHeading`, `displayHeading`, `lightLabel`, `darkLabel`, `systemLabel`, `iconsLabel`, `emojisLabel`. Optional (default to `mrs.*` chrome keys, override to translate): `menuSizeHeading` (`mrs.prefs.menuSizeHeading`), `menuSizeSmallLabel` (`mrs.prefs.menuSizeSmall`), `menuSizeMediumLabel` (`mrs.prefs.menuSizeMedium`), `menuSizeLargeLabel` (`mrs.prefs.menuSizeLarge`), `closeLabel` (`mrs.action.close`); `description` is optional. The reserved `'language'` pane heading uses `mrs.prefs.language`. Pass translated strings. |
+| label props | — | **Required** (no default): `triggerLabel`, `title`, `themeHeading`, `modeHeading`, `displayHeading`, `lightLabel`, `darkLabel`, `systemLabel`, `iconsLabel`, `emojisLabel`. Optional (default to `mrs.*` chrome keys, override to translate): `menuSizeHeading` (`mrs.prefs.menuSizeHeading`), `menuSizeMediumLabel` (`mrs.prefs.menuSizeMedium`), `menuSizeLargeLabel` (`mrs.prefs.menuSizeLarge`), `menuSizeXlargeLabel` (`mrs.prefs.menuSizeXlarge`), `closeLabel` (`mrs.action.close`); `description` is optional. The reserved `'language'` pane heading uses `mrs.prefs.language`. Pass translated strings. |
 | `className` | — | Extra classes on the dialog, merged via `cn()`. |
 
 `UserPreferencesSection` (exported): `{ id: string; icon: ReactNode; label: ReactNode; content?: ReactNode }` — one left-nav item + its right-pane content. The shell stays icon- and language-neutral: the consumer passes already-resolved icon nodes (e.g. `<AppIcon…>`) and translated labels. The nav renders the array verbatim; the reserved `id: 'theme'` (palette + mode) and `id: 'display'` (icons↔emojis + menu size) entries (whose `content` you omit) show the built-in controls, so you choose their position — first, last, or anywhere between your own sections.
@@ -1139,15 +1139,15 @@ import 'my-react-shell/app-shell/styles.css'
 | `PageSection` | component | Standalone section card. `title`, `icon` (string key or custom Node), `actions[]`, `children`, `className`. |
 | `useDynamicPages(cfg)` | hook | Register runtime breadcrumb levels (record names, slugs) under a `parent` route. Works at any depth — set `parent` to whichever registered route the dynamic items hang under. Each item may carry `hideCrumb?: () => boolean` to omit it from the rendered trail while keeping it in the chain (the access-gated-ancestor pattern; same semantics as `PageEntry.hideCrumb`), or `disableCrumbLink?: () => boolean` to render the ancestor as a plain label with no click target (same semantics as `PageEntry.disableCrumbLink`). |
 | `useShellContext()`, `useShellContextOptional()` | hook | Read shell context — incl. `scrollContainer` (the only scroller; use instead of `window`). |
-| `MenuSizeProvider` | component | Owns the **menu-size** preference (header-chrome size `small`·`medium`·`large`). Uncontrolled (localStorage) or controlled (`value`+`onChange`). `defaultSize` (`'small'`), `storageKey`. `<AppShell>` reads it **softly** — no provider → `small` (normal). |
+| `MenuSizeProvider` | component | Owns the **menu-size** preference (header-chrome size `medium`·`large`·`xlarge`). Uncontrolled (localStorage) or controlled (`value`+`onChange`). `defaultSize` (`'medium'`), `storageKey`. `<AppShell>` reads it **softly** — no provider → `medium` (normal). |
 | `useMenuSize()`, `useMenuSizeOptional()` | hook | `useMenuSize()` → `{ menuSize, setMenuSize }` (throws outside the provider); feed into `<UserPreferences>` (`menuSize`/`onMenuSizeChange`). `useMenuSizeOptional()` is the non-throwing read (`null` outside a provider) `<AppShell>` uses. |
 
-**Menu size (header-chrome size).** `<AppShell>` sets `data-menu-size` (`small`·`medium`·`large`)
-on its root; for `medium`/`large`, app-shell.css scales the page-header band (breadcrumbs +
+**Menu size (header-chrome size).** `<AppShell>` sets `data-menu-size` (`medium`·`large`·`xlarge`)
+on its root; for `large`/`xlarge`, app-shell.css scales the page-header band (breadcrumbs +
 actions + search) and the top-header action cluster (via `zoom`, so icons, text, and spacing
-scale uniformly) — the app title/brand is left untouched. `small` (the default) is normal
+scale uniformly) — the app title/brand is left untouched. `medium` (the default) is normal
 size. Purely a display/accessibility preference; it changes no data or routing. Tune each
-step with the `--mrs-menu-scale-medium` (default `1.375`) / `--mrs-menu-scale-large`
+step with the `--mrs-menu-scale-large` (default `1.375`) / `--mrs-menu-scale-xlarge`
 (default `1.75`) CSS vars.
 
 **Contract types:** `PageEntry`, `ShellConfig`, `ShellConfigInput`, `PageContainerMaxWidth`,

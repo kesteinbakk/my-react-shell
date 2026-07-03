@@ -108,8 +108,8 @@ export function AppShell({
   const pathname = useRouterState({ select: (s) => s.location.pathname })
 
   // Soft read of the menu-size preference (header-chrome size). Absent provider →
-  // null → 'small' (normal), so a standalone consumer is unaffected.
-  const menuSize = useMenuSizeOptional()?.menuSize ?? 'small'
+  // null → 'medium' (normal), so a standalone consumer is unaffected.
+  const menuSize = useMenuSizeOptional()?.menuSize ?? 'medium'
 
   const [scrollEl, setScrollEl] = useState<HTMLElement | null>(null)
 
