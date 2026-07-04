@@ -26,6 +26,10 @@
  * own render, so it never needs a fresh thunk *identity* pushed to it, only a fresh
  * value signal.
  *
+ * Churn is tolerated, not endorsed: in DEV the content effect warns once per instance
+ * (naming the offending field) when an option's identity churns without its value
+ * changing, so a consumer can memoize away the wasted per-render work.
+ *
  * Replaces foundation's `<ShellPageHeader>` registration component with a hook (the
  * React-idiomatic shape, consistent with the sibling `useDynamicPages`).
  */
@@ -39,6 +43,12 @@ import { useShellAPIContext } from './shellContext';
  * instance claims exactly one token even under StrictMode's double-invoke.
  */
 let nextHeaderOrder = 0;
+/**
+ * Option fields carried as thunks / objects / arrays — the ones whose identity can
+ * change across renders without their resolved value changing. The DEV churn check
+ * names whichever of these got a fresh identity so the consumer knows what to memoize.
+ */
+const CHURN_FIELDS = ['title', 'actions', 'search', 'tabs', 'documentTitle'];
 /* ── Value-signature comparison ──────────────────────────────────────────────
  *
  * Two specs are "equivalent" — pushing the new one would be a no-op the band can't
@@ -114,6 +124,10 @@ export function usePageHeader(options) {
     // compares against this (not option identities) to decide whether a push is
     // warranted — the guard that keeps unstable options from looping.
     const lastPushedRef = useRef(null);
+    // DEV churn check: the previous render's `options` (for identity diffing) and a
+    // one-shot flag so the warning fires at most once per hook instance.
+    const prevOptionsRef = useRef(null);
+    const churnWarnedRef = useRef(false);
     const buildSpec = () => ({
         title: options.title,
         actions: options.actions,
@@ -146,7 +160,27 @@ export function usePageHeader(options) {
         if (handle === null)
             return;
         const next = buildSpec();
-        if (lastPushedRef.current !== null && specsEquivalent(lastPushedRef.current, next))
+        const equivalent = lastPushedRef.current !== null && specsEquivalent(lastPushedRef.current, next);
+        // DEV nudge: this effect only re-runs when an option's identity changed; if the
+        // spec is nonetheless value-equivalent, that identity change was pure churn — an
+        // inline thunk / fresh object / new array recreated every render. Tolerated (no
+        // push, no loop) but wasteful, so name the churning field(s) once per instance.
+        // Skipped on the first run (no previous render to diff against) and on a real
+        // value change (which pushes below, never warns).
+        const prev = prevOptionsRef.current;
+        prevOptionsRef.current = options;
+        if (import.meta.env.DEV && equivalent && !churnWarnedRef.current && prev !== null) {
+            const churned = CHURN_FIELDS.filter((k) => prev[k] !== options[k]);
+            if (churned.length > 0) {
+                churnWarnedRef.current = true;
+                console.warn(`[app-shell] usePageHeader: the \`${churned.join('`, `')}\` option(s) get a new ` +
+                    'identity across renders (an inline thunk, a fresh object, or a new array). The ' +
+                    'band tolerates this — it updates only on a real value change — but the churn ' +
+                    're-runs an effect every render. Memoize them (useMemo / useCallback) or hoist ' +
+                    'them to module scope.');
+            }
+        }
+        if (equivalent)
             return;
         lastPushedRef.current = next;
         handle.update(next);

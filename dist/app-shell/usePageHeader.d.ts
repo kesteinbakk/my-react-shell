@@ -26,6 +26,10 @@
  * own render, so it never needs a fresh thunk *identity* pushed to it, only a fresh
  * value signal.
  *
+ * Churn is tolerated, not endorsed: in DEV the content effect warns once per instance
+ * (naming the offending field) when an option's identity churns without its value
+ * changing, so a consumer can memoize away the wasted per-render work.
+ *
  * Replaces foundation's `<ShellPageHeader>` registration component with a hook (the
  * React-idiomatic shape, consistent with the sibling `useDynamicPages`).
  */
