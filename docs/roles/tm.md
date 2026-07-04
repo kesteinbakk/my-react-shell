@@ -281,6 +281,8 @@ No file:line references yet — 1b produces those.
 
 **1c. Plan.** TM writes the **Plan** section in dialog with the user — no subagent. Each phase carries Scope / Files touched / Verifiability / Risks / Atomicity, plus a decisions log + open questions. Every supersession kill-list item from 1b becomes an explicit deletion step in the phase that supersedes it — not "delete later", not "follow-up task". The phase that adds the replacement is the phase that removes the predecessor.
 
+**Default entry mode — user gives a high-level goal in chat.** Unless the user's message already specifies a different mode (e.g. "just do X", a fully-specified plan, or an explicit skip), the default sequence for a fresh high-level ask is: create task (1a) → baseline review (1b) → draw a design mockup (in chat or the Plan tool — sketch the UI/flow/data shape the Plan implies) → ask design questions grounded in that mockup, before finalizing the Plan.
+
 **Commit before reviews** — task creation + proposal removal + baseline + plan in one commit. This gives reviewers a clean diff to anchor against.
 
 **2. Review (Pre-Implementation)** — the second and third pre-impl reviews, both run against the **Plan** from 1c, not the goal-sketch outline. (The first, the Baseline review, ran in 1b — it grounds the Plan, so it precedes these.)
