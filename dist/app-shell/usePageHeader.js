@@ -11,6 +11,21 @@
  * so the winner can't flip at runtime when a component re-renders with fresh inline
  * thunks. The chrome stays reactive while remaining deterministic.
  *
+ * **Footgun-proof by design.** The content effect pushes a new spec to the shell
+ * band (a `setState`) only when the spec's *resolved values* actually change — never
+ * merely because an option's identity did. This matters because pushing a spec
+ * re-renders the band, which re-renders this hook's own subtree; if that push fired
+ * on every render (as it would for an inline `title: () => t('…')` thunk, a fresh
+ * `search: { … }` object, or a fresh `actions: []` array — all recreated each
+ * render) the band and the route would re-render each other without end, tripping
+ * React's "Maximum update depth exceeded" guard (the loop surfaces at the breadcrumb
+ * leaf's Radix Popper anchor, but the engine is the every-render push). By comparing
+ * *values* rather than identities, unstable options are tolerated — exactly what a
+ * consumer expects — while a title/search/action whose underlying value genuinely
+ * changes still updates the band. The band resolves the winning spec's thunks on its
+ * own render, so it never needs a fresh thunk *identity* pushed to it, only a fresh
+ * value signal.
+ *
  * Replaces foundation's `<ShellPageHeader>` registration component with a hook (the
  * React-idiomatic shape, consistent with the sibling `useDynamicPages`).
  */
@@ -24,6 +39,69 @@ import { useShellAPIContext } from './shellContext';
  * instance claims exactly one token even under StrictMode's double-invoke.
  */
 let nextHeaderOrder = 0;
+/* ── Value-signature comparison ──────────────────────────────────────────────
+ *
+ * Two specs are "equivalent" — pushing the new one would be a no-op the band can't
+ * observe — when every field resolves to the same value/structure. Only then do we
+ * skip the push. The string thunks (`title`, function-form `documentTitle`, and
+ * `search.placeholder`) are pure reads by contract, so calling them here to compare
+ * resolved values is safe and is exactly what the band does on its own render.
+ *
+ * Callbacks (`search.onChange`, action `onClick`/`onChange`) and node-producing
+ * thunks (`tabs`, function children in `actions`) are compared by *presence/kind*,
+ * not output — their content re-resolves whenever the band next re-renders (a nav,
+ * a language flip, or another field's value change), so a churned identity alone
+ * never needs to force a push. Consumers with stable callbacks (the common case)
+ * see no staleness; the guard's whole purpose is to not treat identity churn as a
+ * change. */
+function titleKey(title) {
+    return title ? `t:${title()}` : '';
+}
+function documentTitleKey(dt) {
+    if (dt === undefined)
+        return '';
+    return typeof dt === 'function' ? `d:${dt()}` : `m:${dt}`;
+}
+function searchEquivalent(a, b) {
+    if (a === undefined || b === undefined)
+        return a === b;
+    return a.initialValue === b.initialValue && a.placeholder?.() === b.placeholder?.();
+}
+/** Signature of one action — scalar props only, callbacks + nodes ignored. */
+function actionSignature(item) {
+    if (typeof item === 'function')
+        return 'fn';
+    if (typeof item === 'string')
+        return `p:${item}`;
+    const parts = [];
+    for (const [k, v] of Object.entries(item)) {
+        const t = typeof v;
+        if (t === 'string' || t === 'number' || t === 'boolean' || v == null) {
+            parts.push(`${k}=${String(v)}`);
+        }
+        // functions / objects / ReactNodes are intentionally skipped
+    }
+    return `o:${parts.sort().join('&')}`;
+}
+function actionsEquivalent(a, b) {
+    const xa = a ?? [];
+    const xb = b ?? [];
+    if (xa.length !== xb.length)
+        return false;
+    for (let i = 0; i < xa.length; i++) {
+        if (actionSignature(xa[i]) !== actionSignature(xb[i]))
+            return false;
+    }
+    return true;
+}
+function specsEquivalent(a, b) {
+    return (titleKey(a.title) === titleKey(b.title) &&
+        a.className === b.className &&
+        documentTitleKey(a.documentTitle) === documentTitleKey(b.documentTitle) &&
+        (a.tabs === undefined) === (b.tabs === undefined) &&
+        searchEquivalent(a.search, b.search) &&
+        actionsEquivalent(a.actions, b.actions));
+}
 /** Register page chrome onto the shell band. No-op band-wise if every field is absent. */
 export function usePageHeader(options) {
     const shell = useShellAPIContext();
@@ -32,6 +110,10 @@ export function usePageHeader(options) {
     if (orderRef.current === -1)
         orderRef.current = nextHeaderOrder++;
     const handleRef = useRef(null);
+    // The last spec whose values we propagated to the band. The content effect
+    // compares against this (not option identities) to decide whether a push is
+    // warranted — the guard that keeps unstable options from looping.
+    const lastPushedRef = useRef(null);
     const buildSpec = () => ({
         title: options.title,
         actions: options.actions,
@@ -43,18 +125,31 @@ export function usePageHeader(options) {
     // Identity — runs once; fixes this contributor's slot + render-order token.
     // `registerPageHeader` is stable (useCallback in AppShell), so this never re-fires.
     useEffect(() => {
-        const handle = shell.registerPageHeader(orderRef.current, buildSpec());
+        const spec = buildSpec();
+        const handle = shell.registerPageHeader(orderRef.current, spec);
         handleRef.current = handle;
+        lastPushedRef.current = spec;
         return () => {
             handle.unregister();
             handleRef.current = null;
+            lastPushedRef.current = null;
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps -- register once; registerPageHeader + order are stable
     }, [shell.registerPageHeader]);
     // Content — re-runs on any option change; updates the spec in place, no re-register.
-    // The explicit option deps (not `buildSpec`) are the reactive set, by design.
+    // Guards the push on a resolved-VALUE change so unstable option identities (inline
+    // thunks / fresh objects / fresh arrays) don't push a new spec every render — which
+    // would re-render the band, re-render this subtree, and loop. A genuine value change
+    // still propagates. The explicit option deps (not `buildSpec`) are the reactive set.
     useEffect(() => {
-        handleRef.current?.update(buildSpec());
+        const handle = handleRef.current;
+        if (handle === null)
+            return;
+        const next = buildSpec();
+        if (lastPushedRef.current !== null && specsEquivalent(lastPushedRef.current, next))
+            return;
+        lastPushedRef.current = next;
+        handle.update(next);
         // eslint-disable-next-line react-hooks/exhaustive-deps -- explicit option deps are the reactive set
     }, [
         options.title,

@@ -1,9 +1,15 @@
 # B002 — pageheader-unstable-thunk-loop
 
-**Status:** open | **Branch:** main
+**Status:** awaiting-user-confirmation | **Branch:** main
 **Filed:** 2026-06-20 — dogfood finding from evaluering's T029 (app-shell adoption).
 Caught by live preview verification of the first real `app-shell` consumer; unit
 tests miss it because they mock the shell and never mount the band.
+
+> **Code moved since filing.** The `<ShellPageHeader>` registration *component* the
+> analysis below describes was replaced by the `usePageHeader` *hook* (T016/T017 —
+> register-once + update-in-place). The loop survived that refactor, relocated into
+> the hook's **content effect**, and is what the resolution fixes. Line/symbol
+> references below are as-filed and now stale; see **Resolution**.
 
 ## Symptom
 
@@ -88,3 +94,40 @@ consumer on the dev-loop will hit it.
   is a one-line `useCallback`, so not release-blocking for the shell itself.
 - Repro: any consumer that pins `PageTabs` into the band via the documented
   `tabs={() => …}` form without memoizing the thunk.
+
+## Resolution
+
+Fix option 1 — **make the push idempotent against an equivalent spec** — applied in
+`src/app-shell/usePageHeader.ts` (where the loop lived post-T016/T017, not in the old
+`ShellPageHeader.tsx` registration effect). The hook's **content effect** now guards
+`handle.update(spec)` behind a resolved-**value** comparison (`specsEquivalent`)
+against the last spec it pushed, held in a `lastPushedRef`:
+
+- String thunks (`title`, function-form `documentTitle`, `search.placeholder`) are
+  compared by their **resolved value** (the thunks are called — pure reads by
+  contract, exactly what the band does on its own render), not by identity.
+- `actions` compare by a per-item **signature** of scalar props (kind + `label` /
+  `tone` / `disabled` / …); callbacks and node-producing thunks are ignored.
+- `tabs` / `search` presence and `search.initialValue` are compared structurally.
+
+So a fresh `title: () => …` thunk, a brand-new `search: { … }` object, or an
+un-memoized `actions` array — recreated every render — no longer push a new spec each
+render, which is what re-rendered the band → re-rendered the consumer → looped
+(`Maximum update depth exceeded`, surfacing at the breadcrumb leaf's Radix Popper
+anchor). A genuine **value** change (a title/placeholder/action whose resolved value
+differs) still propagates. The deepest-mounted-wins ordering and in-place spec update
+are untouched — only the redundant push is suppressed.
+
+The misleading "correctness does not depend on it" promise is now **true**: unstable
+option identities are tolerated. The hook's docstring was rewritten to explain the
+guard.
+
+**Related Radix-dedup note:** already documented — `docs/guides/distribution-model.md`
+lists `@radix-ui/react-dialog` / `@radix-ui/react-dropdown-menu` in the `link:`
+consumer `resolve.dedupe` set. No further action.
+
+**Verified** in `my-react-shell-demo` via the live preview: a page calling
+`usePageHeader({ title: () => …, search: { onChange, placeholder: () => … }, actions:
+[…] })` with every option recreated each render mounts with **zero** `Maximum update
+depth` errors, and a control that changes the title's underlying value updates the
+band's leaf crumb live (`Oslo #0` → `Oslo #4`).

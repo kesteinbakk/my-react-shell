@@ -332,9 +332,13 @@ usePageHeader({
 })
 ```
 
-Stable thunks (`useCallback` / `useMemo` / module-level) are nice but not required — the
-hook updates the band **in place** on every change, so inline thunks (`actions: [() =>
-<Btn/>]`) are fine and never cause flicker.
+Stable thunks (`useCallback` / `useMemo` / module-level) are nice but not required —
+inline thunks (`actions: [() => <Btn/>]`), a fresh `search` object, or an un-memoized
+`actions` array recreated every render are all fine. The hook compares each option's
+**resolved value** (not its identity) against what it last pushed and updates the band
+**in place** only on a real change, so unstable identities never re-render the band —
+no flicker, and no infinite render loop. A change to a thunk's underlying *value* still
+updates the band.
 
 An `ActionButton` in the `actions` slot always renders **inline** (glyph before label):
 the band's stylesheet overrides its `layout` prop, since the kit default `vertical`
