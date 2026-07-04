@@ -244,7 +244,8 @@ trailing icon while the earlier steps stay plain.
 
 ### Per-page mode support
 
-A page can declare **which app-modes it supports** with `supportedModes` on its `PageEntry`.
+A page can declare **which app-modes it supports** with `supportedModes` — on its `PageEntry`,
+or on a `useDynamicPages` item (`DynamicPageInput`) for runtime-registered pages.
 When that page is the breadcrumb **leaf**, the control narrows to those modes (intersected
 with any runtime `setModes` role-narrowing) and `useAppMode().modes` reports the narrowed
 set. A page with **no** `supportedModes` supports every mode — landing on it changes nothing.

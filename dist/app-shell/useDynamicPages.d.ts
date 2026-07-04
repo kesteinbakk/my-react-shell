@@ -24,6 +24,14 @@ export interface DynamicPageInput {
     route: string;
     icon?: string;
     /**
+     * App-modes this page supports (values from `appMode.modes`). **Undefined → the
+     * page supports every mode** (no narrowing — landing here does nothing). Only
+     * evaluated when this entry resolves as the breadcrumb **leaf**: it then narrows
+     * the app-mode control and can trigger `appMode.onUnsupportedMode`. Same semantics
+     * as `PageEntry.supportedModes`.
+     */
+    supportedModes?: string[];
+    /**
      * Reactive predicate to omit this level from the rendered breadcrumb trail while
      * keeping it structurally in the chain (its descendants stay navigable). Use it to
      * hide an access-gated ancestor — e.g. a workspace crumb a member can reach the
