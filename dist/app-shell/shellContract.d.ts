@@ -121,6 +121,48 @@ export interface ShellPageHeaderConfig {
     breadcrumbCollapse?: ShellBreadcrumbCollapseConfig | false;
 }
 /**
+ * App-phase declaration — an optional single-select "what mode is the app in"
+ * control the shell renders in its own section directly under the app title
+ * (header mode) or under the sidebar brand, above the nav (menu mode).
+ *
+ * Only the **static** parts are declared here: the ordered set of states and how
+ * to label each. The **live** value, visibility, selectability, and the currently
+ * available states are runtime state, read and driven anywhere under `<AppShell>`
+ * via `usePhase()`. A consumer sets the phase from end-user selection *or* from
+ * data (e.g. a role effect calling `setPhase`), and reads `phase` as a global app
+ * mode. The shell renders **no** control when fewer than two states are available
+ * or `visible` is false — the value stays readable either way.
+ */
+export interface ShellPhaseConfig {
+    /**
+     * Ordered state values — the consumer's own constants (e.g. the values of
+     * `{ setup: 'SETUP', main: 'MAIN', finalize: 'FINALIZE' }`). At least one; the
+     * control only renders once two or more are *available* at runtime.
+     */
+    states: string[];
+    /**
+     * Label resolver for a state — consumer **content**, wired to the consumer's
+     * own `t()`. Called during render so it re-resolves on a language flip.
+     */
+    label: (state: string) => string;
+    /** Initial phase on mount. Omitted → the first entry in `states`. */
+    defaultState?: string;
+    /**
+     * Accessible label for the segmented-control group — a thunk the consumer wires
+     * to its own `t()`. Omitted → the group is unlabeled (the app-shell module never
+     * imports i18n; like the other chrome labels this is a consumer-supplied thunk).
+     */
+    ariaLabel?: () => string;
+    /** Whether the control is shown initially. Default `true`. Runtime-overridable via `usePhase().setVisible`. */
+    visible?: boolean;
+    /**
+     * Whether the end-user may change the phase initially. Default `true`; `false`
+     * renders a read-only indicator (visible, not interactive). Runtime-overridable
+     * via `usePhase().setSelectable`.
+     */
+    selectable?: boolean;
+}
+/**
  * Icon renderer. The shell is icon-library-agnostic: the consumer passes one
  * function that turns an icon key + pixel size into a node. The module ships no
  * icon kit, so this is required.
@@ -163,6 +205,12 @@ export interface ShellConfigInput {
     renderIcon: ShellIconRenderer;
     /** Aria-label / tooltip strings the chrome needs. */
     labels?: ShellChromeLabels;
+    /**
+     * Optional app-phase control — a single-select segmented control the shell
+     * renders in its own section under the app title. Declares the states + labels;
+     * the live value is driven/read via `usePhase()`. Omitted → no phase surface.
+     */
+    phase?: ShellPhaseConfig;
 }
 /** Validated, branded config — what `<AppShell>` accepts. */
 export interface ShellConfig extends ShellConfigInput {

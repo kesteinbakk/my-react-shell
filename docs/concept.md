@@ -111,9 +111,9 @@ The base offers both ready-made drop-ins *and* contracts to implement:
    and how to use it. A module additionally ships a `docs/guides/<module>.md` for the
    *why* + deeper contract when there is more to say than the reference carries.
 
-**Adding to the base:** an app builds a capability locally; when a second app needs it
-(rule of two), it is contributed back as a new module or component. Every app gets it
-on the next version bump.
+**Adding to the base:** a capability is built for the app that needs it first, then
+refined into a module or component here as it is re-used. Every app gets it on the next
+version bump.
 
 ## Relationship to the SolidJS `foundation`
 

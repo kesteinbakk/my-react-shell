@@ -319,7 +319,7 @@ import 'my-react-shell/components/styles.css' // REQUIRED (plain prebuilt CSS; a
 | `CardGrid` | component | **Static** card grid: fixed-size cards flow left-to-right and **wrap** when a row is full, separated by a fixed `gap`. Cards are **not** stretched (a larger gap may remain at the end of a row) and keep their own intrinsic width/height (`StatCard`/`ContentCard`/`PhiCard`/`PaperCard`). `align` (`start`·`center`, default `start`), `gap` (CSS length override; default `1.5rem`, sized so four ≈312px cards fit a `wide` row). Children-based. |
 | `DynamicCardGrid` | component | **Fluid** card grid with a built-in search / filter / sort toolbar. Cards stretch to fill uniform `1fr` columns sized by `cardSize` (`sm`·`md`·`lg`) or a raw `minColumnWidth`. Data-driven via `items` / `renderCard` / `getKey`; `filters`, `sortOptions`, `searchFields`/`searchFn`, `loading`, empty + no-results states. Pair with `DynamicGridCard`. |
 | `DynamicGridCard` | component | Fluid card for `DynamicCardGrid`: stretches to `width:100%` of its column, inherits the grid's max-width cap, keeps the golden-ratio shape via `aspect-ratio`. Optional `title` / `subtitle` / `icon` / `footer` slots, primary content as `children`. `size` (`sm`·`md`·`lg`), `shape` (`standard` = φ:1 · `landscape` = φ²:1), `watermark` — `string` (faint oversized emoji, centred, dropped a little below centre) **or** a `ReactNode` art layer (e.g. a `DrawerMark`), with `autoscaleWatermark` (default on) scaling a glyph to watermark size; an element watermark makes the card root a `mrs-reveal-host`. `icon` supports placements (`title` inline · four corners · `center`; `upperRight` dev-throws against `corner`, `center` against `children`). Optional accent stripe (`accentPlacement` top/left) driven by `tone` (semantic tokens) or a raw CSS `color`. Acts as a **whole-card navigation link** via `renderLink` (consumer supplies its router `<Link>`, rendered as a full-bleed block-link overlay), with a `hoverable` background-tint hover state (`lift` adds movement) and a raised `corner` action slot. Drag-reorder grip via `showDragHandle` (or a custom `dragHandle` node) + `dragHandleProps` (vertical stripes, right-edge centred). |
-| `NavCard` | component | A small **navigation-tile** variant of `DynamicGridCard`: fixed at the `md` size (no `size` prop) and carrying no `icon`. Its single **required** `title` renders as the card's **centred main content** (passed into the body), not a header — there is no `subtitle`/`children` slot. Everything else is inherited from `DynamicGridCard`: `renderLink` whole-card navigation (accessible name auto-wired from `title`), `footer`, `corner`, `tone`/`color` accent (`accentPlacement` top/left), `watermark` (+ `autoscaleWatermark`), the drag seam (`showDragHandle`/`dragHandle`/`dragHandleProps`/`dragWholeCard`), `hoverable`/`lift`, and `shape` (`standard`·`landscape`). Reach for it to build a grid of navigation links. |
+| `NavCard` | component | A small **navigation-tile** variant of `DynamicGridCard`: `size` (defaults to `md`) and carrying no `icon`. Its single **required** `title` renders as the card's **centred main content** (passed into the body), not a header — there is no `subtitle`/`children` slot. Everything else is inherited from `DynamicGridCard`: `renderLink` whole-card navigation (accessible name auto-wired from `title`), `footer`, `corner`, `tone`/`color` accent (`accentPlacement` top/left), `watermark` (+ `autoscaleWatermark`), the drag seam (`showDragHandle`/`dragHandle`/`dragHandleProps`/`dragWholeCard`), `hoverable`/`lift`, and `shape` (`standard`·`landscape`). Reach for it to build a grid of navigation links. |
 | `RevealMark` | component | Hover-reveal seam: two stacked layers (`closed` / `revealed`) that cross-fade. The `revealed` layer replaces `closed` when the mark's nearest `.mrs-reveal-host` ancestor is hovered, or unconditionally when `open` is `true` (e.g. the active route). Purely decorative (`aria-hidden`); meant for a card's `watermark` slot. Build new openable marks on it. |
 | `DrawerMark` | component | First `RevealMark` instance — an **isometric drawer** that rests as a closed box and slides open (tray with a gray interior floor + walls and one sheet lying flat inside) on hover, or stays open via `open`. Fully theme-token-driven; the gray interior is a `color-mix` of `--color-text-primary` into the surface, so it inverts between light/dark mode. Drop into `DynamicGridCard`'s `watermark`. |
 | `InputField` | component | Full field: label + input + helper + error, a11y-wired (`htmlFor`/`aria-invalid`/`aria-describedby`). Spreads native input props; pass `error` to switch on error styling. `inputSize` (`sm`·`md`·`lg`, default `md`) matches the `Input` height/padding scale. `onDebouncedChange(value)` (fires `debounceMs` after the user stops typing; default 500 ms), `saveStatus` (visual status `'idle'`·`'pending'`·`'saving'`·`'saved'`·`'error'`). **`required`** renders the red asterisk on the label, sets `aria-required` (no native constraint), and turns an empty field's border red once blurred (no message text — pass `error` for one), OR-ed with the controlled `error`, which wins. Pass **`validateOnBlur={false}`** to opt out of the blur behaviour (asterisk only). |
@@ -369,7 +369,7 @@ Every component has a matching `…Props` type export (e.g. `ButtonProps`, `Butt
 `RevealMarkProps`, `DrawerMarkProps`,
 `CardGridProps`, `DynamicCardGridProps`, `ToggleFilter`, `SortOption`,
 `DynamicGridCardProps`, `DynamicGridCardSize`, `DynamicGridCardShape`, `DynamicGridCardIconPlacement`, `DynamicGridCardIconConfig`, `DynamicGridCardFooter`, `DynamicGridCardFooterLine`, `DynamicGridCardFooterLineType`, `DynamicGridCardLinkProps`,
-`NavCardProps`, `NavCardShape`, `NavCardFooter`, `NavCardFooterLine`, `NavCardFooterLineType`, `NavCardLinkProps`, `ColorPickerProps`,
+`NavCardProps`, `NavCardShape`, `NavCardSize`, `NavCardFooter`, `NavCardFooterLine`, `NavCardFooterLineType`, `NavCardLinkProps`, `ColorPickerProps`,
 `ColorFormat`, `CollapsibleProps`, `CollapsibleVariant`, `CollapsibleSize`,
 `AccordionProps`, `AccordionItem`, `AccordionVariant`, `AccordionSize`,
 `CheckboxProps`, `SwitchProps`, `RadioGroupProps`, `RadioOption`,
@@ -807,20 +807,20 @@ import { Link } from '@tanstack/react-router'
 #### `NavCard`
 
 A small **navigation-tile** variant of `DynamicGridCard`, for a grid of navigation links. It
-is fixed at the `md` size (**no `size` prop**) and carries **no `icon`**; its single
-**required** `title` renders as the card's **centred main content** (passed into the body),
-not a header — so there is no `subtitle` or `children` slot. Every other prop is inherited
-verbatim from `DynamicGridCard`.
+carries **no `icon`**; its single **required** `title` renders as the card's **centred main
+content** (passed into the body), not a header — so there is no `subtitle` or `children` slot.
+Every other prop is inherited verbatim from `DynamicGridCard`.
 
 | Prop | Default | Meaning |
 |---|---|---|
 | `title` | — (**required**) | The tile's label — rendered centred (both axes) as the card's main content, not a header. **No default**: it's user-facing text, so pass a translated string. |
+| `size` | `'md'` | `sm`·`md`·`lg` — self-applied min/max-width cap, identical to `DynamicGridCard`'s `size` (see its table above). |
 | `renderLink` | — | Whole-card navigation seam, identical to `DynamicGridCard` — the block-link overlay's accessible name is auto-wired from `title` (via `aria-labelledby`). |
 | `shape` · `footer` · `corner` · `tone`/`color`/`accentPlacement` · `watermark`/`autoscaleWatermark` · `hoverable`/`lift` · `showDragHandle`/`dragHandle`/`dragHandleProps`/`dragHandleLabel`/`dragWholeCard` | — | Inherited from `DynamicGridCard`; see its table above. |
 
-`NavCard` self-caps at the `md` width (min 240 / max 320 px), so it stays a consistent size even
-inside a larger `DynamicCardGrid`; drop it in a grid with `cardSize="md"` for uniform columns, or
-use it standalone.
+`NavCard` self-caps at its `size`'s width (min/max px, `md` = 240/320 by default), so it stays a
+consistent size even inside a larger `DynamicCardGrid`; drop it in a grid with a matching
+`cardSize` for uniform columns, or use it standalone.
 
 ```tsx
 import { NavCard, DynamicCardGrid } from 'my-react-shell/components'
@@ -1118,7 +1118,7 @@ Radix — both optional peers. **Guide:** [app-shell.md](../guides/app-shell.md)
 
 ```ts
 import { AppShell, usePageHeader, usePageAlert, PageTabs, PageSections, useDynamicPages,
-         defineShellConfig, ShellConfigError, useShellContext,
+         defineShellConfig, ShellConfigError, useShellContext, usePhase,
          MenuSizeProvider, useMenuSize } from 'my-react-shell/app-shell'
 import type { ShellConfig, ShellConfigInput, PageEntry, PageHeaderOptions, PageHeaderAlertSpec /* … */ } from 'my-react-shell/app-shell'
 import 'my-react-shell/app-shell/styles.css'
@@ -1139,6 +1139,7 @@ import 'my-react-shell/app-shell/styles.css'
 | `PageSection` | component | Standalone section card. `title`, `icon` (string key or custom Node), `actions[]`, `children`, `className`. |
 | `useDynamicPages(cfg)` | hook | Register runtime breadcrumb levels (record names, slugs) under a `parent` route. Works at any depth — set `parent` to whichever registered route the dynamic items hang under. Each item may carry `hideCrumb?: () => boolean` to omit it from the rendered trail while keeping it in the chain (the access-gated-ancestor pattern; same semantics as `PageEntry.hideCrumb`), or `disableCrumbLink?: () => boolean` to render the ancestor as a plain label with no click target (same semantics as `PageEntry.disableCrumbLink`). |
 | `useShellContext()`, `useShellContextOptional()` | hook | Read shell context — incl. `scrollContainer` (the only scroller; use instead of `window`). |
+| `usePhase()`, `usePhaseOptional()` | hook | Read/drive the **app-phase** — the global "what mode is the app in" state declared by the config's `phase` block. `→ { phase, setPhase, states, setStates, visible, setVisible, selectable, setSelectable }`. Pass a union for exhaustive typing: `usePhase<'SETUP'\|'MAIN'\|'FINALIZE'>()`. `usePhase()` throws when no `phase` block is declared; `usePhaseOptional()` returns `null` instead. Set from end-user selection **or** data (a role/data effect calling `setPhase`); read `phase` anywhere as a global mode. |
 | `MenuSizeProvider` | component | Owns the **menu-size** preference (header-chrome size `medium`·`large`·`xlarge`). Uncontrolled (localStorage) or controlled (`value`+`onChange`). `defaultSize` (`'medium'`), `storageKey`. `<AppShell>` reads it **softly** — no provider → `medium` (normal). |
 | `useMenuSize()`, `useMenuSizeOptional()` | hook | `useMenuSize()` → `{ menuSize, setMenuSize }` (throws outside the provider); feed into `<UserPreferences>` (`menuSize`/`onMenuSizeChange`). `useMenuSizeOptional()` is the non-throwing read (`null` outside a provider) `<AppShell>` uses. |
 
@@ -1150,11 +1151,33 @@ size. Purely a display/accessibility preference; it changes no data or routing. 
 step with the `--mrs-menu-scale-large` (default `1.375`) / `--mrs-menu-scale-xlarge`
 (default `1.75`) CSS vars.
 
+**App-phase (optional).** Add a `phase` block to `defineShellConfig` to render a
+single-select **"what mode is the app in"** segmented control in its own section directly
+under the app title (header mode) / sidebar brand, above the nav (menu mode). The block
+declares only the **static** parts — `states: string[]` (the consumer's own constant
+values), `label: (state) => string` (**content**, consumer-translated), and optional
+`defaultState`, `ariaLabel` (a thunk; the module never imports i18n), `visible` (default
+`true`), `selectable` (default `true`). The **live** value + flags are runtime state driven
+anywhere via `usePhase()`: `setPhase` (end-user *or* data-driven), `setVisible`,
+`setSelectable` (`false` → a read-only indicator), and `setStates` (narrow by role at
+runtime). The control **auto-hides** when fewer than two states are available or `visible`
+is false — `phase` stays readable either way. Built on the kit `SegmentedControl`.
+
+```tsx
+const PHASES = { setup: 'SETUP', main: 'MAIN', finalize: 'FINALIZE' } as const
+type AppPhase = (typeof PHASES)[keyof typeof PHASES]
+defineShellConfig({
+  …,
+  phase: { states: Object.values(PHASES), label: (s) => t(`phase.${s}`), defaultState: PHASES.setup },
+})
+const { phase, setPhase } = usePhase<AppPhase>()   // read/drive anywhere under <AppShell>
+```
+
 **Contract types:** `PageEntry`, `ShellConfig`, `ShellConfigInput`, `PageContainerMaxWidth`,
 `ShellPageContainerConfig`, `ShellTabsConfig`, `ShellTabsVariant`, `ShellPageHeaderConfig`,
 `ShellBreadcrumbCollapseConfig`,
 `ShellPageHeaderSearchSlot`, `ShellDocumentTitleMode`, `ShellIconRenderer`,
-`ShellChromeLabels`, plus component props (`AppShellProps`, `AppShellMobileNav`,
+`ShellChromeLabels`, `ShellPhaseConfig`, `ShellPhaseState`, `ShellPhaseRuntime`, plus component props (`AppShellProps`, `AppShellMobileNav`,
 `AppShellContentPadding`, `PageHeaderOptions`, `ChainLevel`, `PageTab`, `PageTabsProps`,
 `PageSection`, `PageSectionProps`, `PageSectionsMode`, `PageSectionsProps`, `DynamicPageInput`,
 `DynamicPagesConfig`, `ShellContextValue`, `MenuSizeProviderProps`, `UseMenuSizeResult`,

@@ -113,5 +113,36 @@ export function defineShellConfig(input: ShellConfigInput): ShellConfig {
   if (input.shellPageHeader !== undefined && typeof input.shellPageHeader.border !== 'boolean') {
     throw new ShellConfigError('`shellPageHeader.border` must be a boolean.')
   }
+  if (input.phase !== undefined) {
+    const p = input.phase
+    if (!Array.isArray(p.states) || p.states.length === 0) {
+      throw new ShellConfigError('`phase.states` must be a non-empty array.')
+    }
+    for (const state of p.states) {
+      if (typeof state !== 'string' || state === '') {
+        throw new ShellConfigError('`phase.states` entries must be non-empty strings.')
+      }
+    }
+    if (new Set(p.states).size !== p.states.length) {
+      throw new ShellConfigError('`phase.states` must not contain duplicate values.')
+    }
+    if (typeof p.label !== 'function') {
+      throw new ShellConfigError('`phase.label` must be a function `(state) => string`.')
+    }
+    if (p.defaultState !== undefined && !p.states.includes(p.defaultState)) {
+      throw new ShellConfigError(
+        `\`phase.defaultState\` "${p.defaultState}" is not one of \`phase.states\`.`,
+      )
+    }
+    if (p.ariaLabel !== undefined && typeof p.ariaLabel !== 'function') {
+      throw new ShellConfigError('`phase.ariaLabel` must be a function when present.')
+    }
+    if (p.visible !== undefined && typeof p.visible !== 'boolean') {
+      throw new ShellConfigError('`phase.visible` must be a boolean when present.')
+    }
+    if (p.selectable !== undefined && typeof p.selectable !== 'boolean') {
+      throw new ShellConfigError('`phase.selectable` must be a boolean when present.')
+    }
+  }
   return Object.freeze({ ...input, [SHELL_CONFIG_BRAND]: true as const })
 }

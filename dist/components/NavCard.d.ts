@@ -1,7 +1,9 @@
 import { type ReactNode } from 'react';
-import { type DynamicGridCardProps, type DynamicGridCardShape, type DynamicGridCardFooter, type DynamicGridCardFooterLine, type DynamicGridCardFooterLineType, type DynamicGridCardLinkProps } from './DynamicGridCard';
+import { type DynamicGridCardProps, type DynamicGridCardShape, type DynamicGridCardSize, type DynamicGridCardFooter, type DynamicGridCardFooterLine, type DynamicGridCardFooterLineType, type DynamicGridCardLinkProps } from './DynamicGridCard';
 /** Proportion of the card — the same axis as {@link DynamicGridCardShape}. */
 export type NavCardShape = DynamicGridCardShape;
+/** Size — the same scale as {@link DynamicGridCardSize}. Defaults to `md`. */
+export type NavCardSize = DynamicGridCardSize;
 /** Structured footer — inherited from {@link DynamicGridCardFooter}. */
 export type NavCardFooter = DynamicGridCardFooter;
 /** One left-side footer line — inherited from {@link DynamicGridCardFooterLine}. */
@@ -12,11 +14,11 @@ export type NavCardFooterLineType = DynamicGridCardFooterLineType;
 export type NavCardLinkProps = DynamicGridCardLinkProps;
 /**
  * Props for {@link NavCard}. The full {@link DynamicGridCardProps} surface **minus**
- * `size` (fixed at `md`), `icon` (unsupported), and `subtitle`/`children` (its only
- * content is `title`). Everything else — `renderLink`, `footer`, `corner`, `tone`/
+ * `icon` (unsupported) and `subtitle`/`children` (its only content is `title`).
+ * Everything else — `size` (defaults to `md`), `renderLink`, `footer`, `corner`, `tone`/
  * `color` accent, `watermark`, the drag seam, `hoverable`/`lift`, `shape` — is inherited.
  */
-export interface NavCardProps extends Omit<DynamicGridCardProps, 'size' | 'icon' | 'subtitle' | 'children' | 'title'> {
+export interface NavCardProps extends Omit<DynamicGridCardProps, 'icon' | 'subtitle' | 'children' | 'title'> {
     /**
      * The nav tile's label. Rendered as the card's **centred main content** (passed into
      * `DynamicGridCard`'s body), not a header. **Required, no default** — it's user-facing
@@ -25,14 +27,14 @@ export interface NavCardProps extends Omit<DynamicGridCardProps, 'size' | 'icon'
     title: ReactNode;
 }
 /**
- * A small **navigation-tile** variant of {@link DynamicGridCard}. It is fixed at the `md`
- * size (there is no `size` prop) and carries no `icon`; its single `title` renders as the
- * card's centred main content rather than a header. Reach for it to build a grid of
- * navigation links — pair it with `renderLink` for whole-card navigation.
+ * A small **navigation-tile** variant of {@link DynamicGridCard}. It carries no `icon`;
+ * its single `title` renders as the card's centred main content rather than a header.
+ * Reach for it to build a grid of navigation links — pair it with `renderLink` for
+ * whole-card navigation.
  *
- * Everything beyond size/icon/content is inherited from `DynamicGridCard`: `renderLink`
- * whole-card navigation (with the accessible name auto-wired from `title`), `footer`,
- * `corner`, `tone`/`color` accent, `watermark`, the drag-reorder seam, `hoverable`/`lift`,
- * and `shape`.
+ * Everything beyond icon/content is inherited from `DynamicGridCard`: `size` (defaults
+ * to `md`), `renderLink` whole-card navigation (with the accessible name auto-wired from
+ * `title`), `footer`, `corner`, `tone`/`color` accent, `watermark`, the drag-reorder seam,
+ * `hoverable`/`lift`, and `shape`.
  */
 export declare const NavCard: import("react").ForwardRefExoticComponent<NavCardProps & import("react").RefAttributes<HTMLDivElement>>;

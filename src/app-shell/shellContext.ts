@@ -14,6 +14,32 @@ import type { PageEntry, ShellConfig, ShellPageHeaderSpec, PageHeaderAlertSpec }
 /** One dynamic page — same fields as `PageEntry`, produced at runtime. */
 export interface DynamicPagesEntry extends PageEntry {}
 
+/**
+ * Runtime app-phase state — the live value, the currently-available states, and
+ * the visibility / selectability flags. Owned by `<AppShell>` (seeded from the
+ * `phase` block of the shell config) and exposed to the whole tree via
+ * `usePhase()`. `null` on the context when the config declares no `phase`.
+ */
+export interface ShellPhaseRuntime {
+  /** The current phase — a value from {@link states}. */
+  phase: string
+  /** Set the current phase — from end-user selection or a data-driven effect. */
+  setPhase: (phase: string) => void
+  /**
+   * The states available *right now* (seeded from `config.phase.states`, narrowable
+   * at runtime — e.g. by role). The control auto-hides when fewer than two remain.
+   */
+  states: string[]
+  /** Replace the available states at runtime (≤ 1 auto-hides the control). */
+  setStates: (states: string[]) => void
+  /** Whether the control is shown. */
+  visible: boolean
+  setVisible: (visible: boolean) => void
+  /** Whether the end-user may change the phase (`false` → read-only indicator). */
+  selectable: boolean
+  setSelectable: (selectable: boolean) => void
+}
+
 export interface ShellContextValue {
   config: ShellConfig
   /**
@@ -57,6 +83,11 @@ export interface ShellContextValue {
    * badge) — not a register/unregister stack. Wired via `useDocumentTitlePrefix`.
    */
   setDocumentTitlePrefix: (prefix: string | null) => void
+  /**
+   * Runtime app-phase state, or `null` when the config declares no `phase` block.
+   * Read/driven via `usePhase()`; the shell renders its segmented control from it.
+   */
+  phase: ShellPhaseRuntime | null
 }
 
 export interface ShellAPIContextValue {

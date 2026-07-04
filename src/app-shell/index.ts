@@ -31,7 +31,11 @@ export { useDynamicPages } from './useDynamicPages'
 export type { DynamicPageInput, DynamicPagesConfig } from './useDynamicPages'
 export { defineShellConfig, ShellConfigError } from './defineShellConfig'
 export { useShellContext, useShellContextOptional } from './shellContext'
-export type { ShellContextValue } from './shellContext'
+export type { ShellContextValue, ShellPhaseRuntime } from './shellContext'
+
+// ── app-phase (single-select "what mode is the app in", under the app title) ───
+export { usePhase, usePhaseOptional } from './usePhase'
+export type { ShellPhaseState } from './usePhase'
 
 // ── menu-size preference (header-chrome size: medium · large · xlarge) ─────────
 export { MenuSizeProvider } from './MenuSizeProvider'
@@ -62,6 +66,7 @@ export type {
   ShellDocumentTitleMode,
   ShellIconRenderer,
   ShellChromeLabels,
+  ShellPhaseConfig,
   PageHeaderOptions,
   PageHeaderAction,
   PageHeaderSearchAction,

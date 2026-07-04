@@ -19,6 +19,7 @@ import * as Dialog from '@radix-ui/react-dialog';
 import { SHELL_CONFIG_BRAND } from './shellContract';
 import { ShellContext, ShellAPIContext, } from './shellContext';
 import { ShellPageHeaderUI, findActiveChain } from './ShellPageHeader';
+import { ShellPhaseControl } from './ShellPhaseControl';
 import { useMenuSizeOptional } from './useMenuSize';
 import { AppHeader } from './AppHeader';
 import { AppMenu } from './AppMenu';
@@ -41,6 +42,27 @@ export function AppShell({ config, useMenu, actions, subtitle, titleAdornment, f
     // null → 'medium' (normal), so a standalone consumer is unaffected.
     const menuSize = useMenuSizeOptional()?.menuSize ?? 'medium';
     const [scrollEl, setScrollEl] = useState(null);
+    // App-phase runtime — seeded from the `phase` config block (static: states +
+    // labels), then driven at runtime via `usePhase()`. All four slots are plain
+    // React state so a consumer's `setPhase`/`setVisible`/… re-renders the tree.
+    // `phaseRuntime` is `null` when the config declares no `phase`.
+    const phaseConfig = config.phase;
+    const [phaseValue, setPhaseValue] = useState(() => phaseConfig?.defaultState ?? phaseConfig?.states[0] ?? '');
+    const [phaseStates, setPhaseStates] = useState(() => phaseConfig?.states ?? []);
+    const [phaseVisible, setPhaseVisible] = useState(() => phaseConfig?.visible ?? true);
+    const [phaseSelectable, setPhaseSelectable] = useState(() => phaseConfig?.selectable ?? true);
+    const phaseRuntime = useMemo(() => phaseConfig === undefined
+        ? null
+        : {
+            phase: phaseValue,
+            setPhase: setPhaseValue,
+            states: phaseStates,
+            setStates: setPhaseStates,
+            visible: phaseVisible,
+            setVisible: setPhaseVisible,
+            selectable: phaseSelectable,
+            setSelectable: setPhaseSelectable,
+        }, [phaseConfig, phaseValue, phaseStates, phaseVisible, phaseSelectable]);
     // Page-chrome contributors (`usePageHeader`), keyed by a stable id + a render-order
     // token. The band renders the chrome of the entry with the HIGHEST order — the
     // deepest-mounted contributor (React renders parent→child, so an ancestor's order
@@ -116,7 +138,8 @@ export function AppShell({ config, useMenu, actions, subtitle, titleAdornment, f
         pageHeaderSpec,
         registerPageHeader,
         setDocumentTitlePrefix,
-    }), [config, scrollEl, flatDynamicPages, registerDynamicPages, pageAlertSpec, registerPageAlert, pageHeaderSpec, registerPageHeader]);
+        phase: phaseRuntime,
+    }), [config, scrollEl, flatDynamicPages, registerDynamicPages, pageAlertSpec, registerPageAlert, pageHeaderSpec, registerPageHeader, phaseRuntime]);
     const apiCtx = useMemo(() => ({
         setScrollContainer: setScrollEl,
         registerDynamicPages,
@@ -182,5 +205,5 @@ export function AppShell({ config, useMenu, actions, subtitle, titleAdornment, f
     const openMenuLabel = config.labels?.openMenu?.();
     const navLabel = config.labels?.mainNavigation?.();
     const menu = (_jsx(AppMenu, { actions: actions, subtitle: subtitle, titleAdornment: titleAdornment }));
-    return (_jsx(ShellAPIContext.Provider, { value: apiCtx, children: _jsxs(ShellContext.Provider, { value: ctx, children: [_jsxs("div", { className: "mrs-shell", "data-content-padding": containerPadding, "data-max-width": maxWidth, "data-menu-size": menuSize, children: [!showMenu && (_jsx("div", { className: "mrs-shell__header-row", children: _jsx(AppHeader, { actions: actions, subtitle: subtitle, titleAdornment: titleAdornment }) })), _jsxs("div", { className: "mrs-shell__middle", children: [showMenu && menuOnLeft && (_jsx("div", { className: "mrs-shell__sidebar mrs-shell__sidebar--left", children: menu })), _jsxs("div", { className: "mrs-shell__page-area", children: [showBand ? (_jsx("div", { className: "mrs-shell__chrome", children: _jsx("div", { className: "mrs-shell__container", children: _jsx(ShellPageHeaderUI, { spec: pageHeaderSpec ?? EMPTY_HEADER_SPEC, shell: ctx, showMenuButton: showMenu && !useTabBar, onOpenMenu: () => setMobileMenuOpen(true) }) }) })) : (showMenu && (_jsxs("div", { className: "mrs-shell__mobile-brand", children: [!useTabBar && (_jsx("button", { type: "button", className: "mrs-shell__hamburger", onClick: () => setMobileMenuOpen(true), "aria-label": openMenuLabel, children: config.renderIcon('menu', 20) })), _jsx(Link, { to: "/", className: "mrs-shell__brand-link", children: brand() })] }))), _jsx("div", { ref: setScrollEl, className: "mrs-shell__content", "data-shell-content": true, children: _jsx("div", { className: "mrs-shell__container mrs-shell__container--fill", children: children }) })] }), showMenu && !menuOnLeft && (_jsx("div", { className: "mrs-shell__sidebar mrs-shell__sidebar--right", children: menu }))] }), footer && (_jsx("div", { className: useTabBar ? 'mrs-shell__footer mrs-shell__footer--hide-mobile' : 'mrs-shell__footer', children: footer() })), useTabBar && (_jsx(AppBottomNav, { onOpenMore: () => setMobileMenuOpen(true), moreOpen: mobileMenuOpen }))] }), showMenu && (_jsx(MobileMenuDrawer, { open: mobileMenuOpen, onOpenChange: setMobileMenuOpen, side: menuOnLeft ? 'left' : 'right', title: navLabel, children: menu }))] }) }));
+    return (_jsx(ShellAPIContext.Provider, { value: apiCtx, children: _jsxs(ShellContext.Provider, { value: ctx, children: [_jsxs("div", { className: "mrs-shell", "data-content-padding": containerPadding, "data-max-width": maxWidth, "data-menu-size": menuSize, children: [!showMenu && (_jsxs("div", { className: "mrs-shell__header-row", children: [_jsx(AppHeader, { actions: actions, subtitle: subtitle, titleAdornment: titleAdornment }), _jsx(ShellPhaseControl, { variant: "header" })] })), _jsxs("div", { className: "mrs-shell__middle", children: [showMenu && menuOnLeft && (_jsx("div", { className: "mrs-shell__sidebar mrs-shell__sidebar--left", children: menu })), _jsxs("div", { className: "mrs-shell__page-area", children: [showBand ? (_jsx("div", { className: "mrs-shell__chrome", children: _jsx("div", { className: "mrs-shell__container", children: _jsx(ShellPageHeaderUI, { spec: pageHeaderSpec ?? EMPTY_HEADER_SPEC, shell: ctx, showMenuButton: showMenu && !useTabBar, onOpenMenu: () => setMobileMenuOpen(true) }) }) })) : (showMenu && (_jsxs("div", { className: "mrs-shell__mobile-brand", children: [!useTabBar && (_jsx("button", { type: "button", className: "mrs-shell__hamburger", onClick: () => setMobileMenuOpen(true), "aria-label": openMenuLabel, children: config.renderIcon('menu', 20) })), _jsx(Link, { to: "/", className: "mrs-shell__brand-link", children: brand() })] }))), _jsx("div", { ref: setScrollEl, className: "mrs-shell__content", "data-shell-content": true, children: _jsx("div", { className: "mrs-shell__container mrs-shell__container--fill", children: children }) })] }), showMenu && !menuOnLeft && (_jsx("div", { className: "mrs-shell__sidebar mrs-shell__sidebar--right", children: menu }))] }), footer && (_jsx("div", { className: useTabBar ? 'mrs-shell__footer mrs-shell__footer--hide-mobile' : 'mrs-shell__footer', children: footer() })), useTabBar && (_jsx(AppBottomNav, { onOpenMore: () => setMobileMenuOpen(true), moreOpen: mobileMenuOpen }))] }), showMenu && (_jsx(MobileMenuDrawer, { open: mobileMenuOpen, onOpenChange: setMobileMenuOpen, side: menuOnLeft ? 'left' : 'right', title: navLabel, children: menu }))] }) }));
 }

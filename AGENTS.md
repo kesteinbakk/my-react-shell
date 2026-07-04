@@ -42,8 +42,8 @@ modules** an app picks from:
 
 Each module is **independently importable, self-contained** (never hard-depends on
 another module's runtime), and ships a **contract + a guide** so an app can wire it,
-swap it, or bring its own. New modules are added when a capability is reused
-(rule of two), and every app gets them on the next version bump.
+swap it, or bring its own. A capability is built for the app that needs it first, then
+refined here on re-use; every app gets it on the next version bump.
 
 It ships the **complete component surface** at `my-react-shell/components` — the
 un-opinionated primitives (Button/Input/Checkbox/…) **and** the opinionated composites

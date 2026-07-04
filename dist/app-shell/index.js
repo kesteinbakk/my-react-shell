@@ -23,6 +23,8 @@ export { findActiveChain } from './ShellPageHeader';
 export { useDynamicPages } from './useDynamicPages';
 export { defineShellConfig, ShellConfigError } from './defineShellConfig';
 export { useShellContext, useShellContextOptional } from './shellContext';
+// ── app-phase (single-select "what mode is the app in", under the app title) ───
+export { usePhase, usePhaseOptional } from './usePhase';
 // ── menu-size preference (header-chrome size: medium · large · xlarge) ─────────
 export { MenuSizeProvider } from './MenuSizeProvider';
 export { useMenuSize, useMenuSizeOptional } from './useMenuSize';

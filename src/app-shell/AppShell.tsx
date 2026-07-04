@@ -27,6 +27,8 @@ import {
   type ShellContextValue,
 } from './shellContext'
 import { ShellPageHeaderUI, findActiveChain } from './ShellPageHeader'
+import { ShellPhaseControl } from './ShellPhaseControl'
+import type { ShellPhaseRuntime } from './shellContext'
 import { useMenuSizeOptional } from './useMenuSize'
 import { AppHeader } from './AppHeader'
 import { AppMenu } from './AppMenu'
@@ -112,6 +114,36 @@ export function AppShell({
   const menuSize = useMenuSizeOptional()?.menuSize ?? 'medium'
 
   const [scrollEl, setScrollEl] = useState<HTMLElement | null>(null)
+
+  // App-phase runtime — seeded from the `phase` config block (static: states +
+  // labels), then driven at runtime via `usePhase()`. All four slots are plain
+  // React state so a consumer's `setPhase`/`setVisible`/… re-renders the tree.
+  // `phaseRuntime` is `null` when the config declares no `phase`.
+  const phaseConfig = config.phase
+  const [phaseValue, setPhaseValue] = useState<string>(
+    () => phaseConfig?.defaultState ?? phaseConfig?.states[0] ?? '',
+  )
+  const [phaseStates, setPhaseStates] = useState<string[]>(() => phaseConfig?.states ?? [])
+  const [phaseVisible, setPhaseVisible] = useState<boolean>(() => phaseConfig?.visible ?? true)
+  const [phaseSelectable, setPhaseSelectable] = useState<boolean>(
+    () => phaseConfig?.selectable ?? true,
+  )
+  const phaseRuntime = useMemo<ShellPhaseRuntime | null>(
+    () =>
+      phaseConfig === undefined
+        ? null
+        : {
+            phase: phaseValue,
+            setPhase: setPhaseValue,
+            states: phaseStates,
+            setStates: setPhaseStates,
+            visible: phaseVisible,
+            setVisible: setPhaseVisible,
+            selectable: phaseSelectable,
+            setSelectable: setPhaseSelectable,
+          },
+    [phaseConfig, phaseValue, phaseStates, phaseVisible, phaseSelectable],
+  )
 
   // Page-chrome contributors (`usePageHeader`), keyed by a stable id + a render-order
   // token. The band renders the chrome of the entry with the HIGHEST order — the
@@ -224,8 +256,9 @@ export function AppShell({
       pageHeaderSpec,
       registerPageHeader,
       setDocumentTitlePrefix,
+      phase: phaseRuntime,
     }),
-    [config, scrollEl, flatDynamicPages, registerDynamicPages, pageAlertSpec, registerPageAlert, pageHeaderSpec, registerPageHeader],
+    [config, scrollEl, flatDynamicPages, registerDynamicPages, pageAlertSpec, registerPageAlert, pageHeaderSpec, registerPageHeader, phaseRuntime],
   )
 
   const apiCtx = useMemo<ShellAPIContextValue>(
@@ -316,6 +349,7 @@ export function AppShell({
           {!showMenu && (
             <div className="mrs-shell__header-row">
               <AppHeader actions={actions} subtitle={subtitle} titleAdornment={titleAdornment} />
+              <ShellPhaseControl variant="header" />
             </div>
           )}
 
