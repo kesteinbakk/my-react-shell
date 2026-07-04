@@ -4774,6 +4774,17 @@
 .mrs-sheet--bottom.mrs-sheet--full {
   height: 100dvh;
 }
+/* Permanent mode — inline, layout-occupying panel (rendered above the `permanent`
+   breakpoint). Replaces the fixed overlay positioning with static flow; keeps the edge
+   border + size, drops the elevation and slide-in. For a left/right panel it fills the
+   height of its layout row, so its flex/grid parent must have a resolved height. */
+.mrs-sheet--permanent {
+  position: relative;
+  inset: auto;
+  z-index: auto;
+  box-shadow: none;
+  animation: none;
+}
 /* Slide animations, keyed to the entry edge. */
 .mrs-sheet--left[data-state='open'] {
   animation: mrs-sheet-in-left 240ms cubic-bezier(0.32, 0.72, 0, 1);

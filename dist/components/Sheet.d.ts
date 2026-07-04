@@ -4,6 +4,11 @@ import type { IconMode } from '../icons/iconModeContext';
 export type SheetSide = 'left' | 'right' | 'top' | 'bottom';
 /** Panel extent — width for left/right, height for top/bottom. `full` fills that axis. */
 export type SheetSize = 'sm' | 'md' | 'lg' | 'xl' | 'full';
+/**
+ * Breakpoint at and above which a `permanent` sheet becomes an inline layout panel.
+ * `sm` = ≥640px, `lg` = ≥1024px — the same two breakpoints the app-shell uses.
+ */
+export type SheetPermanentBreakpoint = 'sm' | 'lg';
 export interface SheetProps {
     /** Panel content. */
     children: ReactNode;
@@ -60,6 +65,19 @@ export interface SheetProps {
      */
     modal?: boolean;
     /**
+     * Make the sheet a **permanent, non-modal, non-dismissible layout panel** at and
+     * above the given breakpoint (`sm` = ≥640px, `lg` = ≥1024px). Above it, the panel
+     * renders inline as a real layout sibling that occupies UI space — no portal, no
+     * overlay, no close affordance, always visible. Below it, the sheet falls back to a
+     * normal modal sheet honoring `modal` / `scrim` (open via `trigger` / `open`,
+     * dismissible via ✕ / Esc). Above the breakpoint `trigger`, `scrim`, `modal`,
+     * `showClose`, `open` / `onOpenChange`, and the dismiss handlers are ignored.
+     *
+     * Because a permanent panel participates in layout, place `<Sheet>` as a flex/grid
+     * sibling of the content it flanks (unlike an overlay sheet, which can sit anywhere).
+     */
+    permanent?: SheetPermanentBreakpoint;
+    /**
      * Render `children` directly into the panel with no built-in header row and no padded
      * scroll wrapper — for a self-contained, full-height column (e.g. a nav menu) that
      * fills the panel edge-to-edge. `title` / `header` / `showClose` are ignored.
@@ -93,4 +111,4 @@ export interface SheetProps {
  * </Sheet>
  * ```
  */
-export declare function Sheet({ children, trigger, open, onOpenChange, onEscapeKeyDown, defaultOpen, title, header, headerActions, description, side, size, showClose, closeLabel, iconMode, scrim, modal, bare, className, overlayClass, panelTestId, }: SheetProps): import("react").JSX.Element;
+export declare function Sheet({ children, trigger, open, onOpenChange, onEscapeKeyDown, defaultOpen, title, header, headerActions, description, side, size, showClose, closeLabel, iconMode, scrim, modal, permanent, bare, className, overlayClass, panelTestId, }: SheetProps): import("react").JSX.Element;

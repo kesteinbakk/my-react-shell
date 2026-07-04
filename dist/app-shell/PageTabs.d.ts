@@ -47,6 +47,11 @@ export interface PageTabsProps {
     match?: 'exact' | 'prefix';
     /** Additional classes on the outer container. */
     className?: string;
+    /**
+     * Whether the `underline` variant draws its full-width baseline. Default
+     * `true` — see `ScrollableTabRowProps.showBaseline`.
+     */
+    showBaseline?: boolean;
 }
 /**
  * Resolve which tab is active using longest-route-wins. Without this, a

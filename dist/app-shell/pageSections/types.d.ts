@@ -77,4 +77,9 @@ export interface PageSectionsProps {
     persistKey?: string;
     /** Render sections at full height, expanding to fill the scroll container. */
     fullHeight?: boolean;
+    /**
+     * Whether the `underline` variant draws its full-width baseline. Default
+     * `true` — see `ScrollableTabRowProps.showBaseline`.
+     */
+    showBaseline?: boolean;
 }

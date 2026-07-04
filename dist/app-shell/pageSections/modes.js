@@ -97,7 +97,7 @@ export function SectionTabsStrip(props) {
     const shell = useShellContextOptional();
     const variant = shell?.config.tabs?.variant ?? 'underline';
     const renderIcon = shell?.config.renderIcon;
-    return (_jsx(ScrollableTabRow, { role: "tablist", variant: variant, className: props.className, children: props.sections.map((section) => {
+    return (_jsx(ScrollableTabRow, { role: "tablist", variant: variant, showBaseline: props.showBaseline, className: props.className, children: props.sections.map((section) => {
             const active = section.id === props.activeId;
             return (_jsx("div", { className: "mrs-tab", "data-active": active, children: _jsxs("button", { type: "button", role: "tab", "aria-selected": active, title: section.tooltip?.(), onClick: () => props.onTabClick(section.id), className: "mrs-tab__button", 
                     // Inline colour wins over the base/active state rules, so a toned

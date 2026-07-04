@@ -1,9 +1,15 @@
-import { jsx as _jsx, Fragment as _Fragment, jsxs as _jsxs } from "react/jsx-runtime";
+import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "react/jsx-runtime";
 import * as RadixDialog from '@radix-ui/react-dialog';
 import { cn } from './cn';
 import { CloseGlyph } from './CloseGlyph';
 import { useShellText } from './useShellText';
 import { useDialogDismissGuard } from './useDialogDismissGuard';
+import { useMediaQuery } from './useMediaQuery';
+/** Min-width media query for each permanent breakpoint. */
+const PERMANENT_QUERY = {
+    sm: '(min-width: 640px)',
+    lg: '(min-width: 1024px)',
+};
 /**
  * Overlay sheet that slides in from any edge — for navigation menus, filters, detail
  * panels, or any content that overlays the page. Built on Radix Dialog (focus trap,
@@ -25,12 +31,23 @@ import { useDialogDismissGuard } from './useDialogDismissGuard';
  * </Sheet>
  * ```
  */
-export function Sheet({ children, trigger, open, onOpenChange, onEscapeKeyDown, defaultOpen, title, header, headerActions, description, side = 'right', size = 'md', showClose = true, closeLabel, iconMode, scrim = true, modal = true, bare = false, className, overlayClass, panelTestId, }) {
+export function Sheet({ children, trigger, open, onOpenChange, onEscapeKeyDown, defaultOpen, title, header, headerActions, description, side = 'right', size = 'md', showClose = true, closeLabel, iconMode, scrim = true, modal = true, permanent, bare = false, className, overlayClass, panelTestId, }) {
     const st = useShellText();
+    // Above the `permanent` breakpoint the sheet renders as an inline layout panel; below
+    // it (or when `permanent` is unset) it stays the normal overlay dialog. The hook runs
+    // unconditionally — a null query disables the subscription.
+    const isPermanent = useMediaQuery(permanent != null ? PERMANENT_QUERY[permanent] : null);
     const showHeader = !bare && (header != null || title != null || showClose || headerActions != null);
     // Keep a nested layer — a popper (Select, DropdownMenu, Popover, …) or a stacked Dialog —
     // from tearing down the whole sheet when it's dismissed. See useDialogDismissGuard.
     const guardNestedDismiss = useDialogDismissGuard(open);
+    // Permanent mode: an inline, non-dismissible column that occupies real layout space.
+    // Not a dialog — no portal, overlay, trigger, or close; `title`/`description` render as
+    // plain elements (no accessible-name plumbing needed without a modal focus trap).
+    if (permanent != null && isPermanent) {
+        const showPermanentHeader = !bare && (header != null || title != null || headerActions != null);
+        return (_jsx("aside", { "data-testid": panelTestId, className: cn('mrs-sheet', `mrs-sheet--${side}`, `mrs-sheet--${size}`, 'mrs-sheet--permanent', className), children: bare ? (children) : (_jsxs(_Fragment, { children: [showPermanentHeader && (_jsxs("div", { className: "mrs-sheet__header", children: [header != null ? (header) : (title != null && _jsx("h2", { className: "mrs-sheet__title", children: title })), headerActions != null && (_jsx("div", { className: "mrs-sheet__header-actions", children: headerActions }))] })), description != null && _jsx("p", { className: "mrs-sheet__desc", children: description }), _jsx("div", { className: "mrs-sheet__body", children: children })] })) }));
+    }
     return (_jsxs(RadixDialog.Root, { open: open, onOpenChange: onOpenChange, defaultOpen: defaultOpen, modal: modal, children: [trigger != null && _jsx(RadixDialog.Trigger, { asChild: true, children: trigger }), _jsxs(RadixDialog.Portal, { children: [scrim && _jsx(RadixDialog.Overlay, { className: cn('mrs-sheet__overlay', overlayClass) }), _jsx(RadixDialog.Content, { "data-testid": panelTestId, className: cn('mrs-sheet', `mrs-sheet--${side}`, `mrs-sheet--${size}`, className), 
                         // Without a scrim, Radix still traps focus when modal; keep the panel from
                         // grabbing focus away from the live page in the non-modal float case. The nested-layer

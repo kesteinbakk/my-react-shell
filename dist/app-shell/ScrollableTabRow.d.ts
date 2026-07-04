@@ -71,6 +71,13 @@ export interface ScrollableTabRowProps {
     role?: AriaRole;
     /** Tab visual variant — set as `data-variant` on the scroll container. */
     variant?: ShellTabsVariant;
+    /**
+     * Whether the `underline` variant draws its full-width baseline
+     * (`border-bottom` under the whole row). Default `true`. Set `false` to keep
+     * only the active tab's own underline, no rail beneath the inactive tabs.
+     * No effect on the `pill` variant, which has no baseline to begin with.
+     */
+    showBaseline?: boolean;
     /** Additional classes on the inner scroll container. */
     className?: string;
     /** Accessible name for the left scroll arrow. No default — absent → the chevron stands alone. */

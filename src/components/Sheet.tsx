@@ -5,11 +5,23 @@ import type { IconMode } from '../icons/iconModeContext'
 import { CloseGlyph } from './CloseGlyph'
 import { useShellText } from './useShellText'
 import { useDialogDismissGuard } from './useDialogDismissGuard'
+import { useMediaQuery } from './useMediaQuery'
 
 /** Which edge the panel slides in from. */
 export type SheetSide = 'left' | 'right' | 'top' | 'bottom'
 /** Panel extent — width for left/right, height for top/bottom. `full` fills that axis. */
 export type SheetSize = 'sm' | 'md' | 'lg' | 'xl' | 'full'
+/**
+ * Breakpoint at and above which a `permanent` sheet becomes an inline layout panel.
+ * `sm` = ≥640px, `lg` = ≥1024px — the same two breakpoints the app-shell uses.
+ */
+export type SheetPermanentBreakpoint = 'sm' | 'lg'
+
+/** Min-width media query for each permanent breakpoint. */
+const PERMANENT_QUERY: Record<SheetPermanentBreakpoint, string> = {
+  sm: '(min-width: 640px)',
+  lg: '(min-width: 1024px)',
+}
 
 export interface SheetProps {
   /** Panel content. */
@@ -67,6 +79,19 @@ export interface SheetProps {
    */
   modal?: boolean
   /**
+   * Make the sheet a **permanent, non-modal, non-dismissible layout panel** at and
+   * above the given breakpoint (`sm` = ≥640px, `lg` = ≥1024px). Above it, the panel
+   * renders inline as a real layout sibling that occupies UI space — no portal, no
+   * overlay, no close affordance, always visible. Below it, the sheet falls back to a
+   * normal modal sheet honoring `modal` / `scrim` (open via `trigger` / `open`,
+   * dismissible via ✕ / Esc). Above the breakpoint `trigger`, `scrim`, `modal`,
+   * `showClose`, `open` / `onOpenChange`, and the dismiss handlers are ignored.
+   *
+   * Because a permanent panel participates in layout, place `<Sheet>` as a flex/grid
+   * sibling of the content it flanks (unlike an overlay sheet, which can sit anywhere).
+   */
+  permanent?: SheetPermanentBreakpoint
+  /**
    * Render `children` directly into the panel with no built-in header row and no padded
    * scroll wrapper — for a self-contained, full-height column (e.g. a nav menu) that
    * fills the panel edge-to-edge. `title` / `header` / `showClose` are ignored.
@@ -119,16 +144,56 @@ export function Sheet({
   iconMode,
   scrim = true,
   modal = true,
+  permanent,
   bare = false,
   className,
   overlayClass,
   panelTestId,
 }: SheetProps) {
   const st = useShellText()
+  // Above the `permanent` breakpoint the sheet renders as an inline layout panel; below
+  // it (or when `permanent` is unset) it stays the normal overlay dialog. The hook runs
+  // unconditionally — a null query disables the subscription.
+  const isPermanent = useMediaQuery(permanent != null ? PERMANENT_QUERY[permanent] : null)
   const showHeader = !bare && (header != null || title != null || showClose || headerActions != null)
   // Keep a nested layer — a popper (Select, DropdownMenu, Popover, …) or a stacked Dialog —
   // from tearing down the whole sheet when it's dismissed. See useDialogDismissGuard.
   const guardNestedDismiss = useDialogDismissGuard(open)
+
+  // Permanent mode: an inline, non-dismissible column that occupies real layout space.
+  // Not a dialog — no portal, overlay, trigger, or close; `title`/`description` render as
+  // plain elements (no accessible-name plumbing needed without a modal focus trap).
+  if (permanent != null && isPermanent) {
+    const showPermanentHeader = !bare && (header != null || title != null || headerActions != null)
+    return (
+      <aside
+        data-testid={panelTestId}
+        className={cn('mrs-sheet', `mrs-sheet--${side}`, `mrs-sheet--${size}`, 'mrs-sheet--permanent', className)}
+      >
+        {bare ? (
+          children
+        ) : (
+          <>
+            {showPermanentHeader && (
+              <div className="mrs-sheet__header">
+                {header != null ? (
+                  header
+                ) : (
+                  title != null && <h2 className="mrs-sheet__title">{title}</h2>
+                )}
+                {headerActions != null && (
+                  <div className="mrs-sheet__header-actions">{headerActions}</div>
+                )}
+              </div>
+            )}
+            {description != null && <p className="mrs-sheet__desc">{description}</p>}
+            <div className="mrs-sheet__body">{children}</div>
+          </>
+        )}
+      </aside>
+    )
+  }
+
   return (
     <RadixDialog.Root open={open} onOpenChange={onOpenChange} defaultOpen={defaultOpen} modal={modal}>
       {trigger != null && <RadixDialog.Trigger asChild>{trigger}</RadixDialog.Trigger>}

@@ -60,6 +60,7 @@ interface SectionTabsStripProps {
     activeId: string;
     onTabClick: (id: string) => void;
     className?: string;
+    showBaseline?: boolean;
 }
 export declare function SectionsListMode(props: ListModeProps): ReactNode;
 export declare function SectionsSingleMode(props: SingleModeProps): ReactNode;
