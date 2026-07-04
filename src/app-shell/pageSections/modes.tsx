@@ -35,6 +35,7 @@ import { useShellContextOptional } from '../shellContext'
 import type { ShellTabsVariant } from '../shellContract'
 import type { PageSection as PageSectionConfig } from './types'
 import { PageSection } from '../PageSection'
+import { TONE_COLOR } from '../../components/tone'
 
 // ----------------------------------------------------------------------------
 // LazyContent — render placeholder until in-view OR forceMountAll fires
@@ -198,6 +199,9 @@ export function SectionTabsStrip(props: SectionTabsStripProps): ReactNode {
               title={section.tooltip?.()}
               onClick={() => props.onTabClick(section.id)}
               className="mrs-tab__button"
+              // Inline colour wins over the base/active state rules, so a toned
+              // section keeps its semantic colour in every state.
+              style={section.tone ? { color: TONE_COLOR[section.tone] } : undefined}
             >
               {section.icon && renderIcon?.(section.icon, 16)}
               <span>{section.label()}</span>

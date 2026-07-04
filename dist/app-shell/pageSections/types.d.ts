@@ -7,6 +7,7 @@
  */
 import type { ReactNode } from 'react';
 import type { ShellIcon } from '../shellContract';
+import type { Tone } from '../../components/tone';
 export interface PageSection {
     /** Unique identifier. */
     id: string;
@@ -18,6 +19,14 @@ export interface PageSection {
     label: () => string;
     /** Optional icon key — resolved by the consumer-supplied `renderIcon`. */
     icon?: ShellIcon;
+    /**
+     * Semantic tone — colours this section's tab trigger (label + icon) across
+     * active/inactive states (an icon using `currentColor` inherits it). Omitted
+     * → default neutral chrome (secondary → primary on active/hover), same as
+     * `SegmentedOption.tone` / `PageTab.tone`. Tab-strip only — doesn't affect
+     * the section card itself.
+     */
+    tone?: Tone;
     /**
      * Section content. A thunk — `() => <X />` — never eager JSX.
      *

@@ -20,6 +20,7 @@ import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import { Link, useRouterState } from '@tanstack/react-router';
 import { ScrollableTabRow } from './ScrollableTabRow';
 import { useShellContextOptional } from './shellContext';
+import { TONE_COLOR } from '../components/tone';
 /**
  * Resolve which tab is active using longest-route-wins. Without this, a
  * prefix-mode tab whose route is `/x` would also match on `/x/anything`,
@@ -53,6 +54,9 @@ export function PageTabs(props) {
     const activeTabId = findActiveTabId(pathname, props.tabs, match);
     return (_jsx(ScrollableTabRow, { role: "tablist", variant: variant, className: props.className, scrollLeftLabel: shell?.config.labels?.scrollTabsLeft?.(), scrollRightLabel: shell?.config.labels?.scrollTabsRight?.(), children: props.tabs.map((tab) => {
             const active = activeTabId === tab.id;
-            return (_jsx("div", { className: "mrs-tab", "data-active": active, children: _jsxs(Link, { to: tab.route, role: "tab", "aria-selected": active, className: "mrs-tab__link", children: [tab.icon && renderIcon?.(tab.icon, 16), _jsx("span", { children: tab.label })] }) }, tab.id));
+            return (_jsx("div", { className: "mrs-tab", "data-active": active, children: _jsxs(Link, { to: tab.route, role: "tab", "aria-selected": active, className: "mrs-tab__link", 
+                    // Inline colour wins over the base/active state rules, so a toned
+                    // tab keeps its semantic colour in every state.
+                    style: tab.tone ? { color: TONE_COLOR[tab.tone] } : undefined, children: [tab.icon && renderIcon?.(tab.icon, 16), _jsx("span", { children: tab.label })] }) }, tab.id));
         }) }));
 }

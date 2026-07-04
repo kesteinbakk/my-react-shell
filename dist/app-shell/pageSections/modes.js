@@ -32,6 +32,7 @@ import { useEffect, useRef, useState } from 'react';
 import { ScrollableTabRow } from '../ScrollableTabRow';
 import { useShellContextOptional } from '../shellContext';
 import { PageSection } from '../PageSection';
+import { TONE_COLOR } from '../../components/tone';
 export function LazyContent(props) {
     if (!props.lazy)
         return props.children;
@@ -98,6 +99,9 @@ export function SectionTabsStrip(props) {
     const renderIcon = shell?.config.renderIcon;
     return (_jsx(ScrollableTabRow, { role: "tablist", variant: variant, className: props.className, children: props.sections.map((section) => {
             const active = section.id === props.activeId;
-            return (_jsx("div", { className: "mrs-tab", "data-active": active, children: _jsxs("button", { type: "button", role: "tab", "aria-selected": active, title: section.tooltip?.(), onClick: () => props.onTabClick(section.id), className: "mrs-tab__button", children: [section.icon && renderIcon?.(section.icon, 16), _jsx("span", { children: section.label() })] }) }, section.id));
+            return (_jsx("div", { className: "mrs-tab", "data-active": active, children: _jsxs("button", { type: "button", role: "tab", "aria-selected": active, title: section.tooltip?.(), onClick: () => props.onTabClick(section.id), className: "mrs-tab__button", 
+                    // Inline colour wins over the base/active state rules, so a toned
+                    // section keeps its semantic colour in every state.
+                    style: section.tone ? { color: TONE_COLOR[section.tone] } : undefined, children: [section.icon && renderIcon?.(section.icon, 16), _jsx("span", { children: section.label() })] }) }, section.id));
         }) }));
 }

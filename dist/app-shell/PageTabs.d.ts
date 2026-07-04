@@ -18,6 +18,7 @@
  */
 import type { ReactNode } from 'react';
 import type { ShellIcon } from './shellContract';
+import { type Tone } from '../components/tone';
 export interface PageTab {
     /** Stable id (used as render key). */
     id: string;
@@ -27,6 +28,13 @@ export interface PageTab {
     icon?: ShellIcon;
     /** Route this tab points at. Click navigates here. */
     route: string;
+    /**
+     * Semantic tone — colours this tab's label + icon across active/inactive
+     * states (an icon using `currentColor` inherits it). Omitted → default
+     * neutral chrome (secondary → primary on active/hover), same as
+     * `SegmentedOption.tone`.
+     */
+    tone?: Tone;
 }
 export interface PageTabsProps {
     tabs: PageTab[];

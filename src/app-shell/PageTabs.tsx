@@ -22,6 +22,7 @@ import type { ReactNode } from 'react'
 import { ScrollableTabRow } from './ScrollableTabRow'
 import { useShellContextOptional } from './shellContext'
 import type { ShellTabsVariant, ShellIcon } from './shellContract'
+import { type Tone, TONE_COLOR } from '../components/tone'
 
 export interface PageTab {
   /** Stable id (used as render key). */
@@ -32,6 +33,13 @@ export interface PageTab {
   icon?: ShellIcon
   /** Route this tab points at. Click navigates here. */
   route: string
+  /**
+   * Semantic tone — colours this tab's label + icon across active/inactive
+   * states (an icon using `currentColor` inherits it). Omitted → default
+   * neutral chrome (secondary → primary on active/hover), same as
+   * `SegmentedOption.tone`.
+   */
+  tone?: Tone
 }
 
 export interface PageTabsProps {
@@ -96,7 +104,15 @@ export function PageTabs(props: PageTabsProps): ReactNode {
         const active = activeTabId === tab.id
         return (
           <div key={tab.id} className="mrs-tab" data-active={active}>
-            <Link to={tab.route} role="tab" aria-selected={active} className="mrs-tab__link">
+            <Link
+              to={tab.route}
+              role="tab"
+              aria-selected={active}
+              className="mrs-tab__link"
+              // Inline colour wins over the base/active state rules, so a toned
+              // tab keeps its semantic colour in every state.
+              style={tab.tone ? { color: TONE_COLOR[tab.tone] } : undefined}
+            >
               {tab.icon && renderIcon?.(tab.icon, 16)}
               <span>{tab.label}</span>
             </Link>
