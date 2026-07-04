@@ -25,7 +25,7 @@ import { useDialogDismissGuard } from './useDialogDismissGuard';
  * </Sheet>
  * ```
  */
-export function Sheet({ children, trigger, open, onOpenChange, defaultOpen, title, header, headerActions, description, side = 'right', size = 'md', showClose = true, closeLabel, iconMode, scrim = true, modal = true, bare = false, className, overlayClass, panelTestId, }) {
+export function Sheet({ children, trigger, open, onOpenChange, onEscapeKeyDown, defaultOpen, title, header, headerActions, description, side = 'right', size = 'md', showClose = true, closeLabel, iconMode, scrim = true, modal = true, bare = false, className, overlayClass, panelTestId, }) {
     const st = useShellText();
     const showHeader = !bare && (header != null || title != null || showClose || headerActions != null);
     // Keep a nested layer — a popper (Select, DropdownMenu, Popover, …) or a stacked Dialog —
@@ -36,7 +36,7 @@ export function Sheet({ children, trigger, open, onOpenChange, defaultOpen, titl
                         // grabbing focus away from the live page in the non-modal float case. The nested-layer
                         // guard runs first so a nested Select/menu or stacked Dialog dismissal never collapses
                         // the sheet.
-                        onPointerDownOutside: (e) => {
+                        onEscapeKeyDown: onEscapeKeyDown, onPointerDownOutside: (e) => {
                             guardNestedDismiss(e);
                         }, onInteractOutside: (e) => {
                             if (guardNestedDismiss(e))

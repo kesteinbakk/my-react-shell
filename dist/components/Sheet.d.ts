@@ -13,6 +13,12 @@ export interface SheetProps {
     open?: boolean;
     /** Open-state change handler (trigger / Esc / outside-click / ✕ call this). */
     onOpenChange?: (open: boolean) => void;
+    /**
+     * Called when the Escape key is pressed while the sheet is open (forwarded to Radix's
+     * `onEscapeKeyDown`). Call `event.preventDefault()` to suppress the default Esc-closes
+     * behavior — for a persistent panel that must close only via ✕ or an external toggle.
+     */
+    onEscapeKeyDown?: (event: KeyboardEvent) => void;
     /** Initial open state when uncontrolled. */
     defaultOpen?: boolean;
     /** Heading shown in the built-in header row (also the accessible name). */
@@ -87,4 +93,4 @@ export interface SheetProps {
  * </Sheet>
  * ```
  */
-export declare function Sheet({ children, trigger, open, onOpenChange, defaultOpen, title, header, headerActions, description, side, size, showClose, closeLabel, iconMode, scrim, modal, bare, className, overlayClass, panelTestId, }: SheetProps): import("react").JSX.Element;
+export declare function Sheet({ children, trigger, open, onOpenChange, onEscapeKeyDown, defaultOpen, title, header, headerActions, description, side, size, showClose, closeLabel, iconMode, scrim, modal, bare, className, overlayClass, panelTestId, }: SheetProps): import("react").JSX.Element;

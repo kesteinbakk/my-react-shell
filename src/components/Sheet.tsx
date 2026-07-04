@@ -20,6 +20,12 @@ export interface SheetProps {
   open?: boolean
   /** Open-state change handler (trigger / Esc / outside-click / ✕ call this). */
   onOpenChange?: (open: boolean) => void
+  /**
+   * Called when the Escape key is pressed while the sheet is open (forwarded to Radix's
+   * `onEscapeKeyDown`). Call `event.preventDefault()` to suppress the default Esc-closes
+   * behavior — for a persistent panel that must close only via ✕ or an external toggle.
+   */
+  onEscapeKeyDown?: (event: KeyboardEvent) => void
   /** Initial open state when uncontrolled. */
   defaultOpen?: boolean
   /** Heading shown in the built-in header row (also the accessible name). */
@@ -100,6 +106,7 @@ export function Sheet({
   trigger,
   open,
   onOpenChange,
+  onEscapeKeyDown,
   defaultOpen,
   title,
   header,
@@ -134,6 +141,7 @@ export function Sheet({
           // grabbing focus away from the live page in the non-modal float case. The nested-layer
           // guard runs first so a nested Select/menu or stacked Dialog dismissal never collapses
           // the sheet.
+          onEscapeKeyDown={onEscapeKeyDown}
           onPointerDownOutside={(e) => {
             guardNestedDismiss(e)
           }}
