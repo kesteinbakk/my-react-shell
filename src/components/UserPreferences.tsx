@@ -5,6 +5,7 @@ import type { ThemeInfo, ThemeMode, ThemeName } from '../theme/themeContext'
 import type { IconMode } from '../icons/iconModeContext'
 import type { MenuSize } from '../app-shell/menuSizeContext'
 import { useI18nContextOptional } from '../i18n/i18nContext'
+import { Button } from './Button'
 import { cn } from './cn'
 import { Flag } from './Flag'
 import { useShellText } from './useShellText'
@@ -120,7 +121,7 @@ export interface UserPreferencesProps {
   menuSizeLargeLabel?: ReactNode
   /** Label for the `xlarge` (extra large) menu-size segment. Optional — defaults to `mrs.prefs.menuSizeXlarge`. */
   menuSizeXlargeLabel?: ReactNode
-  /** Accessible label for the close ✕. Optional — defaults to the built-in `mrs.action.close`. */
+  /** Text for the lower close button and the accessible label of the header ✕. Optional — defaults to the built-in `mrs.action.close`. */
   closeLabel?: string
   className?: string
 }
@@ -572,6 +573,14 @@ export function UserPreferences({
           )}
 
           {accountActions != null && <div className="mrs-prefs__account">{accountActions}</div>}
+
+          <div className="mrs-prefs__footer">
+            <Dialog.Close asChild>
+              <Button variant="soft" tone="neutral">
+                {closeLabel ?? st('mrs.action.close')}
+              </Button>
+            </Dialog.Close>
+          </div>
         </Dialog.Content>
       </Dialog.Portal>
     </Dialog.Root>

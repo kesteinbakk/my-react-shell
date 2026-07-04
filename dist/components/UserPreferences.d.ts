@@ -99,7 +99,7 @@ export interface UserPreferencesProps {
     menuSizeLargeLabel?: ReactNode;
     /** Label for the `xlarge` (extra large) menu-size segment. Optional — defaults to `mrs.prefs.menuSizeXlarge`. */
     menuSizeXlargeLabel?: ReactNode;
-    /** Accessible label for the close ✕. Optional — defaults to the built-in `mrs.action.close`. */
+    /** Text for the lower close button and the accessible label of the header ✕. Optional — defaults to the built-in `mrs.action.close`. */
     closeLabel?: string;
     className?: string;
 }

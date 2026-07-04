@@ -1390,6 +1390,19 @@
   flex-direction: column;
   gap: 0.5rem;
 }
+.mrs-prefs__footer {
+  margin-top: 1rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--color-border-primary);
+  display: flex;
+  justify-content: flex-end;
+}
+/* The account block already draws its own divider — don't stack a second one. */
+.mrs-prefs__account + .mrs-prefs__footer {
+  margin-top: 0.75rem;
+  padding-top: 0;
+  border-top: none;
+}
 
 /* ── UserPreferences — sectioned (two-pane) layout ───────────────────────────
    Engaged only when the consumer passes `sections`; the base `.mrs-prefs` above
