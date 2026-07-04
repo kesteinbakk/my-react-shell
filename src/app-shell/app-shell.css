@@ -264,13 +264,18 @@
   background: var(--color-surface-primary);
 }
 .mrs-shell__app-mode .mrs-segmented__item--active {
-  background: var(--color-surface-sunken);
+  background: var(--color-surface-sunken-deep);
   border-color: var(--color-border-hover);
-  /* Layered inset shadows — a deep top-edge well plus a tighter inner shadow —
-     push the active mode convincingly into the track. */
+  /* Pressed-button bevel (light from the top). At this small size crisp bevel
+     lines read as depth better than soft glow: a hard dark lip at the top inner
+     edge + a soft shadow falling from it, and a hard highlight line at the bottom
+     edge (the lighter `surface-raised` plane catching light). The opposing
+     dark/light pair is what sells the recess — a dark-only inset vanishes on a
+     dark surface. */
   box-shadow:
-    inset 0 3px 6px -1px var(--color-shadow-lg),
-    inset 0 2px 3px var(--color-shadow-md);
+    inset 0 1px 0 0 var(--color-shadow-xl),
+    inset 0 3px 5px -2px var(--color-shadow-lg),
+    inset 0 -1px 0 0 var(--color-surface-raised);
 }
 /* Dim the unselected modes so the pressed-in mode reads as more clearly selected.
    Opacity (not a colour swap) so it also dims a toned option, whose inline colour
