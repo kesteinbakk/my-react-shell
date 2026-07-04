@@ -68,6 +68,15 @@ export interface PageEntry {
   /** Nested entries — render as breadcrumb-chain levels after the parent. */
   subPages?: PageEntry[]
   /**
+   * App-modes this page supports (values from `appMode.modes`). **Undefined → the
+   * page supports every mode** (no narrowing — landing here does nothing). When the
+   * active breadcrumb **leaf** declares this, the app-mode control shows only these
+   * modes (intersected with any runtime `setModes` narrowing), and arriving here
+   * while the current mode is *not* in the set triggers `appMode.onUnsupportedMode`.
+   * Requires an `appMode` block; ignored without one.
+   */
+  supportedModes?: string[]
+  /**
    * Reactive predicate to **omit this level from the rendered breadcrumb trail**
    * while keeping it structurally in the chain: the URL is unchanged, the chain
    * still descends through it, and its descendants stay navigable. Use it to hide
@@ -188,6 +197,16 @@ export interface ShellAppModeConfig {
    * via `useAppMode().setSelectable`.
    */
   selectable?: boolean
+  /**
+   * What to do when the active page's `supportedModes` excludes the current mode:
+   * - `'throw'` (**default**) — treat it as a routing/config bug and throw, so the
+   *   consumer gates navigation instead of landing in an impossible state.
+   * - `'jump'` — auto-switch to the first supported mode and emit a `console.warn`.
+   *
+   * Only fires when the breadcrumb **leaf** page declares `supportedModes` and the
+   * current mode is not in it; pages without `supportedModes` never trigger it.
+   */
+  onUnsupportedMode?: 'throw' | 'jump'
 }
 
 /**

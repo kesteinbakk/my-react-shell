@@ -127,22 +127,8 @@ export function AppShell({
   const [appModeSelectable, setAppModeSelectable] = useState<boolean>(
     () => appModeConfig?.selectable ?? true,
   )
-  const appModeRuntime = useMemo<ShellAppModeRuntime | null>(
-    () =>
-      appModeConfig === undefined
-        ? null
-        : {
-            appMode: appModeValue,
-            setAppMode: setAppModeValue,
-            modes: appModeOptions,
-            setModes: setAppModeOptions,
-            visible: appModeVisible,
-            setVisible: setAppModeVisible,
-            selectable: appModeSelectable,
-            setSelectable: setAppModeSelectable,
-          },
-    [appModeConfig, appModeValue, appModeOptions, appModeVisible, appModeSelectable],
-  )
+  // `appModeRuntime` is built after `activeChain` below — it depends on the active
+  // leaf page's `supportedModes` to narrow the available set.
 
   // Page-chrome contributors (`usePageHeader`), keyed by a stable id + a render-order
   // token. The band renders the chrome of the entry with the HIGHEST order — the
@@ -243,6 +229,57 @@ export function AppShell({
     [config.pages, pathname, flatDynamicPages],
   )
 
+  // App-mode ↔ page support. The active breadcrumb leaf's `supportedModes` narrows
+  // the control (intersected with any runtime `setModes` role-narrowing); undefined
+  // → all modes, no narrowing. `effectiveModes` is both what the control renders and
+  // what `useAppMode().modes` reports.
+  const appModeLeaf = activeChain.at(-1)?.entry
+  const pageSupportedModes = appModeLeaf?.supportedModes
+  const effectiveModes = useMemo(
+    () =>
+      pageSupportedModes
+        ? appModeOptions.filter((m) => pageSupportedModes.includes(m))
+        : appModeOptions,
+    [pageSupportedModes, appModeOptions],
+  )
+
+  // Current mode vs the leaf's declared support. Undefined support → no-op. When the
+  // leaf excludes the current mode we honour `appMode.onUnsupportedMode`: 'jump'
+  // switches to the first supported mode + warns (here); 'throw' (default) is raised
+  // below in render, after all hooks, so it aborts the bad render without skipping any.
+  const appModeUnsupported =
+    appModeConfig !== undefined &&
+    pageSupportedModes !== undefined &&
+    !pageSupportedModes.includes(appModeValue)
+  const onUnsupportedMode = appModeConfig?.onUnsupportedMode ?? 'throw'
+  useEffect(() => {
+    if (!appModeUnsupported || onUnsupportedMode !== 'jump') return
+    const target = effectiveModes[0] ?? pageSupportedModes?.[0]
+    if (target === undefined) return
+    console.warn(
+      `[app-shell] The current page does not support app-mode "${appModeValue}"; ` +
+        `switching to "${target}".`,
+    )
+    setAppModeValue(target)
+  }, [appModeUnsupported, onUnsupportedMode, effectiveModes, pageSupportedModes, appModeValue])
+
+  const appModeRuntime = useMemo<ShellAppModeRuntime | null>(
+    () =>
+      appModeConfig === undefined
+        ? null
+        : {
+            appMode: appModeValue,
+            setAppMode: setAppModeValue,
+            modes: effectiveModes,
+            setModes: setAppModeOptions,
+            visible: appModeVisible,
+            setVisible: setAppModeVisible,
+            selectable: appModeSelectable,
+            setSelectable: setAppModeSelectable,
+          },
+    [appModeConfig, appModeValue, effectiveModes, appModeVisible, appModeSelectable],
+  )
+
   const ctx = useMemo<ShellContextValue>(
     () => ({
       config,
@@ -335,6 +372,19 @@ export function AppShell({
   const menu = (
     <AppMenu actions={actions} subtitle={subtitle} titleAdornment={titleAdornment} />
   )
+
+  // Hard stop for an unsupported current mode when the consumer kept the default
+  // 'throw' policy: treat "navigated to a page in a mode it doesn't support" as a
+  // routing/config bug. Raised here — after every hook — so the throw never skips a
+  // hook, and the bad page never commits ('jump' is handled in the effect above).
+  if (appModeUnsupported && onUnsupportedMode === 'throw') {
+    throw new Error(
+      `App-mode "${appModeValue}" is not supported by the current page` +
+        (appModeLeaf ? ` (${appModeLeaf.route})` : '') +
+        `. Its supportedModes are [${pageSupportedModes?.join(', ')}]. Gate navigation so ` +
+        `this can't happen, or set appMode.onUnsupportedMode: 'jump' to auto-switch instead.`,
+    )
+  }
 
   return (
     <ShellAPIContext.Provider value={apiCtx}>

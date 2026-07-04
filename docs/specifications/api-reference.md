@@ -1167,6 +1167,14 @@ anywhere via `useAppMode()`: `setAppMode` (end-user *or* data-driven), `setVisib
 runtime). The control **auto-hides** when fewer than two modes are available or `visible`
 is false — `appMode` stays readable either way. Built on the kit `SegmentedControl`.
 
+**Per-page mode support.** A `PageEntry` may declare `supportedModes: string[]` — the
+app-modes valid on that page. **Undefined → all modes** (no narrowing; landing there does
+nothing). When the active breadcrumb **leaf** declares it, the control shows only those
+modes (intersected with any `setModes` narrowing), and `useAppMode().modes` reports the
+narrowed set. Arriving in a mode the leaf excludes runs `appMode.onUnsupportedMode`:
+`'throw'` (**default** — a routing/config bug) or `'jump'` (switch to the first supported
+mode + `console.warn`).
+
 ```tsx
 const MODES = { setup: 'SETUP', main: 'MAIN', finalize: 'FINALIZE' } as const
 type AppMode = (typeof MODES)[keyof typeof MODES]

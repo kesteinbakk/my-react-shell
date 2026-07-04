@@ -97,7 +97,7 @@ route (e.g. `/dashboard`, `/data`).
 | `shellPageHeader.documentTitle` | `composed` · `leaf` · `app` | `composed` | Project-wide browser-tab title mode — see [Document title](#document-title-browser-tab). |
 | `shellPageHeader.breadcrumbCollapse` | `{ leading?, trailing? }` · `false` | `{ leading: 1, trailing: 2 }` | Breadcrumb middle-collapse — see [Overflow](#overflow-the-trail-never-breaks). |
 | `labels` | aria-label thunks: `home`, `up`, `breadcrumb`, `openMenu`, `mainNavigation`, `more`, `scrollTabsLeft`, `scrollTabsRight` | none (no language default) | Translated accessible names for the chrome. Each is optional with **no default** — omit one and that control is unnamed (an icon / landmark with no language), never an English fallback. Pass them for accessible chrome. |
-| `appMode` | `{ modes, label, icon?, iconPosition?, tone?, defaultMode?, ariaLabel?, visible?, selectable? }` | none (no app-mode surface) | A single-select **app-mode** control in the header's right cluster (left of the actions), or under the sidebar brand in menu mode. Per-mode `icon` (resolved via `renderIcon`) + `tone` style individual options — see [App mode](#app-mode-a-global-what-mode-is-the-app-in). |
+| `appMode` | `{ modes, label, icon?, iconPosition?, tone?, defaultMode?, ariaLabel?, visible?, selectable?, onUnsupportedMode? }` | none (no app-mode surface) | A single-select **app-mode** control in the header's right cluster (left of the actions), or under the sidebar brand in menu mode. Per-mode `icon` (resolved via `renderIcon`) + `tone` style individual options — see [App mode](#app-mode-a-global-what-mode-is-the-app-in). |
 
 #### Optional per-`PageEntry` fields
 
@@ -108,6 +108,7 @@ route (e.g. `/dashboard`, `/data`).
 | `tabBar` | `true` | Opts a top-level entry into the mobile bottom tab bar (only when `AppShell mobileNav='tabBar'`). |
 | `hideCrumb` | `() => boolean` | Reactive predicate — omit this level from the rendered trail while keeping it in the chain. See [Hiding an access-gated crumb](#hiding-an-access-gated-crumb). |
 | `disableCrumbLink` | `() => boolean` | Reactive predicate — render this ancestor as a plain label instead of a clickable link. The crumb still appears; it simply has no click target. Use for structural parents that have no meaningful page of their own. No effect on the leaf. |
+| `supportedModes` | `string[]` | App-modes valid on this page. **Undefined → all modes** (no narrowing). When this is the breadcrumb leaf, the app-mode control shows only these — see [App mode](#app-mode-a-global-what-mode-is-the-app-in). |
 
 #### A nav-less, card-dashboard app
 
@@ -240,6 +241,47 @@ kit `SegmentedControl`, so it inherits the shipped look (full-width, small size 
 sidebar; natural size in the header's right cluster). Per-mode `icon` and `tone` resolvers
 style individual options — e.g. give the last, irreversible step a `warning` tone and a
 trailing icon while the earlier steps stay plain.
+
+### Per-page mode support
+
+A page can declare **which app-modes it supports** with `supportedModes` on its `PageEntry`.
+When that page is the breadcrumb **leaf**, the control narrows to those modes (intersected
+with any runtime `setModes` role-narrowing) and `useAppMode().modes` reports the narrowed
+set. A page with **no** `supportedModes` supports every mode — landing on it changes nothing.
+
+If you navigate to a page whose `supportedModes` excludes the *current* mode, the shell
+applies `appMode.onUnsupportedMode`:
+
+- `'throw'` (**default**) — throws, treating it as a routing/config bug you should have
+  gated. Pair it with your own guard so it never actually fires in normal flow.
+- `'jump'` — switches to the first supported mode and logs a `console.warn`.
+
+```tsx
+const MODES = { setup: 'SETUP', main: 'MAIN', finalize: 'FINALIZE' } as const
+
+export const shellConfig = defineShellConfig({
+  appName: 'Acme',
+  renderIcon,
+  appMode: {
+    modes: Object.values(MODES),
+    label: (m) => t(`mode.${m}`),
+    onUnsupportedMode: 'jump',        // omit for the default 'throw'
+  },
+  pages: [
+    // no supportedModes → available in every mode; landing here never narrows or jumps
+    { id: 'dashboard', route: '/dashboard', label: () => t('nav.dashboard'), icon: 'home' },
+
+    // SETUP-only: the control collapses to a single mode here (auto-hidden), and arriving
+    // in MAIN/FINALIZE jumps to SETUP (+ warns) — or throws under the default policy
+    { id: 'wizard', route: '/wizard', label: () => t('nav.wizard'), icon: 'wand',
+      supportedModes: [MODES.setup] },
+
+    // post-setup pages: the control shows Main + Finalize, hides Setup
+    { id: 'reports', route: '/reports', label: () => t('nav.reports'), icon: 'chart',
+      supportedModes: [MODES.main, MODES.finalize] },
+  ],
+})
+```
 
 ## Not-found (404)
 

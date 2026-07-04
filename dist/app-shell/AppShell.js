@@ -50,18 +50,8 @@ export function AppShell({ config, useMenu, actions, subtitle, titleAdornment, f
     const [appModeOptions, setAppModeOptions] = useState(() => appModeConfig?.modes ?? []);
     const [appModeVisible, setAppModeVisible] = useState(() => appModeConfig?.visible ?? true);
     const [appModeSelectable, setAppModeSelectable] = useState(() => appModeConfig?.selectable ?? true);
-    const appModeRuntime = useMemo(() => appModeConfig === undefined
-        ? null
-        : {
-            appMode: appModeValue,
-            setAppMode: setAppModeValue,
-            modes: appModeOptions,
-            setModes: setAppModeOptions,
-            visible: appModeVisible,
-            setVisible: setAppModeVisible,
-            selectable: appModeSelectable,
-            setSelectable: setAppModeSelectable,
-        }, [appModeConfig, appModeValue, appModeOptions, appModeVisible, appModeSelectable]);
+    // `appModeRuntime` is built after `activeChain` below — it depends on the active
+    // leaf page's `supportedModes` to narrow the available set.
     // Page-chrome contributors (`usePageHeader`), keyed by a stable id + a render-order
     // token. The band renders the chrome of the entry with the HIGHEST order — the
     // deepest-mounted contributor (React renders parent→child, so an ancestor's order
@@ -126,6 +116,45 @@ export function AppShell({ config, useMenu, actions, subtitle, titleAdornment, f
     // dynamic children); the band shows whenever this resolves to ≥1 level, so a page
     // never mounts a header just to surface breadcrumbs.
     const activeChain = useMemo(() => findActiveChain(config.pages, pathname, flatDynamicPages), [config.pages, pathname, flatDynamicPages]);
+    // App-mode ↔ page support. The active breadcrumb leaf's `supportedModes` narrows
+    // the control (intersected with any runtime `setModes` role-narrowing); undefined
+    // → all modes, no narrowing. `effectiveModes` is both what the control renders and
+    // what `useAppMode().modes` reports.
+    const appModeLeaf = activeChain.at(-1)?.entry;
+    const pageSupportedModes = appModeLeaf?.supportedModes;
+    const effectiveModes = useMemo(() => pageSupportedModes
+        ? appModeOptions.filter((m) => pageSupportedModes.includes(m))
+        : appModeOptions, [pageSupportedModes, appModeOptions]);
+    // Current mode vs the leaf's declared support. Undefined support → no-op. When the
+    // leaf excludes the current mode we honour `appMode.onUnsupportedMode`: 'jump'
+    // switches to the first supported mode + warns (here); 'throw' (default) is raised
+    // below in render, after all hooks, so it aborts the bad render without skipping any.
+    const appModeUnsupported = appModeConfig !== undefined &&
+        pageSupportedModes !== undefined &&
+        !pageSupportedModes.includes(appModeValue);
+    const onUnsupportedMode = appModeConfig?.onUnsupportedMode ?? 'throw';
+    useEffect(() => {
+        if (!appModeUnsupported || onUnsupportedMode !== 'jump')
+            return;
+        const target = effectiveModes[0] ?? pageSupportedModes?.[0];
+        if (target === undefined)
+            return;
+        console.warn(`[app-shell] The current page does not support app-mode "${appModeValue}"; ` +
+            `switching to "${target}".`);
+        setAppModeValue(target);
+    }, [appModeUnsupported, onUnsupportedMode, effectiveModes, pageSupportedModes, appModeValue]);
+    const appModeRuntime = useMemo(() => appModeConfig === undefined
+        ? null
+        : {
+            appMode: appModeValue,
+            setAppMode: setAppModeValue,
+            modes: effectiveModes,
+            setModes: setAppModeOptions,
+            visible: appModeVisible,
+            setVisible: setAppModeVisible,
+            selectable: appModeSelectable,
+            setSelectable: setAppModeSelectable,
+        }, [appModeConfig, appModeValue, effectiveModes, appModeVisible, appModeSelectable]);
     const ctx = useMemo(() => ({
         config,
         scrollContainer: scrollEl,
@@ -204,5 +233,15 @@ export function AppShell({ config, useMenu, actions, subtitle, titleAdornment, f
     const openMenuLabel = config.labels?.openMenu?.();
     const navLabel = config.labels?.mainNavigation?.();
     const menu = (_jsx(AppMenu, { actions: actions, subtitle: subtitle, titleAdornment: titleAdornment }));
+    // Hard stop for an unsupported current mode when the consumer kept the default
+    // 'throw' policy: treat "navigated to a page in a mode it doesn't support" as a
+    // routing/config bug. Raised here — after every hook — so the throw never skips a
+    // hook, and the bad page never commits ('jump' is handled in the effect above).
+    if (appModeUnsupported && onUnsupportedMode === 'throw') {
+        throw new Error(`App-mode "${appModeValue}" is not supported by the current page` +
+            (appModeLeaf ? ` (${appModeLeaf.route})` : '') +
+            `. Its supportedModes are [${pageSupportedModes?.join(', ')}]. Gate navigation so ` +
+            `this can't happen, or set appMode.onUnsupportedMode: 'jump' to auto-switch instead.`);
+    }
     return (_jsx(ShellAPIContext.Provider, { value: apiCtx, children: _jsxs(ShellContext.Provider, { value: ctx, children: [_jsxs("div", { className: "mrs-shell", "data-content-padding": containerPadding, "data-max-width": maxWidth, "data-menu-size": menuSize, children: [!showMenu && (_jsx("div", { className: "mrs-shell__header-row", children: _jsx(AppHeader, { actions: actions, subtitle: subtitle, titleAdornment: titleAdornment }) })), _jsxs("div", { className: "mrs-shell__middle", children: [showMenu && menuOnLeft && (_jsx("div", { className: "mrs-shell__sidebar mrs-shell__sidebar--left", children: menu })), _jsxs("div", { className: "mrs-shell__page-area", children: [showBand ? (_jsx("div", { className: "mrs-shell__chrome", children: _jsx("div", { className: "mrs-shell__container", children: _jsx(ShellPageHeaderUI, { spec: pageHeaderSpec ?? EMPTY_HEADER_SPEC, shell: ctx, showMenuButton: showMenu && !useTabBar, onOpenMenu: () => setMobileMenuOpen(true) }) }) })) : (showMenu && (_jsxs("div", { className: "mrs-shell__mobile-brand", children: [!useTabBar && (_jsx("button", { type: "button", className: "mrs-shell__hamburger", onClick: () => setMobileMenuOpen(true), "aria-label": openMenuLabel, children: config.renderIcon('menu', 20) })), _jsx(Link, { to: "/", className: "mrs-shell__brand-link", children: brand() })] }))), _jsx("div", { ref: setScrollEl, className: "mrs-shell__content", "data-shell-content": true, children: _jsx("div", { className: "mrs-shell__container mrs-shell__container--fill", children: children }) })] }), showMenu && !menuOnLeft && (_jsx("div", { className: "mrs-shell__sidebar mrs-shell__sidebar--right", children: menu }))] }), footer && (_jsx("div", { className: useTabBar ? 'mrs-shell__footer mrs-shell__footer--hide-mobile' : 'mrs-shell__footer', children: footer() })), useTabBar && (_jsx(AppBottomNav, { onOpenMore: () => setMobileMenuOpen(true), moreOpen: mobileMenuOpen }))] }), showMenu && (_jsx(MobileMenuDrawer, { open: mobileMenuOpen, onOpenChange: setMobileMenuOpen, side: menuOnLeft ? 'left' : 'right', title: navLabel, children: menu }))] }) }));
 }
