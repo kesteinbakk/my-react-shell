@@ -90,33 +90,33 @@ export function defineShellConfig(input) {
     if (input.shellPageHeader !== undefined && typeof input.shellPageHeader.border !== 'boolean') {
         throw new ShellConfigError('`shellPageHeader.border` must be a boolean.');
     }
-    if (input.phase !== undefined) {
-        const p = input.phase;
-        if (!Array.isArray(p.states) || p.states.length === 0) {
-            throw new ShellConfigError('`phase.states` must be a non-empty array.');
+    if (input.appMode !== undefined) {
+        const m = input.appMode;
+        if (!Array.isArray(m.modes) || m.modes.length === 0) {
+            throw new ShellConfigError('`appMode.modes` must be a non-empty array.');
         }
-        for (const state of p.states) {
-            if (typeof state !== 'string' || state === '') {
-                throw new ShellConfigError('`phase.states` entries must be non-empty strings.');
+        for (const mode of m.modes) {
+            if (typeof mode !== 'string' || mode === '') {
+                throw new ShellConfigError('`appMode.modes` entries must be non-empty strings.');
             }
         }
-        if (new Set(p.states).size !== p.states.length) {
-            throw new ShellConfigError('`phase.states` must not contain duplicate values.');
+        if (new Set(m.modes).size !== m.modes.length) {
+            throw new ShellConfigError('`appMode.modes` must not contain duplicate values.');
         }
-        if (typeof p.label !== 'function') {
-            throw new ShellConfigError('`phase.label` must be a function `(state) => string`.');
+        if (typeof m.label !== 'function') {
+            throw new ShellConfigError('`appMode.label` must be a function `(mode) => string`.');
         }
-        if (p.defaultState !== undefined && !p.states.includes(p.defaultState)) {
-            throw new ShellConfigError(`\`phase.defaultState\` "${p.defaultState}" is not one of \`phase.states\`.`);
+        if (m.defaultMode !== undefined && !m.modes.includes(m.defaultMode)) {
+            throw new ShellConfigError(`\`appMode.defaultMode\` "${m.defaultMode}" is not one of \`appMode.modes\`.`);
         }
-        if (p.ariaLabel !== undefined && typeof p.ariaLabel !== 'function') {
-            throw new ShellConfigError('`phase.ariaLabel` must be a function when present.');
+        if (m.ariaLabel !== undefined && typeof m.ariaLabel !== 'function') {
+            throw new ShellConfigError('`appMode.ariaLabel` must be a function when present.');
         }
-        if (p.visible !== undefined && typeof p.visible !== 'boolean') {
-            throw new ShellConfigError('`phase.visible` must be a boolean when present.');
+        if (m.visible !== undefined && typeof m.visible !== 'boolean') {
+            throw new ShellConfigError('`appMode.visible` must be a boolean when present.');
         }
-        if (p.selectable !== undefined && typeof p.selectable !== 'boolean') {
-            throw new ShellConfigError('`phase.selectable` must be a boolean when present.');
+        if (m.selectable !== undefined && typeof m.selectable !== 'boolean') {
+            throw new ShellConfigError('`appMode.selectable` must be a boolean when present.');
         }
     }
     return Object.freeze({ ...input, [SHELL_CONFIG_BRAND]: true });

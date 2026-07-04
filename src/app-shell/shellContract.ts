@@ -133,44 +133,44 @@ export interface ShellPageHeaderConfig {
 }
 
 /**
- * App-phase declaration — an optional single-select "what mode is the app in"
+ * App-mode declaration — an optional single-select "what mode is the app in"
  * control the shell renders in its own section directly under the app title
  * (header mode) or under the sidebar brand, above the nav (menu mode).
  *
- * Only the **static** parts are declared here: the ordered set of states and how
+ * Only the **static** parts are declared here: the ordered set of modes and how
  * to label each. The **live** value, visibility, selectability, and the currently
- * available states are runtime state, read and driven anywhere under `<AppShell>`
- * via `usePhase()`. A consumer sets the phase from end-user selection *or* from
- * data (e.g. a role effect calling `setPhase`), and reads `phase` as a global app
- * mode. The shell renders **no** control when fewer than two states are available
- * or `visible` is false — the value stays readable either way.
+ * available modes are runtime state, read and driven anywhere under `<AppShell>`
+ * via `useAppMode()`. A consumer sets the app-mode from end-user selection *or*
+ * from data (e.g. a role effect calling `setAppMode`), and reads `appMode` as a
+ * global app mode. The shell renders **no** control when fewer than two modes are
+ * available or `visible` is false — the value stays readable either way.
  */
-export interface ShellPhaseConfig {
+export interface ShellAppModeConfig {
   /**
-   * Ordered state values — the consumer's own constants (e.g. the values of
+   * Ordered mode values — the consumer's own constants (e.g. the values of
    * `{ setup: 'SETUP', main: 'MAIN', finalize: 'FINALIZE' }`). At least one; the
    * control only renders once two or more are *available* at runtime.
    */
-  states: string[]
+  modes: string[]
   /**
-   * Label resolver for a state — consumer **content**, wired to the consumer's
+   * Label resolver for a mode — consumer **content**, wired to the consumer's
    * own `t()`. Called during render so it re-resolves on a language flip.
    */
-  label: (state: string) => string
-  /** Initial phase on mount. Omitted → the first entry in `states`. */
-  defaultState?: string
+  label: (mode: string) => string
+  /** Initial app-mode on mount. Omitted → the first entry in `modes`. */
+  defaultMode?: string
   /**
    * Accessible label for the segmented-control group — a thunk the consumer wires
    * to its own `t()`. Omitted → the group is unlabeled (the app-shell module never
    * imports i18n; like the other chrome labels this is a consumer-supplied thunk).
    */
   ariaLabel?: () => string
-  /** Whether the control is shown initially. Default `true`. Runtime-overridable via `usePhase().setVisible`. */
+  /** Whether the control is shown initially. Default `true`. Runtime-overridable via `useAppMode().setVisible`. */
   visible?: boolean
   /**
-   * Whether the end-user may change the phase initially. Default `true`; `false`
+   * Whether the end-user may change the app-mode initially. Default `true`; `false`
    * renders a read-only indicator (visible, not interactive). Runtime-overridable
-   * via `usePhase().setSelectable`.
+   * via `useAppMode().setSelectable`.
    */
   selectable?: boolean
 }
@@ -221,11 +221,11 @@ export interface ShellConfigInput {
   /** Aria-label / tooltip strings the chrome needs. */
   labels?: ShellChromeLabels
   /**
-   * Optional app-phase control — a single-select segmented control the shell
-   * renders in its own section under the app title. Declares the states + labels;
-   * the live value is driven/read via `usePhase()`. Omitted → no phase surface.
+   * Optional app-mode control — a single-select segmented control the shell
+   * renders in its own section under the app title. Declares the modes + labels;
+   * the live value is driven/read via `useAppMode()`. Omitted → no app-mode surface.
    */
-  phase?: ShellPhaseConfig
+  appMode?: ShellAppModeConfig
 }
 
 /** Validated, branded config — what `<AppShell>` accepts. */

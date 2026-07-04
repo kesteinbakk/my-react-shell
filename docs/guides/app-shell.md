@@ -97,7 +97,7 @@ route (e.g. `/dashboard`, `/data`).
 | `shellPageHeader.documentTitle` | `composed` · `leaf` · `app` | `composed` | Project-wide browser-tab title mode — see [Document title](#document-title-browser-tab). |
 | `shellPageHeader.breadcrumbCollapse` | `{ leading?, trailing? }` · `false` | `{ leading: 1, trailing: 2 }` | Breadcrumb middle-collapse — see [Overflow](#overflow-the-trail-never-breaks). |
 | `labels` | aria-label thunks: `home`, `up`, `breadcrumb`, `openMenu`, `mainNavigation`, `more`, `scrollTabsLeft`, `scrollTabsRight` | none (no language default) | Translated accessible names for the chrome. Each is optional with **no default** — omit one and that control is unnamed (an icon / landmark with no language), never an English fallback. Pass them for accessible chrome. |
-| `phase` | `{ states, label, defaultState?, ariaLabel?, visible?, selectable? }` | none (no phase surface) | A single-select **app-phase** control under the app title — see [App phase](#app-phase-a-global-what-mode-is-the-app-in). |
+| `appMode` | `{ modes, label, defaultMode?, ariaLabel?, visible?, selectable? }` | none (no app-mode surface) | A single-select **app-mode** control under the app title — see [App mode](#app-mode-a-global-what-mode-is-the-app-in). |
 
 #### Optional per-`PageEntry` fields
 
@@ -179,32 +179,32 @@ heterogeneous fixed-px icons, text, and spacing scale uniformly and stay aligned
 step with the `--mrs-menu-scale-large` (default `1.375`) / `--mrs-menu-scale-xlarge`
 (default `1.75`) CSS vars.
 
-## App phase (a global "what mode is the app in")
+## App mode (a global "what mode is the app in")
 
 An opt-in single-select control the shell renders in **its own section directly under the
 app title** — the band beneath `AppHeader` in header mode, and between the sidebar brand
 head and the nav in menu mode. It answers "what mode/stage is the app in" (e.g. `Setup →
-Main → Finalize`) as a **global** value any component can read via `usePhase()`, and any
+Main → Finalize`) as a **global** value any component can read via `useAppMode()`, and any
 component can set — from **end-user selection** *or* from **data** (a role/data effect
-calling `setPhase`, or a data-driven default).
+calling `setAppMode`, or a data-driven default).
 
-Declare only the static parts in the shell config's `phase` block; the live value and the
+Declare only the static parts in the shell config's `appMode` block; the live value and the
 visibility/selectability flags are runtime state:
 
 ```tsx
-// your own constants — the state values are yours, the shell just switches between them
-const PHASES = { setup: 'SETUP', main: 'MAIN', finalize: 'FINALIZE' } as const
-type AppPhase = (typeof PHASES)[keyof typeof PHASES]
+// your own constants — the mode values are yours, the shell just switches between them
+const MODES = { setup: 'SETUP', main: 'MAIN', finalize: 'FINALIZE' } as const
+type AppMode = (typeof MODES)[keyof typeof MODES]
 
 export const shellConfig = defineShellConfig({
   appName: 'Acme',
   renderIcon,
   pages: [/* … */],
-  phase: {
-    states: Object.values(PHASES),        // ordered; the control shows once ≥ 2 are available
-    label: (s) => t(`phase.${s}`),        // CONTENT — a mandatory, consumer-translated label per state
-    defaultState: PHASES.setup,           // optional; else states[0]
-    ariaLabel: () => t('phase.aria'),     // optional thunk (the module never imports i18n)
+  appMode: {
+    modes: Object.values(MODES),          // ordered; the control shows once ≥ 2 are available
+    label: (m) => t(`mode.${m}`),         // CONTENT — a mandatory, consumer-translated label per mode
+    defaultMode: MODES.setup,             // optional; else modes[0]
+    ariaLabel: () => t('mode.aria'),      // optional thunk (the module never imports i18n)
     // visible / selectable default true; override here or at runtime
   },
 })
@@ -213,25 +213,25 @@ export const shellConfig = defineShellConfig({
 Read and drive it anywhere under `<AppShell>` — pass your union for exhaustive typing:
 
 ```tsx
-const { phase, setPhase, states, setStates, visible, setVisible, selectable, setSelectable } =
-  usePhase<AppPhase>()
+const { appMode, setAppMode, modes, setModes, visible, setVisible, selectable, setSelectable } =
+  useAppMode<AppMode>()
 
 // data-driven default (instead of / before end-user selection):
-useEffect(() => { setPhase(deriveFromData(record)) }, [record])
+useEffect(() => { setAppMode(deriveFromData(record)) }, [record])
 
 // show it read-only (visible, not changeable): setSelectable(false)  → the control greys to an indicator
-// hide it entirely:                            setVisible(false)      → no control; `phase` still readable
-// narrow by role at runtime:                   setStates(allowedForRole)  → auto-hides when ≤ 1 remains
+// hide it entirely:                            setVisible(false)      → no control; `appMode` still readable
+// narrow by role at runtime:                   setModes(allowedForRole)  → auto-hides when ≤ 1 remains
 ```
 
 **Visibility rules the shell enforces:** the control renders **only** when `visible` is true
-**and** two or more `states` are available — a single effective choice (e.g. after a role
+**and** two or more `modes` are available — a single effective choice (e.g. after a role
 narrows the set) shows nothing, matching "if there's only one option, don't show a switcher."
 `selectable: false` keeps it visible but non-interactive (a status indicator). In every
-hidden/one-choice case `phase` is still readable via `usePhase()`.
+hidden/one-choice case `appMode` is still readable via `useAppMode()`.
 
-`usePhase()` throws if the config declares no `phase` block; use `usePhaseOptional()` (→
-`null`) in a component that may run in an app without a phase. The control is built on the
+`useAppMode()` throws if the config declares no `appMode` block; use `useAppModeOptional()` (→
+`null`) in a component that may run in an app without an app-mode. The control is built on the
 kit `SegmentedControl`, so it inherits the shipped look (full-width, small size in the narrow
 sidebar; natural size in the header band).
 

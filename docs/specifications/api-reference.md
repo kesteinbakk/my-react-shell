@@ -1118,7 +1118,7 @@ Radix — both optional peers. **Guide:** [app-shell.md](../guides/app-shell.md)
 
 ```ts
 import { AppShell, usePageHeader, usePageAlert, PageTabs, PageSections, useDynamicPages,
-         defineShellConfig, ShellConfigError, useShellContext, usePhase,
+         defineShellConfig, ShellConfigError, useShellContext, useAppMode,
          MenuSizeProvider, useMenuSize } from 'my-react-shell/app-shell'
 import type { ShellConfig, ShellConfigInput, PageEntry, PageHeaderOptions, PageHeaderAlertSpec /* … */ } from 'my-react-shell/app-shell'
 import 'my-react-shell/app-shell/styles.css'
@@ -1139,7 +1139,7 @@ import 'my-react-shell/app-shell/styles.css'
 | `PageSection` | component | Standalone section card. `title`, `icon` (string key or custom Node), `actions[]`, `children`, `className`. |
 | `useDynamicPages(cfg)` | hook | Register runtime breadcrumb levels (record names, slugs) under a `parent` route. Works at any depth — set `parent` to whichever registered route the dynamic items hang under. Each item may carry `hideCrumb?: () => boolean` to omit it from the rendered trail while keeping it in the chain (the access-gated-ancestor pattern; same semantics as `PageEntry.hideCrumb`), or `disableCrumbLink?: () => boolean` to render the ancestor as a plain label with no click target (same semantics as `PageEntry.disableCrumbLink`). |
 | `useShellContext()`, `useShellContextOptional()` | hook | Read shell context — incl. `scrollContainer` (the only scroller; use instead of `window`). |
-| `usePhase()`, `usePhaseOptional()` | hook | Read/drive the **app-phase** — the global "what mode is the app in" state declared by the config's `phase` block. `→ { phase, setPhase, states, setStates, visible, setVisible, selectable, setSelectable }`. Pass a union for exhaustive typing: `usePhase<'SETUP'\|'MAIN'\|'FINALIZE'>()`. `usePhase()` throws when no `phase` block is declared; `usePhaseOptional()` returns `null` instead. Set from end-user selection **or** data (a role/data effect calling `setPhase`); read `phase` anywhere as a global mode. |
+| `useAppMode()`, `useAppModeOptional()` | hook | Read/drive the **app-mode** — the global "what mode is the app in" state declared by the config's `appMode` block. `→ { appMode, setAppMode, modes, setModes, visible, setVisible, selectable, setSelectable }`. Pass a union for exhaustive typing: `useAppMode<'SETUP'\|'MAIN'\|'FINALIZE'>()`. `useAppMode()` throws when no `appMode` block is declared; `useAppModeOptional()` returns `null` instead. Set from end-user selection **or** data (a role/data effect calling `setAppMode`); read `appMode` anywhere as a global mode. |
 | `MenuSizeProvider` | component | Owns the **menu-size** preference (header-chrome size `medium`·`large`·`xlarge`). Uncontrolled (localStorage) or controlled (`value`+`onChange`). `defaultSize` (`'medium'`), `storageKey`. `<AppShell>` reads it **softly** — no provider → `medium` (normal). |
 | `useMenuSize()`, `useMenuSizeOptional()` | hook | `useMenuSize()` → `{ menuSize, setMenuSize }` (throws outside the provider); feed into `<UserPreferences>` (`menuSize`/`onMenuSizeChange`). `useMenuSizeOptional()` is the non-throwing read (`null` outside a provider) `<AppShell>` uses. |
 
@@ -1151,33 +1151,33 @@ size. Purely a display/accessibility preference; it changes no data or routing. 
 step with the `--mrs-menu-scale-large` (default `1.375`) / `--mrs-menu-scale-xlarge`
 (default `1.75`) CSS vars.
 
-**App-phase (optional).** Add a `phase` block to `defineShellConfig` to render a
+**App-mode (optional).** Add an `appMode` block to `defineShellConfig` to render a
 single-select **"what mode is the app in"** segmented control in its own section directly
 under the app title (header mode) / sidebar brand, above the nav (menu mode). The block
-declares only the **static** parts — `states: string[]` (the consumer's own constant
-values), `label: (state) => string` (**content**, consumer-translated), and optional
-`defaultState`, `ariaLabel` (a thunk; the module never imports i18n), `visible` (default
+declares only the **static** parts — `modes: string[]` (the consumer's own constant
+values), `label: (mode) => string` (**content**, consumer-translated), and optional
+`defaultMode`, `ariaLabel` (a thunk; the module never imports i18n), `visible` (default
 `true`), `selectable` (default `true`). The **live** value + flags are runtime state driven
-anywhere via `usePhase()`: `setPhase` (end-user *or* data-driven), `setVisible`,
-`setSelectable` (`false` → a read-only indicator), and `setStates` (narrow by role at
-runtime). The control **auto-hides** when fewer than two states are available or `visible`
-is false — `phase` stays readable either way. Built on the kit `SegmentedControl`.
+anywhere via `useAppMode()`: `setAppMode` (end-user *or* data-driven), `setVisible`,
+`setSelectable` (`false` → a read-only indicator), and `setModes` (narrow by role at
+runtime). The control **auto-hides** when fewer than two modes are available or `visible`
+is false — `appMode` stays readable either way. Built on the kit `SegmentedControl`.
 
 ```tsx
-const PHASES = { setup: 'SETUP', main: 'MAIN', finalize: 'FINALIZE' } as const
-type AppPhase = (typeof PHASES)[keyof typeof PHASES]
+const MODES = { setup: 'SETUP', main: 'MAIN', finalize: 'FINALIZE' } as const
+type AppMode = (typeof MODES)[keyof typeof MODES]
 defineShellConfig({
   …,
-  phase: { states: Object.values(PHASES), label: (s) => t(`phase.${s}`), defaultState: PHASES.setup },
+  appMode: { modes: Object.values(MODES), label: (m) => t(`mode.${m}`), defaultMode: MODES.setup },
 })
-const { phase, setPhase } = usePhase<AppPhase>()   // read/drive anywhere under <AppShell>
+const { appMode, setAppMode } = useAppMode<AppMode>()   // read/drive anywhere under <AppShell>
 ```
 
 **Contract types:** `PageEntry`, `ShellConfig`, `ShellConfigInput`, `PageContainerMaxWidth`,
 `ShellPageContainerConfig`, `ShellTabsConfig`, `ShellTabsVariant`, `ShellPageHeaderConfig`,
 `ShellBreadcrumbCollapseConfig`,
 `ShellPageHeaderSearchSlot`, `ShellDocumentTitleMode`, `ShellIconRenderer`,
-`ShellChromeLabels`, `ShellPhaseConfig`, `ShellPhaseState`, `ShellPhaseRuntime`, plus component props (`AppShellProps`, `AppShellMobileNav`,
+`ShellChromeLabels`, `ShellAppModeConfig`, `ShellAppModeState`, `ShellAppModeRuntime`, plus component props (`AppShellProps`, `AppShellMobileNav`,
 `AppShellContentPadding`, `PageHeaderOptions`, `ChainLevel`, `PageTab`, `PageTabsProps`,
 `PageSection`, `PageSectionProps`, `PageSectionsMode`, `PageSectionsProps`, `DynamicPageInput`,
 `DynamicPagesConfig`, `ShellContextValue`, `MenuSizeProviderProps`, `UseMenuSizeResult`,

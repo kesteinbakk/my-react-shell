@@ -20,7 +20,7 @@ import { useMemo } from 'react'
 import { Link, useRouterState } from '@tanstack/react-router'
 import type { PageEntry } from './shellContract'
 import { useShellContext } from './shellContext'
-import { ShellPhaseControl } from './ShellPhaseControl'
+import { ShellAppModeControl } from './ShellAppModeControl'
 
 export interface AppMenuProps {
   /** Action item render thunks for the footer. `[]` for none. */
@@ -81,7 +81,7 @@ export function AppMenu(props: AppMenuProps): ReactNode {
         ) : null}
       </div>
 
-      <ShellPhaseControl variant="menu" />
+      <ShellAppModeControl variant="menu" />
 
       <nav className="mrs-app-menu__nav">
         {config.pages.map((page, i) => (

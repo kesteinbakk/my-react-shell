@@ -27,8 +27,8 @@ import {
   type ShellContextValue,
 } from './shellContext'
 import { ShellPageHeaderUI, findActiveChain } from './ShellPageHeader'
-import { ShellPhaseControl } from './ShellPhaseControl'
-import type { ShellPhaseRuntime } from './shellContext'
+import { ShellAppModeControl } from './ShellAppModeControl'
+import type { ShellAppModeRuntime } from './shellContext'
 import { useMenuSizeOptional } from './useMenuSize'
 import { AppHeader } from './AppHeader'
 import { AppMenu } from './AppMenu'
@@ -115,34 +115,34 @@ export function AppShell({
 
   const [scrollEl, setScrollEl] = useState<HTMLElement | null>(null)
 
-  // App-phase runtime — seeded from the `phase` config block (static: states +
-  // labels), then driven at runtime via `usePhase()`. All four slots are plain
-  // React state so a consumer's `setPhase`/`setVisible`/… re-renders the tree.
-  // `phaseRuntime` is `null` when the config declares no `phase`.
-  const phaseConfig = config.phase
-  const [phaseValue, setPhaseValue] = useState<string>(
-    () => phaseConfig?.defaultState ?? phaseConfig?.states[0] ?? '',
+  // App-mode runtime — seeded from the `appMode` config block (static: modes +
+  // labels), then driven at runtime via `useAppMode()`. All four slots are plain
+  // React state so a consumer's `setAppMode`/`setVisible`/… re-renders the tree.
+  // `appModeRuntime` is `null` when the config declares no `appMode`.
+  const appModeConfig = config.appMode
+  const [appModeValue, setAppModeValue] = useState<string>(
+    () => appModeConfig?.defaultMode ?? appModeConfig?.modes[0] ?? '',
   )
-  const [phaseStates, setPhaseStates] = useState<string[]>(() => phaseConfig?.states ?? [])
-  const [phaseVisible, setPhaseVisible] = useState<boolean>(() => phaseConfig?.visible ?? true)
-  const [phaseSelectable, setPhaseSelectable] = useState<boolean>(
-    () => phaseConfig?.selectable ?? true,
+  const [appModeOptions, setAppModeOptions] = useState<string[]>(() => appModeConfig?.modes ?? [])
+  const [appModeVisible, setAppModeVisible] = useState<boolean>(() => appModeConfig?.visible ?? true)
+  const [appModeSelectable, setAppModeSelectable] = useState<boolean>(
+    () => appModeConfig?.selectable ?? true,
   )
-  const phaseRuntime = useMemo<ShellPhaseRuntime | null>(
+  const appModeRuntime = useMemo<ShellAppModeRuntime | null>(
     () =>
-      phaseConfig === undefined
+      appModeConfig === undefined
         ? null
         : {
-            phase: phaseValue,
-            setPhase: setPhaseValue,
-            states: phaseStates,
-            setStates: setPhaseStates,
-            visible: phaseVisible,
-            setVisible: setPhaseVisible,
-            selectable: phaseSelectable,
-            setSelectable: setPhaseSelectable,
+            appMode: appModeValue,
+            setAppMode: setAppModeValue,
+            modes: appModeOptions,
+            setModes: setAppModeOptions,
+            visible: appModeVisible,
+            setVisible: setAppModeVisible,
+            selectable: appModeSelectable,
+            setSelectable: setAppModeSelectable,
           },
-    [phaseConfig, phaseValue, phaseStates, phaseVisible, phaseSelectable],
+    [appModeConfig, appModeValue, appModeOptions, appModeVisible, appModeSelectable],
   )
 
   // Page-chrome contributors (`usePageHeader`), keyed by a stable id + a render-order
@@ -256,9 +256,9 @@ export function AppShell({
       pageHeaderSpec,
       registerPageHeader,
       setDocumentTitlePrefix,
-      phase: phaseRuntime,
+      appMode: appModeRuntime,
     }),
-    [config, scrollEl, flatDynamicPages, registerDynamicPages, pageAlertSpec, registerPageAlert, pageHeaderSpec, registerPageHeader, phaseRuntime],
+    [config, scrollEl, flatDynamicPages, registerDynamicPages, pageAlertSpec, registerPageAlert, pageHeaderSpec, registerPageHeader, appModeRuntime],
   )
 
   const apiCtx = useMemo<ShellAPIContextValue>(
@@ -349,7 +349,7 @@ export function AppShell({
           {!showMenu && (
             <div className="mrs-shell__header-row">
               <AppHeader actions={actions} subtitle={subtitle} titleAdornment={titleAdornment} />
-              <ShellPhaseControl variant="header" />
+              <ShellAppModeControl variant="header" />
             </div>
           )}
 

@@ -15,27 +15,27 @@ import type { PageEntry, ShellConfig, ShellPageHeaderSpec, PageHeaderAlertSpec }
 export interface DynamicPagesEntry extends PageEntry {}
 
 /**
- * Runtime app-phase state — the live value, the currently-available states, and
+ * Runtime app-mode state — the live value, the currently-available modes, and
  * the visibility / selectability flags. Owned by `<AppShell>` (seeded from the
- * `phase` block of the shell config) and exposed to the whole tree via
- * `usePhase()`. `null` on the context when the config declares no `phase`.
+ * `appMode` block of the shell config) and exposed to the whole tree via
+ * `useAppMode()`. `null` on the context when the config declares no `appMode`.
  */
-export interface ShellPhaseRuntime {
-  /** The current phase — a value from {@link states}. */
-  phase: string
-  /** Set the current phase — from end-user selection or a data-driven effect. */
-  setPhase: (phase: string) => void
+export interface ShellAppModeRuntime {
+  /** The current app-mode — a value from {@link modes}. */
+  appMode: string
+  /** Set the current app-mode — from end-user selection or a data-driven effect. */
+  setAppMode: (mode: string) => void
   /**
-   * The states available *right now* (seeded from `config.phase.states`, narrowable
+   * The modes available *right now* (seeded from `config.appMode.modes`, narrowable
    * at runtime — e.g. by role). The control auto-hides when fewer than two remain.
    */
-  states: string[]
-  /** Replace the available states at runtime (≤ 1 auto-hides the control). */
-  setStates: (states: string[]) => void
+  modes: string[]
+  /** Replace the available modes at runtime (≤ 1 auto-hides the control). */
+  setModes: (modes: string[]) => void
   /** Whether the control is shown. */
   visible: boolean
   setVisible: (visible: boolean) => void
-  /** Whether the end-user may change the phase (`false` → read-only indicator). */
+  /** Whether the end-user may change the app-mode (`false` → read-only indicator). */
   selectable: boolean
   setSelectable: (selectable: boolean) => void
 }
@@ -84,10 +84,10 @@ export interface ShellContextValue {
    */
   setDocumentTitlePrefix: (prefix: string | null) => void
   /**
-   * Runtime app-phase state, or `null` when the config declares no `phase` block.
-   * Read/driven via `usePhase()`; the shell renders its segmented control from it.
+   * Runtime app-mode state, or `null` when the config declares no `appMode` block.
+   * Read/driven via `useAppMode()`; the shell renders its segmented control from it.
    */
-  phase: ShellPhaseRuntime | null
+  appMode: ShellAppModeRuntime | null
 }
 
 export interface ShellAPIContextValue {
