@@ -1,6 +1,7 @@
 # B002 — pageheader-unstable-thunk-loop
 
-**Status:** awaiting-user-confirmation | **Branch:** main
+**Status:** resolved | **Branch:** main
+**User confirmed:** 2026-07-04 — "mark as solved and close".
 **Filed:** 2026-06-20 — dogfood finding from evaluering's T029 (app-shell adoption).
 Caught by live preview verification of the first real `app-shell` consumer; unit
 tests miss it because they mock the shell and never mount the band.
