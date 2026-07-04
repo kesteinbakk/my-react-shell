@@ -1177,8 +1177,8 @@ app-modes valid on that page. **Undefined → all modes** (no narrowing; landing
 nothing). When the active breadcrumb **leaf** declares it, the control shows only those
 modes (intersected with any `setModes` narrowing), and `useAppMode().modes` reports the
 narrowed set. Arriving in a mode the leaf excludes runs `appMode.onUnsupportedMode`:
-`'throw'` (**default** — a routing/config bug) or `'jump'` (switch to the first supported
-mode + `console.warn`).
+`'warn'` (**default** — switch to the first supported mode + `console.warn`), `'jump'`
+(switch silently, no warning), or `'throw'` (treat as a routing/config bug).
 
 ```tsx
 const MODES = { setup: 'SETUP', main: 'MAIN', finalize: 'FINALIZE' } as const

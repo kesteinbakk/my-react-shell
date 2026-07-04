@@ -252,9 +252,10 @@ set. A page with **no** `supportedModes` supports every mode — landing on it c
 If you navigate to a page whose `supportedModes` excludes the *current* mode, the shell
 applies `appMode.onUnsupportedMode`:
 
-- `'throw'` (**default**) — throws, treating it as a routing/config bug you should have
-  gated. Pair it with your own guard so it never actually fires in normal flow.
-- `'jump'` — switches to the first supported mode and logs a `console.warn`.
+- `'warn'` (**default**) — switches to the first supported mode and logs a `console.warn`.
+- `'jump'` — switches to the first supported mode, silently (no warning).
+- `'throw'` — throws, treating it as a routing/config bug you should have gated. Pair it
+  with your own guard so it never actually fires in normal flow.
 
 ```tsx
 const MODES = { setup: 'SETUP', main: 'MAIN', finalize: 'FINALIZE' } as const
@@ -265,14 +266,14 @@ export const shellConfig = defineShellConfig({
   appMode: {
     modes: Object.values(MODES),
     label: (m) => t(`mode.${m}`),
-    onUnsupportedMode: 'jump',        // omit for the default 'throw'
+    onUnsupportedMode: 'warn',        // default; 'jump' = silent, 'throw' = hard error
   },
   pages: [
     // no supportedModes → available in every mode; landing here never narrows or jumps
     { id: 'dashboard', route: '/dashboard', label: () => t('nav.dashboard'), icon: 'home' },
 
     // SETUP-only: the control collapses to a single mode here (auto-hidden), and arriving
-    // in MAIN/FINALIZE jumps to SETUP (+ warns) — or throws under the default policy
+    // in MAIN/FINALIZE switches to SETUP (+ warns, under the default 'warn' policy)
     { id: 'wizard', route: '/wizard', label: () => t('nav.wizard'), icon: 'wand',
       supportedModes: [MODES.setup] },
 

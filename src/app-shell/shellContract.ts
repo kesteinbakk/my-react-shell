@@ -199,14 +199,16 @@ export interface ShellAppModeConfig {
   selectable?: boolean
   /**
    * What to do when the active page's `supportedModes` excludes the current mode:
-   * - `'throw'` (**default**) — treat it as a routing/config bug and throw, so the
-   *   consumer gates navigation instead of landing in an impossible state.
-   * - `'jump'` — auto-switch to the first supported mode and emit a `console.warn`.
+   * - `'warn'` (**default**) — auto-switch to the first supported mode and emit a
+   *   `console.warn`.
+   * - `'jump'` — auto-switch to the first supported mode, silently (no warning).
+   * - `'throw'` — treat it as a routing/config bug and throw, so the consumer gates
+   *   navigation instead of landing in an impossible state.
    *
    * Only fires when the breadcrumb **leaf** page declares `supportedModes` and the
    * current mode is not in it; pages without `supportedModes` never trigger it.
    */
-  onUnsupportedMode?: 'throw' | 'jump'
+  onUnsupportedMode?: 'warn' | 'jump' | 'throw'
   /**
    * localStorage key the selected mode persists under, so a reload restores the
    * user's choice (same best-effort try/catch as the theme/i18n/menu-size

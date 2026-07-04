@@ -274,22 +274,25 @@ export function AppShell({
   )
 
   // Current mode vs the leaf's declared support. Undefined support → no-op. When the
-  // leaf excludes the current mode we honour `appMode.onUnsupportedMode`: 'jump'
-  // switches to the first supported mode + warns (here); 'throw' (default) is raised
-  // below in render, after all hooks, so it aborts the bad render without skipping any.
+  // leaf excludes the current mode we honour `appMode.onUnsupportedMode`: 'warn'
+  // (default) and 'jump' both switch to the first supported mode (only 'warn' logs);
+  // 'throw' is raised below in render, after all hooks, so it aborts the bad render
+  // without skipping any.
   const appModeUnsupported =
     appModeConfig !== undefined &&
     pageSupportedModes !== undefined &&
     !pageSupportedModes.includes(appModeValue)
-  const onUnsupportedMode = appModeConfig?.onUnsupportedMode ?? 'throw'
+  const onUnsupportedMode = appModeConfig?.onUnsupportedMode ?? 'warn'
   useEffect(() => {
-    if (!appModeUnsupported || onUnsupportedMode !== 'jump') return
+    if (!appModeUnsupported || (onUnsupportedMode !== 'warn' && onUnsupportedMode !== 'jump')) return
     const target = effectiveModes[0] ?? pageSupportedModes?.[0]
     if (target === undefined) return
-    console.warn(
-      `[app-shell] The current page does not support app-mode "${appModeValue}"; ` +
-        `switching to "${target}".`,
-    )
+    if (onUnsupportedMode === 'warn') {
+      console.warn(
+        `[app-shell] The current page does not support app-mode "${appModeValue}"; ` +
+          `switching to "${target}".`,
+      )
+    }
     setAppModeValue(target)
   }, [appModeUnsupported, onUnsupportedMode, effectiveModes, pageSupportedModes, appModeValue])
 
@@ -403,10 +406,10 @@ export function AppShell({
     <AppMenu actions={actions} subtitle={subtitle} titleAdornment={titleAdornment} />
   )
 
-  // Hard stop for an unsupported current mode when the consumer kept the default
-  // 'throw' policy: treat "navigated to a page in a mode it doesn't support" as a
-  // routing/config bug. Raised here — after every hook — so the throw never skips a
-  // hook, and the bad page never commits ('jump' is handled in the effect above).
+  // Hard stop for an unsupported current mode when the consumer opted into 'throw':
+  // treat "navigated to a page in a mode it doesn't support" as a routing/config bug.
+  // Raised here — after every hook — so the throw never skips a hook, and the bad page
+  // never commits ('warn'/'jump' are handled in the effect above).
   if (appModeUnsupported && onUnsupportedMode === 'throw') {
     throw new Error(
       `App-mode "${appModeValue}" is not supported by the current page` +
