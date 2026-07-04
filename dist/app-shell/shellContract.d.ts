@@ -12,6 +12,7 @@ import type { ReactNode } from 'react';
 import type { ActionType, ActionButtonTone, ActionButtonSize, ActionButtonLayout } from '../components/ActionButton';
 import type { SearchInputProps } from '../components/SearchInput';
 import type { AlertTone } from '../components/Alert';
+import type { Tone } from '../components/tone';
 /**
  * Consumer-extensible interface for strict icon typing.
  * By default it is empty, meaning the shell falls back to `string`.
@@ -145,6 +146,20 @@ export interface ShellAppModeConfig {
      * own `t()`. Called during render so it re-resolves on a language flip.
      */
     label: (mode: string) => string;
+    /**
+     * Optional per-mode icon key — resolved through `config.renderIcon` and rendered
+     * beside the label. Return `null`/`undefined` for a mode with no icon (so only
+     * some modes carry one). Omit the resolver entirely for no icons at all.
+     */
+    icon?: (mode: string) => ShellIcon | null | undefined;
+    /** Which side of the label the icon sits. Default `'leading'`. */
+    iconPosition?: 'leading' | 'trailing';
+    /**
+     * Optional per-mode semantic tone — colours a mode's label + icon (e.g. a
+     * `warning`-toned "Finalize" step). Return `null`/`undefined` for the default
+     * neutral chrome. Omit the resolver for no toning.
+     */
+    tone?: (mode: string) => Tone | null | undefined;
     /** Initial app-mode on mount. Omitted → the first entry in `modes`. */
     defaultMode?: string;
     /**

@@ -1,7 +1,18 @@
 import { type ReactNode, type CSSProperties } from 'react';
+import { type Tone } from './tone';
 export interface SegmentedOption<T extends string> {
     value: T;
     label: ReactNode;
+    /** Optional icon node rendered beside the label. */
+    icon?: ReactNode;
+    /** Which side of the label the icon sits. Default `'leading'`. */
+    iconPosition?: 'leading' | 'trailing';
+    /**
+     * Semantic tone — colours this option's label + icon (an `icon` using
+     * `currentColor` inherits it), across active and inactive states. Omitted →
+     * the default neutral chrome (secondary → primary on hover/active).
+     */
+    tone?: Tone;
     disabled?: boolean;
 }
 export interface SegmentedControlProps<T extends string> {

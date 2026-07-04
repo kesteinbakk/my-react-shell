@@ -23,8 +23,9 @@ export interface ShellAppModeControlProps {
 
 export function ShellAppModeControl({ variant }: ShellAppModeControlProps): ReactNode {
   const shell = useShellContextOptional()
-  const runtime = shell?.appMode ?? null
-  const config = shell?.config.appMode
+  if (shell === null) return null
+  const runtime = shell.appMode
+  const config = shell.config.appMode
 
   if (runtime === null || config === undefined) return null
   if (!runtime.visible) return null
@@ -32,14 +33,22 @@ export function ShellAppModeControl({ variant }: ShellAppModeControlProps): Reac
   // to switch between, so the control is omitted (the value is still readable).
   if (runtime.modes.length < 2) return null
 
-  const options = runtime.modes.map((mode) => ({
-    value: mode,
-    label: config.label(mode),
-  }))
-
   // Menu mode sits in a narrow sidebar column → stretch full-width at the small
   // size; header mode gets its natural width at the default size.
   const menu = variant === 'menu'
+  const iconSize = menu ? 14 : 16
+
+  const renderIcon = shell.config.renderIcon
+  const options = runtime.modes.map((mode) => {
+    const iconKey = config.icon?.(mode)
+    return {
+      value: mode,
+      label: config.label(mode),
+      icon: iconKey ? renderIcon(iconKey, iconSize) : undefined,
+      iconPosition: config.iconPosition,
+      tone: config.tone?.(mode) ?? undefined,
+    }
+  })
 
   return (
     <div

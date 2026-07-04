@@ -97,7 +97,7 @@ route (e.g. `/dashboard`, `/data`).
 | `shellPageHeader.documentTitle` | `composed` · `leaf` · `app` | `composed` | Project-wide browser-tab title mode — see [Document title](#document-title-browser-tab). |
 | `shellPageHeader.breadcrumbCollapse` | `{ leading?, trailing? }` · `false` | `{ leading: 1, trailing: 2 }` | Breadcrumb middle-collapse — see [Overflow](#overflow-the-trail-never-breaks). |
 | `labels` | aria-label thunks: `home`, `up`, `breadcrumb`, `openMenu`, `mainNavigation`, `more`, `scrollTabsLeft`, `scrollTabsRight` | none (no language default) | Translated accessible names for the chrome. Each is optional with **no default** — omit one and that control is unnamed (an icon / landmark with no language), never an English fallback. Pass them for accessible chrome. |
-| `appMode` | `{ modes, label, defaultMode?, ariaLabel?, visible?, selectable? }` | none (no app-mode surface) | A single-select **app-mode** control in the header's right cluster (left of the actions), or under the sidebar brand in menu mode — see [App mode](#app-mode-a-global-what-mode-is-the-app-in). |
+| `appMode` | `{ modes, label, icon?, iconPosition?, tone?, defaultMode?, ariaLabel?, visible?, selectable? }` | none (no app-mode surface) | A single-select **app-mode** control in the header's right cluster (left of the actions), or under the sidebar brand in menu mode. Per-mode `icon` (resolved via `renderIcon`) + `tone` style individual options — see [App mode](#app-mode-a-global-what-mode-is-the-app-in). |
 
 #### Optional per-`PageEntry` fields
 
@@ -204,6 +204,9 @@ export const shellConfig = defineShellConfig({
   appMode: {
     modes: Object.values(MODES),          // ordered; the control shows once ≥ 2 are available
     label: (m) => t(`mode.${m}`),         // CONTENT — a mandatory, consumer-translated label per mode
+    icon: (m) => (m === MODES.finalize ? 'flag' : null),  // optional per-mode icon (via renderIcon)
+    iconPosition: 'trailing',             // optional; default 'leading'
+    tone: (m) => (m === MODES.finalize ? 'warning' : null),  // optional per-mode semantic colour
     defaultMode: MODES.setup,             // optional; else modes[0]
     ariaLabel: () => t('mode.aria'),      // optional thunk (the module never imports i18n)
     // visible / selectable default true; override here or at runtime
@@ -234,7 +237,9 @@ hidden/one-choice case `appMode` is still readable via `useAppMode()`.
 `useAppMode()` throws if the config declares no `appMode` block; use `useAppModeOptional()` (→
 `null`) in a component that may run in an app without an app-mode. The control is built on the
 kit `SegmentedControl`, so it inherits the shipped look (full-width, small size in the narrow
-sidebar; natural size in the header's right cluster).
+sidebar; natural size in the header's right cluster). Per-mode `icon` and `tone` resolvers
+style individual options — e.g. give the last, irreversible step a `warning` tone and a
+trailing icon while the earlier steps stay plain.
 
 ## Not-found (404)
 

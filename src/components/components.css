@@ -1560,6 +1560,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: 0.375rem;
   padding: 0.3125rem 0.75rem;
   border: 1px solid transparent;
   border-radius: 0.375rem;
@@ -1572,8 +1573,14 @@
   transition: background-color 120ms ease, color 120ms ease;
 }
 .mrs-segmented--sm .mrs-segmented__item {
+  gap: 0.25rem;
   padding: 0.25rem 0.5rem;
   font-size: 0.8125rem;
+}
+/* Icon slot — a flex box so an SVG (currentColor) sits centred on the text baseline. */
+.mrs-segmented__icon {
+  display: inline-flex;
+  align-items: center;
 }
 .mrs-segmented__item:hover:not(.mrs-segmented__item--active):not(:disabled) {
   color: var(--color-text-primary);
