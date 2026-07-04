@@ -37,7 +37,7 @@ export type { ShellContextValue, ShellAppModeRuntime } from './shellContext'
 export { useAppMode, useAppModeOptional } from './useAppMode'
 export type { ShellAppModeState } from './useAppMode'
 
-// ── menu-size preference (header-chrome size: medium · large · xlarge) ─────────
+// ── menu-size preference (header-chrome size: small · medium · large) ─────────
 export { MenuSizeProvider } from './MenuSizeProvider'
 export type { MenuSizeProviderProps } from './MenuSizeProvider'
 export { useMenuSize, useMenuSizeOptional } from './useMenuSize'

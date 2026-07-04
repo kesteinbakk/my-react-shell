@@ -1,20 +1,21 @@
 /**
- * Menu-size context — the header-chrome size preference (`medium` · `large` ·
- * `xlarge`), isolated from the effectful <MenuSizeProvider> (same split as
+ * Menu-size context — the header-chrome size preference (`small` · `medium` ·
+ * `large`), isolated from the effectful <MenuSizeProvider> (same split as
  * iconModeContext / themeContext) so editing the provider doesn't mint a new
  * context identity on hot reload. Keep this file free of effects and component
  * imports.
  *
- * When set above `medium`, <AppShell> reads this softly and scales its header
- * chrome — the page-header band (breadcrumbs + actions + search) and the
- * top-header action cluster — leaving the app title untouched. A pure
- * UI/accessibility preference; it changes no data and no routing.
+ * When set away from `medium` (the normal, no-scaling baseline), <AppShell> reads
+ * this softly and scales its header chrome — the page-header band (breadcrumbs +
+ * actions + search) and the top-header action cluster — down (`small`) or up
+ * (`large`), leaving the app title untouched. A pure UI/accessibility preference;
+ * it changes no data and no routing.
  */
 
 import { createContext, useContext } from 'react'
 
-/** Header-chrome size: `medium` (normal, the default) · `large` · `xlarge`. */
-export type MenuSize = 'medium' | 'large' | 'xlarge'
+/** Header-chrome size: `small` · `medium` (normal, the default) · `large`. */
+export type MenuSize = 'small' | 'medium' | 'large'
 
 export interface MenuSizeContextValue {
   /** Active header-chrome size. */

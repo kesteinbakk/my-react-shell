@@ -1,6 +1,6 @@
 /**
- * useMenuSize — read and set the header-chrome size preference (`medium` ·
- * `large` · `xlarge`).
+ * useMenuSize — read and set the header-chrome size preference (`small` ·
+ * `medium` · `large`).
  *
  * A thin, stable wrapper over the menu-size context. Throws outside
  * <MenuSizeProvider>. Feed its value + setter into <UserPreferences>
@@ -9,7 +9,7 @@
  */
 import type { MenuSize, MenuSizeContextValue } from './menuSizeContext';
 export interface UseMenuSizeResult {
-    /** Active header-chrome size (`medium` · `large` · `xlarge`). */
+    /** Active header-chrome size (`small` · `medium` · `large`). */
     menuSize: MenuSize;
     /** Set the size. */
     setMenuSize: (size: MenuSize) => void;

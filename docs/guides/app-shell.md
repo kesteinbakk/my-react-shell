@@ -151,8 +151,8 @@ the `tabBar: true` pages when `mobileNav='tabBar'`).
 
 An opt-in display/accessibility preference that sizes the shell's **header chrome** —
 the page-header band (breadcrumbs + action buttons + search) and the top-header
-(`AppHeader`) action cluster — across three steps: `medium` (normal), `large` (~1.375×) and
-`xlarge` (~1.75×), always leaving the app **title/brand** at its normal size. It changes no
+(`AppHeader`) action cluster — across three steps: `small` (~0.875×), `medium` (normal) and
+`large` (~1.375×), always leaving the app **title/brand** at its normal size. It changes no
 data and no routing.
 
 Mount `<MenuSizeProvider>` above the shell (mirrors `<IconModeProvider>`): uncontrolled it
@@ -174,11 +174,11 @@ const { menuSize, setMenuSize } = useMenuSize()
 <UserPreferences /* … */ menuSize={menuSize} onMenuSizeChange={setMenuSize} />
 ```
 
-Mechanically, `<AppShell>` sets `data-menu-size` (`medium`·`large`·`xlarge`) on its root, and
-for `large`/`xlarge` app-shell.css scales the two chrome regions with `zoom` (so
-heterogeneous fixed-px icons, text, and spacing scale uniformly and stay aligned). Tune each
-step with the `--mrs-menu-scale-large` (default `1.375`) / `--mrs-menu-scale-xlarge`
-(default `1.75`) CSS vars.
+Mechanically, `<AppShell>` sets `data-menu-size` (`small`·`medium`·`large`) on its root, and
+for `small`/`large` app-shell.css scales the two chrome regions with `zoom` (so
+heterogeneous fixed-px icons, text, and spacing scale uniformly and stay aligned). `medium`
+matches no rule → normal, no-scaling size. Tune each step with the `--mrs-menu-scale-small`
+(default `0.875`) / `--mrs-menu-scale-large` (default `1.375`) CSS vars.
 
 ## App mode (a global "what mode is the app in")
 

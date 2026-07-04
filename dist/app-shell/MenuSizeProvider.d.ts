@@ -1,6 +1,6 @@
 /**
- * MenuSizeProvider — owns the header-chrome size preference (`medium` · `large` ·
- * `xlarge`). Mirrors <IconModeProvider>: uncontrolled by default (seeds from
+ * MenuSizeProvider — owns the header-chrome size preference (`small` · `medium` ·
+ * `large`). Mirrors <IconModeProvider>: uncontrolled by default (seeds from
  * localStorage and persists there, zero-config) and controllable via `value` +
  * `onChange` (own the state yourself, e.g. mirror it to a per-user account /
  * Convex; the provider then stops touching localStorage). SPA-only (no SSR).

@@ -226,7 +226,7 @@
 .mrs-app-header__actions {
   display: flex;
   align-items: center;
-  gap: 0;
+  gap: 0.25rem;
 }
 .mrs-app-header__actions > span {
   display: flex;
@@ -330,20 +330,21 @@
 }
 
 /* ── Menu-size display preference (MenuSizeProvider / useMenuSize) ────────────
-   Header-chrome size: `medium` · `large` · `xlarge`. <AppShell> sets
-   `data-menu-size` on the root; here `large`/`xlarge` scale the page-header band
-   (breadcrumbs + actions + search + tabs) and the top-header action cluster,
-   leaving the app-header brand/title at its normal size. `medium` (the default)
-   matches no rule → normal size. `zoom` reflows layout properly, so heterogeneous
-   fixed-px icons, text, and spacing all scale uniformly and stay aligned (a
-   `transform: scale` would not reserve layout box). Tune each step via its var. */
+   Header-chrome size: `small` · `medium` · `large`. <AppShell> sets
+   `data-menu-size` on the root; here `small`/`large` scale the page-header band
+   (breadcrumbs + actions + search + tabs) and the top-header action cluster down
+   or up, leaving the app-header brand/title at its normal size. `medium` (the
+   default) matches no rule → normal, no-scaling size. `zoom` reflows layout
+   properly, so heterogeneous fixed-px icons, text, and spacing all scale
+   uniformly and stay aligned (a `transform: scale` would not reserve layout box).
+   Tune each step via its var. */
+.mrs-shell[data-menu-size='small'] .mrs-page-header,
+.mrs-shell[data-menu-size='small'] .mrs-app-header__right {
+  zoom: var(--mrs-menu-scale-small, 0.875);
+}
 .mrs-shell[data-menu-size='large'] .mrs-page-header,
 .mrs-shell[data-menu-size='large'] .mrs-app-header__right {
   zoom: var(--mrs-menu-scale-large, 1.375);
-}
-.mrs-shell[data-menu-size='xlarge'] .mrs-page-header,
-.mrs-shell[data-menu-size='xlarge'] .mrs-app-header__right {
-  zoom: var(--mrs-menu-scale-xlarge, 1.75);
 }
 
 /* ── Page header chrome (ShellPageHeaderUI) ──────────────────────────────── */

@@ -25,7 +25,7 @@ export { defineShellConfig, ShellConfigError } from './defineShellConfig';
 export { useShellContext, useShellContextOptional } from './shellContext';
 // ── app-mode (single-select "what mode is the app in", under the app title) ────
 export { useAppMode, useAppModeOptional } from './useAppMode';
-// ── menu-size preference (header-chrome size: medium · large · xlarge) ─────────
+// ── menu-size preference (header-chrome size: small · medium · large) ─────────
 export { MenuSizeProvider } from './MenuSizeProvider';
 export { useMenuSize, useMenuSizeOptional } from './useMenuSize';
 // ── page tabs ─────────────────────────────────────────────────────────────────

@@ -307,7 +307,7 @@ const items = [
 A fully **controlled** settings panel in a Radix dialog with two built-in control groups:
 a **theme** group (palette + light/dark/system) and a **display** group (an optional
 icons↔emojis switch + an optional **menu-size** control that sizes the app-shell header
-chrome — `medium`·`large`·`xlarge`). It **persists nothing** — reads each value, emits
+chrome — `small`·`medium`·`large`). It **persists nothing** — reads each value, emits
 `onChange` — so the consumer owns storage. Auth-free; surface sign-out/profile via the
 `accountActions` slot.
 

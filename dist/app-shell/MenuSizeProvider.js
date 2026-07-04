@@ -1,7 +1,7 @@
 import { jsx as _jsx } from "react/jsx-runtime";
 /**
- * MenuSizeProvider — owns the header-chrome size preference (`medium` · `large` ·
- * `xlarge`). Mirrors <IconModeProvider>: uncontrolled by default (seeds from
+ * MenuSizeProvider — owns the header-chrome size preference (`small` · `medium` ·
+ * `large`). Mirrors <IconModeProvider>: uncontrolled by default (seeds from
  * localStorage and persists there, zero-config) and controllable via `value` +
  * `onChange` (own the state yourself, e.g. mirror it to a per-user account /
  * Convex; the provider then stops touching localStorage). SPA-only (no SSR).
@@ -22,7 +22,7 @@ function readPersisted(storageKey) {
     catch {
         return null; // storage blocked (e.g. privacy mode)
     }
-    return raw === 'medium' || raw === 'large' || raw === 'xlarge' ? raw : null;
+    return raw === 'small' || raw === 'medium' || raw === 'large' ? raw : null;
 }
 export function MenuSizeProvider({ children, value, onChange, defaultSize = 'medium', storageKey = DEFAULT_STORAGE_KEY, }) {
     const controlled = value !== undefined;

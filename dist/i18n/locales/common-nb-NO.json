@@ -53,9 +53,9 @@
         "prefs": {
             "language": "Språk",
             "menuSizeHeading": "Menystørrelse",
+            "menuSizeSmall": "Liten",
             "menuSizeMedium": "Middels",
-            "menuSizeLarge": "Stor",
-            "menuSizeXlarge": "Ekstra stor"
+            "menuSizeLarge": "Stor"
         }
     }
 }
