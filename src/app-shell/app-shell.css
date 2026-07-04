@@ -256,6 +256,15 @@
 .mrs-shell__app-mode[data-readonly='true'] {
   pointer-events: none;
 }
+/* Dim the unselected modes so the active chip reads as more clearly selected.
+   Opacity (not a colour swap) so it also dims a toned option, whose inline colour
+   would win over any colour rule; full strength on hover keeps it responsive. */
+.mrs-shell__app-mode .mrs-segmented__item:not(.mrs-segmented__item--active) {
+  opacity: 0.6;
+}
+.mrs-shell__app-mode .mrs-segmented__item:not(.mrs-segmented__item--active):hover {
+  opacity: 1;
+}
 
 /* ── Mobile brand strip + hamburger (no page header) ─────────────────────── */
 .mrs-shell__mobile-brand {
