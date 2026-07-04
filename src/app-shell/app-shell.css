@@ -256,7 +256,19 @@
 .mrs-shell__app-mode[data-readonly='true'] {
   pointer-events: none;
 }
-/* Dim the unselected modes so the active chip reads as more clearly selected.
+/* Pressed-in selected mode: unlike the kit default (a sunken track with the active
+   chip lifted above it), the app-mode track is a raised surface and the active mode
+   is depressed into it — a sunken well with an inset shadow and a crisper border, so
+   the selected mode reads as a physically pushed-in button. */
+.mrs-shell__app-mode .mrs-segmented {
+  background: var(--color-surface-primary);
+}
+.mrs-shell__app-mode .mrs-segmented__item--active {
+  background: var(--color-surface-sunken);
+  border-color: var(--color-border-hover);
+  box-shadow: inset 0 1px 3px var(--color-shadow-md);
+}
+/* Dim the unselected modes so the pressed-in mode reads as more clearly selected.
    Opacity (not a colour swap) so it also dims a toned option, whose inline colour
    would win over any colour rule; full strength on hover keeps it responsive. */
 .mrs-shell__app-mode .mrs-segmented__item:not(.mrs-segmented__item--active) {
