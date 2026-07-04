@@ -7,8 +7,8 @@
      white `raised` plane separates. Sunken levels go darker (recessed). */
   --color-surface-primary: #fdfdfc;                    /* card — faint off-white */
   --color-surface-raised: #ffffff;                     /* popovers/dialogs — lifts above the card */
-  --color-surface-sunken: var(--color-stone-50);       /* recessed well */
-  --color-surface-sunken-deep: var(--color-stone-100); /* deeper recess */
+  --color-surface-sunken: var(--color-emerald-50);       /* recessed well */
+  --color-surface-sunken-deep: var(--color-emerald-100); /* deeper recess */
   --color-surface-neutral: var(--color-gray-400); /* mid-gray for color indicators */
 
   /* ===== Background Colors ===== */
@@ -16,9 +16,9 @@
   --color-background-secondary: var(--color-emerald-100);
 
   /* ===== Border Colors ===== */
-  --color-border-primary: var(--color-stone-200);
-  --color-border-secondary: var(--color-stone-300);
-  --color-border-hover: var(--color-stone-400);
+  --color-border-primary: var(--color-emerald-200);
+  --color-border-secondary: var(--color-emerald-300);
+  --color-border-hover: var(--color-emerald-400);
 
   /* ===== Text Hierarchy ===== */
   --color-text-primary: var(--color-stone-900);
@@ -28,9 +28,9 @@
   --color-text-heading: var(--color-emerald-600);
 
   /* ===== Interactive States ===== */
-  --color-hover: var(--color-stone-100);
-  --color-active: var(--color-stone-200);
-  --color-selected: var(--color-emerald-100);
+  --color-hover: var(--color-emerald-100);
+  --color-active: var(--color-emerald-200);
+  --color-selected: var(--color-emerald-200);
 
   /* ===== Brand Colors ===== */
   --color-primary: var(--color-emerald-700);
@@ -42,7 +42,7 @@
   --color-secondary: var(--color-stone-600); /* neutral low-emphasis button — label / solid fill */
   --color-secondary-hover: var(--color-stone-700);
   --color-secondary-on: #ffffff; /* label on the solid fill */
-  --color-secondary-bg: var(--color-stone-100); /* soft surface for the bordered secondary button */
+  --color-secondary-bg: var(--color-emerald-100); /* soft surface for the bordered secondary button */
 
   /* ===== Semantic Colors ===== */
   --color-success: var(--color-green-700);
