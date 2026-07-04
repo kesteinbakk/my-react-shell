@@ -291,12 +291,13 @@ export type {
   DynamicGridCardLinkProps,
 } from './DynamicGridCard'
 
-// NavCard — a small navigation-tile variant of DynamicGridCard: fixed `sm`, no icon,
-// its single `title` rendered as the card's centred main content.
+// NavCard — a small navigation-tile variant of DynamicGridCard: `size` defaults to
+// `md`, no icon, its single `title` rendered as the card's centred main content.
 export { NavCard } from './NavCard'
 export type {
   NavCardProps,
   NavCardShape,
+  NavCardSize,
   NavCardFooter,
   NavCardFooterLine,
   NavCardFooterLineType,
