@@ -27,7 +27,6 @@ import {
   type ShellContextValue,
 } from './shellContext'
 import { ShellPageHeaderUI, findActiveChain } from './ShellPageHeader'
-import { ShellAppModeControl } from './ShellAppModeControl'
 import type { ShellAppModeRuntime } from './shellContext'
 import { useMenuSizeOptional } from './useMenuSize'
 import { AppHeader } from './AppHeader'
@@ -349,7 +348,6 @@ export function AppShell({
           {!showMenu && (
             <div className="mrs-shell__header-row">
               <AppHeader actions={actions} subtitle={subtitle} titleAdornment={titleAdornment} />
-              <ShellAppModeControl variant="header" />
             </div>
           )}
 

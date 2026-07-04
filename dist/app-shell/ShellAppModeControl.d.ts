@@ -1,6 +1,7 @@
 /**
- * ShellAppModeControl — the app-mode segmented control the shell renders in its own
- * section under the app title (header mode) or under the sidebar brand (menu mode).
+ * ShellAppModeControl — the app-mode segmented control the shell renders inline in the
+ * header's right cluster, left of the actions (header mode), or in its own section under
+ * the sidebar brand (menu mode).
  *
  * A soft read of shell context: renders nothing when there is no shell, no `appMode`
  * block, the app-mode is hidden, or fewer than two modes are available (the "only one

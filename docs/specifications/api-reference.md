@@ -1152,8 +1152,9 @@ step with the `--mrs-menu-scale-large` (default `1.375`) / `--mrs-menu-scale-xla
 (default `1.75`) CSS vars.
 
 **App-mode (optional).** Add an `appMode` block to `defineShellConfig` to render a
-single-select **"what mode is the app in"** segmented control in its own section directly
-under the app title (header mode) / sidebar brand, above the nav (menu mode). The block
+single-select **"what mode is the app in"** segmented control inline in the header's right
+cluster, left of the actions (header mode) / in its own section under the sidebar brand,
+above the nav (menu mode). The block
 declares only the **static** parts — `modes: string[]` (the consumer's own constant
 values), `label: (mode) => string` (**content**, consumer-translated), and optional
 `defaultMode`, `ariaLabel` (a thunk; the module never imports i18n), `visible` (default

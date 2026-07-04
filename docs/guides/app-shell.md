@@ -97,7 +97,7 @@ route (e.g. `/dashboard`, `/data`).
 | `shellPageHeader.documentTitle` | `composed` · `leaf` · `app` | `composed` | Project-wide browser-tab title mode — see [Document title](#document-title-browser-tab). |
 | `shellPageHeader.breadcrumbCollapse` | `{ leading?, trailing? }` · `false` | `{ leading: 1, trailing: 2 }` | Breadcrumb middle-collapse — see [Overflow](#overflow-the-trail-never-breaks). |
 | `labels` | aria-label thunks: `home`, `up`, `breadcrumb`, `openMenu`, `mainNavigation`, `more`, `scrollTabsLeft`, `scrollTabsRight` | none (no language default) | Translated accessible names for the chrome. Each is optional with **no default** — omit one and that control is unnamed (an icon / landmark with no language), never an English fallback. Pass them for accessible chrome. |
-| `appMode` | `{ modes, label, defaultMode?, ariaLabel?, visible?, selectable? }` | none (no app-mode surface) | A single-select **app-mode** control under the app title — see [App mode](#app-mode-a-global-what-mode-is-the-app-in). |
+| `appMode` | `{ modes, label, defaultMode?, ariaLabel?, visible?, selectable? }` | none (no app-mode surface) | A single-select **app-mode** control in the header's right cluster (left of the actions), or under the sidebar brand in menu mode — see [App mode](#app-mode-a-global-what-mode-is-the-app-in). |
 
 #### Optional per-`PageEntry` fields
 
@@ -181,9 +181,10 @@ step with the `--mrs-menu-scale-large` (default `1.375`) / `--mrs-menu-scale-xla
 
 ## App mode (a global "what mode is the app in")
 
-An opt-in single-select control the shell renders in **its own section directly under the
-app title** — the band beneath `AppHeader` in header mode, and between the sidebar brand
-head and the nav in menu mode. It answers "what mode/stage is the app in" (e.g. `Setup →
+An opt-in single-select control the shell renders **inline in the header's right cluster,
+left of the actions** in header mode (`[brand … mode, actions]`), and in its own section
+between the sidebar brand head and the nav in menu mode. It answers "what mode/stage is the
+app in" (e.g. `Setup →
 Main → Finalize`) as a **global** value any component can read via `useAppMode()`, and any
 component can set — from **end-user selection** *or* from **data** (a role/data effect
 calling `setAppMode`, or a data-driven default).
@@ -233,7 +234,7 @@ hidden/one-choice case `appMode` is still readable via `useAppMode()`.
 `useAppMode()` throws if the config declares no `appMode` block; use `useAppModeOptional()` (→
 `null`) in a component that may run in an app without an app-mode. The control is built on the
 kit `SegmentedControl`, so it inherits the shipped look (full-width, small size in the narrow
-sidebar; natural size in the header band).
+sidebar; natural size in the header's right cluster).
 
 ## Not-found (404)
 

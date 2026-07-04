@@ -216,11 +216,17 @@
   font-size: 0.75rem;
   color: var(--color-text-tertiary);
 }
+/* Right cluster: app-mode control + actions, anchored to the header's right edge. */
+.mrs-app-header__right {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-left: auto;
+}
 .mrs-app-header__actions {
   display: flex;
   align-items: center;
   gap: 0;
-  margin-left: auto;
 }
 .mrs-app-header__actions > span {
   display: flex;
@@ -231,15 +237,15 @@
   align-items: center;
 }
 
-/* ── App-mode control (its own section under the app title / brand) ──────── */
+/* ── App-mode control ─────────────────────────────────────────────────────
+   Header mode: an inline item in the header's right cluster, left of the actions.
+   Menu mode: its own section under the sidebar brand, above the nav. */
 .mrs-shell__app-mode {
   display: flex;
 }
-/* Header mode: a band directly under the AppHeader banner, aligned to its inset. */
+/* Header mode: inline in the header right cluster — no band chrome of its own. */
 .mrs-shell__app-mode--header {
-  padding: 0.5rem 1.5rem;
-  border-bottom: 1px solid var(--color-border-primary);
-  background: var(--color-surface-primary);
+  align-items: center;
 }
 /* Menu mode: under the sidebar brand head, above the nav; stretches the column. */
 .mrs-shell__app-mode--menu {
@@ -302,11 +308,11 @@
    fixed-px icons, text, and spacing all scale uniformly and stay aligned (a
    `transform: scale` would not reserve layout box). Tune each step via its var. */
 .mrs-shell[data-menu-size='large'] .mrs-page-header,
-.mrs-shell[data-menu-size='large'] .mrs-app-header__actions {
+.mrs-shell[data-menu-size='large'] .mrs-app-header__right {
   zoom: var(--mrs-menu-scale-large, 1.375);
 }
 .mrs-shell[data-menu-size='xlarge'] .mrs-page-header,
-.mrs-shell[data-menu-size='xlarge'] .mrs-app-header__actions {
+.mrs-shell[data-menu-size='xlarge'] .mrs-app-header__right {
   zoom: var(--mrs-menu-scale-xlarge, 1.75);
 }
 

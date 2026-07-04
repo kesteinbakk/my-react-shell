@@ -12,6 +12,7 @@
 import type { ReactNode } from 'react'
 import { Link } from '@tanstack/react-router'
 import { useShellContextOptional } from './shellContext'
+import { ShellAppModeControl } from './ShellAppModeControl'
 
 export interface AppHeaderProps {
   /** Action item render thunks, rendered in the right zone. `[]` for none. */
@@ -58,10 +59,15 @@ export function AppHeader(props: AppHeaderProps): ReactNode {
       {props.subtitle ? (
         <span className="mrs-app-header__subtitle">{props.subtitle()}</span>
       ) : null}
-      <div className="mrs-app-header__actions">
-        {props.actions.map((thunk, i) => (
-          <span key={i}>{thunk()}</span>
-        ))}
+      <div className="mrs-app-header__right">
+        {/* App-mode control sits before the actions: [brand … mode, actions]. Soft
+            reads shell context, so it renders nothing standalone or when no `appMode`. */}
+        <ShellAppModeControl variant="header" />
+        <div className="mrs-app-header__actions">
+          {props.actions.map((thunk, i) => (
+            <span key={i}>{thunk()}</span>
+          ))}
+        </div>
       </div>
     </header>
   )
