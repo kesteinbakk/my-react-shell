@@ -6,10 +6,12 @@ dist-harness/
 .env.*
 !.env.example
 logs/
-# Local agent tooling — ecosystem-coupled (the SessionStart hook points outside the
-# repo) and skill-synced, so it's regenerated locally and never belongs in this public
-# repo. Kept on disk, untracked.
-.claude/
+# Local agent tooling. Most of .claude/ is machine-local (settings.json hooks an
+# absolute path outside the repo) or skill-synced/generated (skills/, launch.json,
+# worktrees/ — regenerated), so those stay out. Hand-authored agent role files under
+# .claude/agents/ ARE source and are tracked.
+.claude/*
+!.claude/agents/
 .DS_Store
 
 # generated
