@@ -340,6 +340,11 @@ inline thunks (`actions: [() => <Btn/>]`), a fresh `search` object, or an un-mem
 no flicker, and no infinite render loop. A change to a thunk's underlying *value* still
 updates the band.
 
+Churn is tolerated but not free — an unstable option still re-runs a comparison effect
+each render. In **DEV** the hook warns once (naming the offending option) when an
+identity churns without its value changing, so you can memoize it away; production
+builds strip the check.
+
 An `ActionButton` in the `actions` slot always renders **inline** (glyph before label):
 the band's stylesheet overrides its `layout` prop, since the kit default `vertical`
 would stack the label under the glyph and blow out the band height. A stacked

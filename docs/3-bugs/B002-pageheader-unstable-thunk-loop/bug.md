@@ -122,6 +122,13 @@ The misleading "correctness does not depend on it" promise is now **true**: unst
 option identities are tolerated. The hook's docstring was rewritten to explain the
 guard.
 
+Fix option 3's **DEV warning** was also added (churn is tolerated, not free): the
+content effect only re-runs on an identity change, so when the rebuilt spec is
+value-equivalent that change was pure churn. The hook then `console.warn`s **once per
+instance** (gated on `import.meta.env.DEV`), naming the offending option(s), so a
+consumer can memoize the wasted per-render work away. Silent on stable options and on
+real value changes.
+
 **Related Radix-dedup note:** already documented — `docs/guides/distribution-model.md`
 lists `@radix-ui/react-dialog` / `@radix-ui/react-dropdown-menu` in the `link:`
 consumer `resolve.dedupe` set. No further action.
