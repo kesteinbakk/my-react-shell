@@ -1161,11 +1161,16 @@ values), `label: (mode) => string` (**content**, consumer-translated), and optio
 `iconPosition` (`'leading'`·`'trailing'`, default leading), `tone: (mode) => Tone | null`
 (per-mode semantic colour — e.g. a `warning`-toned "Finalize"), `defaultMode`, `ariaLabel`
 (a thunk; the module never imports i18n), `visible` (default `true`), `selectable` (default
-`true`). The **live** value + flags are runtime state driven
+`true`), `storageKey` (default `'my-react-shell.app-mode'`). The **live** value + flags are
+runtime state driven
 anywhere via `useAppMode()`: `setAppMode` (end-user *or* data-driven), `setVisible`,
 `setSelectable` (`false` → a read-only indicator), and `setModes` (narrow by role at
 runtime). The control **auto-hides** when fewer than two modes are available or `visible`
 is false — `appMode` stays readable either way. Built on the kit `SegmentedControl`.
+
+**Persistence.** The selected mode persists to `localStorage` under `storageKey` (same
+best-effort try/catch as the theme/i18n/menu-size modules) and restores on reload — a
+persisted value naming a mode the config no longer ships falls back to `defaultMode`.
 
 **Per-page mode support.** A `PageEntry` may declare `supportedModes: string[]` — the
 app-modes valid on that page. **Undefined → all modes** (no narrowing; landing there does

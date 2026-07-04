@@ -207,6 +207,13 @@ export interface ShellAppModeConfig {
    * current mode is not in it; pages without `supportedModes` never trigger it.
    */
   onUnsupportedMode?: 'throw' | 'jump'
+  /**
+   * localStorage key the selected mode persists under, so a reload restores the
+   * user's choice (same best-effort try/catch as the theme/i18n/menu-size
+   * persistence — a blocked store just falls back to `defaultMode`). Default
+   * `'my-react-shell.app-mode'`.
+   */
+  storageKey?: string
 }
 
 /**

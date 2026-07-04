@@ -143,6 +143,9 @@ export function defineShellConfig(input: ShellConfigInput): ShellConfig {
     if (m.selectable !== undefined && typeof m.selectable !== 'boolean') {
       throw new ShellConfigError('`appMode.selectable` must be a boolean when present.')
     }
+    if (m.storageKey !== undefined && (typeof m.storageKey !== 'string' || m.storageKey === '')) {
+      throw new ShellConfigError('`appMode.storageKey` must be a non-empty string when present.')
+    }
   }
   return Object.freeze({ ...input, [SHELL_CONFIG_BRAND]: true as const })
 }

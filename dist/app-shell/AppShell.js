@@ -23,6 +23,19 @@ import { useMenuSizeOptional } from './useMenuSize';
 import { AppHeader } from './AppHeader';
 import { AppMenu } from './AppMenu';
 import { AppBottomNav } from './AppBottomNav';
+const DEFAULT_APP_MODE_STORAGE_KEY = 'my-react-shell.app-mode';
+/** Best-effort read of the persisted app-mode — dropped if storage is blocked
+ * (e.g. privacy mode), unset, or names a mode the config no longer ships. */
+function readPersistedAppMode(storageKey, modes) {
+    let raw;
+    try {
+        raw = window.localStorage.getItem(storageKey);
+    }
+    catch {
+        return null;
+    }
+    return raw !== null && modes.includes(raw) ? raw : null;
+}
 /**
  * Empty chrome spec — handed to the band renderer when only breadcrumbs exist (no
  * `usePageHeader` contributed chrome). A stable module-level ref so the renderer
@@ -46,10 +59,27 @@ export function AppShell({ config, useMenu, actions, subtitle, titleAdornment, f
     // React state so a consumer's `setAppMode`/`setVisible`/… re-renders the tree.
     // `appModeRuntime` is `null` when the config declares no `appMode`.
     const appModeConfig = config.appMode;
-    const [appModeValue, setAppModeValue] = useState(() => appModeConfig?.defaultMode ?? appModeConfig?.modes[0] ?? '');
+    const appModeStorageKey = appModeConfig?.storageKey ?? DEFAULT_APP_MODE_STORAGE_KEY;
+    const [appModeValue, setAppModeValue] = useState(() => (appModeConfig && readPersistedAppMode(appModeStorageKey, appModeConfig.modes)) ??
+        appModeConfig?.defaultMode ??
+        appModeConfig?.modes[0] ??
+        '');
     const [appModeOptions, setAppModeOptions] = useState(() => appModeConfig?.modes ?? []);
     const [appModeVisible, setAppModeVisible] = useState(() => appModeConfig?.visible ?? true);
     const [appModeSelectable, setAppModeSelectable] = useState(() => appModeConfig?.selectable ?? true);
+    // Persist the user's selection (best-effort — storage may be unavailable), so a
+    // reload restores it via the lazy initializer above. Mirrors the theme/i18n/
+    // menu-size modules' persistence convention.
+    useEffect(() => {
+        if (appModeConfig === undefined)
+            return;
+        try {
+            window.localStorage.setItem(appModeStorageKey, appModeValue);
+        }
+        catch {
+            /* ignore */
+        }
+    }, [appModeConfig, appModeValue, appModeStorageKey]);
     // `appModeRuntime` is built after `activeChain` below — it depends on the active
     // leaf page's `supportedModes` to narrow the available set.
     // Page-chrome contributors (`usePageHeader`), keyed by a stable id + a render-order
