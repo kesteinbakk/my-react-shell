@@ -1,5 +1,7 @@
 # my-react-shell — concept
 
+Default role: my-react-shell-master
+
 ## What this is
 
 **my-react-shell is a support and starting base for React + Convex apps** under
@@ -124,6 +126,26 @@ shell, kit, and primitives (the idiom changes — signals→hooks, inline utilit
 CSS — the feature set does not). The two **share their theme tokens** through the
 framework-neutral `themes` package — colors are edited once and propagate to both — but
 otherwise stay independent, each the source of truth for its own framework's modules.
+
+## The demo pair — a lockstep unit
+
+**my-react-shell + [my-react-shell-demo](../../my-react-shell-demo)** are one
+library-plus-showcase unit that ships in lockstep. This repo contains **no** showcase
+or demo files — all visual showcasing lives in the demo. A demo shows **only** what the
+shell exports out of the box (never pimped); component work is always done in the shell
+source, never patched into the demo.
+
+**Cross-editing between the two is pre-approved, both directions** — a standing
+exception to the root working-contract rule *"editing any project other than the one you
+were invoked in requires approval."* An agent invoked in either repo may write to the
+other **without asking for that specific edit** (e.g. registering a new component's demo
+section + icon key, updating `PaletteReference` after a token change, reproducing a filed
+bug). The carve-out is scoped to **this one repo pair only** — every other sibling
+(including any consumer app that live-links the shell, e.g. `evaluering`) still requires
+per-edit approval.
+
+Showcasing/lockstep mechanics are in the maintainer guide
+[docs/maintainers/my-react-shell-master/showcasing.md](maintainers/my-react-shell-master/showcasing.md).
 
 ## Distribution
 
