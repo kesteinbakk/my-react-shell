@@ -31,7 +31,7 @@ const actionButtonVariants = cva('mrs-action-btn', {
 const ICON_PX = {
     xs: 16,
     sm: 20,
-    md: 24,
+    md: 26,
     lg: 32,
     xl: 40,
 };

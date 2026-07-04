@@ -78,6 +78,6 @@ export { CardGrid } from './CardGrid';
 // built-in search / filter / sort toolbar.
 export { DynamicCardGrid } from './DynamicCardGrid';
 export { DynamicGridCard } from './DynamicGridCard';
-// NavCard — a small navigation-tile variant of DynamicGridCard: `size` defaults to
-// `md`, no icon, its single `title` rendered as the card's centred main content.
+// NavCard — a small navigation-tile variant of DynamicGridCard: no icon, its single
+// `title` rendered as the card's centred main content.
 export { NavCard } from './NavCard';

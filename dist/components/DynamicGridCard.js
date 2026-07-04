@@ -69,6 +69,25 @@ function titleFitStep(title) {
         return 1;
     return 0;
 }
+/** Size tiers, smallest to largest — the order `sizeLimit` steps down through. */
+const SIZE_ORDER = ['sm', 'md', 'lg'];
+/**
+ * The `max-width` a card should cap itself at, given its effective size and `sizeLimit`.
+ * Interpolates linearly between the effective tier's max and the next-smaller tier's max,
+ * in fifths. Returns `undefined` (no cap of its own — falls back to the grid's cap) when
+ * `sizeLimit` is `0`/unset, or when the effective tier is already the smallest (`'sm'`).
+ */
+function resolveSizeLimitMaxWidth(effectiveSize, sizeLimit) {
+    if (!sizeLimit)
+        return undefined;
+    const tierIndex = SIZE_ORDER.indexOf(effectiveSize);
+    if (tierIndex <= 0)
+        return undefined;
+    const upperMax = DYNAMIC_GRID_CARD_MAX_WIDTH[effectiveSize];
+    const lowerMax = DYNAMIC_GRID_CARD_MAX_WIDTH[SIZE_ORDER[tierIndex - 1]];
+    const step = (upperMax - lowerMax) / 5;
+    return upperMax - step * sizeLimit;
+}
 /**
  * Fluid card for the {@link DynamicCardGrid}: it stretches to `width: 100%` of its
  * grid column and inherits the grid's max-width cap, keeping the golden-ratio shape via
@@ -79,7 +98,7 @@ function titleFitStep(title) {
  * pass `renderLink` and the card mounts the consumer's `<Link>` as a full-bleed block-link
  * overlay, with `corner` controls raised above it so they stay independently clickable.
  */
-export const DynamicGridCard = forwardRef(function DynamicGridCard({ size, shape = 'standard', title, subtitle, icon, hoverable, lift = false, watermark, autoscaleWatermark = true, corner, footer, renderLink, showDragHandle, dragHandle, dragHandleProps, dragHandleLabel, dragWholeCard, tone, color, accentPlacement = 'top', className, style, children, ...props }, ref) {
+export const DynamicGridCard = forwardRef(function DynamicGridCard({ sizeLimit, shape = 'standard', title, subtitle, icon, hoverable, lift = false, watermark, autoscaleWatermark = true, corner, footer, renderLink, showDragHandle, dragHandle, dragHandleProps, dragHandleLabel, dragWholeCard, tone, color, accentPlacement = 'top', className, style, children, ...props }, ref) {
     // A visible grip shows when toggled on, or when a custom handle node is supplied.
     const hasDragHandle = showDragHandle || dragHandle != null;
     // Mirrors StatCard/ContentCard: a card with an `onClick` is hoverable by default — without
@@ -98,13 +117,11 @@ export const DynamicGridCard = forwardRef(function DynamicGridCard({ size, shape
         }
         setIsHolding(false);
     }
-    // The card's own `size` wins; absent that, fall back to the enclosing grid's `cardSize`
-    // (provided via context) so the icon/title scale below resolves without the consumer
-    // having to repeat `size` on every card.
+    // Typography/icon scale always follows the enclosing grid's `cardSize` (via context),
+    // falling back to `'md'` with no enclosing grid — a card never overrides its own scale.
     const gridSize = useContext(DynamicCardGridSizeContext);
-    const effectiveSize = size ?? gridSize;
-    const minWidth = size ? DYNAMIC_GRID_CARD_MIN_WIDTH[size] : undefined;
-    const maxWidth = size ? DYNAMIC_GRID_CARD_MAX_WIDTH[size] : undefined;
+    const effectiveSize = gridSize ?? 'md';
+    const maxWidth = resolveSizeLimitMaxWidth(effectiveSize, sizeLimit);
     const aspectRatio = shape === 'landscape' ? `${PHI * PHI} / 1` : `${PHI} / 1`;
     // No accent unless tone/color is given.
     const accentColor = resolveAccentColor(tone, color);
@@ -131,7 +148,6 @@ export const DynamicGridCard = forwardRef(function DynamicGridCard({ size, shape
         : footer != null;
     const cssVars = {
         '--mrs-dynamic-grid-card-aspect-ratio': aspectRatio,
-        ...(minWidth != null ? { '--mrs-dynamic-grid-card-min-width': `${minWidth}px` } : {}),
         ...(maxWidth != null ? { '--mrs-dynamic-grid-card-max-width': `${maxWidth}px` } : {}),
         ...(hasAccent ? { '--mrs-stat-accent': accentColor } : {}),
         ...style,

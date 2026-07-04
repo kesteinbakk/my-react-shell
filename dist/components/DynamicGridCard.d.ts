@@ -37,7 +37,15 @@ export interface DynamicGridCardLinkProps {
     'aria-labelledby'?: string;
 }
 export interface DynamicGridCardProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title'> {
-    size?: DynamicGridCardSize;
+    /**
+     * Steps the card's own width cap down from the enclosing `DynamicCardGrid`'s `cardSize`
+     * toward the next-smaller tier, in fifths: `0` (default) is the grid's own cap, `5` is the
+     * next-smaller tier's cap. Typography/icon scale always follow the grid's `cardSize` (or
+     * `'md'` when there's no enclosing grid) — `sizeLimit` only narrows the width, so a stepped
+     * card keeps the larger tier's text/icon scale. No effect on a card whose effective size is
+     * already the smallest tier (`'sm'`) — there's nothing smaller to step toward.
+     */
+    sizeLimit?: 0 | 1 | 2 | 3 | 4 | 5;
     /** Proportion of the card. Default `'standard'` (φ:1); `'landscape'` is φ²:1 (shorter, wider). */
     shape?: DynamicGridCardShape;
     title?: ReactNode;
