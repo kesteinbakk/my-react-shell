@@ -48,6 +48,22 @@
   --mrs-text-xl: 1.25rem;
 }
 
+/* Radix Dialog (Sheet, Dialog, ConfirmDialog, …) scroll-locks the body while a
+   modal is open via `react-remove-scroll`, which compensates for the vanished
+   scrollbar with a computed `margin-right` on `body[data-scroll-locked]`. This
+   shell's own layout never scrolls `body` — `.mrs-shell__content` is the only
+   scroller — so body has no scrollbar to compensate for; on some browsers the
+   library still injects a nonzero margin anyway, which pushes body wider than
+   the viewport. On mobile, ANY horizontal overflow makes the browser widen the
+   whole layout viewport to fit it (zooming the entire page out), not just add
+   a scrollbar — so even a small stray margin breaks the mobile modal
+   experience. Clipping horizontal overflow at the root starves that reflow.
+   `overflow-y` is untouched — non-shell consumers may still scroll `body`. */
+html,
+body {
+  overflow-x: hidden;
+}
+
 body {
   font-family: var(--font-sans);
   background-color: var(--color-background-primary);

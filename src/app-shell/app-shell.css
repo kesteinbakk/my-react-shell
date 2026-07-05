@@ -516,6 +516,16 @@ button.mrs-breadcrumbs__leaf {
   cursor: default;
   pointer-events: none;
 }
+/* Mobile (<1024px): only home, up-arrow, and the current leaf stay visible — the
+   ancestor trail (links, chevrons, the "…" overflow) is redundant with the drawer
+   nav behind the hamburger, and cramped in the narrow header row. Every crumb is
+   already in the DOM for desktop, so this is a pure CSS toggle at the shell's one
+   breakpoint, not a second render path. */
+@media (max-width: 1023.98px) {
+  .mrs-breadcrumbs__crumb:not(:last-child) {
+    display: none;
+  }
+}
 .mrs-page-header__actions {
   display: flex;
   align-items: center;

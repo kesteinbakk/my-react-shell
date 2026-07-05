@@ -507,6 +507,11 @@ The band stays on **one line** no matter how deep the chain or how long a label
   })
   ```
 
+- **On mobile (<1024px) the trail collapses to home + up-arrow + the current leaf.**
+  The ancestor links, chevrons, and the "…" overflow all hide — redundant with the
+  drawer nav behind the hamburger, and cramped in the narrow header row. Pure CSS,
+  same breakpoint as the sidebar/drawer split; no separate mobile config.
+
 `useDynamicPages` works at any depth — set `parent` to the ancestor route it hangs off:
 
 ```tsx
