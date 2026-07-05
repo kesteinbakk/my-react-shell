@@ -32,24 +32,25 @@
   --mrs-icon-btn-xl: 2.75rem;
 }
 
-/* Sizes every kit icon-trigger box off `data-size` (default `md`). Each class keeps
-   its own colour/hover/border below; only the box dimensions come from here. */
-.mrs-menu__icon-trigger,
+/* Sizes every kit icon button box off `data-size` (default `md`). Each class keeps
+   its own colour/hover/border below; only the box dimensions come from here.
+   `.mrs-icon-btn` is the canonical IconButton; `.mrs-prefs-trigger` shares the scale. */
+.mrs-icon-btn,
 .mrs-prefs-trigger {
   width: var(--mrs-icon-btn-md);
   height: var(--mrs-icon-btn-md);
 }
-.mrs-menu__icon-trigger[data-size='sm'],
+.mrs-icon-btn[data-size='sm'],
 .mrs-prefs-trigger[data-size='sm'] {
   width: var(--mrs-icon-btn-sm);
   height: var(--mrs-icon-btn-sm);
 }
-.mrs-menu__icon-trigger[data-size='lg'],
+.mrs-icon-btn[data-size='lg'],
 .mrs-prefs-trigger[data-size='lg'] {
   width: var(--mrs-icon-btn-lg);
   height: var(--mrs-icon-btn-lg);
 }
-.mrs-menu__icon-trigger[data-size='xl'],
+.mrs-icon-btn[data-size='xl'],
 .mrs-prefs-trigger[data-size='xl'] {
   width: var(--mrs-icon-btn-xl);
   height: var(--mrs-icon-btn-xl);
@@ -4362,8 +4363,11 @@
   flex-shrink: 0;
   color: var(--color-text-tertiary);
 }
-/* Icon-only trigger: a square ghost button wrapping the consumer's icon glyph. */
-.mrs-menu__icon-trigger {
+/* IconButton — the canonical square ghost button wrapping a single icon glyph.
+   Box dimensions come from the shared scale block up top; this is its ghost skin
+   (transparent → hover / open / focus lit). `[data-state='open']` tracks a Radix
+   trigger it's driving (DropdownMenu / Popover). */
+.mrs-icon-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -4376,12 +4380,12 @@
   cursor: pointer;
   transition: background 120ms ease, color 120ms ease;
 }
-.mrs-menu__icon-trigger:hover,
-.mrs-menu__icon-trigger[data-state='open'] {
+.mrs-icon-btn:hover,
+.mrs-icon-btn[data-state='open'] {
   background: var(--color-hover);
   color: var(--color-text-primary);
 }
-.mrs-menu__icon-trigger:focus-visible {
+.mrs-icon-btn:focus-visible {
   outline: none;
   border-color: var(--color-focus);
   box-shadow: 0 0 0 3px var(--color-focus-ring);

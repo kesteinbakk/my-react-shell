@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 import type { ThemeInfo, ThemeMode, ThemeName } from '../theme/themeContext';
 import type { IconMode } from '../icons/iconModeContext';
 import type { MenuSize } from '../app-shell/menuSizeContext';
-import type { IconButtonSize } from './iconButton';
+import type { IconButtonSize } from './iconButtonScale';
 /**
  * A section rendered as one left-nav item + right pane in the two-pane
  * (sectioned) layout. Provide the full, ordered list via

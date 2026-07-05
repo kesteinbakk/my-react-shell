@@ -15,7 +15,7 @@ import type { AlertTone } from '../components/Alert';
 import type { Tone } from '../components/tone';
 import type { DropdownMenuItem } from '../components/DropdownMenu';
 import type { PopoverAlign } from '../components/Popover';
-import type { IconButtonSize } from '../components/iconButton';
+import type { IconButtonSize } from '../components/iconButtonScale';
 /**
  * Consumer-extensible interface for strict icon typing.
  * By default it is empty, meaning the shell falls back to `string`.

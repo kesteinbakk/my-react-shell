@@ -1,5 +1,5 @@
 import type { PopoverAlign, PopoverSide } from './Popover';
-import type { IconButtonSize } from './iconButton';
+import type { IconButtonSize } from './iconButtonScale';
 /** What the closed trigger button shows for the active locale. */
 export type LanguageTrigger = 'flag' | 'code' | 'globe';
 export interface LanguagePickerProps {

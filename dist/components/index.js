@@ -11,7 +11,8 @@
 // this sub-path, so the package barrel stays the theme core. The kit's canonical
 // doc is docs/specifications/api-reference.md (it ships no separate guide).
 export { TONE_COLOR } from './tone';
-export { ICON_BUTTON_GLYPH_PX } from './iconButton';
+export { ICON_BUTTON_GLYPH_PX } from './iconButtonScale';
+export { IconButton } from './IconButton';
 export { Button } from './Button';
 export { HeaderMenuButton } from './HeaderMenuButton';
 export { useDebounce } from './useDebounce';

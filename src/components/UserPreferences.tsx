@@ -9,7 +9,7 @@ import { Button } from './Button'
 import { cn } from './cn'
 import { Flag } from './Flag'
 import { useShellText } from './useShellText'
-import type { IconButtonSize } from './iconButton'
+import type { IconButtonSize } from './iconButtonScale'
 
 /**
  * A section rendered as one left-nav item + right pane in the two-pane

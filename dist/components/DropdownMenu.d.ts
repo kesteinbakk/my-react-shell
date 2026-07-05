@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import type { PopoverAlign, PopoverSide } from './Popover';
-import type { IconButtonSize } from './iconButton';
+import type { IconButtonSize } from './iconButtonScale';
 /** A plain action row — the default entry. Closes the menu when chosen. */
 export interface DropdownMenuActionItem {
     type?: 'item';

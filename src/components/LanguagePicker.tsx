@@ -1,7 +1,7 @@
 import { cn } from './cn'
 import { DropdownMenu } from './DropdownMenu'
 import type { PopoverAlign, PopoverSide } from './Popover'
-import type { IconButtonSize } from './iconButton'
+import type { IconButtonSize } from './iconButtonScale'
 import { Flag } from './Flag'
 import { useShellText } from './useShellText'
 import { useI18nContextOptional } from '../i18n/i18nContext'

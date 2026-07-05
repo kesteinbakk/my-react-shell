@@ -1,13 +1,33 @@
+import type { ButtonHTMLAttributes, ReactNode } from 'react';
+import type { IconButtonSize } from './iconButtonScale';
+export interface IconButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'> {
+    /**
+     * The icon glyph, centered in the square. Size it from the paired glyph scale
+     * (`ICON_BUTTON_GLYPH_PX`) so the icon tracks the box across the size steps.
+     */
+    children: ReactNode;
+    /** Box size step — sm · md · lg · xl. Defaults to `md`. */
+    size?: IconButtonSize;
+    /** Pressed / toggled state → `aria-pressed`. */
+    active?: boolean;
+    /** Accessible name. Required for any non-decorative icon button. */
+    'aria-label'?: string;
+    className?: string;
+}
 /**
- * The shared square icon-button size scale.
+ * The canonical square **icon-only button** — a ghost button that wraps a single
+ * icon glyph in a fixed square hit-area (the box scale, `--mrs-icon-btn-*`), lit on
+ * hover / open / focus. One component for every icon trigger in the kit; `DropdownMenu`
+ * renders it for its `iconTrigger`.
  *
- * One vocabulary for every square, icon-only trigger in the kit — the
- * `DropdownMenu` icon-trigger, the `UserPreferences` trigger, `LanguagePicker`,
- * and the app-shell `HeaderActionButton`. Each renders the same box at the same
- * `data-size`, so an icon button is the same size everywhere unless a caller opts
- * into a different step. `md` is the default. Sizes map to `--mrs-icon-btn-*` in
- * components.css; keep the two in sync.
+ * It forwards its `ref` and spreads native button props, so it drops straight into a
+ * Radix `asChild` trigger (Dropdown / Popover / Tooltip). The glyph size is the
+ * caller's to set — pair it with `ICON_BUTTON_GLYPH_PX[size]`:
+ *
+ * ```tsx
+ * <IconButton size="md" aria-label={t('action.settings')} onClick={openSettings}>
+ *   <Settings size={ICON_BUTTON_GLYPH_PX.md} />
+ * </IconButton>
+ * ```
  */
-export type IconButtonSize = 'sm' | 'md' | 'lg' | 'xl';
-/** Glyph pixel size that pairs with each icon-button box size. */
-export declare const ICON_BUTTON_GLYPH_PX: Record<IconButtonSize, number>;
+export declare const IconButton: import("react").ForwardRefExoticComponent<IconButtonProps & import("react").RefAttributes<HTMLButtonElement>>;

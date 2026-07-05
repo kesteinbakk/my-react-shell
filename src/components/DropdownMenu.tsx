@@ -2,8 +2,9 @@ import type { ReactNode } from 'react'
 import * as RadixMenu from '@radix-ui/react-dropdown-menu'
 import { cn } from './cn'
 import { useShellText } from './useShellText'
+import { IconButton } from './IconButton'
 import type { PopoverAlign, PopoverSide } from './Popover'
-import type { IconButtonSize } from './iconButton'
+import type { IconButtonSize } from './iconButtonScale'
 
 /** A plain action row — the default entry. Closes the menu when chosen. */
 export interface DropdownMenuActionItem {
@@ -286,9 +287,9 @@ export function DropdownMenu({
     <RadixMenu.Root open={open} defaultOpen={defaultOpen} onOpenChange={onOpenChange}>
       {iconTrigger != null ? (
         <RadixMenu.Trigger asChild>
-          <button type="button" className="mrs-menu__icon-trigger" data-size={iconTriggerSize} aria-label={iconTriggerLabel ?? st('mrs.action.actions')}>
+          <IconButton size={iconTriggerSize} aria-label={iconTriggerLabel ?? st('mrs.action.actions')}>
             {iconTrigger}
-          </button>
+          </IconButton>
         </RadixMenu.Trigger>
       ) : (
         <RadixMenu.Trigger asChild>{trigger}</RadixMenu.Trigger>

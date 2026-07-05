@@ -13,8 +13,11 @@
 
 export type { Tone } from './tone'
 export { TONE_COLOR } from './tone'
-export type { IconButtonSize } from './iconButton'
-export { ICON_BUTTON_GLYPH_PX } from './iconButton'
+export type { IconButtonSize } from './iconButtonScale'
+export { ICON_BUTTON_GLYPH_PX } from './iconButtonScale'
+
+export { IconButton } from './IconButton'
+export type { IconButtonProps } from './IconButton'
 
 export { Button } from './Button'
 export type { ButtonProps, ButtonVariant, ButtonSize } from './Button'
