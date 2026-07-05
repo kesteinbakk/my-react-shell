@@ -132,10 +132,10 @@
      lifts), while `sunken` / `sunken-deep` are DARKER than the card (a well
      recedes toward the page floor). Each stop is a distinct step so borders and
      hover applied on any surface stay visible. */
-  --color-surface-primary: oklch(0.255 0.045 237);      /* card — shared dark ladder: identical OKLCH L stops across palettes, only hue+chroma differ */
-  --color-surface-raised: oklch(0.295 0.045 237);       /* popovers/dropdowns — lifted above the card */
-  --color-surface-sunken: oklch(0.23 0.045 237);       /* recessed well — darker than the card */
-  --color-surface-sunken-deep: oklch(0.20 0.045 237);  /* deepest recess — a clear step above the page floor */
+  --color-surface-primary: oklch(0.245 0.036 237);      /* card — shared dark ladder, tuned back toward the pre-systematization depth: identical OKLCH L/C stops across palettes, only hue differs */
+  --color-surface-raised: oklch(0.285 0.038 237);       /* popovers/dropdowns — lifted above the card */
+  --color-surface-sunken: oklch(0.22 0.034 237);       /* recessed well — darker than the card */
+  --color-surface-sunken-deep: oklch(0.195 0.032 237);  /* deepest recess — a clear step above the page floor */
   --color-surface-neutral: rgb(107, 114, 128); /* gray-500 — mid-gray for color indicators (shared across palettes) */
 
   /* ===== Background Colors ===== */

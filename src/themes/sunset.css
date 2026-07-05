@@ -128,10 +128,10 @@
   /* ===== Surface Colors — the depth ladder (dark) =====
      Mode-consistent: `raised` is LIGHTER than the card, `sunken` / `sunken-deep`
      are DARKER (recessed). */
-  --color-surface-primary: oklch(0.255 0.045 52);      /* card — shared dark ladder: identical OKLCH L stops across palettes, only hue+chroma differ */
-  --color-surface-raised: oklch(0.295 0.045 52);       /* popovers/dropdowns — lifted above the card */
-  --color-surface-sunken: oklch(0.23 0.045 52);       /* recessed well — darker than the card */
-  --color-surface-sunken-deep: oklch(0.20 0.045 52);  /* deepest recess — a clear step above the page floor */
+  --color-surface-primary: oklch(0.245 0.036 52);      /* card — shared dark ladder, tuned back toward the pre-systematization depth: identical OKLCH L/C stops across palettes, only hue differs */
+  --color-surface-raised: oklch(0.285 0.038 52);       /* popovers/dropdowns — lifted above the card */
+  --color-surface-sunken: oklch(0.22 0.034 52);       /* recessed well — darker than the card */
+  --color-surface-sunken-deep: oklch(0.195 0.032 52);  /* deepest recess — a clear step above the page floor */
   --color-surface-neutral: rgb(107, 114, 128); /* gray-500 - mid-gray for color indicators */
 
   /* ===== Background Colors ===== */
