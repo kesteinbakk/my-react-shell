@@ -71,4 +71,5 @@ export type {
   PageHeaderAction,
   PageHeaderSearchAction,
   PageHeaderPresetAction,
+  PageHeaderIconAction,
 } from './shellContract'

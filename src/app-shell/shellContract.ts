@@ -299,6 +299,30 @@ export interface PageHeaderPresetAction {
   hint?: string
 }
 
+/**
+ * Custom-icon action — the `PageHeaderPresetAction` counterpart for a glyph outside
+ * the `ActionType` preset enum (e.g. a feature-specific toggle icon). Unlike the raw
+ * `() => ReactNode` thunk form, this is a scalar-props object: `usePageHeader`'s
+ * value-signature diff reads its `label`/`tone`/`disabled`/etc, so a real content
+ * change (e.g. the label flipping on a view-mode toggle) is detected and pushed —
+ * a `() => ReactNode` thunk is opaque to that diff ('fn' only), so a change baked
+ * into its closure can go unpropagated when it's the only thing that changed.
+ */
+export interface PageHeaderIconAction {
+  /** Absent — distinguishes this from `PageHeaderSearchAction` /
+   *  `PageHeaderPresetAction` in the union so `actionItem.action` narrows safely. */
+  action?: never
+  icon: ReactNode
+  onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void
+  label?: string
+  showEmoji?: boolean
+  tone?: ActionButtonTone
+  size?: ActionButtonSize
+  layout?: ActionButtonLayout
+  disabled?: boolean
+  hint?: string
+}
+
 export interface PageHeaderAlertSpec {
   label: string
   tone: AlertTone
@@ -310,6 +334,7 @@ export type PageHeaderAction =
   | ActionType
   | PageHeaderSearchAction
   | PageHeaderPresetAction
+  | PageHeaderIconAction
 
 /**
  * Public options for the `usePageHeader` hook — the page chrome a route contributes

@@ -29,4 +29,4 @@ export { PageSections } from './PageSections';
 export type { PageSectionsMode, PageSectionsProps } from './pageSections/types';
 export { PageSection } from './PageSectionExport';
 export type { PageSectionProps } from './PageSection';
-export type { PageEntry, ShellConfig, ShellConfigInput, PageContainerMaxWidth, ShellPageContainerConfig, ShellTabsConfig, ShellTabsVariant, ShellPageHeaderConfig, ShellPageHeaderSearchSlot, ShellDocumentTitleMode, ShellIconRenderer, ShellChromeLabels, ShellAppModeConfig, PageHeaderOptions, PageHeaderAction, PageHeaderSearchAction, PageHeaderPresetAction, } from './shellContract';
+export type { PageEntry, ShellConfig, ShellConfigInput, PageContainerMaxWidth, ShellPageContainerConfig, ShellTabsConfig, ShellTabsVariant, ShellPageHeaderConfig, ShellPageHeaderSearchSlot, ShellDocumentTitleMode, ShellIconRenderer, ShellChromeLabels, ShellAppModeConfig, PageHeaderOptions, PageHeaderAction, PageHeaderSearchAction, PageHeaderPresetAction, PageHeaderIconAction, } from './shellContract';

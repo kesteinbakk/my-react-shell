@@ -116,6 +116,10 @@ export function ShellPageHeaderUI(props) {
                                         const presetAction = actionItem;
                                         return (_jsx("span", { children: _jsx(ActionButton, { action: presetAction.action, onClick: presetAction.onClick, label: presetAction.label, showEmoji: presetAction.showEmoji, tone: presetAction.tone, size: presetAction.size, layout: presetAction.layout, disabled: presetAction.disabled, hint: presetAction.hint }) }, i));
                                     }
+                                    if ('icon' in actionItem) {
+                                        const iconAction = actionItem;
+                                        return (_jsx("span", { children: _jsx(ActionButton, { icon: iconAction.icon, onClick: iconAction.onClick, label: iconAction.label, showEmoji: iconAction.showEmoji, tone: iconAction.tone, size: iconAction.size, layout: iconAction.layout, disabled: iconAction.disabled, hint: iconAction.hint }) }, i));
+                                    }
                                 }
                                 return null;
                             })] })) : null, (!hideOther && spec.search) ? _jsx(HeaderSearchInput, { slot: spec.search, shell: shell }) : null] }), spec.tabs ? (_jsx("div", { className: "mrs-page-header__tabs", children: spec.tabs() })) : null] }));

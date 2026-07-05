@@ -29,6 +29,7 @@ import type {
   ShellPageHeaderSpec,
   PageHeaderPresetAction,
   PageHeaderSearchAction,
+  PageHeaderIconAction,
 } from './shellContract'
 import type { ShellContextValue } from './shellContext'
 import { SearchInput as SearchInputComponent, ActionButton } from '../components'
@@ -220,6 +221,24 @@ export function ShellPageHeaderUI(props: ShellPageHeaderUIProps): ReactNode {
                         layout={presetAction.layout}
                         disabled={presetAction.disabled}
                         hint={presetAction.hint}
+                      />
+                    </span>
+                  )
+                }
+                if ('icon' in actionItem) {
+                  const iconAction = actionItem as PageHeaderIconAction
+                  return (
+                    <span key={i}>
+                      <ActionButton
+                        icon={iconAction.icon}
+                        onClick={iconAction.onClick}
+                        label={iconAction.label}
+                        showEmoji={iconAction.showEmoji}
+                        tone={iconAction.tone}
+                        size={iconAction.size}
+                        layout={iconAction.layout}
+                        disabled={iconAction.disabled}
+                        hint={iconAction.hint}
                       />
                     </span>
                   )
