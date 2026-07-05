@@ -33,7 +33,7 @@
  * Replaces foundation's `<ShellPageHeader>` registration component with a hook (the
  * React-idiomatic shape, consistent with the sibling `useDynamicPages`).
  */
-import { useEffect, useRef } from 'react';
+import { isValidElement, useEffect, useRef } from 'react';
 import { useShellAPIContext } from './shellContext';
 /**
  * Monotonic, module-wide counter handing each `usePageHeader` instance a token in
@@ -57,13 +57,18 @@ const CHURN_FIELDS = ['title', 'actions', 'search', 'tabs', 'documentTitle'];
  * `search.placeholder`) are pure reads by contract, so calling them here to compare
  * resolved values is safe and is exactly what the band does on its own render.
  *
- * Callbacks (`search.onChange`, action `onClick`/`onChange`) and node-producing
- * thunks (`tabs`, function children in `actions`) are compared by *presence/kind*,
- * not output — their content re-resolves whenever the band next re-renders (a nav,
- * a language flip, or another field's value change), so a churned identity alone
- * never needs to force a push. Consumers with stable callbacks (the common case)
- * see no staleness; the guard's whole purpose is to not treat identity churn as a
- * change. */
+ * A **function-form action** (`() => ReactNode`) is resolved the same way: we call
+ * the thunk (a `createElement`, NOT a render — no hooks run) and signature the
+ * resulting element's scalar / `Set` / scalar-array props + scalar children. So a
+ * thunk whose *rendered value* changes — e.g. a vendor selector re-created with a
+ * new `openSet` prop — propagates to the band and re-renders live, while pure
+ * identity churn (a fresh thunk each render with the same output) stays equivalent
+ * and never pushes, so unstable inline thunks still can't loop. Non-scalar props
+ * (callbacks, arrays of objects, nested nodes) are skipped, exactly as the object-
+ * action branch skips its callbacks — their identity churn alone never forces a push.
+ *
+ * The remaining callbacks (`search.onChange`) and the `tabs` thunk are still compared
+ * by *presence/kind*, not output. */
 function titleKey(title) {
     return title ? `t:${title()}` : '';
 }
@@ -77,10 +82,74 @@ function searchEquivalent(a, b) {
         return a === b;
     return a.initialValue === b.initialValue && a.placeholder?.() === b.placeholder?.();
 }
-/** Signature of one action — scalar props only, callbacks + nodes ignored. */
+/**
+ * Serialize a value iff it is observable/stable — a scalar, a `Set` of scalars, or
+ * an array of scalars. Returns `null` for anything else (functions, plain objects,
+ * ReactNodes), so identity churn in those is ignored, matching the object-action
+ * branch. A `Set` is order-normalized so `{a,b}` and `{b,a}` compare equal.
+ */
+function valueSig(v) {
+    if (v === null || v === undefined)
+        return String(v);
+    const t = typeof v;
+    if (t === 'string' || t === 'number' || t === 'boolean')
+        return `${t}:${String(v)}`;
+    if (v instanceof Set) {
+        const parts = [...v].map(valueSig);
+        return parts.every((p) => p !== null) ? `set:{${parts.sort().join(',')}}` : null;
+    }
+    if (Array.isArray(v)) {
+        const parts = v.map(valueSig);
+        return parts.every((p) => p !== null) ? `arr:[${parts.join(',')}]` : null;
+    }
+    return null;
+}
+/**
+ * Signature of a resolved action node: its element type + the scalar/collection
+ * props (and scalar children) that determine what the user sees. Non-scalar props
+ * are skipped, so only a genuine rendered-value change alters the signature.
+ */
+function nodeSig(node) {
+    if (isValidElement(node)) {
+        const type = node.type;
+        const typeName = typeof type === 'string'
+            ? type
+            : type.displayName ??
+                type.name ??
+                'C';
+        const props = (node.props ?? {});
+        const parts = [];
+        for (const [k, v] of Object.entries(props)) {
+            if (k === 'children')
+                continue;
+            const s = valueSig(v);
+            if (s !== null)
+                parts.push(`${k}=${s}`);
+        }
+        const childSig = valueSig(props.children);
+        if (childSig !== null)
+            parts.push(`children=${childSig}`);
+        return `<${typeName} ${parts.sort().join('&')}>`;
+    }
+    if (Array.isArray(node))
+        return node.map(nodeSig).join('|');
+    return valueSig(node) ?? 'node';
+}
+/** Signature of one action — scalar props + resolved function-action output. */
 function actionSignature(item) {
-    if (typeof item === 'function')
-        return 'fn';
+    if (typeof item === 'function') {
+        // Resolve the render thunk to its element (createElement — no render, no hooks)
+        // and signature its observable props, so a changed rendered value propagates
+        // while pure identity churn stays equivalent (no push, no loop).
+        let node;
+        try {
+            node = item();
+        }
+        catch {
+            return 'fn:threw';
+        }
+        return `fn:${nodeSig(node)}`;
+    }
     if (typeof item === 'string')
         return `p:${item}`;
     const parts = [];
