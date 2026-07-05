@@ -139,9 +139,9 @@
   --color-background-secondary: oklch(0.19 0.045 52);  /* section background — a step above the floor */
 
   /* ===== Border Colors ===== */
-  --color-border-primary: rgb(70, 45, 35);
-  --color-border-secondary: rgb(85, 55, 45);
-  --color-border-hover: rgb(100, 65, 50);
+  --color-border-primary: oklch(0.43 0.045 52);   /* shared dark ladder — borders sit above surface-raised */
+  --color-border-secondary: oklch(0.49 0.045 52);
+  --color-border-hover: oklch(0.56 0.045 52);
 
   /* ===== Text Hierarchy =====
      One stop brighter than a naive invert, so muted body text clears even the
@@ -153,9 +153,9 @@
   --color-text-heading: #de89eb; /* fuchsia-400 desaturated ~20pp */
 
   /* ===== Interactive States ===== */
-  --color-hover: rgb(50, 30, 25);
-  --color-active: rgb(60, 40, 30);
-  --color-selected: rgb(64, 22, 58); /* Dark fuchsia selection */
+  --color-hover: oklch(0.365 0.045 52);   /* shared dark ladder — one step above surface-raised */
+  --color-active: oklch(0.405 0.045 52);  /* one step above hover */
+  --color-selected: oklch(0.35 0.06 330);  /* brand-hue (fuchsia) selection */
 
   /* ===== Brand Colors ===== */
   --color-primary: #de89eb;         /* fuchsia-400 desaturated ~20pp */
@@ -173,22 +173,22 @@
   --color-success: #4ebb93;         /* emerald-400 desaturated ~20pp */
   --color-success-hover: #7fd7b4;   /* emerald-300 desaturated ~20pp */
   --color-success-on: var(--color-emerald-950);
-  --color-success-bg: rgb(20, 40, 25);
+  --color-success-bg: var(--color-emerald-950);
 
   --color-warning: #e4b43a;         /* amber-400 desaturated ~20pp */
   --color-warning-hover: #eac35e;   /* amber-300 desaturated ~20pp */
   --color-warning-on: var(--color-amber-950);
-  --color-warning-bg: rgb(40, 30, 10);
+  --color-warning-bg: var(--color-amber-950);
 
   --color-danger: var(--color-red-600);
   --color-danger-hover: var(--color-red-500);
   --color-danger-on: #ffffff;
-  --color-danger-bg: rgb(40, 15, 15);
+  --color-danger-bg: var(--color-red-950);
 
   --color-info: #4fb4e4;            /* sky-400 desaturated ~20pp */
   --color-info-hover: #8bcfee;      /* sky-300 desaturated ~20pp */
   --color-info-on: var(--color-sky-950);
-  --color-info-bg: rgb(15, 25, 40);
+  --color-info-bg: var(--color-sky-950);
 
   /* Semantic strong text — legible colored text on the matching -bg tint */
   --color-success-on-bg: #7fd7b4;  /* emerald-300 desaturated ~20pp */
@@ -220,23 +220,23 @@
 
   /* ===== Accent Colors (foreground desaturated ~20pp for dark mode comfort) ===== */
   --color-accent-sky: #4fb4e4;                  /* sky-400 desaturated */
-  --color-accent-sky-bg: rgb(15, 25, 40);
+  --color-accent-sky-bg: var(--color-sky-950);
   --color-accent-sky-hover: #8bcfee;            /* sky-300 desaturated */
 
   --color-accent-emerald: #4ebb93;              /* emerald-400 desaturated */
-  --color-accent-emerald-bg: rgb(20, 40, 25);
+  --color-accent-emerald-bg: var(--color-emerald-950);
   --color-accent-emerald-hover: #7fd7b4;        /* emerald-300 desaturated */
 
   --color-accent-amber: #e4b43a;                /* amber-400 desaturated */
-  --color-accent-amber-bg: rgb(40, 30, 10);
+  --color-accent-amber-bg: var(--color-amber-950);
   --color-accent-amber-hover: #eac35e;          /* amber-300 desaturated */
 
   --color-accent-violet: #ac96ee;               /* violet-400 desaturated */
-  --color-accent-violet-bg: rgb(40, 20, 50);
+  --color-accent-violet-bg: var(--color-violet-950);
   --color-accent-violet-hover: #cbbef4;         /* violet-300 desaturated */
 
   --color-accent-rose: #ec7e8f;                 /* rose-400 desaturated */
-  --color-accent-rose-bg: rgb(45, 20, 30);
+  --color-accent-rose-bg: var(--color-rose-950);
   --color-accent-rose-hover: #f3b0ba;           /* rose-300 desaturated */
 
   /* ===== Share Status Colors ===== */

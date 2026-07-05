@@ -141,9 +141,9 @@
 
   /* ===== Border Colors =====
      Border must contrast with surface-primary AND surface-raised. */
-  --color-border-primary: rgb(55, 70, 58);
-  --color-border-secondary: rgb(75, 95, 78);
-  --color-border-hover: rgb(95, 120, 100);
+  --color-border-primary: oklch(0.43 0.045 162);   /* shared dark ladder — borders sit above surface-raised */
+  --color-border-secondary: oklch(0.49 0.045 162);
+  --color-border-hover: oklch(0.56 0.045 162);
 
   /* ===== Text Hierarchy =====
      One stop brighter than a naive invert, so muted body text clears even the
@@ -157,16 +157,16 @@
   /* ===== Interactive States =====
      `--color-hover` must contrast with both surface-primary and
      surface-raised. */
-  --color-hover: rgb(50, 65, 53);
-  --color-active: rgb(40, 52, 42);
-  --color-selected: rgb(25, 48, 38); /* Dark emerald selection */
+  --color-hover: oklch(0.365 0.045 162);   /* shared dark ladder — one step above surface-raised */
+  --color-active: oklch(0.405 0.045 162);  /* one step above hover */
+  --color-selected: oklch(0.35 0.06 162);  /* brand-hue selection */
 
   /* ===== Brand Colors ===== */
   --color-primary: #4ebb93;         /* emerald-400 desaturated ~20pp */
   --color-primary-hover: #7fd7b4;   /* emerald-300 desaturated ~20pp */
   --color-primary-active: #24a57a;  /* emerald-500 desaturated ~20pp */
   --color-primary-on: var(--color-gray-900);
-  --color-primary-bg: rgb(10, 30, 20); /* Very dark green */
+  --color-primary-bg: var(--color-emerald-950); /* Very dark green */
 
   --color-secondary: rgb(168, 189, 176); /* neutral green-gray — label / solid fill */
   --color-secondary-hover: rgb(194, 210, 199);
@@ -177,22 +177,22 @@
   --color-success: #4ebb93;         /* emerald-400 desaturated ~20pp */
   --color-success-hover: #7fd7b4;   /* emerald-300 desaturated ~20pp */
   --color-success-on: var(--color-gray-900);
-  --color-success-bg: rgb(10, 30, 20);
+  --color-success-bg: var(--color-emerald-950);
 
   --color-warning: #e4b43a;         /* amber-400 desaturated ~20pp */
   --color-warning-hover: #eac35e;   /* amber-300 desaturated ~20pp */
   --color-warning-on: var(--color-gray-900);
-  --color-warning-bg: rgb(30, 25, 10);
+  --color-warning-bg: var(--color-amber-950);
 
   --color-danger: var(--color-red-600);
   --color-danger-hover: var(--color-red-500);
   --color-danger-on: #ffffff;
-  --color-danger-bg: rgb(30, 10, 10);
+  --color-danger-bg: var(--color-red-950);
 
   --color-info: #4fb4e4;            /* sky-400 desaturated ~20pp */
   --color-info-hover: #8bcfee;      /* sky-300 desaturated ~20pp */
   --color-info-on: var(--color-gray-900);
-  --color-info-bg: rgb(10, 20, 30);
+  --color-info-bg: var(--color-sky-950);
 
   /* Semantic strong text — legible colored text on the matching -bg tint */
   --color-success-on-bg: #7fd7b4;  /* emerald-300 desaturated ~20pp */
@@ -224,15 +224,15 @@
 
   /* ===== Accent Colors (foreground desaturated ~20pp for dark mode comfort) ===== */
   --color-accent-sky: #4fb4e4;                  /* sky-400 desaturated */
-  --color-accent-sky-bg: rgb(10, 20, 30);
+  --color-accent-sky-bg: var(--color-sky-950);
   --color-accent-sky-hover: #8bcfee;            /* sky-300 desaturated */
 
   --color-accent-emerald: #4ebb93;              /* emerald-400 desaturated */
-  --color-accent-emerald-bg: rgb(10, 30, 20);
+  --color-accent-emerald-bg: var(--color-emerald-950);
   --color-accent-emerald-hover: #7fd7b4;        /* emerald-300 desaturated */
 
   --color-accent-amber: #e4b43a;                /* amber-400 desaturated */
-  --color-accent-amber-bg: rgb(30, 25, 10);
+  --color-accent-amber-bg: var(--color-amber-950);
   --color-accent-amber-hover: #eac35e;          /* amber-300 desaturated */
 
   --color-accent-violet: #ac96ee;               /* violet-400 desaturated */

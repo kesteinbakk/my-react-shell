@@ -136,7 +136,7 @@
   --color-surface-raised: oklch(0.325 0.045 237);       /* popovers/dropdowns — lifted above the card */
   --color-surface-sunken: oklch(0.245 0.045 237);       /* recessed well — darker than the card */
   --color-surface-sunken-deep: oklch(0.215 0.045 237);  /* deepest recess — a clear step above the page floor */
-  --color-surface-neutral: var(--color-gray-500); /* mid-gray for color indicators */
+  --color-surface-neutral: rgb(107, 114, 128); /* gray-500 — mid-gray for color indicators (shared across palettes) */
 
   /* ===== Background Colors ===== */
   --color-background-primary: oklch(0.16 0.045 237);    /* page floor — darkest rung */
@@ -144,9 +144,9 @@
 
   /* ===== Border Colors =====
      Border must contrast with surface-primary AND surface-raised. */
-  --color-border-primary: #2b3a4b; /* matches the kons-ev card border */
-  --color-border-secondary: #3a4b5e;
-  --color-border-hover: #4d6076;
+  --color-border-primary: oklch(0.43 0.045 237);   /* shared dark ladder — borders sit above surface-raised */
+  --color-border-secondary: oklch(0.49 0.045 237);
+  --color-border-hover: oklch(0.56 0.045 237);
 
   /* ===== Text Hierarchy =====
      Dark ramp runs one stop brighter than the light ramp inverts to: the
@@ -161,9 +161,9 @@
 
   /* ===== Interactive States =====
      Hover must contrast with both surface-primary and surface-raised. */
-  --color-hover: #26354a;
-  --color-active: #2f4058;
-  --color-selected: var(--color-cyan-900);
+  --color-hover: oklch(0.365 0.045 237);   /* shared dark ladder — one step above surface-raised */
+  --color-active: oklch(0.405 0.045 237);  /* one step above hover */
+  --color-selected: oklch(0.35 0.06 200);  /* brand-hue selection */
 
   /* ===== Brand Colors ===== */
   --color-primary: #38c1d6;         /* cyan-400 desaturated ~20pp */
