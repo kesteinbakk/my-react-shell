@@ -291,14 +291,12 @@ export type {
   DynamicGridCardLinkProps,
 } from './DynamicGridCard'
 
-// NavCard — a small navigation-tile variant of DynamicGridCard: no icon, its single
-// `title` rendered as the card's centred main content.
-export { NavCard } from './NavCard'
+// DynamicNavCards — a self-contained grid of lean navigation tiles. Rides the same
+// DynamicCardGrid as the card family but renders its own tile (never a DynamicGridCard);
+// each tile's single `title` grows large when short and steps down (2-line cap) as it grows.
+export { DynamicNavCards } from './DynamicNavCards'
 export type {
-  NavCardProps,
-  NavCardShape,
-  NavCardFooter,
-  NavCardFooterLine,
-  NavCardFooterLineType,
-  NavCardLinkProps,
-} from './NavCard'
+  DynamicNavCardsProps,
+  DynamicNavCard,
+  DynamicNavCardLinkProps,
+} from './DynamicNavCards'

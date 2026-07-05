@@ -319,7 +319,7 @@ import 'my-react-shell/components/styles.css' // REQUIRED (plain prebuilt CSS; a
 | `CardGrid` | component | **Static** card grid: fixed-size cards flow left-to-right and **wrap** when a row is full, separated by a fixed `gap`. Cards are **not** stretched (a larger gap may remain at the end of a row) and keep their own intrinsic width/height (`StatCard`/`ContentCard`/`PhiCard`/`PaperCard`). `align` (`start`·`center`, default `start`), `gap` (CSS length override; default `1.5rem`, sized so four ≈312px cards fit a `wide` row). Children-based. |
 | `DynamicCardGrid` | component | **Fluid** card grid with a built-in search / filter / sort toolbar. Cards stretch to fill uniform `1fr` columns sized by `cardSize` (`sm`·`md`·`lg`) or a raw `minColumnWidth`. Data-driven via `items` / `renderCard` / `getKey`; `filters`, `sortOptions`, `searchFields`/`searchFn`, `loading`, empty + no-results states. Pair with `DynamicGridCard`. |
 | `DynamicGridCard` | component | Fluid card for `DynamicCardGrid`: stretches to `width:100%` of its column, inherits the grid's max-width cap, keeps the golden-ratio shape via `aspect-ratio`. Optional `title` / `subtitle` / `icon` / `footer` slots, primary content as `children`. Typography/icon scale always follow the enclosing grid's `cardSize` (or `'md'` standalone); `sizeLimit` (`0`–`5`) steps just the width cap down toward the next-smaller tier. `shape` (`standard` = φ:1 · `landscape` = φ²:1), `watermark` — `string` (faint oversized emoji, centred, dropped a little below centre) **or** a `ReactNode` art layer (e.g. a `DrawerMark`), with `autoscaleWatermark` (default on) scaling a glyph to watermark size; an element watermark makes the card root a `mrs-reveal-host`. `icon` supports placements (`title` inline · four corners · `center`; `upperRight` dev-throws against `corner`, `center` against `children`). Optional accent stripe (`accentPlacement` top/left) driven by `tone` (semantic tokens) or a raw CSS `color`. Acts as a **whole-card navigation link** via `renderLink` (consumer supplies its router `<Link>`, rendered as a full-bleed block-link overlay), with a `hoverable` background-tint hover state (`lift` adds movement) and a raised `corner` action slot. Drag-reorder grip via `showDragHandle` (or a custom `dragHandle` node) + `dragHandleProps` (vertical stripes, right-edge centred). |
-| `NavCard` | component | A small **navigation-tile** variant of `DynamicGridCard`, carrying no `icon`. Its single **required** `title` renders as the card's **centred main content** (passed into the body), not a header — there is no `subtitle`/`children` slot. Everything else is inherited from `DynamicGridCard`: `sizeLimit`, `renderLink` whole-card navigation (accessible name auto-wired from `title`), `footer`, `corner`, `tone`/`color` accent (`accentPlacement` top/left), `watermark` (+ `autoscaleWatermark`), the drag seam (`showDragHandle`/`dragHandle`/`dragHandleProps`/`dragWholeCard`), `hoverable`/`lift`, and `shape` (`standard`·`landscape`). Reach for it to build a grid of navigation links. |
+| `DynamicNavCards` | component | A **self-contained grid of lean navigation tiles**. It renders its own tile element (**not** a `DynamicGridCard`) but drives it through the same `DynamicCardGrid`, so it inherits the fluid `1fr` columns, `cardSize` scale, and the search / filter / sort toolbar — pass the full `DynamicCardGridProps` surface minus `renderCard`, replaced by **`getCard`** (maps each item to its tile). Each tile's single **required** `title` is its **centred main content**, sized fluidly by label length — **large when the label is short, stepping down and clamped at two lines** as it grows. Per-tile: `renderLink` whole-tile navigation (accessible name auto-wired from `title`), `onClick`, `hoverable`/`lift`, `tone`/`color` accent (`accentPlacement` top/left), freeform `footer`, a raised `corner` slot, and `watermark` (+ `autoscaleWatermark`). Reach for it to build a grid of navigation links. |
 | `RevealMark` | component | Hover-reveal seam: two stacked layers (`closed` / `revealed`) that cross-fade. The `revealed` layer replaces `closed` when the mark's nearest `.mrs-reveal-host` ancestor is hovered, or unconditionally when `open` is `true` (e.g. the active route). Purely decorative (`aria-hidden`); meant for a card's `watermark` slot. Build new openable marks on it. |
 | `DrawerMark` | component | First `RevealMark` instance — an **isometric drawer** that rests as a closed box and slides open (tray with a gray interior floor + walls and one sheet lying flat inside) on hover, or stays open via `open`. Fully theme-token-driven; the gray interior is a `color-mix` of `--color-text-primary` into the surface, so it inverts between light/dark mode. Drop into `DynamicGridCard`'s `watermark`. |
 | `InputField` | component | Full field: label + input + helper + error, a11y-wired (`htmlFor`/`aria-invalid`/`aria-describedby`). Spreads native input props; pass `error` to switch on error styling. `inputSize` (`sm`·`md`·`lg`, default `md`) matches the `Input` height/padding scale. `onDebouncedChange(value)` (fires `debounceMs` after the user stops typing; default 500 ms), `saveStatus` (visual status `'idle'`·`'pending'`·`'saving'`·`'saved'`·`'error'`). **`required`** renders the red asterisk on the label, sets `aria-required` (no native constraint), and turns an empty field's border red once blurred (no message text — pass `error` for one), OR-ed with the controlled `error`, which wins. Pass **`validateOnBlur={false}`** to opt out of the blur behaviour (asterisk only). |
@@ -369,7 +369,7 @@ Every component has a matching `…Props` type export (e.g. `ButtonProps`, `Butt
 `RevealMarkProps`, `DrawerMarkProps`,
 `CardGridProps`, `DynamicCardGridProps`, `ToggleFilter`, `SortOption`,
 `DynamicGridCardProps`, `DynamicGridCardSize`, `DynamicGridCardShape`, `DynamicGridCardIconPlacement`, `DynamicGridCardIconConfig`, `DynamicGridCardFooter`, `DynamicGridCardFooterLine`, `DynamicGridCardFooterLineType`, `DynamicGridCardLinkProps`,
-`NavCardProps`, `NavCardShape`, `NavCardFooter`, `NavCardFooterLine`, `NavCardFooterLineType`, `NavCardLinkProps`, `ColorPickerProps`,
+`DynamicNavCardsProps`, `DynamicNavCard`, `DynamicNavCardLinkProps`, `ColorPickerProps`,
 `ColorFormat`, `CollapsibleProps`, `CollapsibleVariant`, `CollapsibleSize`,
 `AccordionProps`, `AccordionItem`, `AccordionVariant`, `AccordionSize`,
 `CheckboxProps`, `SwitchProps`, `RadioGroupProps`, `RadioOption`,
@@ -804,44 +804,55 @@ import { Link } from '@tanstack/react-router'
 <DynamicGridCard title="Empty state" icon={{ content: '📭', placement: 'center' }} />
 ```
 
-#### `NavCard`
+#### `DynamicNavCards`
 
-A small **navigation-tile** variant of `DynamicGridCard`, for a grid of navigation links. It
-carries **no `icon`**; its single **required** `title` renders as the card's **centred main
-content** (passed into the body), not a header — so there is no `subtitle` or `children` slot.
-Every other prop is inherited verbatim from `DynamicGridCard`.
+A **self-contained grid of navigation tiles**. Unlike the card family it renders its own lean
+tile element — it does **not** use `DynamicGridCard` — but drives that grid through the same
+`DynamicCardGrid`, so it inherits the fluid `1fr` columns, `cardSize` scale, and the built-in
+search / filter / sort toolbar. Each tile's single **required** `title` is its **centred main
+content**, sized fluidly by label length: **large when the label is short**, stepping down and
+**clamped at two lines** as it grows — so a grid of short nav labels reads big and bold.
+
+It takes the full `DynamicCardGridProps` surface (`items`, `getKey`, `searchFields`/`searchFn`,
+`filters`, `sortOptions`, `cardSize`, `align`, `loading`, empty states, `minColumnWidth`, …)
+**minus** `renderCard`, replaced by **`getCard`**:
 
 | Prop | Default | Meaning |
 |---|---|---|
-| `title` | — (**required**) | The tile's label — rendered centred (both axes) as the card's main content, not a header. **No default**: it's user-facing text, so pass a translated string. |
-| `renderLink` | — | Whole-card navigation seam, identical to `DynamicGridCard` — the block-link overlay's accessible name is auto-wired from `title` (via `aria-labelledby`). |
-| `sizeLimit` · `shape` · `footer` · `corner` · `tone`/`color`/`accentPlacement` · `watermark`/`autoscaleWatermark` · `hoverable`/`lift` · `showDragHandle`/`dragHandle`/`dragHandleProps`/`dragHandleLabel`/`dragWholeCard` | — | Inherited from `DynamicGridCard`; see its table above. |
+| `getCard` | — (**required**) | Maps one item to its tile's content — a `DynamicNavCard` (below). The nav equivalent of the grid's `renderCard`. |
+| *(grid props)* | — | Everything else is `DynamicCardGridProps` minus `renderCard`; see `DynamicCardGrid` above. |
 
-`NavCard` has no `size` of its own — its typography/icon scale follows the enclosing
-`DynamicCardGrid`'s `cardSize` (or `'md'` standalone), so it stays consistent inside a grid
-with no prop needed. Use `sizeLimit` to step just this card's width cap down.
+Each `DynamicNavCard` (the value `getCard` returns) is a **lean** tile — no `icon`, `subtitle`,
+`shape`, or drag seam:
+
+| Field | Default | Meaning |
+|---|---|---|
+| `title` | — (**required**) | The tile's label — centred main content, sized by length (large when short, two-line clamp). Pass a translated string. |
+| `renderLink` | — | Whole-tile navigation seam — the consumer's router `<Link>` mounted as a full-bleed block-link overlay; accessible name auto-wired from `title`. |
+| `onClick` | — | Click handler for a non-link tile; sets `hoverable` by default. |
+| `hoverable` / `lift` | `hoverable` ← `!!onClick` | Background-tint hover state; `lift` adds a translateY + stronger shadow. |
+| `tone` / `color` / `accentPlacement` | none / `top` | Optional accent stripe (semantic `tone` or raw `color`), top or left edge. |
+| `footer` | — | Freeform node pinned to the bottom (e.g. a meta line). |
+| `corner` | — | Raised top-corner action slot (e.g. a menu trigger). |
+| `watermark` / `autoscaleWatermark` | — / `true` | Faint background watermark — a `string` (oversized emoji) or a `ReactNode` art layer; `autoscaleWatermark` scales a glyph node. |
+
+Tiles have no `size` of their own — typography scale follows the enclosing `cardSize` (or `'md'`).
 
 ```tsx
-import { NavCard, DynamicCardGrid } from 'my-react-shell/components'
+import { DynamicNavCards } from 'my-react-shell/components'
 import { Link } from '@tanstack/react-router'
 
-// A grid of navigation tiles:
-<DynamicCardGrid
+<DynamicNavCards
   items={areas}
   getKey={(a) => a.id}
   cardSize="md"
-  renderCard={(a) => (
-    <NavCard
-      title={a.label}
-      hoverable
-      renderLink={(p) => <Link {...p} to="/area/$id" params={{ id: a.id }} />}
-    />
-  )}
+  getCard={(a) => ({
+    title: a.label,
+    tone: 'primary',
+    footer: `${a.count} items`,
+    renderLink: (p) => <Link {...p} to="/area/$id" params={{ id: a.id }} />,
+  })}
 />
-
-// Standalone, with an accent stripe and a footer meta line:
-<NavCard title="Settings" tone="primary" footer={{ lines: [{ text: '3 sections' }] }}
-  renderLink={(p) => <Link {...p} to="/settings" />} />
 ```
 
 #### `DrawerMark` / `RevealMark` — hover-reveal watermark

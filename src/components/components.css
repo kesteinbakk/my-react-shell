@@ -2230,25 +2230,211 @@
   padding-right: calc(1rem + 24px);
 }
 
-/* ── NavCard ─────────────────────────────────────────────────────────────── */
-/* A small navigation-tile variant of DynamicGridCard: fixed `sm` size, no icon, and its
-   single `title` rendered as the card's centred main content (the body) instead of a
-   header. Only the body (+ optional footer / raised overlays) renders, so the title span
-   centres within the grow-body — both horizontally and vertically. */
-.mrs-nav-card .mrs-dynamic-grid-card__body {
+/* ── DynamicNavCards ─────────────────────────────────────────────────────── */
+/* Self-contained grid of lean navigation tiles. The tile is its own element (never a
+   DynamicGridCard) but rides the same DynamicCardGrid columns: fluid `width: 100%`, capped
+   at the grid's per-item max, golden-ratio shape via `aspect-ratio`. Its single `title`
+   centres in the grow-body and scales with the label length (the `[data-fit]` ladder below):
+   large when short, stepping down and clamped to two lines as it grows. */
+.mrs-dynamic-nav-card {
+  position: relative;
+  width: 100%;
+  max-width: var(--mrs-dynamic-card-grid-item-max, 100%);
+  margin: 0 auto;
+  aspect-ratio: 1.6180339887 / 1;
+  background: var(--color-surface-primary);
+  border: 1px solid var(--color-border-primary);
+  border-radius: 0.5rem;
+  box-shadow: var(--mrs-elevation-card);
+  overflow: hidden;
+  padding: 0.75rem 1rem;
+  color: var(--color-text-primary);
+  transition: box-shadow 200ms ease, transform 200ms ease, background-color 200ms ease;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Title base size per resolved grid `cardSize` — the `[data-fit]` scale multiplies this. */
+.mrs-dynamic-nav-card--sm { --mrs-nav-title-base: 1.15rem; }
+.mrs-dynamic-nav-card--md { --mrs-nav-title-base: 1.5rem; }
+.mrs-dynamic-nav-card--lg { --mrs-nav-title-base: 2rem; }
+
+.mrs-dynamic-nav-card__body {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: grid;
   place-items: center;
   text-align: center;
 }
-.mrs-nav-card__title {
+
+/* Fluid title: `--mrs-nav-title-scale` (set by the `[data-fit]` ladder) multiplies the
+   per-size base — short labels read large (step 0), long labels step down, clamped to two
+   lines so they never blow out the tile. */
+.mrs-dynamic-nav-card__title {
   font-weight: 600;
-  font-size: 1rem;
-  line-height: 1.3;
+  line-height: 1.15;
   color: var(--color-text-primary);
-  /* Clamp a long label to 3 lines so it never blows out the small tile. */
+  font-size: calc(var(--mrs-nav-title-base, 1.5rem) * var(--mrs-nav-title-scale, 1));
+  text-wrap: balance;
   display: -webkit-box;
-  -webkit-line-clamp: 3;
+  -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+.mrs-dynamic-nav-card__title[data-fit='1'] { --mrs-nav-title-scale: 1.25; }
+.mrs-dynamic-nav-card__title { --mrs-nav-title-scale: 1.5; } /* step 0 — shortest, largest */
+.mrs-dynamic-nav-card__title[data-fit='2'] { --mrs-nav-title-scale: 1; }
+.mrs-dynamic-nav-card__title[data-fit='3'] { --mrs-nav-title-scale: 0.82; }
+.mrs-dynamic-nav-card__title[data-fit='4'] { --mrs-nav-title-scale: 0.68; }
+
+.mrs-dynamic-nav-card__footer {
+  flex-shrink: 0;
+  margin-top: 0.5rem;
+  font-size: 0.8125rem;
+  color: var(--color-text-secondary);
+  text-align: center;
+}
+
+/* Optional 4px accent stripe (none unless `tone`/`color`), top (default) or left edge —
+   mirrors DynamicGridCard. */
+.mrs-dynamic-nav-card--accent-top::before,
+.mrs-dynamic-nav-card--accent-left::before {
+  content: '';
+  position: absolute;
+  z-index: 2;
+  pointer-events: none;
+}
+.mrs-dynamic-nav-card--accent-top::before {
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(
+    90deg,
+    var(--mrs-stat-accent, var(--color-primary)),
+    color-mix(in srgb, var(--mrs-stat-accent, var(--color-primary)) 35%, transparent)
+  );
+}
+.mrs-dynamic-nav-card--accent-left::before {
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 4px;
+  background: linear-gradient(
+    180deg,
+    var(--mrs-stat-accent, var(--color-primary)),
+    color-mix(in srgb, var(--mrs-stat-accent, var(--color-primary)) 35%, transparent)
+  );
+}
+.mrs-dynamic-nav-card--accent-top { padding-top: calc(0.75rem + 4px); }
+.mrs-dynamic-nav-card--accent-left { padding-left: calc(1rem + 4px); }
+
+/* Hover feedback — opt-in via `hoverable`. Default: a subtle background tint, no movement.
+   `lift` adds a translateY + stronger shadow on top. */
+.mrs-dynamic-nav-card--hoverable {
+  cursor: pointer;
+}
+.mrs-dynamic-nav-card--hoverable:hover {
+  background: var(--color-surface-raised);
+}
+.mrs-dynamic-nav-card--hoverable.mrs-dynamic-nav-card--lift:hover {
+  box-shadow: var(--mrs-elevation-card-hover);
+  transform: translateY(-4px);
+}
+
+/* Interactive-root: the consumer's `<Link>` mounts as a full-bleed block-link overlay. The
+   anchor is the real interactive element; the root projects its focus ring. Body/footer are
+   click-transparent so the overlay always receives the click. */
+.mrs-dynamic-nav-card--linked {
+  cursor: pointer;
+}
+.mrs-dynamic-nav-card--linked:hover {
+  box-shadow: var(--mrs-elevation-card-hover);
+}
+.mrs-dynamic-nav-card--linked .mrs-dynamic-nav-card__body,
+.mrs-dynamic-nav-card--linked .mrs-dynamic-nav-card__footer {
+  pointer-events: none;
+}
+.mrs-dynamic-nav-card__link-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+  cursor: inherit;
+}
+.mrs-dynamic-nav-card__link-overlay:focus {
+  outline: none;
+}
+.mrs-dynamic-nav-card:has(> .mrs-dynamic-nav-card__link-overlay:focus-visible) {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+/* Corner action slot — raised above the link overlay so it stays independently clickable. */
+.mrs-dynamic-nav-card__corner {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+/* Faint oversized emoji watermark — centred horizontally, dropped a little below centre.
+   Content is raised above it on watermarked tiles. */
+.mrs-dynamic-nav-card--watermark[data-watermark]::after {
+  content: attr(data-watermark);
+  position: absolute;
+  top: 56%;
+  left: 50%;
+  font-size: 5em;
+  line-height: 1;
+  opacity: 0.1;
+  pointer-events: none;
+  transform: translate(-50%, -50%) rotate(-8deg);
+  z-index: 0;
+  user-select: none;
+}
+.mrs-dynamic-nav-card--watermark .mrs-dynamic-nav-card__body,
+.mrs-dynamic-nav-card--watermark .mrs-dynamic-nav-card__footer {
+  position: relative;
+  z-index: 1;
+}
+
+/* Element (art) watermark — a faint illustration layer behind the content. */
+.mrs-dynamic-nav-card__watermark {
+  position: absolute;
+  left: 54%;
+  top: 60%;
+  width: 62%;
+  transform: translate(-50%, -50%);
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.16;
+  user-select: none;
+}
+/* `autoscaleWatermark` (default true) — scale a keyed icon glyph to mirror the emoji
+   watermark: oversized, faint, centred. */
+.mrs-dynamic-nav-card__watermark--glyph {
+  left: 50%;
+  top: 60%;
+  width: auto;
+  transform: translate(-50%, -50%);
+  opacity: 0.1;
+  font-size: 5em;
+  line-height: 1;
+}
+.mrs-dynamic-nav-card__watermark--glyph svg,
+.mrs-dynamic-nav-card__watermark--glyph img {
+  width: 1em !important;
+  height: 1em !important;
+  max-width: none;
+  object-fit: contain;
+}
+.mrs-dynamic-nav-card__watermark--glyph > span,
+.mrs-dynamic-nav-card__watermark--glyph span {
+  font-size: 1em !important;
 }
 
 /* ── PhiCard ─────────────────────────────────────────────────────────────── */

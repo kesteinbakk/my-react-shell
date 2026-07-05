@@ -14,7 +14,7 @@ Pick the card by what it holds; pick the grid by whether the card has a fixed si
 | **`ContentCard`** | A freeform-text tile: title + a `content` string (optional `html`), optional gauge. The text counterpart to `StatCard`. | Fixed-width, golden-ratio. |
 | **`PaperCard`** | A small preview / thumbnail styled as a dog-eared A4 sheet. | Fixed-width, A4 portrait (`height = width × √2`). |
 | **`DynamicGridCard`** | A size-less tile that should **stretch** to fill its grid column. The card to reach for inside a `DynamicCardGrid` (e.g. navigation tiles). | Fluid — fills its column, golden-ratio shape. |
-| **`NavCard`** | A **navigation tile** — a thin variant of `DynamicGridCard` with no `icon` and only a `title` (rendered centred as the card's main content). Reach for a grid of plain nav links. | Fluid — sizing follows the enclosing grid's `cardSize` (or `'md'` standalone); use `sizeLimit` to step its own width cap down. |
+| **`DynamicNavCards`** | A **self-contained grid of navigation tiles** — renders its own lean tile (not a `DynamicGridCard`) but drives it through the same `DynamicCardGrid`. Each tile's `title` grows large when short and steps down (2-line cap) as it grows. Reach for a grid of plain nav links. | Fluid — inherits `DynamicCardGrid`'s `1fr` columns + `cardSize` scale. |
 | **`PhiCard`** *(legacy)* | The original golden-ratio card. **Being phased out** — prefer `StatCard` / `ContentCard` for new work; it ships only so existing consumers keep building. | Fixed-width, golden-ratio. |
 
 > **Navigation — any card can be a real link.** `StatCard`, `ContentCard`, `PaperCard`, and
@@ -247,39 +247,35 @@ function SortableCard({ item }: { item: Item }) {
 }
 ```
 
-### `NavCard` — the navigation-tile variant
+### `DynamicNavCards` — the navigation-tile grid
 
-`NavCard` is a thin wrapper over `DynamicGridCard` for the common case of a **grid of plain
-navigation links**. It removes the props you don't want on a nav tile and repurposes the one
-you do:
+`DynamicNavCards` is a **self-contained grid of plain navigation links**. Unlike the card
+family it renders its own lean tile — it does **not** wrap `DynamicGridCard` — but it drives
+that grid through the same `DynamicCardGrid`, so it inherits the fluid `1fr` columns, the
+`sm`/`md`/`lg` `cardSize` scale, and the built-in search / filter / sort toolbar. Drive it like
+`DynamicCardGrid`, but map each item to a tile with **`getCard`** instead of `renderCard`.
 
-- **Sizing follows the enclosing grid** — same `sm`/`md`/`lg` scale as `DynamicGridCard`,
-  resolved from the `DynamicCardGrid`'s `cardSize` (or `'md'` standalone). Pass `sizeLimit`
-  to step just this card's width cap down without changing its typography scale.
-- **No `icon`.**
-- **Only a `title`** (required) — no `subtitle`, no `children`. The `title` renders as the
-  card's **centred main content** (both axes), not a header. It's user-facing text with no
-  default, so pass a translated string.
-
-Everything else is inherited from `DynamicGridCard` verbatim: `renderLink` whole-card
-navigation (with the accessible name auto-wired from `title`), `footer`, `corner`, `tone`/
-`color` accent, `watermark`, the drag seam, `hoverable`/`lift`, and `shape`.
+- **Fluid title** — the tile's single `title` (required) is its **centred main content**,
+  sized by label length: **large when short, stepping down and clamped to two lines** as it
+  grows. It's user-facing text with no default, so pass a translated string.
+- **Lean by design** — no `icon`, `subtitle`, `shape`, or drag seam. Each `DynamicNavCard`
+  carries `renderLink` (whole-tile navigation, accessible name auto-wired from `title`),
+  `onClick`, `hoverable`/`lift`, `tone`/`color` accent, a freeform `footer`, a `corner` slot,
+  and `watermark` (+ `autoscaleWatermark`).
 
 ```tsx
-import { DynamicCardGrid, NavCard } from 'my-react-shell/components'
+import { DynamicNavCards } from 'my-react-shell/components'
 import { Link } from '@tanstack/react-router'
 
-<DynamicCardGrid
+<DynamicNavCards
   items={areas}
   getKey={(a) => a.id}
   cardSize="md"
-  renderCard={(a) => (
-    <NavCard
-      title={a.label}
-      hoverable
-      renderLink={(p) => <Link {...p} to="/area/$id" params={{ id: a.id }} />}
-    />
-  )}
+  getCard={(a) => ({
+    title: a.label,
+    hoverable: true,
+    renderLink: (p) => <Link {...p} to="/area/$id" params={{ id: a.id }} />,
+  })}
 />
 ```
 
