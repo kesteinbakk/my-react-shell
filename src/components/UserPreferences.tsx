@@ -9,6 +9,7 @@ import { Button } from './Button'
 import { cn } from './cn'
 import { Flag } from './Flag'
 import { useShellText } from './useShellText'
+import type { IconButtonSize } from './iconButton'
 
 /**
  * A section rendered as one left-nav item + right pane in the two-pane
@@ -74,6 +75,8 @@ export interface UserPreferencesProps {
   accountActions?: ReactNode
   /** Override the default trigger (an icon button). Rendered as the dialog trigger. */
   trigger?: ReactNode
+  /** Size of the built-in default trigger on the shared icon-button scale. Default `md`. Ignored when `trigger` is set. */
+  triggerSize?: IconButtonSize
   /** Controlled open state. Omit to let the component manage its own. */
   open?: boolean
   /** Open-state change handler. */
@@ -314,6 +317,7 @@ export function UserPreferences({
   onMenuSizeChange,
   accountActions,
   trigger,
+  triggerSize = 'md',
   open,
   onOpenChange,
   sections,
@@ -525,7 +529,7 @@ export function UserPreferences({
     <Dialog.Root open={isOpen} onOpenChange={setOpen}>
       <Dialog.Trigger asChild>
         {trigger ?? (
-          <button type="button" className="mrs-prefs-trigger" aria-label={triggerLabel} title={triggerLabel}>
+          <button type="button" className="mrs-prefs-trigger" data-size={triggerSize} aria-label={triggerLabel} title={triggerLabel}>
             <ModeGlyph icon={PaletteGlyph} emoji="🎨" emojiMode={emojiMode} />
           </button>
         )}

@@ -1,4 +1,5 @@
 import type { PopoverAlign, PopoverSide } from './Popover';
+import type { IconButtonSize } from './iconButton';
 /** What the closed trigger button shows for the active locale. */
 export type LanguageTrigger = 'flag' | 'code' | 'globe';
 export interface LanguagePickerProps {
@@ -15,6 +16,8 @@ export interface LanguagePickerProps {
     align?: PopoverAlign;
     /** Side the menu opens toward. Defaults to `bottom`. */
     side?: PopoverSide;
+    /** Trigger-button size on the shared icon-button scale. Default `md`. */
+    size?: IconButtonSize;
     /** Extra classes on the trigger button content. */
     className?: string;
 }
@@ -30,4 +33,4 @@ export interface LanguagePickerProps {
  * <LanguagePicker trigger="code" />  // shows "EN" / "NO"
  * ```
  */
-export declare function LanguagePicker({ trigger, showFlags, label, align, side, className, }: LanguagePickerProps): import("react").JSX.Element | null;
+export declare function LanguagePicker({ trigger, showFlags, label, align, side, size, className, }: LanguagePickerProps): import("react").JSX.Element | null;

@@ -1,5 +1,7 @@
 export type { Tone } from './tone';
 export { TONE_COLOR } from './tone';
+export type { IconButtonSize } from './iconButton';
+export { ICON_BUTTON_GLYPH_PX } from './iconButton';
 export { Button } from './Button';
 export type { ButtonProps, ButtonVariant, ButtonSize } from './Button';
 export { HeaderMenuButton } from './HeaderMenuButton';

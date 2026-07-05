@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import type { PopoverAlign, PopoverSide } from './Popover';
+import type { IconButtonSize } from './iconButton';
 /** A plain action row — the default entry. Closes the menu when chosen. */
 export interface DropdownMenuActionItem {
     type?: 'item';
@@ -120,9 +121,11 @@ interface DropdownMenuBaseProps {
 type DropdownIconTriggerProps = {
     iconTrigger: ReactNode;
     iconTriggerLabel?: string;
+    iconTriggerSize?: IconButtonSize;
 } | {
     iconTrigger?: undefined;
     iconTriggerLabel?: undefined;
+    iconTriggerSize?: undefined;
 };
 export type DropdownMenuProps = DropdownMenuBaseProps & DropdownIconTriggerProps;
 /**
@@ -156,5 +159,5 @@ export type DropdownMenuProps = DropdownMenuBaseProps & DropdownIconTriggerProps
  * />
  * ```
  */
-export declare function DropdownMenu({ trigger, iconTrigger, iconTriggerLabel, open, defaultOpen, onOpenChange, items, align, side, sideOffset, className, }: DropdownMenuProps): import("react").JSX.Element;
+export declare function DropdownMenu({ trigger, iconTrigger, iconTriggerLabel, iconTriggerSize, open, defaultOpen, onOpenChange, items, align, side, sideOffset, className, }: DropdownMenuProps): import("react").JSX.Element;
 export {};

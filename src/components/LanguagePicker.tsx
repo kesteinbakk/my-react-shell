@@ -1,6 +1,7 @@
 import { cn } from './cn'
 import { DropdownMenu } from './DropdownMenu'
 import type { PopoverAlign, PopoverSide } from './Popover'
+import type { IconButtonSize } from './iconButton'
 import { Flag } from './Flag'
 import { useShellText } from './useShellText'
 import { useI18nContextOptional } from '../i18n/i18nContext'
@@ -23,6 +24,8 @@ export interface LanguagePickerProps {
   align?: PopoverAlign
   /** Side the menu opens toward. Defaults to `bottom`. */
   side?: PopoverSide
+  /** Trigger-button size on the shared icon-button scale. Default `md`. */
+  size?: IconButtonSize
   /** Extra classes on the trigger button content. */
   className?: string
 }
@@ -45,6 +48,7 @@ export function LanguagePicker({
   label,
   align = 'end',
   side = 'bottom',
+  size = 'md',
   className,
 }: LanguagePickerProps) {
   const st = useShellText()
@@ -66,6 +70,7 @@ export function LanguagePicker({
     <DropdownMenu
       iconTrigger={<span className={cn('mrs-lang-picker__trigger', className)}>{triggerContent}</span>}
       iconTriggerLabel={label ?? st('mrs.action.selectLanguage')}
+      iconTriggerSize={size}
       align={align}
       side={side}
       items={[

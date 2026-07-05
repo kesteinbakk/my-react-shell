@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 import type { ThemeInfo, ThemeMode, ThemeName } from '../theme/themeContext';
 import type { IconMode } from '../icons/iconModeContext';
 import type { MenuSize } from '../app-shell/menuSizeContext';
+import type { IconButtonSize } from './iconButton';
 /**
  * A section rendered as one left-nav item + right pane in the two-pane
  * (sectioned) layout. Provide the full, ordered list via
@@ -56,6 +57,8 @@ export interface UserPreferencesProps {
     accountActions?: ReactNode;
     /** Override the default trigger (an icon button). Rendered as the dialog trigger. */
     trigger?: ReactNode;
+    /** Size of the built-in default trigger on the shared icon-button scale. Default `md`. Ignored when `trigger` is set. */
+    triggerSize?: IconButtonSize;
     /** Controlled open state. Omit to let the component manage its own. */
     open?: boolean;
     /** Open-state change handler. */
@@ -117,4 +120,4 @@ export interface UserPreferencesProps {
  * **required, no-default prop** — pass translated strings via your t() seam, so the
  * kit never imports i18n and never renders a hardcoded language.
  */
-export declare function UserPreferences({ theme, themes, onThemeChange, mode, onModeChange, followSystem, onFollowSystemChange, iconMode, onIconModeChange, menuSize, onMenuSizeChange, accountActions, trigger, open, onOpenChange, sections, activeSection, onActiveSectionChange, triggerLabel, title, description, themeHeading, modeHeading, displayHeading, lightLabel, darkLabel, systemLabel, iconsLabel, emojisLabel, menuSizeHeading, menuSizeSmallLabel, menuSizeMediumLabel, menuSizeLargeLabel, closeLabel, className, }: UserPreferencesProps): import("react").JSX.Element;
+export declare function UserPreferences({ theme, themes, onThemeChange, mode, onModeChange, followSystem, onFollowSystemChange, iconMode, onIconModeChange, menuSize, onMenuSizeChange, accountActions, trigger, triggerSize, open, onOpenChange, sections, activeSection, onActiveSectionChange, triggerLabel, title, description, themeHeading, modeHeading, displayHeading, lightLabel, darkLabel, systemLabel, iconsLabel, emojisLabel, menuSizeHeading, menuSizeSmallLabel, menuSizeMediumLabel, menuSizeLargeLabel, closeLabel, className, }: UserPreferencesProps): import("react").JSX.Element;

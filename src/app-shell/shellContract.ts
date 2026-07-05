@@ -16,6 +16,7 @@ import type { AlertTone } from '../components/Alert'
 import type { Tone } from '../components/tone'
 import type { DropdownMenuItem } from '../components/DropdownMenu'
 import type { PopoverAlign } from '../components/Popover'
+import type { IconButtonSize } from '../components/iconButton'
 
 /**
  * Consumer-extensible interface for strict icon typing.
@@ -386,6 +387,8 @@ export interface HeaderActionTriggerProps {
   badge?: number
   /** Native tooltip. Defaults to `label`. */
   hint?: string
+  /** Square-button size on the shared icon-button scale. Default `md`. */
+  size?: IconButtonSize
   /**
    * Click handler — for a plain trigger. Omit when the trigger is an overlay anchor
    * (Radix wires the open/close itself via `asChild`).

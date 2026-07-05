@@ -17,7 +17,7 @@ import { localeMetaFor } from '../i18n/localeMeta';
  * <LanguagePicker trigger="code" />  // shows "EN" / "NO"
  * ```
  */
-export function LanguagePicker({ trigger = 'flag', showFlags = true, label, align = 'end', side = 'bottom', className, }) {
+export function LanguagePicker({ trigger = 'flag', showFlags = true, label, align = 'end', side = 'bottom', size = 'md', className, }) {
     const st = useShellText();
     const ctx = useI18nContextOptional();
     // No provider, or nothing to switch between → render nothing.
@@ -25,7 +25,7 @@ export function LanguagePicker({ trigger = 'flag', showFlags = true, label, alig
         return null;
     const { locale, locales, setLocale } = ctx;
     const triggerContent = trigger === 'globe' ? (_jsx("span", { "aria-hidden": "true", children: "\uD83C\uDF10" })) : trigger === 'code' ? (_jsx("span", { className: "mrs-lang-picker__code", children: localeMetaFor(locale)?.code ?? locale })) : (_jsx(Flag, { code: locale }));
-    return (_jsx(DropdownMenu, { iconTrigger: _jsx("span", { className: cn('mrs-lang-picker__trigger', className), children: triggerContent }), iconTriggerLabel: label ?? st('mrs.action.selectLanguage'), align: align, side: side, items: [
+    return (_jsx(DropdownMenu, { iconTrigger: _jsx("span", { className: cn('mrs-lang-picker__trigger', className), children: triggerContent }), iconTriggerLabel: label ?? st('mrs.action.selectLanguage'), iconTriggerSize: size, align: align, side: side, items: [
             {
                 type: 'radio-group',
                 value: locale,

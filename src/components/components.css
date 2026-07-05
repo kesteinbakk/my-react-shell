@@ -20,6 +20,39 @@
   --mrs-elevation-card: 0 1px 2px var(--color-shadow-sm), 0 8px 24px var(--color-shadow-md);
   --mrs-elevation-card-hover: 0 2px 6px var(--color-shadow-md), 0 14px 32px var(--color-shadow-lg);
   --mrs-elevation-popover: 0 4px 12px var(--color-shadow-md), 0 18px 44px var(--color-shadow-lg);
+
+  /* Shared square icon-button size scale. ONE source of truth for every icon-only
+     trigger (DropdownMenu icon-trigger, UserPreferences trigger, LanguagePicker,
+     HeaderActionButton) — they all read these via `data-size` (default `md`), so an
+     icon button is the same size everywhere unless a caller opts into a step. Pairs
+     with `IconButtonSize` / `ICON_BUTTON_GLYPH_PX` in iconButton.ts. */
+  --mrs-icon-btn-sm: 2rem;
+  --mrs-icon-btn-md: 2.25rem;
+  --mrs-icon-btn-lg: 2.5rem;
+  --mrs-icon-btn-xl: 2.75rem;
+}
+
+/* Sizes every kit icon-trigger box off `data-size` (default `md`). Each class keeps
+   its own colour/hover/border below; only the box dimensions come from here. */
+.mrs-menu__icon-trigger,
+.mrs-prefs-trigger {
+  width: var(--mrs-icon-btn-md);
+  height: var(--mrs-icon-btn-md);
+}
+.mrs-menu__icon-trigger[data-size='sm'],
+.mrs-prefs-trigger[data-size='sm'] {
+  width: var(--mrs-icon-btn-sm);
+  height: var(--mrs-icon-btn-sm);
+}
+.mrs-menu__icon-trigger[data-size='lg'],
+.mrs-prefs-trigger[data-size='lg'] {
+  width: var(--mrs-icon-btn-lg);
+  height: var(--mrs-icon-btn-lg);
+}
+.mrs-menu__icon-trigger[data-size='xl'],
+.mrs-prefs-trigger[data-size='xl'] {
+  width: var(--mrs-icon-btn-xl);
+  height: var(--mrs-icon-btn-xl);
 }
 
 /* ── Alert ───────────────────────────────────────────────────────────────── */
@@ -1245,8 +1278,6 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 2.25rem;
-  height: 2.25rem;
   border: none;
   border-radius: 0.5rem;
   background: transparent;
@@ -4336,8 +4367,6 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 2rem;
-  height: 2rem;
   margin: 0;
   padding: 0;
   border: 1px solid transparent;

@@ -17,16 +17,13 @@
 
 import type { ButtonHTMLAttributes, ReactNode } from 'react'
 import { forwardRef } from 'react'
-import { DropdownMenu, Popover, CountPill } from '../components'
+import { DropdownMenu, Popover, CountPill, ICON_BUTTON_GLYPH_PX } from '../components'
 import { useShellContextOptional } from './shellContext'
 import type {
   HeaderAction,
   HeaderActionTriggerProps,
   ShellIcon,
 } from './shellContract'
-
-/** Glyph pixel size for every header-action trigger — one size, shell-owned. */
-const GLYPH_PX = 20
 
 type TriggerAllProps = HeaderActionTriggerProps &
   Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children' | 'type'>
@@ -40,13 +37,13 @@ type TriggerAllProps = HeaderActionTriggerProps &
  */
 export const HeaderActionButton = forwardRef<HTMLButtonElement, TriggerAllProps>(
   function HeaderActionButton(
-    { icon, label, active, tone = 'neutral', badge, hint, className, ...rest },
+    { icon, label, active, tone = 'neutral', badge, hint, size = 'md', className, ...rest },
     ref,
   ) {
     const shell = useShellContextOptional()
     const glyph: ReactNode =
       typeof icon === 'string'
-        ? shell?.config.renderIcon(icon as ShellIcon, GLYPH_PX) ?? null
+        ? shell?.config.renderIcon(icon as ShellIcon, ICON_BUTTON_GLYPH_PX[size]) ?? null
         : (icon ?? null)
     const showBadge = typeof badge === 'number' && badge > 0
     return (
@@ -55,6 +52,7 @@ export const HeaderActionButton = forwardRef<HTMLButtonElement, TriggerAllProps>
         type="button"
         className={className ? `mrs-header-action ${className}` : 'mrs-header-action'}
         data-tone={tone}
+        data-size={size}
         aria-label={label}
         aria-pressed={active}
         title={hint ?? label}

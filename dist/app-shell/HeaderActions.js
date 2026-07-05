@@ -1,9 +1,7 @@
 import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "react/jsx-runtime";
 import { forwardRef } from 'react';
-import { DropdownMenu, Popover, CountPill } from '../components';
+import { DropdownMenu, Popover, CountPill, ICON_BUTTON_GLYPH_PX } from '../components';
 import { useShellContextOptional } from './shellContext';
-/** Glyph pixel size for every header-action trigger — one size, shell-owned. */
-const GLYPH_PX = 20;
 /**
  * The single header-action trigger chrome. Exported so the `custom` escape hatch can
  * wire it into a bespoke overlay (as a Radix `asChild` trigger — it forwards its ref).
@@ -11,13 +9,13 @@ const GLYPH_PX = 20;
  * box model. `icon` is a registry key (resolved via `config.renderIcon`) or a
  * pre-resolved node.
  */
-export const HeaderActionButton = forwardRef(function HeaderActionButton({ icon, label, active, tone = 'neutral', badge, hint, className, ...rest }, ref) {
+export const HeaderActionButton = forwardRef(function HeaderActionButton({ icon, label, active, tone = 'neutral', badge, hint, size = 'md', className, ...rest }, ref) {
     const shell = useShellContextOptional();
     const glyph = typeof icon === 'string'
-        ? shell?.config.renderIcon(icon, GLYPH_PX) ?? null
+        ? shell?.config.renderIcon(icon, ICON_BUTTON_GLYPH_PX[size]) ?? null
         : (icon ?? null);
     const showBadge = typeof badge === 'number' && badge > 0;
-    return (_jsxs("button", { ref: ref, type: "button", className: className ? `mrs-header-action ${className}` : 'mrs-header-action', "data-tone": tone, "aria-label": label, "aria-pressed": active, title: hint ?? label, ...rest, children: [_jsx("span", { className: "mrs-header-action__glyph", "aria-hidden": "true", children: glyph }), showBadge ? (_jsx(CountPill, { className: "mrs-header-action__badge", count: badge, tone: "danger" })) : null] }));
+    return (_jsxs("button", { ref: ref, type: "button", className: className ? `mrs-header-action ${className}` : 'mrs-header-action', "data-tone": tone, "data-size": size, "aria-label": label, "aria-pressed": active, title: hint ?? label, ...rest, children: [_jsx("span", { className: "mrs-header-action__glyph", "aria-hidden": "true", children: glyph }), showBadge ? (_jsx(CountPill, { className: "mrs-header-action__badge", count: badge, tone: "danger" })) : null] }));
 });
 /** Build the uniform trigger — handed to the `custom` escape hatch. */
 function renderTrigger(props) {
