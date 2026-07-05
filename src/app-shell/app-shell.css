@@ -237,77 +237,10 @@
   align-items: center;
 }
 
-/* ── Header action trigger (the ONE chrome-action box, shared by header + menu) ──
-   Every action in the shell's `actions` row renders as this single button — one
-   size, one box model. Uniformity is structural: there is no size prop and no way
-   to pass a wrapper, so the row can never drift the way ad-hoc trigger elements did. */
-.mrs-header-action {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  /* Same shared icon-button scale as the kit triggers (components.css); `data-size`
-     default `md`. Literal fallback covers app-shell.css imported without components.css. */
-  width: var(--mrs-icon-btn-md, 2.5rem);
-  height: var(--mrs-icon-btn-md, 2.5rem);
-  margin: 0;
-  padding: 0;
-  border: 1px solid transparent;
-  border-radius: 0.5rem;
-  background: transparent;
-  color: var(--color-text-secondary);
-  cursor: pointer;
-  transition: background 120ms ease, color 120ms ease;
-}
-.mrs-header-action[data-size='sm'] {
-  width: var(--mrs-icon-btn-sm, 2rem);
-  height: var(--mrs-icon-btn-sm, 2rem);
-}
-.mrs-header-action[data-size='lg'] {
-  width: var(--mrs-icon-btn-lg, 3.25rem);
-  height: var(--mrs-icon-btn-lg, 3.25rem);
-}
-.mrs-header-action[data-size='xl'] {
-  width: var(--mrs-icon-btn-xl, 4rem);
-  height: var(--mrs-icon-btn-xl, 4rem);
-}
-.mrs-header-action:hover,
-.mrs-header-action[data-state='open'] {
-  background: var(--color-hover);
-  color: var(--color-text-primary);
-}
-.mrs-header-action[aria-pressed='true'] {
-  background: var(--color-primary-bg);
-  color: var(--color-primary);
-}
-.mrs-header-action:focus-visible {
-  outline: 2px solid var(--color-primary);
-  outline-offset: 2px;
-}
-.mrs-header-action[data-tone='warning'] {
-  color: var(--color-warning);
-}
-.mrs-header-action[data-tone='danger'] {
-  color: var(--color-danger);
-}
-.mrs-header-action[data-tone='success'] {
-  color: var(--color-success);
-}
-.mrs-header-action[data-tone='info'] {
-  color: var(--color-info);
-}
-.mrs-header-action__glyph {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-.mrs-header-action__badge {
-  position: absolute;
-  top: -0.125rem;
-  right: -0.125rem;
-  pointer-events: none;
-}
+/* Header action trigger — every action in the shell's `actions` row renders through
+   the kit's `IconButton` (`.mrs-icon-btn`, styled in components.css), so the whole row
+   shares one box + glyph model. Tone, `active`, and the count badge ride IconButton's
+   own props; nothing header-specific remains here. */
 
 /* ── App-mode control ─────────────────────────────────────────────────────
    Header mode: an inline item in the header's right cluster, left of the actions.

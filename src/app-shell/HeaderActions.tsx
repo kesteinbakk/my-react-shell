@@ -17,7 +17,7 @@
 
 import type { ButtonHTMLAttributes, ReactNode } from 'react'
 import { forwardRef } from 'react'
-import { DropdownMenu, Popover, CountPill, ICON_BUTTON_GLYPH_PX } from '../components'
+import { DropdownMenu, Popover, CountPill, IconButton, ICON_BUTTON_GLYPH_PX } from '../components'
 import { useShellContextOptional } from './shellContext'
 import type {
   HeaderAction,
@@ -47,24 +47,19 @@ export const HeaderActionButton = forwardRef<HTMLButtonElement, TriggerAllProps>
         : (icon ?? null)
     const showBadge = typeof badge === 'number' && badge > 0
     return (
-      <button
+      <IconButton
         ref={ref}
-        type="button"
-        className={className ? `mrs-header-action ${className}` : 'mrs-header-action'}
-        data-tone={tone}
-        data-size={size}
+        size={size}
+        tone={tone}
+        active={active}
         aria-label={label}
-        aria-pressed={active}
         title={hint ?? label}
+        badge={showBadge ? <CountPill count={badge} tone="danger" /> : undefined}
+        className={className}
         {...rest}
       >
-        <span className="mrs-header-action__glyph" aria-hidden="true">
-          {glyph}
-        </span>
-        {showBadge ? (
-          <CountPill className="mrs-header-action__badge" count={badge} tone="danger" />
-        ) : null}
-      </button>
+        {glyph}
+      </IconButton>
     )
   },
 )

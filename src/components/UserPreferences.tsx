@@ -6,6 +6,7 @@ import type { IconMode } from '../icons/iconModeContext'
 import type { MenuSize } from '../app-shell/menuSizeContext'
 import { useI18nContextOptional } from '../i18n/i18nContext'
 import { Button } from './Button'
+import { IconButton } from './IconButton'
 import { cn } from './cn'
 import { Flag } from './Flag'
 import { useShellText } from './useShellText'
@@ -529,9 +530,9 @@ export function UserPreferences({
     <Dialog.Root open={isOpen} onOpenChange={setOpen}>
       <Dialog.Trigger asChild>
         {trigger ?? (
-          <button type="button" className="mrs-prefs-trigger" data-size={triggerSize} aria-label={triggerLabel} title={triggerLabel}>
+          <IconButton size={triggerSize} aria-label={triggerLabel} title={triggerLabel}>
             <ModeGlyph icon={PaletteGlyph} emoji="🎨" emojiMode={emojiMode} />
-          </button>
+          </IconButton>
         )}
       </Dialog.Trigger>
       <Dialog.Portal>

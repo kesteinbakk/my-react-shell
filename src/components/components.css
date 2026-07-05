@@ -34,26 +34,22 @@
   --mrs-icon-btn-xl: 4rem;    /* 40 + 2·12 = 64px */
 }
 
-/* Sizes every kit icon button box off `data-size` (default `md`). Each class keeps
-   its own colour/hover/border below; only the box dimensions come from here.
-   `.mrs-icon-btn` is the canonical IconButton; `.mrs-prefs-trigger` shares the scale. */
-.mrs-icon-btn,
-.mrs-prefs-trigger {
+/* Sizes the IconButton box off `data-size` (default `md`); the ghost skin + glyph
+   sizing follow further down. Every icon-only trigger in the kit renders an
+   `IconButton`, so this one class is the whole scale. */
+.mrs-icon-btn {
   width: var(--mrs-icon-btn-md);
   height: var(--mrs-icon-btn-md);
 }
-.mrs-icon-btn[data-size='sm'],
-.mrs-prefs-trigger[data-size='sm'] {
+.mrs-icon-btn[data-size='sm'] {
   width: var(--mrs-icon-btn-sm);
   height: var(--mrs-icon-btn-sm);
 }
-.mrs-icon-btn[data-size='lg'],
-.mrs-prefs-trigger[data-size='lg'] {
+.mrs-icon-btn[data-size='lg'] {
   width: var(--mrs-icon-btn-lg);
   height: var(--mrs-icon-btn-lg);
 }
-.mrs-icon-btn[data-size='xl'],
-.mrs-prefs-trigger[data-size='xl'] {
+.mrs-icon-btn[data-size='xl'] {
   width: var(--mrs-icon-btn-xl);
   height: var(--mrs-icon-btn-xl);
 }
@@ -1277,22 +1273,7 @@
 }
 
 /* ── UserPreferences ─────────────────────────────────────────────────────── */
-.mrs-prefs-trigger {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border: none;
-  border-radius: 0.5rem;
-  background: transparent;
-  color: var(--color-text-secondary);
-  cursor: pointer;
-  transition: background-color 120ms ease, color 120ms ease;
-}
-.mrs-prefs-trigger:hover {
-  background: var(--color-hover);
-  color: var(--color-text-primary);
-}
-
+/* The default trigger is an `IconButton` (`.mrs-icon-btn`); no bespoke trigger CSS. */
 .mrs-prefs {
   position: fixed;
   z-index: 51;
@@ -4373,9 +4354,11 @@
    (transparent → hover / open / focus lit). `[data-state='open']` tracks a Radix
    trigger it's driving (DropdownMenu / Popover). */
 .mrs-icon-btn {
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
   margin: 0;
   padding: 0;
   border: 1px solid transparent;
@@ -4390,10 +4373,35 @@
   background: var(--color-hover);
   color: var(--color-text-primary);
 }
+/* Toggled/pressed — an accented fill, matching the kit's active affordance. */
+.mrs-icon-btn[aria-pressed='true'] {
+  background: var(--color-primary-bg);
+  color: var(--color-primary);
+}
+/* Semantic glyph colour (neutral = base chrome colour, no rule). */
+.mrs-icon-btn[data-tone='warning'] {
+  color: var(--color-warning);
+}
+.mrs-icon-btn[data-tone='danger'] {
+  color: var(--color-danger);
+}
+.mrs-icon-btn[data-tone='success'] {
+  color: var(--color-success);
+}
+.mrs-icon-btn[data-tone='info'] {
+  color: var(--color-info);
+}
 .mrs-icon-btn:focus-visible {
   outline: none;
   border-color: var(--color-focus);
   box-shadow: 0 0 0 3px var(--color-focus-ring);
+}
+/* Corner overlay (e.g. a CountPill) — pinned to the top-right, non-interactive. */
+.mrs-icon-btn__badge {
+  position: absolute;
+  top: -0.125rem;
+  right: -0.125rem;
+  pointer-events: none;
 }
 /* Glyph wrapper — sizes a direct-child <svg> to the step's glyph size (the shared
    icon-glyph scale) via `1em`, so the icon is drawn from the same ladder as a bare

@@ -1,6 +1,6 @@
-import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "react/jsx-runtime";
+import { jsx as _jsx, Fragment as _Fragment } from "react/jsx-runtime";
 import { forwardRef } from 'react';
-import { DropdownMenu, Popover, CountPill, ICON_BUTTON_GLYPH_PX } from '../components';
+import { DropdownMenu, Popover, CountPill, IconButton, ICON_BUTTON_GLYPH_PX } from '../components';
 import { useShellContextOptional } from './shellContext';
 /**
  * The single header-action trigger chrome. Exported so the `custom` escape hatch can
@@ -15,7 +15,7 @@ export const HeaderActionButton = forwardRef(function HeaderActionButton({ icon,
         ? shell?.config.renderIcon(icon, ICON_BUTTON_GLYPH_PX[size]) ?? null
         : (icon ?? null);
     const showBadge = typeof badge === 'number' && badge > 0;
-    return (_jsxs("button", { ref: ref, type: "button", className: className ? `mrs-header-action ${className}` : 'mrs-header-action', "data-tone": tone, "data-size": size, "aria-label": label, "aria-pressed": active, title: hint ?? label, ...rest, children: [_jsx("span", { className: "mrs-header-action__glyph", "aria-hidden": "true", children: glyph }), showBadge ? (_jsx(CountPill, { className: "mrs-header-action__badge", count: badge, tone: "danger" })) : null] }));
+    return (_jsx(IconButton, { ref: ref, size: size, tone: tone, active: active, "aria-label": label, title: hint ?? label, badge: showBadge ? _jsx(CountPill, { count: badge, tone: "danger" }) : undefined, className: className, ...rest, children: glyph }));
 });
 /** Build the uniform trigger — handed to the `custom` escape hatch. */
 function renderTrigger(props) {
