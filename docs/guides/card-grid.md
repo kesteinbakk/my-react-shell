@@ -14,7 +14,7 @@ Pick the card by what it holds; pick the grid by whether the card has a fixed si
 | **`ContentCard`** | A freeform-text tile: title + a `content` string (optional `html`), optional gauge. The text counterpart to `StatCard`. | Fixed-width, golden-ratio. |
 | **`PaperCard`** | A small preview / thumbnail styled as a dog-eared A4 sheet. | Fixed-width, A4 portrait (`height = width × √2`). |
 | **`DynamicGridCard`** | A size-less tile that should **stretch** to fill its grid column. The card to reach for inside a `DynamicCardGrid` (e.g. navigation tiles). | Fluid — fills its column, golden-ratio shape. |
-| **`NavCard`** | A **navigation tile** — a thin variant of `DynamicGridCard` with no `icon` and only a `title` (rendered centred as the card's main content). Reach for a grid of plain nav links. | Fluid — `size` defaults to `md`, self-caps at that size's width (min 240 / max 320 px by default). |
+| **`NavCard`** | A **navigation tile** — a thin variant of `DynamicGridCard` with no `icon` and only a `title` (rendered centred as the card's main content). Reach for a grid of plain nav links. | Fluid — sizing follows the enclosing grid's `cardSize` (or `'md'` standalone); use `sizeLimit` to step its own width cap down. |
 | **`PhiCard`** *(legacy)* | The original golden-ratio card. **Being phased out** — prefer `StatCard` / `ContentCard` for new work; it ships only so existing consumers keep building. | Fixed-width, golden-ratio. |
 
 > **Navigation — any card can be a real link.** `StatCard`, `ContentCard`, `PaperCard`, and
@@ -118,7 +118,8 @@ import { DynamicCardGrid, DynamicGridCard } from 'my-react-shell/components'
 
 ### Sizes (fluid)
 
-`cardSize` on the grid drives the columns — **set the size on the grid, not on each card**:
+`cardSize` on the grid drives the columns **and** every card's typography/icon scale — set
+it on the grid, never on an individual card:
 
 | Size | Min column width | Max stretch | Best for |
 | :--- | :--- | :--- | :--- |
@@ -132,17 +133,24 @@ shorter and wider). An **accent stripe** is opt-in via `tone` (semantic tokens) 
 the same accent vocabulary as `StatCard`/`PaperCard`. It's independent of the faint surface
 `tint`, so a card can carry both.
 
-> A `DynamicGridCard` used **outside** a `DynamicCardGrid` can set its own `size` to get the
-> same min/max cap; inside a grid, omit it and let `cardSize` drive the columns.
+`DynamicGridCard` has no `size` prop of its own — a card's typography/icon scale always
+resolves from the enclosing `DynamicCardGrid`'s `cardSize` via context, falling back to
+`'md'` for a card used outside any grid. To make **one card** narrower than its grid-mates
+(e.g. a nav tile that should read smaller inside a `lg` grid), pass **`sizeLimit`**: a
+`0`–`5` step that narrows the card's own `max-width` from its effective tier's cap toward
+the next-smaller tier's cap, in fifths (`0` = the grid's own cap, `5` = the next-smaller
+tier's cap). It only narrows the width — typography/icon scale stay at the grid's tier, so a
+stepped card keeps larger text in a smaller box. It has no effect on a card whose effective
+size is already `'sm'` — there's no smaller tier to step toward.
 
 The header `icon` auto-shrinks, and a string `title` auto-fits (3 length-based steps, clamped
 to 2 lines), on an `sm`-size card — `md`/`lg` keep both at their normal size. Resolution is
-**deterministic, not measured**: `DynamicGridCard` reads its own `size` prop, falling back to
-the enclosing `DynamicCardGrid`'s `cardSize` via context — so it works with no prop needed in
-the common case (`size` omitted, `cardSize="sm"` on the grid). A `@container` query on the
-card's rendered width was tried first and dropped: Chromium gives inconsistent results for a
-container-query container that also carries `aspect-ratio` inside a `1fr` grid track, so two
-equal-width cards could resolve to different icon/title sizes.
+**deterministic, not measured**: a card's `mrs-dynamic-grid-card--{size}` class always comes
+from the enclosing `DynamicCardGrid`'s `cardSize` via context (or `'md'` standalone) — never
+from `sizeLimit`, which only affects width. A `@container` query on the card's rendered width
+was tried first and dropped: Chromium gives inconsistent results for a container-query
+container that also carries `aspect-ratio` inside a `1fr` grid track, so two equal-width
+cards could resolve to different icon/title sizes.
 
 ### Icon placement (all four cards)
 
@@ -245,10 +253,9 @@ function SortableCard({ item }: { item: Item }) {
 navigation links**. It removes the props you don't want on a nav tile and repurposes the one
 you do:
 
-- **`size` defaults to `md`** — same `sm`/`md`/`lg` scale as `DynamicGridCard`, self-capping
-  at that size's width (`md` = min 240 / max 320 px), so it stays a consistent size even
-  inside a larger `DynamicCardGrid`. Pass `size="sm"`/`"lg"` to override, matching the grid's
-  own `cardSize`.
+- **Sizing follows the enclosing grid** — same `sm`/`md`/`lg` scale as `DynamicGridCard`,
+  resolved from the `DynamicCardGrid`'s `cardSize` (or `'md'` standalone). Pass `sizeLimit`
+  to step just this card's width cap down without changing its typography scale.
 - **No `icon`.**
 - **Only a `title`** (required) — no `subtitle`, no `children`. The `title` renders as the
   card's **centred main content** (both axes), not a header. It's user-facing text with no
