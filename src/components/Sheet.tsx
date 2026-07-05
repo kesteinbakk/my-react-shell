@@ -6,6 +6,7 @@ import { CloseGlyph } from './CloseGlyph'
 import { useShellText } from './useShellText'
 import { useDialogDismissGuard } from './useDialogDismissGuard'
 import { useMediaQuery } from './useMediaQuery'
+import { type MinWidthBreakpoint, minWidthQuery } from '../breakpoints'
 
 /** Which edge the panel slides in from. */
 export type SheetSide = 'left' | 'right' | 'top' | 'bottom'
@@ -13,15 +14,10 @@ export type SheetSide = 'left' | 'right' | 'top' | 'bottom'
 export type SheetSize = 'sm' | 'md' | 'lg' | 'xl' | 'full'
 /**
  * Breakpoint at and above which a `permanent` sheet becomes an inline layout panel.
- * `sm` = ≥640px, `lg` = ≥1024px — the same two breakpoints the app-shell uses.
+ * One of the shell's named threshold tiers (`pad` = ≥768px · `screen` = ≥1024px ·
+ * `wide` = ≥1440px) — the same scale the app-shell uses. See `breakpoints.ts`.
  */
-export type SheetPermanentBreakpoint = 'sm' | 'lg'
-
-/** Min-width media query for each permanent breakpoint. */
-const PERMANENT_QUERY: Record<SheetPermanentBreakpoint, string> = {
-  sm: '(min-width: 640px)',
-  lg: '(min-width: 1024px)',
-}
+export type SheetPermanentBreakpoint = MinWidthBreakpoint
 
 export interface SheetProps {
   /** Panel content. */
@@ -94,7 +90,7 @@ export interface SheetProps {
   closeOnOutsideClick?: boolean
   /**
    * Make the sheet a **permanent, non-modal, non-dismissible layout panel** at and
-   * above the given breakpoint (`sm` = ≥640px, `lg` = ≥1024px). Above it, the panel
+   * above the given breakpoint (`pad` = ≥768px, `screen` = ≥1024px, `wide` = ≥1440px). Above it, the panel
    * renders inline as a real layout sibling that occupies UI space — no portal, no
    * overlay, no close affordance, always visible. Below it, the sheet falls back to a
    * normal modal sheet honoring `modal` / `scrim` (open via `trigger` / `open`,
@@ -169,7 +165,7 @@ export function Sheet({
   // Above the `permanent` breakpoint the sheet renders as an inline layout panel; below
   // it (or when `permanent` is unset) it stays the normal overlay dialog. The hook runs
   // unconditionally — a null query disables the subscription.
-  const isPermanent = useMediaQuery(permanent != null ? PERMANENT_QUERY[permanent] : null)
+  const isPermanent = useMediaQuery(permanent != null ? minWidthQuery(permanent) : null)
   const showHeader = !bare && (header != null || title != null || showClose || headerActions != null)
   // Keep a nested layer — a popper (Select, DropdownMenu, Popover, …) or a stacked Dialog —
   // from tearing down the whole sheet when it's dismissed. See useDialogDismissGuard.

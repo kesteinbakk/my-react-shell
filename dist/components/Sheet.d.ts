@@ -1,14 +1,16 @@
 import type { ReactNode } from 'react';
 import type { IconMode } from '../icons/iconModeContext';
+import { type MinWidthBreakpoint } from '../breakpoints';
 /** Which edge the panel slides in from. */
 export type SheetSide = 'left' | 'right' | 'top' | 'bottom';
 /** Panel extent — width for left/right, height for top/bottom. `full` fills that axis. */
 export type SheetSize = 'sm' | 'md' | 'lg' | 'xl' | 'full';
 /**
  * Breakpoint at and above which a `permanent` sheet becomes an inline layout panel.
- * `sm` = ≥640px, `lg` = ≥1024px — the same two breakpoints the app-shell uses.
+ * One of the shell's named threshold tiers (`pad` = ≥768px · `screen` = ≥1024px ·
+ * `wide` = ≥1440px) — the same scale the app-shell uses. See `breakpoints.ts`.
  */
-export type SheetPermanentBreakpoint = 'sm' | 'lg';
+export type SheetPermanentBreakpoint = MinWidthBreakpoint;
 export interface SheetProps {
     /** Panel content. */
     children: ReactNode;
@@ -80,7 +82,7 @@ export interface SheetProps {
     closeOnOutsideClick?: boolean;
     /**
      * Make the sheet a **permanent, non-modal, non-dismissible layout panel** at and
-     * above the given breakpoint (`sm` = ≥640px, `lg` = ≥1024px). Above it, the panel
+     * above the given breakpoint (`pad` = ≥768px, `screen` = ≥1024px, `wide` = ≥1440px). Above it, the panel
      * renders inline as a real layout sibling that occupies UI space — no portal, no
      * overlay, no close affordance, always visible. Below it, the sheet falls back to a
      * normal modal sheet honoring `modal` / `scrim` (open via `trigger` / `open`,

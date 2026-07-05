@@ -10,7 +10,9 @@
  * pages), the document title, and the mobile drawer.
  *
  * SPA only — no SSR scars. Responsive show/hide is CSS media queries (app-shell.css);
- * the only breakpoint JS is the auto-close-drawer-past-1024px effect.
+ * the only breakpoint JS is the auto-close-drawer-past-`screen` (≥1024px) effect,
+ * driven off the shared breakpoint scale (`breakpoints.ts`) so it can't drift from
+ * the sidebar's CSS cutoff.
  */
 import type { ReactNode } from 'react';
 import type { ShellConfig, HeaderAction } from './shellContract';

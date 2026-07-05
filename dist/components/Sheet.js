@@ -5,11 +5,7 @@ import { CloseGlyph } from './CloseGlyph';
 import { useShellText } from './useShellText';
 import { useDialogDismissGuard } from './useDialogDismissGuard';
 import { useMediaQuery } from './useMediaQuery';
-/** Min-width media query for each permanent breakpoint. */
-const PERMANENT_QUERY = {
-    sm: '(min-width: 640px)',
-    lg: '(min-width: 1024px)',
-};
+import { minWidthQuery } from '../breakpoints';
 /**
  * Overlay sheet that slides in from any edge — for navigation menus, filters, detail
  * panels, or any content that overlays the page. Built on Radix Dialog (focus trap,
@@ -36,7 +32,7 @@ export function Sheet({ children, trigger, open, onOpenChange, onEscapeKeyDown, 
     // Above the `permanent` breakpoint the sheet renders as an inline layout panel; below
     // it (or when `permanent` is unset) it stays the normal overlay dialog. The hook runs
     // unconditionally — a null query disables the subscription.
-    const isPermanent = useMediaQuery(permanent != null ? PERMANENT_QUERY[permanent] : null);
+    const isPermanent = useMediaQuery(permanent != null ? minWidthQuery(permanent) : null);
     const showHeader = !bare && (header != null || title != null || showClose || headerActions != null);
     // Keep a nested layer — a popper (Select, DropdownMenu, Popover, …) or a stacked Dialog —
     // from tearing down the whole sheet when it's dismissed. See useDialogDismissGuard.

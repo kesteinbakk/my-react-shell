@@ -8,6 +8,8 @@
 // The dev-harness (src/main.tsx, src/routes/**) is NOT exported.
 // ── design size scales (glyph + text step ladders) ──────────────────────────
 export { ICON_GLYPH_PX, TEXT_SIZE_REM } from './sizes';
+// ── responsive breakpoint scale (mobile · pad · screen · wide) ───────────────
+export { BREAKPOINT_PX, minWidthQuery } from './breakpoints';
 // ── theme ───────────────────────────────────────────────────────────────────
 export { ThemeProvider } from './theme/ThemeProvider';
 export { useTheme } from './theme/useTheme';

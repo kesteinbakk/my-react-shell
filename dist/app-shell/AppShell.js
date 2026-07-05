@@ -11,7 +11,9 @@ import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
  * pages), the document title, and the mobile drawer.
  *
  * SPA only — no SSR scars. Responsive show/hide is CSS media queries (app-shell.css);
- * the only breakpoint JS is the auto-close-drawer-past-1024px effect.
+ * the only breakpoint JS is the auto-close-drawer-past-`screen` (≥1024px) effect,
+ * driven off the shared breakpoint scale (`breakpoints.ts`) so it can't drift from
+ * the sidebar's CSS cutoff.
  */
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link, useRouterState } from '@tanstack/react-router';
@@ -23,6 +25,7 @@ import { useMenuSizeOptional } from './useMenuSize';
 import { AppHeader } from './AppHeader';
 import { AppMenu } from './AppMenu';
 import { AppBottomNav } from './AppBottomNav';
+import { minWidthQuery } from '../breakpoints';
 const DEFAULT_APP_MODE_STORAGE_KEY = 'my-react-shell.app-mode';
 /** Best-effort read of the persisted app-mode — dropped if storage is blocked
  * (e.g. privacy mode), unset, or names a mode the config no longer ships. */
@@ -239,7 +242,7 @@ export function AppShell({ config, useMenu, actions, subtitle, titleAdornment, f
         setMobileMenuOpen(false);
     }, [pathname]);
     useEffect(() => {
-        const mq = window.matchMedia('(min-width: 1024px)');
+        const mq = window.matchMedia(minWidthQuery('screen'));
         const onChange = (e) => {
             if (e.matches)
                 setMobileMenuOpen(false);

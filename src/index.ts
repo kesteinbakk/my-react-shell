@@ -11,6 +11,10 @@
 export { ICON_GLYPH_PX, TEXT_SIZE_REM } from './sizes'
 export type { IconSize, TextSize } from './sizes'
 
+// ── responsive breakpoint scale (mobile · pad · screen · wide) ───────────────
+export { BREAKPOINT_PX, minWidthQuery } from './breakpoints'
+export type { Breakpoint, MinWidthBreakpoint } from './breakpoints'
+
 // ── theme ───────────────────────────────────────────────────────────────────
 export { ThemeProvider } from './theme/ThemeProvider'
 export type { ThemeProviderProps } from './theme/ThemeProvider'

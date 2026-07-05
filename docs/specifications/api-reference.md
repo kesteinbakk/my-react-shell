@@ -118,6 +118,42 @@ import type { IconSize, TextSize } from 'my-react-shell'
 CSS-token mirrors (from `my-react-shell/styles.css`): `--mrs-icon-{xs,sm,md,lg,xl}`
 (px) and `--mrs-text-{xs,sm,md,lg,xl}` (rem).
 
+**Breakpoint scale.** The shell's single source of truth for responsive decisions —
+four named tiers exported from the core barrel. `mobile` is the base (0px, unprefixed);
+`pad` / `screen` / `wide` are the three `min-width` thresholds. Every responsive
+decision the shell makes (the app-shell's sidebar/drawer switch, `Sheet`'s `permanent`
+mode, the container-padding steps) is keyed off these numbers, so they never disagree.
+
+```ts
+import { BREAKPOINT_PX, minWidthQuery } from 'my-react-shell'
+import type { Breakpoint, MinWidthBreakpoint } from 'my-react-shell'
+```
+
+| Export | Kind | Summary |
+|---|---|---|
+| `BREAKPOINT_PX` | const | `Record<Breakpoint, number>` — min-width (px) each tier begins: `mobile` 0 · `pad` 768 · `screen` 1024 · `wide` 1440. |
+| `minWidthQuery` | fn | `(name: MinWidthBreakpoint) => string` — the `(min-width: …px)` media-query string for a threshold tier (for `matchMedia` / `useMediaQuery`). |
+| `Breakpoint` | type | `'mobile' \| 'pad' \| 'screen' \| 'wide'`. |
+| `MinWidthBreakpoint` | type | `'pad' \| 'screen' \| 'wide'` — the tiers above base `mobile`. |
+
+CSS-token mirrors (from `my-react-shell/styles.css`): `--mrs-breakpoint-{pad,screen,wide}`
+(px). **CSS forbids custom properties inside an `@media` condition**, so the shell's own
+`@media` rules carry the literal px and JS reads `BREAKPOINT_PX` — both mirror the same
+numbers by hand. These vars are the canonical declaration a consumer references.
+
+**Consumer alignment (Tailwind v4).** The shell owns this scale; align your own utility
+breakpoints to it (rather than the reverse) so `pad:`/`screen:`/`wide:` classes match the
+chrome. Delete Tailwind's defaults and redeclare the four names:
+
+```css
+@theme {
+  --breakpoint-*: initial;      /* drop sm/md/lg/xl/2xl */
+  --breakpoint-pad: 768px;
+  --breakpoint-screen: 1024px;
+  --breakpoint-wide: 1440px;
+}
+```
+
 ---
 
 ## `my-react-shell/providers` — Convex client + `AppProviders`
@@ -361,7 +397,7 @@ import 'my-react-shell/components/styles.css' // REQUIRED (plain prebuilt CSS; a
 | `Progress` | component | Un-opinionated progress bar on Radix Progress; fill paints with `tone` (default `primary`), `size` (`sm`·`md`·`lg`). Pass numeric `value` (`0…max`) for a determinate bar or `null`/omit for an indeterminate loop. Radix wires the ARIA. Uses the `@radix-ui/react-progress` optional peer. |
 | `Toggle` | component | Un-opinionated two-state button on Radix Toggle; pressed fills `--color-primary-bg`. `variant` (`ghost`·`outline`·`plain`), `size` (`sm`·`md`·`lg`). `plain` is a bare icon — no border/background/press/hover fill (keeps the focus ring) — for an unadorned icon toggle. Controlled (`pressed`/`onPressedChange`) or uncontrolled (`defaultPressed`). Uses the `@radix-ui/react-toggle` optional peer. |
 | `ToggleGroup` | component | Un-opinionated set of toggle buttons on Radix ToggleGroup; data-driven via `options`. `type="single"` (value is the chosen string, or `undefined`) or `type="multiple"` (value is an array); shared `variant`/`size`. Controlled (`value`/`onValueChange`) or uncontrolled (`defaultValue`). Uses the `@radix-ui/react-toggle-group` optional peer. |
-| `Sheet` | component | Overlay panel that slides in from any edge on Radix Dialog (focus trap, Esc/outside-click close, portal). `side` (`left`·`right`·`top`·`bottom`), `size` (`sm`·`md`·`lg`·`xl`·`full` — width for left/right, height for top/bottom). Optional `trigger`; built-in header (`title`/`header`/`description` + ✕ `showClose` + `headerActions` next to ✕) or `bare` (child owns the panel). The ✕ close button **follows the app's icons↔emojis mode automatically** (lucide icon → ❌ emoji) with no wiring — via the icons seam, read softly so it falls back to the icon when that module isn't installed; the optional `iconMode` (`'icon'`·`'emoji'`) prop overrides it. `scrim={false}` + `modal={false}` for a non-blocking float over a still-interactive page. `permanent` (`'sm'` = ≥640px · `'lg'` = ≥1024px) makes the sheet an **inline, non-dismissible layout panel** at/above that breakpoint (no portal/overlay/close, occupies real UI space — place `<Sheet>` as a flex/grid sibling of the content it flanks) and a normal modal sheet below it; above the breakpoint `trigger`/`scrim`/`modal`/`showClose`/`open`/dismiss handlers are ignored. Controlled (`open`/`onOpenChange`) or uncontrolled (`defaultOpen`). A nested Radix popper (`Select`, `DropdownMenu`, `Popover`) is handled automatically — opening it and clicking elsewhere inside the sheet dismisses only the popper, never the sheet. Uses the `@radix-ui/react-dialog` optional peer. |
+| `Sheet` | component | Overlay panel that slides in from any edge on Radix Dialog (focus trap, Esc/outside-click close, portal). `side` (`left`·`right`·`top`·`bottom`), `size` (`sm`·`md`·`lg`·`xl`·`full` — width for left/right, height for top/bottom). Optional `trigger`; built-in header (`title`/`header`/`description` + ✕ `showClose` + `headerActions` next to ✕) or `bare` (child owns the panel). The ✕ close button **follows the app's icons↔emojis mode automatically** (lucide icon → ❌ emoji) with no wiring — via the icons seam, read softly so it falls back to the icon when that module isn't installed; the optional `iconMode` (`'icon'`·`'emoji'`) prop overrides it. `scrim={false}` + `modal={false}` for a non-blocking float over a still-interactive page. `permanent` (a named breakpoint tier: `'pad'` = ≥768px · `'screen'` = ≥1024px · `'wide'` = ≥1440px — see the breakpoint scale) makes the sheet an **inline, non-dismissible layout panel** at/above that breakpoint (no portal/overlay/close, occupies real UI space — place `<Sheet>` as a flex/grid sibling of the content it flanks) and a normal modal sheet below it; above the breakpoint `trigger`/`scrim`/`modal`/`showClose`/`open`/dismiss handlers are ignored. Controlled (`open`/`onOpenChange`) or uncontrolled (`defaultOpen`). A nested Radix popper (`Select`, `DropdownMenu`, `Popover`) is handled automatically — opening it and clicking elsewhere inside the sheet dismisses only the popper, never the sheet. Uses the `@radix-ui/react-dialog` optional peer. |
 | `Calendar` | component | Themed month-grid calendar on `react-day-picker`; single/multiple/range selection (`mode`/`selected`/`onSelect`), full keyboard nav + ARIA, rendered against the tokens via `mrs-` classes (no react-day-picker stylesheet needed). Forwards every react-day-picker prop (`disabled`, `startMonth`/`endMonth`, `numberOfMonths`, `captionLayout`, …). Uses the `react-day-picker` + `date-fns` optional peers. |
 | `DatePicker` | component | Single-date field — a trigger button (showing the picked date, `displayFormat` via date-fns) that opens a `Calendar` in a Radix Popover; closes on pick. `disabledDays` (a react-day-picker matcher), `startMonth`/`endMonth`. Controlled (`value`/`onChange`) or uncontrolled (`defaultValue`). Uses the `react-day-picker` + `date-fns` + `@radix-ui/react-popover` optional peers. Supports custom `className` and `style` on the trigger. |
 | `EmojiPicker` | component | Full emoji picker panel — search input, scrollable category tabs (with a frequently-used tab), and an 8-column emoji grid. Ships no popover or trigger; embed inline or drop into a `<Popover>`. `onSelect(emoji)` receives the emoji character string. `locale` (default `'en'`; `'nb'` also bundled, others fall back to `'en'`), `showSearch` (default `true`) — all optional chrome, defaulting through `mrs.*` (`searchPlaceholder` → `mrs.action.search`, `noResultsLabel` → `mrs.state.noResults`, `categoriesLabel` → `mrs.emoji.categories`, `frequentLabel` → `mrs.emoji.frequent`). Optional `onClear()` shows a clear button next to the search input — call your own `setValue(undefined)` from it; omitted, the button is hidden. Its accessible label is `clearLabel`, defaulting to `mrs.action.clear`. Requires the `emojibase-data` optional peer. |

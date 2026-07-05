@@ -48,6 +48,21 @@
   --mrs-text-xl: 1.25rem;
 }
 
+/* ── Viewport breakpoints ─────────────────────────────────────────────────────
+   The shell's four responsive tiers: `mobile` is the base (0px, unprefixed) and
+   `pad` / `screen` / `wide` are the three min-width thresholds. Canonical
+   declared values, mirrored by BREAKPOINT_PX in breakpoints.ts — keep the two in
+   sync. NOTE: CSS forbids custom properties inside an @media condition, so the
+   shell's own @media blocks carry the literal px; these vars are the canonical
+   declaration a consumer references (and can `var()` for non-@media uses). A
+   Tailwind v4 consumer aligns by redeclaring the same names in @theme (see
+   breakpoints.ts) so `pad:` / `screen:` / `wide:` variants match the chrome. */
+:root {
+  --mrs-breakpoint-pad: 768px;
+  --mrs-breakpoint-screen: 1024px;
+  --mrs-breakpoint-wide: 1440px;
+}
+
 /* Radix Dialog (Sheet, Dialog, ConfirmDialog, …) scroll-locks the body while a
    modal is open via `react-remove-scroll`, which compensates for the vanished
    scrollbar with a computed `margin-right` on `body[data-scroll-locked]`. This

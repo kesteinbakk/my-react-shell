@@ -5,9 +5,13 @@
  * node_modules, so no utility classes survive the build. Every shell style lives
  * here as stable `mrs-`-prefixed semantic classes on the theme tokens (the CSS
  * custom properties from styles/base.css), plus the media queries inline styles
- * cannot express. The barrel side-effect-imports this file. One breakpoint at
- * 1024px: below = mobile (drawer / optional bottom nav, static sidebar hidden);
- * at/above = desktop (persistent sidebar).
+ * cannot express. The barrel side-effect-imports this file. The primary layout
+ * switch is the `screen` tier (≥1024px): below = mobile (drawer / optional bottom
+ * nav, static sidebar hidden); at/above = desktop (persistent sidebar). Minor
+ * padding/order tweaks land at the `pad` tier (≥768px). These literal px mirror
+ * the shared scale in breakpoints.ts / the `--mrs-breakpoint-*` vars — CSS can't
+ * read a custom property inside an @media condition, so they're kept in sync by
+ * hand. Change a number here and there together.
  */
 
 /* ── Shell frame ─────────────────────────────────────────────────────────── */
@@ -68,7 +72,7 @@
 .mrs-shell[data-content-padding='default'] .mrs-shell__container {
   padding-inline: 1rem;
 }
-@media (min-width: 640px) {
+@media (min-width: 768px) {
   .mrs-shell[data-content-padding='default'] .mrs-shell__container {
     padding-inline: 1.5rem;
   }
@@ -601,7 +605,7 @@ button.mrs-breadcrumbs__leaf {
   margin-left: auto;
   order: 2;
 }
-@media (min-width: 640px) {
+@media (min-width: 768px) {
   .mrs-page-header__actions {
     order: 3;
   }
@@ -720,7 +724,7 @@ button.mrs-breadcrumbs__leaf {
   flex-basis: 100%;
   order: 3;
 }
-@media (min-width: 640px) {
+@media (min-width: 768px) {
   .mrs-page-header__search {
     flex-basis: auto;
     flex: 1;

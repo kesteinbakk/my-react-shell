@@ -5928,7 +5928,7 @@
   flex-direction: column;
   gap: 0.75rem;
 }
-@media (min-width: 640px) {
+@media (min-width: 768px) {
   .mrs-dynamic-card-grid__toolbar {
     flex-direction: row;
     align-items: center;
