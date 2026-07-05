@@ -108,5 +108,5 @@ function Chevron({ dir }) {
 export function ScrollableTabRow(props) {
     const scrollRef = useRef(null);
     const overflow = useScrollOverflow(scrollRef);
-    return (_jsxs("div", { className: "mrs-tab-scroller", children: [_jsx("div", { ref: scrollRef, role: props.role, "data-variant": props.variant, "data-baseline": props.showBaseline === false ? 'false' : undefined, className: `mrs-tab-row scrollbar-hidden${props.className ? ` ${props.className}` : ''}`, children: props.children }), _jsx(ScrollOverflowAffordance, { canLeft: overflow.canLeft, canRight: overflow.canRight, onScrollLeft: () => overflow.scrollByDir(-1), onScrollRight: () => overflow.scrollByDir(1), scrollLeftLabel: props.scrollLeftLabel, scrollRightLabel: props.scrollRightLabel })] }));
+    return (_jsxs("div", { className: "mrs-tab-scroller", children: [_jsx("div", { ref: scrollRef, role: props.role, "data-variant": props.variant, "data-baseline": props.showBaseline === true ? 'true' : undefined, className: `mrs-tab-row scrollbar-hidden${props.className ? ` ${props.className}` : ''}`, children: props.children }), _jsx(ScrollOverflowAffordance, { canLeft: overflow.canLeft, canRight: overflow.canRight, onScrollLeft: () => overflow.scrollByDir(-1), onScrollRight: () => overflow.scrollByDir(1), scrollLeftLabel: props.scrollLeftLabel, scrollRightLabel: props.scrollRightLabel })] }));
 }

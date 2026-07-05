@@ -49,7 +49,7 @@ export interface PageTabsProps {
     className?: string;
     /**
      * Whether the `underline` variant draws its full-width baseline. Default
-     * `true` — see `ScrollableTabRowProps.showBaseline`.
+     * `false` — see `ScrollableTabRowProps.showBaseline`.
      */
     showBaseline?: boolean;
 }

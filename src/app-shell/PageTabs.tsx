@@ -53,6 +53,11 @@ export interface PageTabsProps {
   match?: 'exact' | 'prefix'
   /** Additional classes on the outer container. */
   className?: string
+  /**
+   * Whether the `underline` variant draws its full-width baseline. Default
+   * `false` — see `ScrollableTabRowProps.showBaseline`.
+   */
+  showBaseline?: boolean
 }
 
 /**
@@ -96,6 +101,7 @@ export function PageTabs(props: PageTabsProps): ReactNode {
     <ScrollableTabRow
       role="tablist"
       variant={variant}
+      showBaseline={props.showBaseline}
       className={props.className}
       scrollLeftLabel={shell?.config.labels?.scrollTabsLeft?.()}
       scrollRightLabel={shell?.config.labels?.scrollTabsRight?.()}

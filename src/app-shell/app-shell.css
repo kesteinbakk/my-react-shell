@@ -653,6 +653,8 @@ button.mrs-breadcrumbs__leaf {
 }
 .mrs-tab-row[data-variant='underline'] {
   gap: 0.25rem;
+}
+.mrs-tab-row[data-variant='underline'][data-baseline='true'] {
   border-bottom: 1px solid var(--color-border-primary);
 }
 .mrs-tab-row[data-variant='pill'] {

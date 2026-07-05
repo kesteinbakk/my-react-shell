@@ -123,6 +123,7 @@ interface SectionTabsStripProps {
   activeId: string
   onTabClick: (id: string) => void
   className?: string
+  showBaseline?: boolean
 }
 
 export function SectionsListMode(props: ListModeProps): ReactNode {
@@ -187,7 +188,12 @@ export function SectionTabsStrip(props: SectionTabsStripProps): ReactNode {
   const renderIcon = shell?.config.renderIcon
 
   return (
-    <ScrollableTabRow role="tablist" variant={variant} className={props.className}>
+    <ScrollableTabRow
+      role="tablist"
+      variant={variant}
+      showBaseline={props.showBaseline}
+      className={props.className}
+    >
       {props.sections.map((section) => {
         const active = section.id === props.activeId
         return (

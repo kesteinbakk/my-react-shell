@@ -318,7 +318,12 @@ export function PageSections(props: PageSectionsProps): ReactNode {
         portalled overlays.
       */}
       <div ref={stripRef} className="mrs-sections__strip">
-        <SectionTabsStrip sections={props.sections} activeId={activeId} onTabClick={handleTabClick} />
+        <SectionTabsStrip
+          sections={props.sections}
+          activeId={activeId}
+          onTabClick={handleTabClick}
+          showBaseline={props.showBaseline}
+        />
       </div>
 
       <div className="mrs-sections__body">

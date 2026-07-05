@@ -73,9 +73,10 @@ export interface ScrollableTabRowProps {
     variant?: ShellTabsVariant;
     /**
      * Whether the `underline` variant draws its full-width baseline
-     * (`border-bottom` under the whole row). Default `true`. Set `false` to keep
-     * only the active tab's own underline, no rail beneath the inactive tabs.
-     * No effect on the `pill` variant, which has no baseline to begin with.
+     * (`border-bottom` under the whole row). Default `false` — only the active
+     * tab's own underline shows, no rail beneath the inactive tabs. Set `true`
+     * to restore the full-width line. No effect on the `pill` variant, which has
+     * no baseline to begin with.
      */
     showBaseline?: boolean;
     /** Additional classes on the inner scroll container. */
