@@ -7,7 +7,7 @@ import { cn } from './cn';
  * gap may remain at the end of a row, and every card keeps its own intrinsic
  * width/height (e.g. {@link StatCard}, {@link ContentCard}, {@link PhiCard}).
  *
- * For fluid cards that stretch to fill uniform columns, use {@link DynamicCardGrid}.
+ * For fluid cards that stretch to fill uniform columns, use {@link DynamicCards}.
  */
 export const CardGrid = forwardRef(function CardGrid({ align = 'start', gap, className, style, children, ...props }, ref) {
     const cssVars = gap != null

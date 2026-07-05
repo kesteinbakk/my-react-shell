@@ -51,7 +51,7 @@ either.
   st('mrs.action.close')` — the prop still overrides. This is why `closeLabel`,
   `dismissLabel`, `confirmLabel`/`cancelLabel`, `removeLabel`, `iconTriggerLabel`,
   `EmojiPicker` search / no-results / category labels, `Spinner` label, `ToastProvider`
-  `dismissLabel`, and `DynamicCardGrid`'s chrome are all **optional now**.
+  `dismissLabel`, and `DynamicCards`'s chrome are all **optional now**.
 
 - **Content** — anything app-specific the shell can't know: titles, subtitles, data
   labels, entity/domain copy. This stays a **mandatory consumer prop** (no default);

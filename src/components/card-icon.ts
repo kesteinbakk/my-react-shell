@@ -2,7 +2,7 @@ import { isValidElement, type ReactNode } from 'react'
 
 /**
  * Shared icon-placement vocabulary for the card family (`StatCard`, `ContentCard`,
- * `PaperCard`, `DynamicGridCard`). Each card re-exports these under its own named aliases
+ * `PaperCard`, `DynamicCard`). Each card re-exports these under its own named aliases
  * (`StatCardIconPlacement`, …) for public-API naming consistency, but the underlying type,
  * config shape, and runtime discriminator live here so the four cards stay unified.
  *

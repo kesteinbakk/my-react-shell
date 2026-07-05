@@ -281,23 +281,33 @@ export type { CardGridProps } from './CardGrid'
 
 // Dynamic grid — fluid cards that stretch to fill uniform `1fr` columns, with a
 // built-in search / filter / sort toolbar.
-export { DynamicCardGrid } from './DynamicCardGrid'
-export type { DynamicCardGridProps, ToggleFilter, SortOption } from './DynamicCardGrid'
-export { DynamicGridCard } from './DynamicGridCard'
+// DynamicCards — the fluid card grid (search / filter / sort toolbar, cardSize scale). Map
+// each item to a card with `getCard` (renders a DynamicCard), or `renderCard` for a raw node;
+// `wrapCard` wraps each tile (e.g. a drag Sortable). DynamicCard is the standalone card
+// primitive it renders — reach for it directly in a drag overlay or a fully custom layout.
+export { DynamicCards } from './DynamicCards'
 export type {
-  DynamicGridCardProps,
-  DynamicGridCardSize,
-  DynamicGridCardShape,
-  DynamicGridCardIconPlacement,
-  DynamicGridCardIconConfig,
-  DynamicGridCardFooter,
-  DynamicGridCardFooterLine,
-  DynamicGridCardFooterLineType,
-  DynamicGridCardLinkProps,
-} from './DynamicGridCard'
+  DynamicCardsProps,
+  DynamicCardsCommonProps,
+  DynamicCardBuilder,
+  ToggleFilter,
+  SortOption,
+} from './DynamicCards'
+export { DynamicCard } from './DynamicCard'
+export type {
+  DynamicCardProps,
+  DynamicCardSize,
+  DynamicCardShape,
+  DynamicCardIconPlacement,
+  DynamicCardIconConfig,
+  DynamicCardFooter,
+  DynamicCardFooterLine,
+  DynamicCardFooterLineType,
+  DynamicCardLinkProps,
+} from './DynamicCard'
 
 // DynamicNavCards — a self-contained grid of lean navigation tiles. Rides the same
-// DynamicCardGrid as the card family but renders its own tile (never a DynamicGridCard);
+// DynamicCards grid but renders its own tile (never a DynamicCard);
 // each tile's single `title` grows large when short and steps down (2-line cap) as it grows.
 // `NavTile` is the single-tile primitive behind the grid — for a lone tile outside
 // `DynamicNavCards` (e.g. wrapped in a drag handle), same look, one `DynamicNavCard`.

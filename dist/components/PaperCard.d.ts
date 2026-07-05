@@ -81,7 +81,7 @@ export interface PaperCardProps {
      * Faint background watermark. A **`string`** is an oversized emoji/text drawn via the
      * sheet's CSS `::after` (e.g. `'📄'`); a **`ReactNode`** (e.g. an `<AppIcon>` / `<img>`)
      * renders in an art layer behind the content. Same shape as `StatCard`/`ContentCard`/
-     * `DynamicGridCard`.
+     * `DynamicCard`.
      */
     watermark?: ReactNode;
     /**

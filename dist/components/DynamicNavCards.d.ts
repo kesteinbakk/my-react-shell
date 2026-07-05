@@ -1,7 +1,7 @@
 import { type MouseEventHandler, type ReactNode } from 'react';
 import type { AccentPlacement } from './accent';
 import type { Tone } from './tone';
-import { type DynamicCardGridProps } from './DynamicCardGrid';
+import { type DynamicCardsCommonProps } from './DynamicCards';
 /**
  * Props the tile hands the consumer's {@link DynamicNavCard.renderLink} callback to spread
  * onto its router `<Link>`. The tile supplies the overlay `className` and an auto-wired
@@ -13,7 +13,7 @@ export interface DynamicNavCardLinkProps {
 }
 /**
  * One navigation tile's content, returned by {@link DynamicNavCardsProps.getCard}. A
- * **lean** nav tile — its own element (it does **not** wrap `DynamicGridCard`) whose single
+ * **lean** nav tile — its own element (it does **not** wrap `DynamicCard`) whose single
  * `title` renders as large, centred main content that scales up when the label is short and
  * steps down (clamped at two lines) as it grows.
  */
@@ -71,33 +71,40 @@ export interface DynamicNavCard {
     /** Extra class on the tile root. */
     className?: string;
 }
+/** Builds one nav tile, deferred so a wrapper (e.g. a drag `Sortable`) can inject overrides. */
+export type NavTileBuilder = (override?: Partial<DynamicNavCard>) => ReactNode;
 /**
- * Props for {@link DynamicNavCards}. The full {@link DynamicCardGridProps} surface — items,
- * search / filter / sort, `cardSize`, `align`, loading / empty states, `minColumnWidth` —
- * **minus** `renderCard`, which is replaced by `getCard`: a map from each item to its
- * {@link DynamicNavCard} spec.
+ * Props for {@link DynamicNavCards}. The shared {@link DynamicCardsCommonProps} grid surface
+ * — items, search / filter / sort, `cardSize`, `align`, loading / empty states,
+ * `minColumnWidth` — plus `getCard` (maps each item to its {@link DynamicNavCard} spec) and
+ * an optional `wrapCard` (per-item wrapper, e.g. a drag `Sortable`).
  */
-export interface DynamicNavCardsProps<T> extends Omit<DynamicCardGridProps<T>, 'renderCard'> {
+export interface DynamicNavCardsProps<T> extends DynamicCardsCommonProps<T> {
     /** Maps one item to its nav tile's content — the nav equivalent of the grid's `renderCard`. */
     getCard: (item: T) => DynamicNavCard;
+    /**
+     * Optional per-item wrapper (e.g. a drag `Sortable`). Receives a lazy {@link NavTileBuilder}
+     * so a wrapper can build the tile at the right tree depth, mirroring `DynamicCards.wrapCard`.
+     */
+    wrapCard?: (item: T, buildCard: NavTileBuilder) => ReactNode;
 }
 /**
  * One independent nav tile — the single-tile primitive behind `DynamicNavCards`.
  * Exported so a consumer can place a lone tile outside the grid (e.g. wrapped in a
- * drag handle), keeping the exact tile look without a `DynamicGridCard`. Props are
+ * drag handle), keeping the exact tile look without a `DynamicCard`. Props are
  * one {@link DynamicNavCard}.
  */
 export declare function NavTile({ title, renderLink, onClick, hoverable, lift, tone, color, accentPlacement, footer, corner, watermark, autoscaleWatermark, className, }: DynamicNavCard): import("react").JSX.Element;
 /**
  * A **self-contained grid of navigation tiles**. Unlike the card family it renders its own
- * lean tile element (it does **not** use `DynamicGridCard`), but it drives that grid through
- * the same {@link DynamicCardGrid} — so it inherits its fluid `1fr` columns, `cardSize`
+ * lean tile element (it does **not** use `DynamicCard`), but it drives that grid through
+ * the same {@link DynamicCards} — so it inherits its fluid `1fr` columns, `cardSize`
  * scale, and the built-in search / filter / sort toolbar. Each tile's single `title` grows
  * large when the label is short and steps down (clamped at two lines) as it lengthens, so a
  * grid of short nav labels reads big and bold.
  *
- * Drive it like `DynamicCardGrid`, but map each item to a tile with `getCard` instead of
- * `renderCard`:
+ * Drive it like `DynamicCards`, but map each item to a tile with `getCard` instead of
+ * `renderCard`. Pass `wrapCard` to wrap each tile (e.g. a drag `Sortable`):
  *
  * ```tsx
  * <DynamicNavCards
@@ -108,4 +115,4 @@ export declare function NavTile({ title, renderLink, onClick, hoverable, lift, t
  * />
  * ```
  */
-export declare function DynamicNavCards<T>({ getCard, ...gridProps }: DynamicNavCardsProps<T>): import("react").JSX.Element;
+export declare function DynamicNavCards<T>({ getCard, wrapCard, ...gridProps }: DynamicNavCardsProps<T>): import("react").JSX.Element;

@@ -6,17 +6,17 @@ import { isIconConfig, resolveCardIconPlacement } from './card-icon';
 /** φ — the golden ratio. The dynamic card's shape is `aspect-ratio: φ : 1` (or `φ² : 1` for landscape). */
 const PHI = 1.6180339887;
 /**
- * Carries the enclosing `DynamicCardGrid`'s `cardSize` down to each `DynamicGridCard` so it
+ * Carries the enclosing `DynamicCards`'s `cardSize` down to each `DynamicCard` so it
  * can resolve its own effective size (for the icon/title scale below) without the consumer
  * having to repeat `size` on every card — the grid is still what drives the column width.
  */
-export const DynamicCardGridSizeContext = createContext(undefined);
-export const DYNAMIC_GRID_CARD_MIN_WIDTH = {
+export const DynamicCardsSizeContext = createContext(undefined);
+export const DYNAMIC_CARD_MIN_WIDTH = {
     sm: 180,
     md: 240,
     lg: 400,
 };
-export const DYNAMIC_GRID_CARD_MAX_WIDTH = {
+export const DYNAMIC_CARD_MAX_WIDTH = {
     sm: 210,
     md: 320,
     lg: 500,
@@ -83,13 +83,13 @@ function resolveSizeLimitMaxWidth(effectiveSize, sizeLimit) {
     const tierIndex = SIZE_ORDER.indexOf(effectiveSize);
     if (tierIndex <= 0)
         return undefined;
-    const upperMax = DYNAMIC_GRID_CARD_MAX_WIDTH[effectiveSize];
-    const lowerMax = DYNAMIC_GRID_CARD_MAX_WIDTH[SIZE_ORDER[tierIndex - 1]];
+    const upperMax = DYNAMIC_CARD_MAX_WIDTH[effectiveSize];
+    const lowerMax = DYNAMIC_CARD_MAX_WIDTH[SIZE_ORDER[tierIndex - 1]];
     const step = (upperMax - lowerMax) / 5;
     return upperMax - step * sizeLimit;
 }
 /**
- * Fluid card for the {@link DynamicCardGrid}: it stretches to `width: 100%` of its
+ * Fluid card for the {@link DynamicCards}: it stretches to `width: 100%` of its
  * grid column and inherits the grid's max-width cap, keeping the golden-ratio shape via
  * `aspect-ratio`. Accepts optional named slots (`title`, `subtitle`, `icon`, `footer`)
  * with the primary content passed as `children`.
@@ -98,7 +98,7 @@ function resolveSizeLimitMaxWidth(effectiveSize, sizeLimit) {
  * pass `renderLink` and the card mounts the consumer's `<Link>` as a full-bleed block-link
  * overlay, with `corner` controls raised above it so they stay independently clickable.
  */
-export const DynamicGridCard = forwardRef(function DynamicGridCard({ sizeLimit, shape = 'standard', title, subtitle, icon, hoverable, lift = false, watermark, autoscaleWatermark = true, corner, footer, renderLink, showDragHandle, dragHandle, dragHandleProps, dragHandleLabel, dragWholeCard, tone, color, accentPlacement = 'top', className, style, children, ...props }, ref) {
+export const DynamicCard = forwardRef(function DynamicCard({ sizeLimit, shape = 'standard', title, subtitle, icon, hoverable, lift = false, watermark, autoscaleWatermark = true, corner, footer, renderLink, showDragHandle, dragHandle, dragHandleProps, dragHandleLabel, dragWholeCard, tone, color, accentPlacement = 'top', className, style, children, ...props }, ref) {
     // A visible grip shows when toggled on, or when a custom handle node is supplied.
     const hasDragHandle = showDragHandle || dragHandle != null;
     // Mirrors StatCard/ContentCard: a card with an `onClick` is hoverable by default — without
@@ -119,7 +119,7 @@ export const DynamicGridCard = forwardRef(function DynamicGridCard({ sizeLimit, 
     }
     // Typography/icon scale always follows the enclosing grid's `cardSize` (via context),
     // falling back to `'md'` with no enclosing grid — a card never overrides its own scale.
-    const gridSize = useContext(DynamicCardGridSizeContext);
+    const gridSize = useContext(DynamicCardsSizeContext);
     const effectiveSize = gridSize ?? 'md';
     const maxWidth = resolveSizeLimitMaxWidth(effectiveSize, sizeLimit);
     const aspectRatio = shape === 'landscape' ? `${PHI * PHI} / 1` : `${PHI} / 1`;
@@ -155,10 +155,10 @@ export const DynamicGridCard = forwardRef(function DynamicGridCard({ sizeLimit, 
     // Dev guards
     if (process.env.NODE_ENV !== 'production') {
         if (iconPlacement === 'upperRight' && corner != null) {
-            throw new Error("DynamicGridCard: icon placement 'upperRight' collides with the `corner` slot — both render in the top-right corner. Use a different icon placement (e.g. 'upperLeft') or drop `corner`.");
+            throw new Error("DynamicCard: icon placement 'upperRight' collides with the `corner` slot — both render in the top-right corner. Use a different icon placement (e.g. 'upperLeft') or drop `corner`.");
         }
         if (isCenterIcon && children != null) {
-            throw new Error("DynamicGridCard: icon placement 'center' replaces the card body — it can't combine with `children`. Drop one of the two.");
+            throw new Error("DynamicCard: icon placement 'center' replaces the card body — it can't combine with `children`. Drop one of the two.");
         }
     }
     return (_jsxs("div", { ref: ref, className: cn('mrs-dynamic-grid-card', effectiveSize && `mrs-dynamic-grid-card--${effectiveSize}`, hasAccent && `mrs-dynamic-grid-card--accent-${accentPlacement}`, isHoverable && 'mrs-dynamic-grid-card--hoverable', isHoverable && lift && 'mrs-dynamic-grid-card--lift', renderLink && 'mrs-dynamic-grid-card--linked', hasDragHandle && 'mrs-dynamic-grid-card--draggable', hasWatermark && 'mrs-dynamic-grid-card--watermark', hasArtWatermark && 'mrs-reveal-host', dragWholeCard && 'mrs-dynamic-grid-card--drag-whole', dragWholeCard && isHolding && 'mrs-dynamic-grid-card--holding', className), style: cssVars, "data-watermark": watermarkIsString ? watermark : undefined, ...props, ...(dragWholeCard ? {

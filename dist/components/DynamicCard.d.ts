@@ -2,43 +2,43 @@ import { type HTMLAttributes, type ReactNode } from 'react';
 import type { AccentPlacement } from './accent';
 import type { Tone } from './tone';
 import { type CardIconPlacement, type CardIconConfig } from './card-icon';
-export type DynamicGridCardSize = 'sm' | 'md' | 'lg';
+export type DynamicCardSize = 'sm' | 'md' | 'lg';
 /**
- * Carries the enclosing `DynamicCardGrid`'s `cardSize` down to each `DynamicGridCard` so it
+ * Carries the enclosing `DynamicCards`'s `cardSize` down to each `DynamicCard` so it
  * can resolve its own effective size (for the icon/title scale below) without the consumer
  * having to repeat `size` on every card — the grid is still what drives the column width.
  */
-export declare const DynamicCardGridSizeContext: import("react").Context<DynamicGridCardSize | undefined>;
+export declare const DynamicCardsSizeContext: import("react").Context<DynamicCardSize | undefined>;
 /** Proportion of the card: `'standard'` is φ:1; `'landscape'` is the shorter-wider φ²:1. */
-export type DynamicGridCardShape = 'standard' | 'landscape';
-/** Where a `DynamicGridCard` `icon` renders — see {@link CardIconPlacement}. */
-export type DynamicGridCardIconPlacement = CardIconPlacement;
-/** The `{ content, placement }` object form of `icon` — see {@link DynamicGridCardIconPlacement}. */
-export type DynamicGridCardIconConfig = CardIconConfig;
+export type DynamicCardShape = 'standard' | 'landscape';
+/** Where a `DynamicCard` `icon` renders — see {@link CardIconPlacement}. */
+export type DynamicCardIconPlacement = CardIconPlacement;
+/** The `{ content, placement }` object form of `icon` — see {@link DynamicCardIconPlacement}. */
+export type DynamicCardIconConfig = CardIconConfig;
 /** Leading glyph kind for a structured footer meta line. */
-export type DynamicGridCardFooterLineType = 'date' | 'time' | 'check';
+export type DynamicCardFooterLineType = 'date' | 'time' | 'check';
 /** One left-side footer line: text with an optional kit-shipped leading glyph. */
-export interface DynamicGridCardFooterLine {
+export interface DynamicCardFooterLine {
     text: ReactNode;
-    type?: DynamicGridCardFooterLineType;
+    type?: DynamicCardFooterLineType;
 }
 /** Structured footer: meta lines on the left, badges stacked on the right. */
-export interface DynamicGridCardFooter {
-    lines?: DynamicGridCardFooterLine[];
+export interface DynamicCardFooter {
+    lines?: DynamicCardFooterLine[];
     badges?: ReactNode[];
 }
 /**
- * Props the card hands the consumer's {@link DynamicGridCardProps.renderLink} callback to
+ * Props the card hands the consumer's {@link DynamicCardProps.renderLink} callback to
  * spread onto its router `<Link>`. The card supplies the overlay `className` and an
  * auto-wired `aria-labelledby` pointing at the card's title; the consumer adds `to`/`params`.
  */
-export interface DynamicGridCardLinkProps {
+export interface DynamicCardLinkProps {
     className: string;
     'aria-labelledby'?: string;
 }
-export interface DynamicGridCardProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title'> {
+export interface DynamicCardProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title'> {
     /**
-     * Steps the card's own width cap down from the enclosing `DynamicCardGrid`'s `cardSize`
+     * Steps the card's own width cap down from the enclosing `DynamicCards`'s `cardSize`
      * toward the next-smaller tier, in fifths: `0` (default) is the grid's own cap, `5` is the
      * next-smaller tier's cap. Typography/icon scale always follow the grid's `cardSize` (or
      * `'md'` when there's no enclosing grid) — `sizeLimit` only narrows the width, so a stepped
@@ -47,16 +47,16 @@ export interface DynamicGridCardProps extends Omit<HTMLAttributes<HTMLDivElement
      */
     sizeLimit?: 0 | 1 | 2 | 3 | 4 | 5;
     /** Proportion of the card. Default `'standard'` (φ:1); `'landscape'` is φ²:1 (shorter, wider). */
-    shape?: DynamicGridCardShape;
+    shape?: DynamicCardShape;
     title?: ReactNode;
     subtitle?: ReactNode;
     /**
      * Icon/emoji glyph. A bare `ReactNode` is shorthand for `{ content, placement: 'title' }`
      * (today's behavior: rendered beside the title block). Pass the full
      * `{ content, placement }` form to place it in a corner (never affects layout) or `'center'`
-     * (replaces `children`) — see {@link DynamicGridCardIconPlacement}.
+     * (replaces `children`) — see {@link DynamicCardIconPlacement}.
      */
-    icon?: ReactNode | DynamicGridCardIconConfig;
+    icon?: ReactNode | DynamicCardIconConfig;
     /**
      * Cursor + hover feedback + `:focus-visible` ring on the card root. Defaults to `true` when
      * `onClick` is set. The default hover feedback is a subtle background tint
@@ -97,7 +97,7 @@ export interface DynamicGridCardProps extends Omit<HTMLAttributes<HTMLDivElement
      * Footer slot: either a freeform node (e.g. a meta row) or a structured
      * `{ lines, badges }` (meta lines on the left, badges stacked on the right).
      */
-    footer?: ReactNode | DynamicGridCardFooter;
+    footer?: ReactNode | DynamicCardFooter;
     /**
      * Interactive-root seam. The consumer renders its own router `<Link>` here, spreading the
      * supplied props, and the card mounts it as a **full-bleed block-link overlay** so the whole
@@ -109,7 +109,7 @@ export interface DynamicGridCardProps extends Omit<HTMLAttributes<HTMLDivElement
      * renderLink={(p) => <Link {...p} to="/setup/$id" params={{ id }} />}
      * ```
      */
-    renderLink?: (linkProps: DynamicGridCardLinkProps) => ReactNode;
+    renderLink?: (linkProps: DynamicCardLinkProps) => ReactNode;
     /**
      * Shows the built-in grip handle — vertical stripes pinned to the right edge,
      * vertically centred. Pair with `dragHandleProps` to wire your DND library.
@@ -147,10 +147,10 @@ export interface DynamicGridCardProps extends Omit<HTMLAttributes<HTMLDivElement
     /** Where the accent reads when `tone`/`color` is set: a `'top'` stripe (default) or a `'left'` bar. */
     accentPlacement?: AccentPlacement;
 }
-export declare const DYNAMIC_GRID_CARD_MIN_WIDTH: Record<DynamicGridCardSize, number>;
-export declare const DYNAMIC_GRID_CARD_MAX_WIDTH: Record<DynamicGridCardSize, number>;
+export declare const DYNAMIC_CARD_MIN_WIDTH: Record<DynamicCardSize, number>;
+export declare const DYNAMIC_CARD_MAX_WIDTH: Record<DynamicCardSize, number>;
 /**
- * Fluid card for the {@link DynamicCardGrid}: it stretches to `width: 100%` of its
+ * Fluid card for the {@link DynamicCards}: it stretches to `width: 100%` of its
  * grid column and inherits the grid's max-width cap, keeping the golden-ratio shape via
  * `aspect-ratio`. Accepts optional named slots (`title`, `subtitle`, `icon`, `footer`)
  * with the primary content passed as `children`.
@@ -159,4 +159,4 @@ export declare const DYNAMIC_GRID_CARD_MAX_WIDTH: Record<DynamicGridCardSize, nu
  * pass `renderLink` and the card mounts the consumer's `<Link>` as a full-bleed block-link
  * overlay, with `corner` controls raised above it so they stay independently clickable.
  */
-export declare const DynamicGridCard: import("react").ForwardRefExoticComponent<DynamicGridCardProps & import("react").RefAttributes<HTMLDivElement>>;
+export declare const DynamicCard: import("react").ForwardRefExoticComponent<DynamicCardProps & import("react").RefAttributes<HTMLDivElement>>;

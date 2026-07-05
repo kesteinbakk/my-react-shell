@@ -1908,8 +1908,11 @@
   align-items: stretch;
 }
 
-/* ── DynamicGridCard ─────────────────────────────────────────────────────── */
-/* Fluid card for the DynamicCardGrid: stretches to `width: 100%` of its `1fr`
+/* ── DynamicCard ─────────────────────────────────────────────────────────── */
+/* The `.mrs-dynamic-grid-card` / `.mrs-dynamic-card-grid` class prefixes are the
+   internal (legacy) names for the `DynamicCard` component and its `DynamicCards` grid —
+   kept as-is so consumer overrides and the `--mrs-dynamic-card-grid-*` vars stay stable.
+   Fluid card for `DynamicCards`: stretches to `width: 100%` of its `1fr`
    grid column, capped by the grid's inherited max-width, centered when its lane
    is wider than the cap. Golden-ratio shape via aspect-ratio. */
 .mrs-dynamic-grid-card {
@@ -1993,7 +1996,7 @@
 }
 
 /* `sm`-size cards shrink the header icon. Resolved from the card's own `size` prop or
-   (inside a `DynamicCardGrid`) the grid's `cardSize`, via `DynamicCardGridSizeContext` —
+   (inside a `DynamicCards`) the grid's `cardSize`, via `DynamicCardsSizeContext` —
    a `@container` query on the rendered width was tried first and dropped: Chromium gives
    inconsistent results for a container-query container that also carries `aspect-ratio`
    inside a `1fr` grid track, so two equal-width cards could resolve to different icon
@@ -2266,7 +2269,7 @@
 
 /* ── DynamicNavCards ─────────────────────────────────────────────────────── */
 /* Self-contained grid of lean navigation tiles. The tile is its own element (never a
-   DynamicGridCard) but rides the same DynamicCardGrid columns: fluid `width: 100%`, capped
+   DynamicCard) but rides the same DynamicCards columns: fluid `width: 100%`, capped
    at the grid's per-item max, golden-ratio shape via `aspect-ratio`. Its single `title`
    centres in the grow-body and scales with the label length (the `[data-fit]` ladder below):
    large when short, stepping down and clamped to two lines as it grows. */
@@ -2330,7 +2333,7 @@
 }
 
 /* Optional 4px accent stripe (none unless `tone`/`color`), top (default) or left edge —
-   mirrors DynamicGridCard. */
+   mirrors DynamicCard. */
 .mrs-dynamic-nav-card--accent-top::before,
 .mrs-dynamic-nav-card--accent-left::before {
   content: '';
@@ -5831,7 +5834,7 @@
   justify-content: center;
 }
 
-/* ── DynamicCardGrid ──────────────────────────────────────────────────────── */
+/* ── DynamicCards (grid) ───────────────────────────────────────────────────── */
 .mrs-dynamic-card-grid {
   display: flex;
   flex-direction: column;

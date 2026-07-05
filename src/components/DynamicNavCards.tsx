@@ -3,8 +3,8 @@ import { cn } from './cn'
 import { resolveAccentColor } from './accent'
 import type { AccentPlacement } from './accent'
 import type { Tone } from './tone'
-import { DynamicCardGrid, type DynamicCardGridProps } from './DynamicCardGrid'
-import { DynamicCardGridSizeContext } from './DynamicGridCard'
+import { DynamicCards, type DynamicCardsCommonProps } from './DynamicCards'
+import { DynamicCardsSizeContext } from './DynamicCard'
 
 /**
  * Props the tile hands the consumer's {@link DynamicNavCard.renderLink} callback to spread
@@ -18,7 +18,7 @@ export interface DynamicNavCardLinkProps {
 
 /**
  * One navigation tile's content, returned by {@link DynamicNavCardsProps.getCard}. A
- * **lean** nav tile — its own element (it does **not** wrap `DynamicGridCard`) whose single
+ * **lean** nav tile — its own element (it does **not** wrap `DynamicCard`) whose single
  * `title` renders as large, centred main content that scales up when the label is short and
  * steps down (clamped at two lines) as it grows.
  */
@@ -77,15 +77,23 @@ export interface DynamicNavCard {
   className?: string
 }
 
+/** Builds one nav tile, deferred so a wrapper (e.g. a drag `Sortable`) can inject overrides. */
+export type NavTileBuilder = (override?: Partial<DynamicNavCard>) => ReactNode
+
 /**
- * Props for {@link DynamicNavCards}. The full {@link DynamicCardGridProps} surface — items,
- * search / filter / sort, `cardSize`, `align`, loading / empty states, `minColumnWidth` —
- * **minus** `renderCard`, which is replaced by `getCard`: a map from each item to its
- * {@link DynamicNavCard} spec.
+ * Props for {@link DynamicNavCards}. The shared {@link DynamicCardsCommonProps} grid surface
+ * — items, search / filter / sort, `cardSize`, `align`, loading / empty states,
+ * `minColumnWidth` — plus `getCard` (maps each item to its {@link DynamicNavCard} spec) and
+ * an optional `wrapCard` (per-item wrapper, e.g. a drag `Sortable`).
  */
-export interface DynamicNavCardsProps<T> extends Omit<DynamicCardGridProps<T>, 'renderCard'> {
+export interface DynamicNavCardsProps<T> extends DynamicCardsCommonProps<T> {
   /** Maps one item to its nav tile's content — the nav equivalent of the grid's `renderCard`. */
   getCard: (item: T) => DynamicNavCard
+  /**
+   * Optional per-item wrapper (e.g. a drag `Sortable`). Receives a lazy {@link NavTileBuilder}
+   * so a wrapper can build the tile at the right tree depth, mirroring `DynamicCards.wrapCard`.
+   */
+  wrapCard?: (item: T, buildCard: NavTileBuilder) => ReactNode
 }
 
 /**
@@ -107,7 +115,7 @@ function titleFit(title: ReactNode): 0 | 1 | 2 | 3 | 4 {
 /**
  * One independent nav tile — the single-tile primitive behind `DynamicNavCards`.
  * Exported so a consumer can place a lone tile outside the grid (e.g. wrapped in a
- * drag handle), keeping the exact tile look without a `DynamicGridCard`. Props are
+ * drag handle), keeping the exact tile look without a `DynamicCard`. Props are
  * one {@link DynamicNavCard}.
  */
 export function NavTile({
@@ -129,7 +137,7 @@ export function NavTile({
 
   // Typography scale follows the enclosing grid's `cardSize` (via context), falling back to
   // `'md'` with no enclosing grid — a tile never overrides its own scale.
-  const gridSize = useContext(DynamicCardGridSizeContext)
+  const gridSize = useContext(DynamicCardsSizeContext)
   const effectiveSize = gridSize ?? 'md'
 
   const isHoverable = hoverable ?? !!onClick
@@ -196,14 +204,14 @@ export function NavTile({
 
 /**
  * A **self-contained grid of navigation tiles**. Unlike the card family it renders its own
- * lean tile element (it does **not** use `DynamicGridCard`), but it drives that grid through
- * the same {@link DynamicCardGrid} — so it inherits its fluid `1fr` columns, `cardSize`
+ * lean tile element (it does **not** use `DynamicCard`), but it drives that grid through
+ * the same {@link DynamicCards} — so it inherits its fluid `1fr` columns, `cardSize`
  * scale, and the built-in search / filter / sort toolbar. Each tile's single `title` grows
  * large when the label is short and steps down (clamped at two lines) as it lengthens, so a
  * grid of short nav labels reads big and bold.
  *
- * Drive it like `DynamicCardGrid`, but map each item to a tile with `getCard` instead of
- * `renderCard`:
+ * Drive it like `DynamicCards`, but map each item to a tile with `getCard` instead of
+ * `renderCard`. Pass `wrapCard` to wrap each tile (e.g. a drag `Sortable`):
  *
  * ```tsx
  * <DynamicNavCards
@@ -214,6 +222,14 @@ export function NavTile({
  * />
  * ```
  */
-export function DynamicNavCards<T>({ getCard, ...gridProps }: DynamicNavCardsProps<T>) {
-  return <DynamicCardGrid {...gridProps} renderCard={(item) => <NavTile {...getCard(item)} />} />
+export function DynamicNavCards<T>({ getCard, wrapCard, ...gridProps }: DynamicNavCardsProps<T>) {
+  return (
+    <DynamicCards
+      {...gridProps}
+      renderCard={(item) => {
+        const buildCard: NavTileBuilder = (override) => <NavTile {...getCard(item)} {...override} />
+        return wrapCard ? wrapCard(item, buildCard) : buildCard()
+      }}
+    />
+  )
 }

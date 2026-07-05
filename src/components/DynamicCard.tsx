@@ -12,52 +12,52 @@ declare const process: { env: { NODE_ENV?: string } }
 /** φ — the golden ratio. The dynamic card's shape is `aspect-ratio: φ : 1` (or `φ² : 1` for landscape). */
 const PHI = 1.6180339887
 
-export type DynamicGridCardSize = 'sm' | 'md' | 'lg'
+export type DynamicCardSize = 'sm' | 'md' | 'lg'
 
 /**
- * Carries the enclosing `DynamicCardGrid`'s `cardSize` down to each `DynamicGridCard` so it
+ * Carries the enclosing `DynamicCards`'s `cardSize` down to each `DynamicCard` so it
  * can resolve its own effective size (for the icon/title scale below) without the consumer
  * having to repeat `size` on every card — the grid is still what drives the column width.
  */
-export const DynamicCardGridSizeContext = createContext<DynamicGridCardSize | undefined>(undefined)
+export const DynamicCardsSizeContext = createContext<DynamicCardSize | undefined>(undefined)
 
 /** Proportion of the card: `'standard'` is φ:1; `'landscape'` is the shorter-wider φ²:1. */
-export type DynamicGridCardShape = 'standard' | 'landscape'
+export type DynamicCardShape = 'standard' | 'landscape'
 
-/** Where a `DynamicGridCard` `icon` renders — see {@link CardIconPlacement}. */
-export type DynamicGridCardIconPlacement = CardIconPlacement
+/** Where a `DynamicCard` `icon` renders — see {@link CardIconPlacement}. */
+export type DynamicCardIconPlacement = CardIconPlacement
 
-/** The `{ content, placement }` object form of `icon` — see {@link DynamicGridCardIconPlacement}. */
-export type DynamicGridCardIconConfig = CardIconConfig
+/** The `{ content, placement }` object form of `icon` — see {@link DynamicCardIconPlacement}. */
+export type DynamicCardIconConfig = CardIconConfig
 
 /** Leading glyph kind for a structured footer meta line. */
-export type DynamicGridCardFooterLineType = 'date' | 'time' | 'check'
+export type DynamicCardFooterLineType = 'date' | 'time' | 'check'
 
 /** One left-side footer line: text with an optional kit-shipped leading glyph. */
-export interface DynamicGridCardFooterLine {
+export interface DynamicCardFooterLine {
   text: ReactNode
-  type?: DynamicGridCardFooterLineType
+  type?: DynamicCardFooterLineType
 }
 
 /** Structured footer: meta lines on the left, badges stacked on the right. */
-export interface DynamicGridCardFooter {
-  lines?: DynamicGridCardFooterLine[]
+export interface DynamicCardFooter {
+  lines?: DynamicCardFooterLine[]
   badges?: ReactNode[]
 }
 
 /**
- * Props the card hands the consumer's {@link DynamicGridCardProps.renderLink} callback to
+ * Props the card hands the consumer's {@link DynamicCardProps.renderLink} callback to
  * spread onto its router `<Link>`. The card supplies the overlay `className` and an
  * auto-wired `aria-labelledby` pointing at the card's title; the consumer adds `to`/`params`.
  */
-export interface DynamicGridCardLinkProps {
+export interface DynamicCardLinkProps {
   className: string
   'aria-labelledby'?: string
 }
 
-export interface DynamicGridCardProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title'> {
+export interface DynamicCardProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title'> {
   /**
-   * Steps the card's own width cap down from the enclosing `DynamicCardGrid`'s `cardSize`
+   * Steps the card's own width cap down from the enclosing `DynamicCards`'s `cardSize`
    * toward the next-smaller tier, in fifths: `0` (default) is the grid's own cap, `5` is the
    * next-smaller tier's cap. Typography/icon scale always follow the grid's `cardSize` (or
    * `'md'` when there's no enclosing grid) — `sizeLimit` only narrows the width, so a stepped
@@ -66,16 +66,16 @@ export interface DynamicGridCardProps extends Omit<HTMLAttributes<HTMLDivElement
    */
   sizeLimit?: 0 | 1 | 2 | 3 | 4 | 5
   /** Proportion of the card. Default `'standard'` (φ:1); `'landscape'` is φ²:1 (shorter, wider). */
-  shape?: DynamicGridCardShape
+  shape?: DynamicCardShape
   title?: ReactNode
   subtitle?: ReactNode
   /**
    * Icon/emoji glyph. A bare `ReactNode` is shorthand for `{ content, placement: 'title' }`
    * (today's behavior: rendered beside the title block). Pass the full
    * `{ content, placement }` form to place it in a corner (never affects layout) or `'center'`
-   * (replaces `children`) — see {@link DynamicGridCardIconPlacement}.
+   * (replaces `children`) — see {@link DynamicCardIconPlacement}.
    */
-  icon?: ReactNode | DynamicGridCardIconConfig
+  icon?: ReactNode | DynamicCardIconConfig
   /**
    * Cursor + hover feedback + `:focus-visible` ring on the card root. Defaults to `true` when
    * `onClick` is set. The default hover feedback is a subtle background tint
@@ -116,7 +116,7 @@ export interface DynamicGridCardProps extends Omit<HTMLAttributes<HTMLDivElement
    * Footer slot: either a freeform node (e.g. a meta row) or a structured
    * `{ lines, badges }` (meta lines on the left, badges stacked on the right).
    */
-  footer?: ReactNode | DynamicGridCardFooter
+  footer?: ReactNode | DynamicCardFooter
   /**
    * Interactive-root seam. The consumer renders its own router `<Link>` here, spreading the
    * supplied props, and the card mounts it as a **full-bleed block-link overlay** so the whole
@@ -128,7 +128,7 @@ export interface DynamicGridCardProps extends Omit<HTMLAttributes<HTMLDivElement
    * renderLink={(p) => <Link {...p} to="/setup/$id" params={{ id }} />}
    * ```
    */
-  renderLink?: (linkProps: DynamicGridCardLinkProps) => ReactNode
+  renderLink?: (linkProps: DynamicCardLinkProps) => ReactNode
   /**
    * Shows the built-in grip handle — vertical stripes pinned to the right edge,
    * vertically centred. Pair with `dragHandleProps` to wire your DND library.
@@ -167,13 +167,13 @@ export interface DynamicGridCardProps extends Omit<HTMLAttributes<HTMLDivElement
   accentPlacement?: AccentPlacement
 }
 
-export const DYNAMIC_GRID_CARD_MIN_WIDTH: Record<DynamicGridCardSize, number> = {
+export const DYNAMIC_CARD_MIN_WIDTH: Record<DynamicCardSize, number> = {
   sm: 180,
   md: 240,
   lg: 400,
 }
 
-export const DYNAMIC_GRID_CARD_MAX_WIDTH: Record<DynamicGridCardSize, number> = {
+export const DYNAMIC_CARD_MAX_WIDTH: Record<DynamicCardSize, number> = {
   sm: 210,
   md: 320,
   lg: 500,
@@ -189,7 +189,7 @@ const DEFAULT_DRAG_HANDLE = (
 
 // ── Footer glyphs ───────────────────────────────────────────────────────────
 
-const FOOTER_GLYPHS: Record<DynamicGridCardFooterLineType, ReactNode> = {
+const FOOTER_GLYPHS: Record<DynamicCardFooterLineType, ReactNode> = {
   date: (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
       <rect x="3" y="4" width="18" height="18" rx="2" />
@@ -214,7 +214,7 @@ const FOOTER_GLYPHS: Record<DynamicGridCardFooterLineType, ReactNode> = {
  * A structured footer is a plain object carrying `lines`/`badges`; a React element, array,
  * or primitive is freeform.
  */
-function isStructuredFooter(footer: ReactNode | DynamicGridCardFooter): footer is DynamicGridCardFooter {
+function isStructuredFooter(footer: ReactNode | DynamicCardFooter): footer is DynamicCardFooter {
   return (
     typeof footer === 'object' &&
     footer !== null &&
@@ -224,7 +224,7 @@ function isStructuredFooter(footer: ReactNode | DynamicGridCardFooter): footer i
   )
 }
 
-function StructuredFooter({ footer }: { footer: DynamicGridCardFooter }) {
+function StructuredFooter({ footer }: { footer: DynamicCardFooter }) {
   const lines = footer.lines ?? []
   const badges = footer.badges ?? []
   const rowCount = Math.max(lines.length, badges.length)
@@ -265,7 +265,7 @@ function titleFitStep(title: ReactNode): 0 | 1 | 2 | 3 {
 }
 
 /** Size tiers, smallest to largest — the order `sizeLimit` steps down through. */
-const SIZE_ORDER: DynamicGridCardSize[] = ['sm', 'md', 'lg']
+const SIZE_ORDER: DynamicCardSize[] = ['sm', 'md', 'lg']
 
 /**
  * The `max-width` a card should cap itself at, given its effective size and `sizeLimit`.
@@ -273,18 +273,18 @@ const SIZE_ORDER: DynamicGridCardSize[] = ['sm', 'md', 'lg']
  * in fifths. Returns `undefined` (no cap of its own — falls back to the grid's cap) when
  * `sizeLimit` is `0`/unset, or when the effective tier is already the smallest (`'sm'`).
  */
-function resolveSizeLimitMaxWidth(effectiveSize: DynamicGridCardSize, sizeLimit: number | undefined): number | undefined {
+function resolveSizeLimitMaxWidth(effectiveSize: DynamicCardSize, sizeLimit: number | undefined): number | undefined {
   if (!sizeLimit) return undefined
   const tierIndex = SIZE_ORDER.indexOf(effectiveSize)
   if (tierIndex <= 0) return undefined
-  const upperMax = DYNAMIC_GRID_CARD_MAX_WIDTH[effectiveSize]
-  const lowerMax = DYNAMIC_GRID_CARD_MAX_WIDTH[SIZE_ORDER[tierIndex - 1]]
+  const upperMax = DYNAMIC_CARD_MAX_WIDTH[effectiveSize]
+  const lowerMax = DYNAMIC_CARD_MAX_WIDTH[SIZE_ORDER[tierIndex - 1]]
   const step = (upperMax - lowerMax) / 5
   return upperMax - step * sizeLimit
 }
 
 /**
- * Fluid card for the {@link DynamicCardGrid}: it stretches to `width: 100%` of its
+ * Fluid card for the {@link DynamicCards}: it stretches to `width: 100%` of its
  * grid column and inherits the grid's max-width cap, keeping the golden-ratio shape via
  * `aspect-ratio`. Accepts optional named slots (`title`, `subtitle`, `icon`, `footer`)
  * with the primary content passed as `children`.
@@ -293,7 +293,7 @@ function resolveSizeLimitMaxWidth(effectiveSize: DynamicGridCardSize, sizeLimit:
  * pass `renderLink` and the card mounts the consumer's `<Link>` as a full-bleed block-link
  * overlay, with `corner` controls raised above it so they stay independently clickable.
  */
-export const DynamicGridCard = forwardRef<HTMLDivElement, DynamicGridCardProps>(function DynamicGridCard(
+export const DynamicCard = forwardRef<HTMLDivElement, DynamicCardProps>(function DynamicCard(
   { sizeLimit, shape = 'standard', title, subtitle, icon, hoverable, lift = false, watermark, autoscaleWatermark = true, corner, footer, renderLink, showDragHandle, dragHandle, dragHandleProps, dragHandleLabel, dragWholeCard, tone, color, accentPlacement = 'top', className, style, children, ...props },
   ref,
 ) {
@@ -319,7 +319,7 @@ export const DynamicGridCard = forwardRef<HTMLDivElement, DynamicGridCardProps>(
 
   // Typography/icon scale always follows the enclosing grid's `cardSize` (via context),
   // falling back to `'md'` with no enclosing grid — a card never overrides its own scale.
-  const gridSize = useContext(DynamicCardGridSizeContext)
+  const gridSize = useContext(DynamicCardsSizeContext)
   const effectiveSize = gridSize ?? 'md'
 
   const maxWidth = resolveSizeLimitMaxWidth(effectiveSize, sizeLimit)
@@ -332,7 +332,7 @@ export const DynamicGridCard = forwardRef<HTMLDivElement, DynamicGridCardProps>(
   // Resolve the `icon` shorthand to its full `{ content, placement }` form.
   const hasIcon = icon != null
   const iconContent = hasIcon ? (isIconConfig(icon) ? icon.content : icon) : null
-  const requestedIconPlacement: DynamicGridCardIconPlacement = hasIcon && isIconConfig(icon) ? (icon.placement ?? 'title') : 'title'
+  const requestedIconPlacement: DynamicCardIconPlacement = hasIcon && isIconConfig(icon) ? (icon.placement ?? 'title') : 'title'
   const iconPlacement = resolveCardIconPlacement(requestedIconPlacement, title != null || subtitle != null)
   const isTitleIcon = hasIcon && iconPlacement === 'title'
   const isCornerIcon = hasIcon && (iconPlacement === 'upperLeft' || iconPlacement === 'upperRight' || iconPlacement === 'lowerLeft' || iconPlacement === 'lowerRight')
@@ -364,12 +364,12 @@ export const DynamicGridCard = forwardRef<HTMLDivElement, DynamicGridCardProps>(
   if (process.env.NODE_ENV !== 'production') {
     if (iconPlacement === 'upperRight' && corner != null) {
       throw new Error(
-        "DynamicGridCard: icon placement 'upperRight' collides with the `corner` slot — both render in the top-right corner. Use a different icon placement (e.g. 'upperLeft') or drop `corner`.",
+        "DynamicCard: icon placement 'upperRight' collides with the `corner` slot — both render in the top-right corner. Use a different icon placement (e.g. 'upperLeft') or drop `corner`.",
       )
     }
     if (isCenterIcon && children != null) {
       throw new Error(
-        "DynamicGridCard: icon placement 'center' replaces the card body — it can't combine with `children`. Drop one of the two.",
+        "DynamicCard: icon placement 'center' replaces the card body — it can't combine with `children`. Drop one of the two.",
       )
     }
   }

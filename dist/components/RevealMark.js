@@ -7,7 +7,7 @@ import { cn } from './cn';
  * meant to sit in a decorative slot such as a card watermark.
  *
  * The reveal is driven entirely by CSS — the host owns the hover, not the mark — so a mark works
- * inside any container that carries `mrs-reveal-host`. `DynamicGridCard` adds that class to its
+ * inside any container that carries `mrs-reveal-host`. `DynamicCard` adds that class to its
  * root when given an element `watermark`, so a mark dropped there opens on card hover.
  *
  * {@link DrawerMark} is the first instance; build new marks the same way.

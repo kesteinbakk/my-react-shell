@@ -60,7 +60,7 @@ export const PaperCard = forwardRef(function PaperCard({ title, subtitle, icon, 
     // A visible grip shows when toggled on, or when a custom handle node is supplied.
     const hasDragHandle = showDragHandle || dragHandle != null;
     // A string watermark draws via the sheet's CSS `::after`; a ReactNode renders in an art
-    // layer (same string-vs-node split as StatCard/ContentCard/DynamicGridCard).
+    // layer (same string-vs-node split as StatCard/ContentCard/DynamicCard).
     const watermarkIsString = typeof watermark === 'string';
     const hasWatermark = watermarkIsString ? watermark.length > 0 : watermark != null;
     const hasArtWatermark = hasWatermark && !watermarkIsString;

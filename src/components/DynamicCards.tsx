@@ -6,7 +6,11 @@ import { Select, type SelectOption } from './Select'
 import { Switch } from './Switch'
 import { Icon } from '../icons'
 import { cn } from './cn'
-import { DYNAMIC_GRID_CARD_MIN_WIDTH, DYNAMIC_GRID_CARD_MAX_WIDTH, DynamicCardGridSizeContext } from './DynamicGridCard'
+import { DynamicCard, DYNAMIC_CARD_MIN_WIDTH, DYNAMIC_CARD_MAX_WIDTH, DynamicCardsSizeContext, type DynamicCardProps, type DynamicCardSize } from './DynamicCard'
+
+// Declared locally (browser-only lib, no @types/node). `process.env.NODE_ENV` is replaced
+// by the consumer's bundler, so the dev guard below is stripped in prod.
+declare const process: { env: { NODE_ENV?: string } }
 
 const FILTER_VISIBILITY_MIN_ITEMS = 6
 
@@ -23,9 +27,17 @@ export interface SortOption {
   dir?: 'asc' | 'desc'
 }
 
-export interface DynamicCardGridProps<T> {
+/**
+ * Builds the tile for one item, deferred so wrapper-injected props reach it at the right
+ * tree depth. Call it inside {@link DynamicCardsProps.wrapCard} — optionally passing a
+ * `Partial<DynamicCardProps>` override (e.g. a drag library's `dragHandleProps`, which are
+ * only known *inside* the per-item wrapper). See `wrapCard`.
+ */
+export type DynamicCardBuilder = (override?: Partial<DynamicCardProps>) => ReactNode
+
+/** Grid-level props shared by both the `getCard` and `renderCard` forms. */
+export interface DynamicCardsCommonProps<T> {
   items: T[]
-  renderCard: (item: T) => ReactNode
   getKey: (item: T) => string
   searchFields?: (keyof T)[]
   searchFn?: (item: T, query: string) => boolean
@@ -41,9 +53,35 @@ export interface DynamicCardGridProps<T> {
   emptyState?: ReactNode
   noResultsMessage?: string
   noResultsDescription?: string
-  cardSize?: import('./DynamicGridCard').DynamicGridCardSize
+  cardSize?: DynamicCardSize
   minColumnWidth?: string
 }
+
+/**
+ * Props for {@link DynamicCards}. The grid engine (search / filter / sort / size / empty
+ * states) plus exactly one of two card seams:
+ *
+ * - **`getCard`** — map each item to a {@link DynamicCardProps}; the grid renders the
+ *   `DynamicCard` for you (the "one level up" ergonomic path). Optionally pair with
+ *   **`wrapCard`** to wrap each tile (e.g. a drag `Sortable`) without dropping to
+ *   `renderCard` — `wrapCard` receives a lazy {@link DynamicCardBuilder} so wrapper-injected
+ *   props (a DnD library's `dragHandleProps`) reach the card at the correct depth.
+ * - **`renderCard`** — the raw escape hatch: render any node per item (a foreign card type,
+ *   a fully custom layout). No `wrapCard` (you already own the full node).
+ */
+export type DynamicCardsProps<T> = DynamicCardsCommonProps<T> &
+  (
+    | {
+        getCard: (item: T) => DynamicCardProps
+        wrapCard?: (item: T, buildCard: DynamicCardBuilder) => ReactNode
+        renderCard?: never
+      }
+    | {
+        renderCard: (item: T) => ReactNode
+        getCard?: never
+        wrapCard?: never
+      }
+  )
 
 function defaultSortCompare<T>(a: T, b: T, key: string, dir: 'asc' | 'desc'): number {
   const aVal = (a as Record<string, unknown>)[key]
@@ -70,9 +108,11 @@ function defaultSearchMatch<T>(item: T, query: string, fields: (keyof T)[]): boo
   })
 }
 
-export function DynamicCardGrid<T>({
+export function DynamicCards<T>({
   items,
+  getCard,
   renderCard,
+  wrapCard,
   getKey,
   searchFields,
   searchFn,
@@ -90,7 +130,22 @@ export function DynamicCardGrid<T>({
   noResultsDescription,
   cardSize,
   minColumnWidth,
-}: DynamicCardGridProps<T>) {
+}: DynamicCardsProps<T>) {
+  // One of `getCard` / `renderCard` is guaranteed by the props union at compile time; the
+  // runtime guard catches plain-JS misuse. `getCard` renders a `DynamicCard` (optionally
+  // through `wrapCard`, which gets a lazy builder so drag props inject at the right depth);
+  // `renderCard` is the raw escape hatch.
+  const renderItem = (item: T): ReactNode => {
+    if (getCard) {
+      const buildCard: DynamicCardBuilder = (override) => <DynamicCard {...getCard(item)} {...override} />
+      return wrapCard ? wrapCard(item, buildCard) : buildCard()
+    }
+    if (renderCard) return renderCard(item)
+    if (process.env.NODE_ENV !== 'production') {
+      throw new Error('DynamicCards: pass either `getCard` (renders a DynamicCard) or `renderCard` (raw node).')
+    }
+    return null
+  }
   const t = useShellText()
 
   const showFilterToolbar = filterThreshold === 0 || items.length >= filterThreshold
@@ -284,19 +339,19 @@ export function DynamicCardGrid<T>({
               if (minColumnWidth) {
                 vars['--mrs-dynamic-card-grid-min'] = minColumnWidth
               } else if (cardSize) {
-                vars['--mrs-dynamic-card-grid-min'] = `${DYNAMIC_GRID_CARD_MIN_WIDTH[cardSize]}px`
-                vars['--mrs-dynamic-card-grid-item-max'] = `${DYNAMIC_GRID_CARD_MAX_WIDTH[cardSize]}px`
+                vars['--mrs-dynamic-card-grid-min'] = `${DYNAMIC_CARD_MIN_WIDTH[cardSize]}px`
+                vars['--mrs-dynamic-card-grid-item-max'] = `${DYNAMIC_CARD_MAX_WIDTH[cardSize]}px`
               }
               return Object.keys(vars).length > 0 ? vars as React.CSSProperties : undefined
             })()}
           >
-            <DynamicCardGridSizeContext.Provider value={cardSize}>
+            <DynamicCardsSizeContext.Provider value={cardSize}>
               {processedItems.map((item) => (
                 <Fragment key={getKey(item)}>
-                  {renderCard(item)}
+                  {renderItem(item)}
                 </Fragment>
               ))}
-            </DynamicCardGridSizeContext.Provider>
+            </DynamicCardsSizeContext.Provider>
           </div>
         )}
       </div>

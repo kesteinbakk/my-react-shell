@@ -7,7 +7,7 @@ import { Select } from './Select';
 import { Switch } from './Switch';
 import { Icon } from '../icons';
 import { cn } from './cn';
-import { DYNAMIC_GRID_CARD_MIN_WIDTH, DYNAMIC_GRID_CARD_MAX_WIDTH, DynamicCardGridSizeContext } from './DynamicGridCard';
+import { DynamicCard, DYNAMIC_CARD_MIN_WIDTH, DYNAMIC_CARD_MAX_WIDTH, DynamicCardsSizeContext } from './DynamicCard';
 const FILTER_VISIBILITY_MIN_ITEMS = 6;
 function defaultSortCompare(a, b, key, dir) {
     const aVal = a[key];
@@ -34,7 +34,23 @@ function defaultSearchMatch(item, query, fields) {
         return false;
     });
 }
-export function DynamicCardGrid({ items, renderCard, getKey, searchFields, searchFn, searchPlaceholder, filterThreshold = FILTER_VISIBILITY_MIN_ITEMS, filters, filterFn, sortOptions, defaultSort, sortFn, align = 'start', loading, emptyState, noResultsMessage, noResultsDescription, cardSize, minColumnWidth, }) {
+export function DynamicCards({ items, getCard, renderCard, wrapCard, getKey, searchFields, searchFn, searchPlaceholder, filterThreshold = FILTER_VISIBILITY_MIN_ITEMS, filters, filterFn, sortOptions, defaultSort, sortFn, align = 'start', loading, emptyState, noResultsMessage, noResultsDescription, cardSize, minColumnWidth, }) {
+    // One of `getCard` / `renderCard` is guaranteed by the props union at compile time; the
+    // runtime guard catches plain-JS misuse. `getCard` renders a `DynamicCard` (optionally
+    // through `wrapCard`, which gets a lazy builder so drag props inject at the right depth);
+    // `renderCard` is the raw escape hatch.
+    const renderItem = (item) => {
+        if (getCard) {
+            const buildCard = (override) => _jsx(DynamicCard, { ...getCard(item), ...override });
+            return wrapCard ? wrapCard(item, buildCard) : buildCard();
+        }
+        if (renderCard)
+            return renderCard(item);
+        if (process.env.NODE_ENV !== 'production') {
+            throw new Error('DynamicCards: pass either `getCard` (renders a DynamicCard) or `renderCard` (raw node).');
+        }
+        return null;
+    };
     const t = useShellText();
     const showFilterToolbar = filterThreshold === 0 || items.length >= filterThreshold;
     const [searchQuery, setSearchQuery] = useState('');
@@ -119,9 +135,9 @@ export function DynamicCardGrid({ items, renderCard, getKey, searchFields, searc
                             vars['--mrs-dynamic-card-grid-min'] = minColumnWidth;
                         }
                         else if (cardSize) {
-                            vars['--mrs-dynamic-card-grid-min'] = `${DYNAMIC_GRID_CARD_MIN_WIDTH[cardSize]}px`;
-                            vars['--mrs-dynamic-card-grid-item-max'] = `${DYNAMIC_GRID_CARD_MAX_WIDTH[cardSize]}px`;
+                            vars['--mrs-dynamic-card-grid-min'] = `${DYNAMIC_CARD_MIN_WIDTH[cardSize]}px`;
+                            vars['--mrs-dynamic-card-grid-item-max'] = `${DYNAMIC_CARD_MAX_WIDTH[cardSize]}px`;
                         }
                         return Object.keys(vars).length > 0 ? vars : undefined;
-                    })(), children: _jsx(DynamicCardGridSizeContext.Provider, { value: cardSize, children: processedItems.map((item) => (_jsx(Fragment, { children: renderCard(item) }, getKey(item)))) }) })) })] }));
+                    })(), children: _jsx(DynamicCardsSizeContext.Provider, { value: cardSize, children: processedItems.map((item) => (_jsx(Fragment, { children: renderItem(item) }, getKey(item)))) }) })) })] }));
 }

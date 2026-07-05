@@ -170,7 +170,7 @@ export interface PaperCardProps {
    * Faint background watermark. A **`string`** is an oversized emoji/text drawn via the
    * sheet's CSS `::after` (e.g. `'📄'`); a **`ReactNode`** (e.g. an `<AppIcon>` / `<img>`)
    * renders in an art layer behind the content. Same shape as `StatCard`/`ContentCard`/
-   * `DynamicGridCard`.
+   * `DynamicCard`.
    */
   watermark?: ReactNode
   /**
@@ -277,7 +277,7 @@ export const PaperCard = forwardRef<HTMLDivElement, PaperCardProps>(function Pap
   const hasDragHandle = showDragHandle || dragHandle != null
 
   // A string watermark draws via the sheet's CSS `::after`; a ReactNode renders in an art
-  // layer (same string-vs-node split as StatCard/ContentCard/DynamicGridCard).
+  // layer (same string-vs-node split as StatCard/ContentCard/DynamicCard).
   const watermarkIsString = typeof watermark === 'string'
   const hasWatermark = watermarkIsString ? watermark.length > 0 : watermark != null
   const hasArtWatermark = hasWatermark && !watermarkIsString

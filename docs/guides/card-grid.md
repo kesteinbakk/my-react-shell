@@ -13,12 +13,12 @@ Pick the card by what it holds; pick the grid by whether the card has a fixed si
 | **`StatCard`** | A KPI / status tile: title, accent medallion (number or arc-ring), a stats row, optional gauge. | Fixed-width, golden-ratio (`height = width / φ`). |
 | **`ContentCard`** | A freeform-text tile: title + a `content` string (optional `html`), optional gauge. The text counterpart to `StatCard`. | Fixed-width, golden-ratio. |
 | **`PaperCard`** | A small preview / thumbnail styled as a dog-eared A4 sheet. | Fixed-width, A4 portrait (`height = width × √2`). |
-| **`DynamicGridCard`** | A size-less tile that should **stretch** to fill its grid column. The card to reach for inside a `DynamicCardGrid` (e.g. navigation tiles). | Fluid — fills its column, golden-ratio shape. |
-| **`DynamicNavCards`** | A **self-contained grid of navigation tiles** — renders its own lean tile (not a `DynamicGridCard`) but drives it through the same `DynamicCardGrid`. Each tile's `title` grows large when short and steps down (2-line cap) as it grows. Reach for a grid of plain nav links. | Fluid — inherits `DynamicCardGrid`'s `1fr` columns + `cardSize` scale. |
+| **`DynamicCard`** | A size-less tile that should **stretch** to fill its grid column. The card to reach for inside a `DynamicCards` (e.g. navigation tiles). | Fluid — fills its column, golden-ratio shape. |
+| **`DynamicNavCards`** | A **self-contained grid of navigation tiles** — renders its own lean tile (not a `DynamicCard`) but drives it through the same `DynamicCards`. Each tile's `title` grows large when short and steps down (2-line cap) as it grows. Reach for a grid of plain nav links. | Fluid — inherits `DynamicCards`'s `1fr` columns + `cardSize` scale. |
 | **`PhiCard`** *(legacy)* | The original golden-ratio card. **Being phased out** — prefer `StatCard` / `ContentCard` for new work; it ships only so existing consumers keep building. | Fixed-width, golden-ratio. |
 
 > **Navigation — any card can be a real link.** `StatCard`, `ContentCard`, `PaperCard`, and
-> `DynamicGridCard` all accept a **`renderLink`** render-prop that turns the whole tile into a
+> `DynamicCard` all accept a **`renderLink`** render-prop that turns the whole tile into a
 > consumer-supplied router `<Link>` (a block-link overlay), without the shell depending on any
 > router. See [§3 Navigation links](#3-navigation-links-any-card) — this is the one pattern for
 > all four, so a card used as a nav target behaves identically everywhere.
@@ -31,10 +31,10 @@ whether the cards you are placing have an intrinsic, fixed size.
 | Layout | Cards | Behaviour |
 | :--- | :--- | :--- |
 | **`CardGrid`** (static) | Fixed-size (`StatCard`, `ContentCard`, `PaperCard`, legacy `PhiCard`) | Cards flow left-to-right and **wrap**; a fixed gap between them; **no stretching** — a larger gap may remain at the end of a row. Every card keeps its own width/height. |
-| **`DynamicCardGrid`** + **`DynamicGridCard`** (fluid) | Size-less | Cards **stretch** to fill uniform `1fr` columns; a built-in search / filter / sort toolbar. |
+| **`DynamicCards`** + **`DynamicCard`** (fluid) | Size-less | Cards **stretch** to fill uniform `1fr` columns; a built-in search / filter / sort toolbar. |
 
 > **Match the card to the grid.** Fixed-size cards (`StatCard` / `ContentCard` / `PaperCard`)
-> go in `CardGrid`; a size-less `DynamicGridCard` goes in `DynamicCardGrid`. Putting a
+> go in `CardGrid`; a size-less `DynamicCard` goes in `DynamicCards`. Putting a
 > fixed-size card in the fluid grid makes it overflow its narrower `1fr` column and overlap its
 > neighbour — a real bug, not a cosmetic one.
 
@@ -85,7 +85,7 @@ an accent stripe is opt-in (none by default).
 
 ---
 
-## 2. `DynamicCardGrid` + `DynamicGridCard` — the fluid grid
+## 2. `DynamicCards` + `DynamicCard` — the fluid grid
 
 For cards that have no intrinsic size and should stretch to fill the available width
 uniformly, with no awkward gaps. This is a CSS-Grid layout with a search/filter/sort toolbar.
@@ -94,27 +94,53 @@ uniformly, with no awkward gaps. This is a CSS-Grid layout with a search/filter/
 
 The grid container uses
 `grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--mrs-dynamic-card-grid-min)), 1fr))`.
-Passing a `cardSize` to `DynamicCardGrid` emits two CSS variables down the tree:
+Passing a `cardSize` to `DynamicCards` emits two CSS variables down the tree:
 
 - `--mrs-dynamic-card-grid-min` — the minimum column width.
 - `--mrs-dynamic-card-grid-item-max` — the maximum width a card grows to.
 
-`DynamicGridCard` takes `width: 100%` to fill its column and inherits the grid's cap via
+`DynamicCard` takes `width: 100%` to fill its column and inherits the grid's cap via
 `max-width: var(--mrs-dynamic-grid-card-max-width, var(--mrs-dynamic-card-grid-item-max, 100%))`,
 centering itself (`margin: 0 auto`) when its lane is wider than the cap. `1fr` columns keep
 every column uniform across all rows; the cap keeps a lone card on a sparse row from
 stretching grotesquely.
 
 ```tsx
-import { DynamicCardGrid, DynamicGridCard } from 'my-react-shell/components'
+import { DynamicCards, DynamicCard } from 'my-react-shell/components'
 
-<DynamicCardGrid
+// getCard — the ergonomic default: map each item to DynamicCard props, the grid builds it.
+<DynamicCards
   items={items}
   getKey={(it) => it.id}
   cardSize="md"
-  renderCard={(it) => <DynamicGridCard title={it.title}>{it.body}</DynamicGridCard>}
+  getCard={(it) => ({ title: it.title, children: it.body })}
 />
 ```
+
+**Two card seams — pick one.** `getCard(item) => DynamicCardProps` (above) is the ergonomic
+default. `renderCard(item) => ReactNode` is the raw escape hatch — return *any* node (a foreign
+card type, a fully custom layout). Pair `getCard` with **`wrapCard(item, buildCard)`** to wrap
+each tile — e.g. a drag `Sortable`. `wrapCard` hands you a **lazy** `buildCard`: call
+`buildCard(override?)` to render the card, injecting props known only inside the wrapper (a DnD
+library's `dragHandleProps`) so they reach the card at the right tree depth:
+
+```tsx
+<DynamicCards
+  items={items}
+  getKey={(it) => it.id}
+  cardSize="md"
+  getCard={(it) => ({ title: it.title, dragWholeCard: true })}
+  wrapCard={(it, buildCard) => (
+    <SortableCard id={it.id}>{(dragHandleProps) => buildCard({ dragHandleProps })}</SortableCard>
+  )}
+/>
+```
+
+> **`DynamicCards` is a bounded-height, internally-scrolling grid** (a flex column whose card
+> area scrolls). Drop it into a sized flex parent. For an **inline, page-flow** grid — one that
+> grows with its content and scrolls with the page — render `DynamicCard`s directly in your own
+> CSS grid instead (the standalone `DynamicCard` is exported for exactly this, and for drag
+> overlays / custom layouts).
 
 ### Sizes (fluid)
 
@@ -127,14 +153,14 @@ it on the grid, never on an individual card:
 | **`md`** | 240px | 320px | Standard widgets. |
 | **`lg`** | 400px | 500px | Featured content, wide charts. |
 
-`DynamicGridCard` also has a `shape`: `'standard'` (φ:1, default) or `'landscape'` (φ²:1,
+`DynamicCard` also has a `shape`: `'standard'` (φ:1, default) or `'landscape'` (φ²:1,
 shorter and wider). An **accent stripe** is opt-in via `tone` (semantic tokens) or a raw
 `color`, with `accentPlacement` reading as a `'top'` stripe (default) or a `'left'` bar —
 the same accent vocabulary as `StatCard`/`PaperCard`. It's independent of the faint surface
 `tint`, so a card can carry both.
 
-`DynamicGridCard` has no `size` prop of its own — a card's typography/icon scale always
-resolves from the enclosing `DynamicCardGrid`'s `cardSize` via context, falling back to
+`DynamicCard` has no `size` prop of its own — a card's typography/icon scale always
+resolves from the enclosing `DynamicCards`'s `cardSize` via context, falling back to
 `'md'` for a card used outside any grid. To make **one card** narrower than its grid-mates
 (e.g. a nav tile that should read smaller inside a `lg` grid), pass **`sizeLimit`**: a
 `0`–`5` step that narrows the card's own `max-width` from its effective tier's cap toward
@@ -146,7 +172,7 @@ size is already `'sm'` — there's no smaller tier to step toward.
 The header `icon` auto-shrinks, and a string `title` auto-fits (3 length-based steps, clamped
 to 2 lines), on an `sm`-size card — `md`/`lg` keep both at their normal size. Resolution is
 **deterministic, not measured**: a card's `mrs-dynamic-grid-card--{size}` class always comes
-from the enclosing `DynamicCardGrid`'s `cardSize` via context (or `'md'` standalone) — never
+from the enclosing `DynamicCards`'s `cardSize` via context (or `'md'` standalone) — never
 from `sizeLimit`, which only affects width. A `@container` query on the card's rendered width
 was tried first and dropped: Chromium gives inconsistent results for a container-query
 container that also carries `aspect-ratio` inside a `1fr` grid track, so two equal-width
@@ -154,7 +180,7 @@ cards could resolve to different icon/title sizes.
 
 ### Icon placement (all four cards)
 
-`StatCard`, `ContentCard`, `PaperCard`, and `DynamicGridCard` all take the **same** `icon` prop
+`StatCard`, `ContentCard`, `PaperCard`, and `DynamicCard` all take the **same** `icon` prop
 and placement vocabulary — the shared `CardIconPlacement` type + `{ content, placement }` config
 (`CardIconConfig`). `icon` takes a bare `ReactNode` (shorthand for
 `{ content: icon, placement: 'title' }` — the in-flow behavior, beside the title block) **or** the
@@ -168,7 +194,7 @@ full `{ content, placement }` form:
 
 ```tsx
 // In-flow (shorthand — identical to { content: '⚙️', placement: 'title' }):
-<DynamicGridCard icon="⚙️" title="Setup" />
+<DynamicCard icon="⚙️" title="Setup" />
 
 // Corner badge — doesn't push the title:
 <StatCard title="Synced" icon={{ content: '✅', placement: 'lowerRight' }} />
@@ -182,7 +208,7 @@ corner sits at the same top-left inset where the `title`/`subtitle` block starts
 would land on top of that text. Rather than a dev-throw (`title` is mandatory on three of the
 four cards, which would make `'upperLeft'` unusable there), it's resolved silently to `'title'`
 placement instead — in-flow, beside the title. `'upperLeft'` still renders as a true corner
-overlay on a `DynamicGridCard` with no `title` or `subtitle`.
+overlay on a `DynamicCard` with no `title` or `subtitle`.
 
 **Per-card collision rules** — a placement that would land on an existing raised slot **throws
 in dev** (a no-op in prod). The four corners and the drag handle don't collide: the handle is
@@ -194,7 +220,7 @@ edges.
 | **`StatCard`** | the corner `medallion` (both own the top-right) | `stats` (both own the body) |
 | **`ContentCard`** | — *(no corner-occupying slot)* | `content` / `children` (both own the body — with a `center` icon they're optional) |
 | **`PaperCard`** | the `corner` slot (the icon is offset below the dog-eared fold to clear it, but `corner` sits there too) | `content` / `image` (both own the body) |
-| **`DynamicGridCard`** | the `corner` slot | `children` |
+| **`DynamicCard`** | the `corner` slot | `children` |
 
 ### Hover feedback
 
@@ -206,7 +232,7 @@ card that's the primary action in a dense layout). `hoverable` defaults to `true
 
 ### Drag-reorder handle
 
-`DynamicGridCard` carries the same `showDragHandle` / `dragHandle` / `dragHandleProps` /
+`DynamicCard` carries the same `showDragHandle` / `dragHandle` / `dragHandleProps` /
 `dragHandleLabel` seam as `StatCard` / `ContentCard` / `PaperCard`. Pass **`showDragHandle`**
 (boolean) to render the built-in grip, or pass a custom handle `ReactNode` to **`dragHandle`**
 (which implies a visible handle on its own). Spread your DND library's listeners (e.g. `@dnd-kit`'s
@@ -214,7 +240,7 @@ card that's the primary action in a dense layout). `hoverable` defaults to `true
 accessible name — **no default**; pass a translated string when a handle is shown (or supply
 `aria-label` via `dragHandleProps`). If you omit it the grip glyph stands alone with no accessible
 name, so pass it for any real reorder UI. Unlike the other cards (PaperCard/PhiCard) — whose handle sits
-top-centre — the `StatCard`, `ContentCard`, and `DynamicGridCard` grip is **vertical stripes pinned to the right edge, vertically
+top-centre — the `StatCard`, `ContentCard`, and `DynamicCard` grip is **vertical stripes pinned to the right edge, vertically
 centred**, and the card reserves a little right padding so the grip never overlaps its content.
 
 Alternatively, you can make the **whole card surface** draggable by passing the opt-in
@@ -228,13 +254,13 @@ never changes the cursor (a 200ms hold threshold gates it). It can coexist with 
 Both drag mechanisms can safely **coexist with navigation links** (`renderLink` or `onClick`). Since DND library sensors (like `@dnd-kit`'s Mouse/Touch sensors) enforce distance activation thresholds (e.g. dragging at least 5px to start a drag), a quick click/tap on the card triggers normal navigation, while dragging past the threshold initiates a drag.
 
 ```tsx
-import { DynamicGridCard } from 'my-react-shell/components'
+import { DynamicCard } from 'my-react-shell/components'
 import { useSortable } from '@dnd-kit/sortable'
 
 function SortableCard({ item }: { item: Item }) {
   const { setNodeRef, attributes, listeners, transform, transition } = useSortable({ id: item.id })
   return (
-    <DynamicGridCard
+    <DynamicCard
       ref={setNodeRef}
       title={item.title}
       footer={{ lines: [{ text: item.meta }] }}
@@ -250,10 +276,10 @@ function SortableCard({ item }: { item: Item }) {
 ### `DynamicNavCards` — the navigation-tile grid
 
 `DynamicNavCards` is a **self-contained grid of plain navigation links**. Unlike the card
-family it renders its own lean tile — it does **not** wrap `DynamicGridCard` — but it drives
-that grid through the same `DynamicCardGrid`, so it inherits the fluid `1fr` columns, the
+family it renders its own lean tile — it does **not** wrap `DynamicCard` — but it drives
+that grid through the same `DynamicCards`, so it inherits the fluid `1fr` columns, the
 `sm`/`md`/`lg` `cardSize` scale, and the built-in search / filter / sort toolbar. Drive it like
-`DynamicCardGrid`, but map each item to a tile with **`getCard`** instead of `renderCard`.
+`DynamicCards`, but map each item to a tile with **`getCard`** instead of `renderCard`.
 
 - **Fluid title** — the tile's single `title` (required) is its **centred main content**,
   sized by label length: **large when short, stepping down and clamped to two lines** as it
@@ -262,6 +288,8 @@ that grid through the same `DynamicCardGrid`, so it inherits the fluid `1fr` col
   carries `renderLink` (whole-tile navigation, accessible name auto-wired from `title`),
   `onClick`, `hoverable`/`lift`, `tone`/`color` accent, a freeform `footer`, a `corner` slot,
   and `watermark` (+ `autoscaleWatermark`).
+- **`wrapCard`** — like `DynamicCards`, pass `wrapCard(item, buildCard)` to wrap each tile in a
+  drag `Sortable` (the tiles ride the same grid, so sortable folder grids work here too).
 
 ```tsx
 import { DynamicNavCards } from 'my-react-shell/components'
@@ -283,7 +311,7 @@ import { Link } from '@tanstack/react-router'
 
 ## 3. Navigation links (any card)
 
-`StatCard`, `ContentCard`, `PaperCard`, and `DynamicGridCard` can each act as a **whole-card
+`StatCard`, `ContentCard`, `PaperCard`, and `DynamicCard` can each act as a **whole-card
 navigation target** without the shell depending on any router. The consumer supplies its own
 router `<Link>` through the `renderLink` render-prop; the card mounts it as a **full-bleed
 block-link overlay** inside a `position: relative` root, so the entire tile is one real,
@@ -291,14 +319,14 @@ keyboard-focusable, keyboard-activatable anchor — while the card root `<div>` 
 hover / border / `:focus-visible` states. It is **one pattern across all four cards**, so a card
 used for navigation behaves identically wherever you use it.
 
-The example below uses `DynamicGridCard` inside a `DynamicCardGrid`; the same `renderLink` prop
+The example below uses `DynamicCard` inside a `DynamicCards`; the same `renderLink` prop
 goes on a `StatCard` / `ContentCard` / `PaperCard` rendered through `CardGrid` + `.map()`.
 
 ```tsx
 import { Link } from '@tanstack/react-router'
 
 renderCard={(it) => (
-  <DynamicGridCard
+  <DynamicCard
     icon={it.icon}
     title={it.title}
     subtitle={it.subtitle}
@@ -325,11 +353,11 @@ renderCard={(it) => (
 - **Dragging coexists with navigation.** You can combine a drag handle (`showDragHandle`) or `dragWholeCard` with `renderLink` or `onClick`. The browser distinguishes between dragging and clicking based on motion/delay thresholds set on your DND sensors.
 
 On every card the overlay sits *beneath* the content layer and the content (`header`/`body`/
-`footer` on `DynamicGridCard`, the equivalent inner wrapper on `StatCard`/`ContentCard`/
+`footer` on `DynamicCard`, the equivalent inner wrapper on `StatCard`/`ContentCard`/
 `PaperCard`) is click-transparent (`pointer-events: none`), so a click anywhere on the card —
 not just the title — reaches the overlay; raised slots (`corner`, `StatCard`'s medallion button,
 any drag handle) opt back into `pointer-events` to stay independently clickable. This matters
-for `DynamicGridCard` specifically with a `watermark`: a watermarked card promotes `header`/
+for `DynamicCard` specifically with a `watermark`: a watermarked card promotes `header`/
 `body`/`footer` to `position: relative; z-index: 1` (to sit above the watermark's `z-index: 0`
 layer), which ties the overlay's own `z-index: 1` — without click-transparency, the
 later-in-DOM content would win that tie and silently swallow every click. Type-safety, the
@@ -339,7 +367,7 @@ auto-wired accessible name, and the raised-slot rule are identical across all fo
 
 ## 4. Watermarks — emoji or a hover-reveal mark
 
-Every card in the family (`StatCard`, `ContentCard`, `PaperCard`, `DynamicGridCard`) shares one
+Every card in the family (`StatCard`, `ContentCard`, `PaperCard`, `DynamicCard`) shares one
 `watermark` seam: it takes a **string** (a faint oversized emoji, the long-standing behaviour)
 **or** a **`ReactNode`** art layer. The shipped art mark is **`DrawerMark`** — an isometric drawer
 that rests closed and slides open on card hover, built on the **`RevealMark`** seam. An element
@@ -362,9 +390,9 @@ lays itself out at watermark scale and shouldn't be force-scaled. It's a no-op f
 > platform's policy renders the native char (common on Apple) or a bundled image (common elsewhere).
 
 ```tsx
-import { DynamicGridCard, DrawerMark } from 'my-react-shell/components'
+import { DynamicCard, DrawerMark } from 'my-react-shell/components'
 
-<DynamicGridCard title="Files" subtitle="Project documents"
+<DynamicCard title="Files" subtitle="Project documents"
   footer={{ lines: [{ text: '8 items' }] }} hoverable
   watermark={<DrawerMark open={isActive} />}
   renderLink={(p) => <Link {...p} to="/files/$id" params={{ id }} />} />
@@ -532,7 +560,7 @@ legibility.
 />
 ```
 
-The **`corner`** slot works the same way as on `DynamicGridCard`: a freeform `ReactNode`
+The **`corner`** slot works the same way as on `DynamicCard`: a freeform `ReactNode`
 (typically a `DropdownMenu` trigger) rendered above the link overlay as a sibling of the anchor,
 so it stays clickable even when the whole card is a navigation link. It sits just below the
 fold triangle height (via `top: var(--mrs-paper-fold)`) so the dog-ear remains visible; the

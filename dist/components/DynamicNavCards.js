@@ -2,8 +2,8 @@ import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import { useContext, useId } from 'react';
 import { cn } from './cn';
 import { resolveAccentColor } from './accent';
-import { DynamicCardGrid } from './DynamicCardGrid';
-import { DynamicCardGridSizeContext } from './DynamicGridCard';
+import { DynamicCards } from './DynamicCards';
+import { DynamicCardsSizeContext } from './DynamicCard';
 /**
  * `title` fit ladder: a short label renders very large (step `0`) and steps down through
  * progressively smaller sizes as it grows (`4` = smallest). Length-based; a non-string node
@@ -27,14 +27,14 @@ function titleFit(title) {
 /**
  * One independent nav tile — the single-tile primitive behind `DynamicNavCards`.
  * Exported so a consumer can place a lone tile outside the grid (e.g. wrapped in a
- * drag handle), keeping the exact tile look without a `DynamicGridCard`. Props are
+ * drag handle), keeping the exact tile look without a `DynamicCard`. Props are
  * one {@link DynamicNavCard}.
  */
 export function NavTile({ title, renderLink, onClick, hoverable, lift = false, tone, color, accentPlacement = 'top', footer, corner, watermark, autoscaleWatermark = true, className, }) {
     const titleId = useId();
     // Typography scale follows the enclosing grid's `cardSize` (via context), falling back to
     // `'md'` with no enclosing grid — a tile never overrides its own scale.
-    const gridSize = useContext(DynamicCardGridSizeContext);
+    const gridSize = useContext(DynamicCardsSizeContext);
     const effectiveSize = gridSize ?? 'md';
     const isHoverable = hoverable ?? !!onClick;
     const accentColor = resolveAccentColor(tone, color);
@@ -53,14 +53,14 @@ export function NavTile({ title, renderLink, onClick, hoverable, lift = false, t
 }
 /**
  * A **self-contained grid of navigation tiles**. Unlike the card family it renders its own
- * lean tile element (it does **not** use `DynamicGridCard`), but it drives that grid through
- * the same {@link DynamicCardGrid} — so it inherits its fluid `1fr` columns, `cardSize`
+ * lean tile element (it does **not** use `DynamicCard`), but it drives that grid through
+ * the same {@link DynamicCards} — so it inherits its fluid `1fr` columns, `cardSize`
  * scale, and the built-in search / filter / sort toolbar. Each tile's single `title` grows
  * large when the label is short and steps down (clamped at two lines) as it lengthens, so a
  * grid of short nav labels reads big and bold.
  *
- * Drive it like `DynamicCardGrid`, but map each item to a tile with `getCard` instead of
- * `renderCard`:
+ * Drive it like `DynamicCards`, but map each item to a tile with `getCard` instead of
+ * `renderCard`. Pass `wrapCard` to wrap each tile (e.g. a drag `Sortable`):
  *
  * ```tsx
  * <DynamicNavCards
@@ -71,6 +71,9 @@ export function NavTile({ title, renderLink, onClick, hoverable, lift = false, t
  * />
  * ```
  */
-export function DynamicNavCards({ getCard, ...gridProps }) {
-    return _jsx(DynamicCardGrid, { ...gridProps, renderCard: (item) => _jsx(NavTile, { ...getCard(item) }) });
+export function DynamicNavCards({ getCard, wrapCard, ...gridProps }) {
+    return (_jsx(DynamicCards, { ...gridProps, renderCard: (item) => {
+            const buildCard = (override) => _jsx(NavTile, { ...getCard(item), ...override });
+            return wrapCard ? wrapCard(item, buildCard) : buildCard();
+        } }));
 }
