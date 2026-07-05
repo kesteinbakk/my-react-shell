@@ -16,7 +16,7 @@ export interface ThemeProviderProps {
     children: ReactNode;
     /** Palettes this app exposes. Defaults to the five built-ins. Pass a stable reference. */
     themes?: readonly ThemeInfo[];
-    /** Palette used when nothing is persisted. Default `'ocean'`. */
+    /** Palette used when nothing is persisted. Default `'soft'`. */
     defaultTheme?: ThemeName;
     /** Mode used when nothing is persisted and not following the system. Default `'light'`. */
     defaultMode?: ThemeMode;

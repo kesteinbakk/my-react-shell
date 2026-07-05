@@ -62,6 +62,16 @@ export function Sheet({ children, trigger, open, onOpenChange, onEscapeKeyDown, 
                             // a genuine backdrop click (the guard already excluded poppers, tooltips,
                             // and stacked dialogs above) instead dismisses the sheet.
                             if (!modal && closeOnOutsideClick) {
+                                // preventDefault FIRST so Radix's own DismissableLayer `onDismiss`
+                                // (which fires when the event is not defaulted) does NOT also close
+                                // the dialog. Without this the dialog is closed through two channels
+                                // in one tick — the consumer's `onOpenChange(false)` here AND Radix's
+                                // internal `setOpen(false)` — and the double transition strands the
+                                // exit animation: `data-state` flips to "closed" but the slide-out
+                                // never plays, so `animationend` never fires and Radix Presence keeps
+                                // the panel mounted forever. Routing through the single consumer
+                                // channel (matching the ✕ path) makes the exit animate and unmount.
+                                e.preventDefault();
                                 onOpenChange?.(false);
                                 return;
                             }

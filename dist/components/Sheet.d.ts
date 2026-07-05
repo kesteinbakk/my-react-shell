@@ -67,12 +67,15 @@ export interface SheetProps {
     /**
      * Let a genuine outside click dismiss a **non-modal** sheet. By default a non-modal
      * sheet suppresses outside-click close (the page stays interactive and the panel
-     * closes only via its ✕ / an external toggle). Set `true` to instead call
-     * `onOpenChange(false)` on a real backdrop click. Has no effect on a modal sheet
-     * (Radix already dismisses those on outside click) and is applied only **after** the
-     * nested-layer guard passes, so a click inside a nested popper (Select, menu,
-     * Popover), a stacked Dialog, or a tooltip never collapses the sheet. Esc handling is
-     * unaffected — wire `onEscapeKeyDown` to suppress it separately. Defaults to `false`.
+     * closes only via its ✕ / an external toggle). Set `true` to instead close on a real
+     * backdrop click: the shell `preventDefault`s the outside interaction (so Radix's own
+     * DismissableLayer dismiss does not *also* fire) and calls `onOpenChange(false)` as the
+     * single close channel — the same channel the ✕ uses, so the exit animation plays and
+     * the panel unmounts cleanly. Has no effect on a modal sheet (Radix already dismisses
+     * those on outside click) and is applied only **after** the nested-layer guard passes,
+     * so a click inside a nested popper (Select, menu, Popover), a stacked Dialog, or a
+     * tooltip never collapses the sheet. Esc handling is unaffected — wire `onEscapeKeyDown`
+     * to suppress it separately. Defaults to `false`.
      */
     closeOnOutsideClick?: boolean;
     /**
