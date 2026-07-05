@@ -54,7 +54,7 @@ function applyThemeToDom(theme, mode) {
     root.setAttribute('data-theme', String(theme));
     root.setAttribute('data-mode', mode);
 }
-export function ThemeProvider({ children, themes = BUILT_IN_THEMES, defaultTheme = 'soft', defaultMode = 'light', defaultFollowSystem = true, storageKey = DEFAULT_STORAGE_KEY, onChange, }) {
+export function ThemeProvider({ children, themes = BUILT_IN_THEMES, defaultTheme = 'ocean', defaultMode = 'light', defaultFollowSystem = true, storageKey = DEFAULT_STORAGE_KEY, onChange, }) {
     const [state, setState] = useState(() => {
         const persisted = readPersisted(storageKey, themes);
         const followSystem = persisted?.followSystem ?? defaultFollowSystem;
