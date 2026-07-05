@@ -1,4 +1,4 @@
-import { useContext, useId, type CSSProperties, type MouseEventHandler, type ReactNode } from 'react'
+import { isValidElement, useContext, useId, type CSSProperties, type MouseEventHandler, type ReactNode } from 'react'
 import { cn } from './cn'
 import { resolveAccentColor } from './accent'
 import type { AccentPlacement } from './accent'
@@ -17,18 +17,43 @@ export interface DynamicNavCardLinkProps {
 }
 
 /**
+ * Vertical placement of a nav tile's `title` content. `'top'` and `'bottom'` sit **well
+ * toward the card edge** (the free space splits 1:5 / 5:1), never flush against it;
+ * `'center'` is the true middle.
+ */
+export type NavTileContentPlacement = 'top' | 'center' | 'bottom'
+
+/**
+ * The three-slot object form of a nav tile's `footer`: `left`, `center`, and `right`, laid
+ * out on a `1fr auto 1fr` grid so `center` stays truly centred however the sides differ.
+ * All slots optional.
+ */
+export interface NavTileFooterSlots {
+  left?: ReactNode
+  center?: ReactNode
+  right?: ReactNode
+}
+
+/**
  * One navigation tile's content, returned by {@link DynamicNavCardsProps.getCard}. A
  * **lean** nav tile — its own element (it does **not** wrap `DynamicCard`) whose single
- * `title` renders as large, centred main content that scales up when the label is short and
- * steps down (clamped at two lines) as it grows.
+ * `title` renders as large, horizontally centred main content that scales up when the label
+ * is short and steps down (clamped at two lines) as it grows.
  */
 export interface DynamicNavCard {
   /**
-   * The tile's label — its **centred main content**. **Required, no default** — it's
-   * user-facing text, so the consumer supplies a translated string. Rendered large when the
-   * label is short and stepped down as it lengthens, clamped at two lines.
+   * The tile's label — its **main content**, horizontally centred and placed vertically by
+   * `contentPlacement`. **Required, no default** — it's user-facing text, so the consumer
+   * supplies a translated string. Rendered large when the label is short and stepped down as
+   * it lengthens, clamped at two lines.
    */
   title: ReactNode
+  /**
+   * Where the `title` sits vertically — see {@link NavTileContentPlacement}. Default
+   * **`'top'`**. A `watermark` dodges it: content top → watermark low, content bottom →
+   * watermark high, content center → the default slightly-below-centre spot.
+   */
+  contentPlacement?: NavTileContentPlacement
   /**
    * Whole-tile navigation seam. The consumer renders its own router `<Link>` here, spreading
    * the supplied props, and the tile mounts it as a **full-bleed block-link overlay** so the
@@ -57,14 +82,20 @@ export interface DynamicNavCard {
   color?: string
   /** Where the accent reads when `tone`/`color` is set: a `'top'` stripe (default) or a `'left'` bar. */
   accentPlacement?: AccentPlacement
-  /** Footer slot — a freeform node (e.g. a meta line) pinned to the bottom of the tile. */
-  footer?: ReactNode
+  /**
+   * Footer pinned to the bottom of the tile. A bare node renders **centred**; the
+   * {@link NavTileFooterSlots} object form places up to three slots — `left`, `center`,
+   * `right`.
+   */
+  footer?: ReactNode | NavTileFooterSlots
   /** Top-corner action slot (e.g. a menu trigger). Raised above the link overlay so it stays clickable. */
   corner?: ReactNode
   /**
-   * Faint background watermark behind the content, centred horizontally and dropped a little
-   * below centre. A **string** is an emoji/text watermark drawn via a pseudo-element; a
-   * **`ReactNode`** renders in a faint art layer (the tile root becomes a `mrs-reveal-host`).
+   * Faint background watermark behind the content, centred horizontally and placed vertically
+   * opposite the `contentPlacement` (low under top content, high over bottom content, a little
+   * below centre with centred content). A **string** is an emoji/text watermark drawn via a
+   * pseudo-element; a **`ReactNode`** renders in a faint art layer (the tile root becomes a
+   * `mrs-reveal-host`).
    */
   watermark?: ReactNode
   /**
@@ -120,6 +151,7 @@ function titleFit(title: ReactNode): 0 | 1 | 2 | 3 | 4 {
  */
 export function NavTile({
   title,
+  contentPlacement = 'top',
   renderLink,
   onClick,
   hoverable,
@@ -145,6 +177,15 @@ export function NavTile({
   const accentColor = resolveAccentColor(tone, color)
   const hasAccent = accentColor != null
 
+  // Resolve the `footer` shorthand: a bare node is `{ center: node }`; a plain (non-element,
+  // non-array) object is already the three-slot form.
+  const footerSlots: NavTileFooterSlots | null =
+    footer == null
+      ? null
+      : typeof footer === 'object' && !isValidElement(footer) && !Array.isArray(footer)
+        ? (footer as NavTileFooterSlots)
+        : { center: footer as ReactNode }
+
   const watermarkIsString = typeof watermark === 'string'
   const hasWatermark = watermarkIsString ? watermark.length > 0 : watermark != null
   const hasArtWatermark = hasWatermark && !watermarkIsString
@@ -161,6 +202,7 @@ export function NavTile({
       className={cn(
         'mrs-dynamic-nav-card',
         `mrs-dynamic-nav-card--${effectiveSize}`,
+        `mrs-dynamic-nav-card--content-${contentPlacement}`,
         hasAccent && `mrs-dynamic-nav-card--accent-${accentPlacement}`,
         isHoverable && 'mrs-dynamic-nav-card--hoverable',
         isHoverable && lift && 'mrs-dynamic-nav-card--lift',
@@ -197,7 +239,13 @@ export function NavTile({
         </span>
       </div>
 
-      {footer != null ? <div className="mrs-dynamic-nav-card__footer">{footer}</div> : null}
+      {footerSlots != null ? (
+        <div className="mrs-dynamic-nav-card__footer">
+          <span className="mrs-dynamic-nav-card__footer-left">{footerSlots.left}</span>
+          <span className="mrs-dynamic-nav-card__footer-center">{footerSlots.center}</span>
+          <span className="mrs-dynamic-nav-card__footer-right">{footerSlots.right}</span>
+        </div>
+      ) : null}
     </div>
   )
 }

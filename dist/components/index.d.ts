@@ -127,4 +127,4 @@ export type { DynamicCardsProps, DynamicCardsCommonProps, DynamicCardBuilder, To
 export { DynamicCard } from './DynamicCard';
 export type { DynamicCardProps, DynamicCardSize, DynamicCardShape, DynamicCardIconPlacement, DynamicCardIconConfig, DynamicCardFooter, DynamicCardFooterLine, DynamicCardFooterLineType, DynamicCardLinkProps, } from './DynamicCard';
 export { DynamicNavCards, NavTile } from './DynamicNavCards';
-export type { DynamicNavCardsProps, DynamicNavCard, DynamicNavCardLinkProps, } from './DynamicNavCards';
+export type { DynamicNavCardsProps, DynamicNavCard, DynamicNavCardLinkProps, NavTileBuilder, NavTileContentPlacement, NavTileFooterSlots, } from './DynamicNavCards';

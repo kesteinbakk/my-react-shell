@@ -316,4 +316,7 @@ export type {
   DynamicNavCardsProps,
   DynamicNavCard,
   DynamicNavCardLinkProps,
+  NavTileBuilder,
+  NavTileContentPlacement,
+  NavTileFooterSlots,
 } from './DynamicNavCards'

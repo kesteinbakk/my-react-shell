@@ -2252,7 +2252,8 @@
 /* Self-contained grid of lean navigation tiles. The tile is its own element (never a
    DynamicCard) but rides the same DynamicCards columns: fluid `width: 100%`, capped
    at the grid's per-item max, golden-ratio shape via `aspect-ratio`. Its single `title`
-   centres in the grow-body and scales with the label length (the `[data-fit]` ladder below):
+   centres horizontally in the grow-body — placed vertically by the `--content-*` modifier —
+   and scales with the label length (the `[data-fit]` ladder below):
    large when short, stepping down and clamped to two lines as it grows. */
 .mrs-dynamic-nav-card {
   position: relative;
@@ -2280,9 +2281,23 @@
 .mrs-dynamic-nav-card__body {
   flex: 1 1 auto;
   min-height: 0;
-  display: grid;
-  place-items: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   text-align: center;
+}
+
+/* Vertical `contentPlacement`: flexible pseudo-spacers split the body's free space
+   above:below the title — 1:5 (top, default), 1:1 (center), 5:1 (bottom) — so top/bottom
+   read clearly toward the edge without ever sitting flush against it. */
+.mrs-dynamic-nav-card__body::before,
+.mrs-dynamic-nav-card__body::after {
+  content: '';
+  flex: 1 1 0;
+}
+.mrs-dynamic-nav-card--content-top .mrs-dynamic-nav-card__body::after,
+.mrs-dynamic-nav-card--content-bottom .mrs-dynamic-nav-card__body::before {
+  flex-grow: 5;
 }
 
 /* Fluid title: `--mrs-nav-title-scale` (set by the `[data-fit]` ladder) multiplies the
@@ -2305,13 +2320,22 @@
 .mrs-dynamic-nav-card__title[data-fit='3'] { --mrs-nav-title-scale: 0.82; }
 .mrs-dynamic-nav-card__title[data-fit='4'] { --mrs-nav-title-scale: 0.68; }
 
+/* Footer — three slots on a `1fr auto 1fr` grid: left, a truly-centred center (the
+   `auto` track centres regardless of how the sides differ), right. A bare `footer`
+   node renders in the center slot. */
 .mrs-dynamic-nav-card__footer {
   flex-shrink: 0;
   margin-top: 0.5rem;
   font-size: 0.8125rem;
   color: var(--color-text-secondary);
-  text-align: center;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: baseline;
+  gap: 0.5rem;
 }
+.mrs-dynamic-nav-card__footer-left { text-align: left; }
+.mrs-dynamic-nav-card__footer-center { text-align: center; }
+.mrs-dynamic-nav-card__footer-right { text-align: right; }
 
 /* Optional 4px accent stripe (none unless `tone`/`color`), top (default) or left edge —
    mirrors DynamicCard. */
@@ -2399,12 +2423,20 @@
   gap: 0.25rem;
 }
 
+/* Watermark vertical anchor dodges the content placement: content top → watermark low,
+   content bottom → watermark high (a gentle shift, mirrored around the centre — the
+   content moves far more than the watermark, and the watermark stays clear of the
+   footer), content center → the default slightly-below-centre spot. The art layer rides
+   the same variable +4%. */
+.mrs-dynamic-nav-card--content-top { --mrs-nav-watermark-y: 64%; }
+.mrs-dynamic-nav-card--content-bottom { --mrs-nav-watermark-y: 36%; }
+
 /* Faint oversized emoji watermark — centred horizontally, dropped a little below centre.
    Content is raised above it on watermarked tiles. */
 .mrs-dynamic-nav-card--watermark[data-watermark]::after {
   content: attr(data-watermark);
   position: absolute;
-  top: 56%;
+  top: var(--mrs-nav-watermark-y, 56%);
   left: 50%;
   font-size: 5em;
   line-height: 1;
@@ -2424,7 +2456,7 @@
 .mrs-dynamic-nav-card__watermark {
   position: absolute;
   left: 54%;
-  top: 60%;
+  top: calc(var(--mrs-nav-watermark-y, 56%) + 4%);
   width: 62%;
   transform: translate(-50%, -50%);
   z-index: 0;
@@ -2436,7 +2468,6 @@
    watermark: oversized, faint, centred. */
 .mrs-dynamic-nav-card__watermark--glyph {
   left: 50%;
-  top: 60%;
   width: auto;
   transform: translate(-50%, -50%);
   opacity: 0.1;
