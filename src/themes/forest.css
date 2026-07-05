@@ -11,9 +11,12 @@
   --color-surface-sunken-deep: var(--color-emerald-100); /* deeper recess */
   --color-surface-neutral: var(--color-gray-400); /* mid-gray for color indicators */
 
-  /* ===== Background Colors ===== */
-  --color-background-primary: var(--color-emerald-50);
-  --color-background-secondary: var(--color-emerald-100);
+  /* ===== Background Colors =====
+     Whisper canvas tint — shared light stops (L/C identical across palettes,
+     only hue varies): the canvas carries a touch of the palette hue; cards
+     stay near-white. */
+  --color-background-primary: oklch(0.975 0.012 166);
+  --color-background-secondary: oklch(0.955 0.018 166);
 
   /* ===== Border Colors ===== */
   --color-border-primary: var(--color-emerald-200);
@@ -129,21 +132,21 @@
      Mode-consistent with light: `raised` is LIGHTER than the card, `sunken` /
      `sunken-deep` are DARKER (recessed). Each stop is a distinct step so borders
      and hover on any surface stay visible. */
-  --color-surface-primary: oklch(0.245 0.036 162);      /* card — shared dark ladder, tuned back toward the pre-systematization depth: identical OKLCH L/C stops across palettes, only hue differs */
-  --color-surface-raised: oklch(0.285 0.038 162);       /* popovers/dropdowns — lifted above the card */
-  --color-surface-sunken: oklch(0.22 0.034 162);       /* recessed well — darker than the card */
-  --color-surface-sunken-deep: oklch(0.195 0.032 162);  /* deepest recess — a clear step above the page floor */
+  --color-surface-primary: oklch(0.245 0.012 162);      /* card — shared dark ladder: identical OKLCH L/C stops across palettes, only hue differs; whisper chroma — the hue is felt, not shouted */
+  --color-surface-raised: oklch(0.285 0.013 162);       /* popovers/dropdowns — lifted above the card */
+  --color-surface-sunken: oklch(0.22 0.011 162);       /* recessed well — darker than the card */
+  --color-surface-sunken-deep: oklch(0.195 0.011 162);  /* deepest recess — a clear step above the page floor */
   --color-surface-neutral: rgb(107, 114, 128); /* gray-500 - mid-gray for color indicators */
 
   /* ===== Background Colors ===== */
-  --color-background-primary: oklch(0.15 0.045 162);    /* page floor — darkest rung */
-  --color-background-secondary: oklch(0.175 0.045 162);  /* section background — a step above the floor */
+  --color-background-primary: oklch(0.15 0.015 162);    /* page floor — darkest rung */
+  --color-background-secondary: oklch(0.175 0.015 162);  /* section background — a step above the floor */
 
   /* ===== Border Colors =====
      Border must contrast with surface-primary AND surface-raised. */
-  --color-border-primary: oklch(0.43 0.045 162);   /* shared dark ladder — borders sit above surface-raised */
-  --color-border-secondary: oklch(0.49 0.045 162);
-  --color-border-hover: oklch(0.56 0.045 162);
+  --color-border-primary: oklch(0.43 0.015 162);   /* shared dark ladder — borders sit above surface-raised */
+  --color-border-secondary: oklch(0.49 0.015 162);
+  --color-border-hover: oklch(0.56 0.015 162);
 
   /* ===== Text Hierarchy =====
      One stop brighter than a naive invert, so muted body text clears even the
@@ -157,8 +160,8 @@
   /* ===== Interactive States =====
      `--color-hover` must contrast with both surface-primary and
      surface-raised. */
-  --color-hover: oklch(0.365 0.045 162);   /* shared dark ladder — one step above surface-raised */
-  --color-active: oklch(0.405 0.045 162);  /* one step above hover */
+  --color-hover: oklch(0.365 0.015 162);   /* shared dark ladder — one step above surface-raised */
+  --color-active: oklch(0.405 0.015 162);  /* one step above hover */
   --color-selected: oklch(0.35 0.06 162);  /* brand-hue selection */
 
   /* ===== Brand Colors ===== */
