@@ -47,6 +47,30 @@ export function findActiveChain(roots, pathname, dynamicByParent) {
     }
     return chain;
 }
+function isCollapsibleAction(item) {
+    if (typeof item === 'function')
+        return true;
+    if (typeof item === 'string')
+        return item !== 'search';
+    return item.action !== 'search';
+}
+/** Builds the one button a collapsible item renders as — shared by the
+ *  always-visible inline row and the mobile "more actions" dropdown, so the two
+ *  never drift apart. */
+function renderPageHeaderAction(item) {
+    if (typeof item === 'function') {
+        return item();
+    }
+    if (typeof item === 'string') {
+        return _jsx(ActionButton, { action: item, size: "md" });
+    }
+    if (item.action) {
+        const presetAction = item;
+        return (_jsx(ActionButton, { action: presetAction.action, onClick: presetAction.onClick, label: presetAction.label, showEmoji: presetAction.showEmoji, tone: presetAction.tone, size: presetAction.size ?? 'md', layout: presetAction.layout, disabled: presetAction.disabled, hint: presetAction.hint }));
+    }
+    const iconAction = item;
+    return (_jsx(ActionButton, { icon: iconAction.icon, onClick: iconAction.onClick, label: iconAction.label, showEmoji: iconAction.showEmoji, tone: iconAction.tone, size: iconAction.size ?? 'md', layout: iconAction.layout, disabled: iconAction.disabled, hint: iconAction.hint }));
+}
 /**
  * Renders the page-header band: breadcrumbs (optional leading hamburger), the
  * actions cluster, the search input, and an optional pinned tabs row.
@@ -93,37 +117,27 @@ export function ShellPageHeaderUI(props) {
     const hideOther = alertAction?.hideOtherActions === true;
     const visibleActions = hideOther ? undefined : spec.actions;
     const hasActions = (visibleActions?.length ?? 0) > 0 || alertAction !== null;
+    // Mobile (<1024px) collapses every action button into one "more actions"
+    // dropdown — see the `CollapsibleAction` comment above for what does and
+    // doesn't qualify. Search inputs stay inline at every breakpoint.
+    const collapsibleActions = (visibleActions ?? []).filter(isCollapsibleAction);
+    const moreActionsLabel = config.labels?.more?.();
     const className = spec.className
         ? `mrs-page-header ${spec.className}`
         : 'mrs-page-header';
     const border = config.shellPageHeader?.border ?? true;
     return (_jsxs("div", { className: className, "data-border": border, children: [_jsxs("div", { className: "mrs-page-header__row", children: [_jsx(Breadcrumbs, { chain: chain, shell: shell, spec: spec, leafMatchesPath: leafMatchesPath, showMenuButton: showMenuButton, onOpenMenu: onOpenMenu }), hasActions ? (_jsxs("div", { className: "mrs-page-header__actions", children: [alertAction ? (_jsxs("span", { className: `mrs-page-header__error-action mrs-page-header__error-action--${alertAction.tone}`, children: [shell.config.renderIcon('alert', 16), _jsx("span", { className: "mrs-page-header__error-label", children: alertAction.label })] })) : null, visibleActions?.map((actionItem, i) => {
-                                if (typeof actionItem === 'function') {
-                                    const actionThunk = actionItem;
-                                    return _jsx("span", { children: actionThunk() }, i);
-                                }
                                 if (actionItem === 'search') {
                                     return _jsx(SearchInputComponent, { style: { backgroundColor: 'transparent' } }, i);
                                 }
-                                if (typeof actionItem === 'string') {
-                                    return (_jsx("span", { children: _jsx(ActionButton, { action: actionItem, size: "md" }) }, i));
+                                if (typeof actionItem === 'object' && actionItem !== null && actionItem.action === 'search') {
+                                    const { action, ...searchProps } = actionItem;
+                                    return _jsx(SearchInputComponent, { style: { backgroundColor: 'transparent', ...searchProps.style }, ...searchProps }, i);
                                 }
-                                if (typeof actionItem === 'object' && actionItem !== null) {
-                                    if (actionItem.action === 'search') {
-                                        const { action, ...searchProps } = actionItem;
-                                        return _jsx(SearchInputComponent, { style: { backgroundColor: 'transparent', ...searchProps.style }, ...searchProps }, i);
-                                    }
-                                    if (actionItem.action) {
-                                        const presetAction = actionItem;
-                                        return (_jsx("span", { children: _jsx(ActionButton, { action: presetAction.action, onClick: presetAction.onClick, label: presetAction.label, showEmoji: presetAction.showEmoji, tone: presetAction.tone, size: presetAction.size ?? 'md', layout: presetAction.layout, disabled: presetAction.disabled, hint: presetAction.hint }) }, i));
-                                    }
-                                    if ('icon' in actionItem) {
-                                        const iconAction = actionItem;
-                                        return (_jsx("span", { children: _jsx(ActionButton, { icon: iconAction.icon, onClick: iconAction.onClick, label: iconAction.label, showEmoji: iconAction.showEmoji, tone: iconAction.tone, size: iconAction.size ?? 'md', layout: iconAction.layout, disabled: iconAction.disabled, hint: iconAction.hint }) }, i));
-                                    }
-                                }
-                                return null;
-                            })] })) : null, (!hideOther && spec.search) ? _jsx(HeaderSearchInput, { slot: spec.search, shell: shell }) : null] }), spec.tabs ? (_jsx("div", { className: "mrs-page-header__tabs", children: spec.tabs() })) : null] }));
+                                // Every remaining shape is a button — rendered inline here (hidden on
+                                // mobile via CSS) and again, collapsed, in the dropdown below.
+                                return (_jsx("span", { className: "mrs-page-header__action-inline", children: renderPageHeaderAction(actionItem) }, i));
+                            }), collapsibleActions.length > 0 ? (_jsx("div", { className: "mrs-page-header__actions-menu", children: _jsxs(DropdownMenu.Root, { children: [_jsx(DropdownMenu.Trigger, { asChild: true, children: _jsx(ActionButton, { action: "more", "aria-label": moreActionsLabel, size: "md" }) }), _jsx(DropdownMenu.Portal, { children: _jsx(DropdownMenu.Content, { className: "mrs-page-header__actions-menu-content", align: "end", children: collapsibleActions.map((actionItem, i) => (_jsx(DropdownMenu.Item, { asChild: true, children: renderPageHeaderAction(actionItem) }, i))) }) })] }) })) : null] })) : null, (!hideOther && spec.search) ? _jsx(HeaderSearchInput, { slot: spec.search, shell: shell }) : null] }), spec.tabs ? (_jsx("div", { className: "mrs-page-header__tabs", children: spec.tabs() })) : null] }));
 }
 /** Default middle-collapse: keep the first crumb + the last two (incl. leaf). */
 const DEFAULT_BREADCRUMB_COLLAPSE = {

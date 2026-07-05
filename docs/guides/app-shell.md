@@ -258,6 +258,11 @@ sidebar; natural size in the header's right cluster). Per-mode `icon` and `tone`
 style individual options — e.g. give the last, irreversible step a `warning` tone and a
 trailing icon while the earlier steps stay plain.
 
+**Mobile (<1024px), header placement only:** the segmented control swaps for a single
+dropdown switcher (current mode + a menu of the rest) — it has no room to breathe in the
+narrow header row. The sidebar/drawer placement keeps the segmented control at every width
+(it already lives in its own full-width column). Pure CSS toggle, not configurable.
+
 ### Per-page mode support
 
 A page can declare **which app-modes it supports** with `supportedModes` — on its `PageEntry`,
@@ -365,6 +370,12 @@ An `ActionButton` in the `actions` slot always renders **inline** (glyph before 
 the band's stylesheet overrides its `layout` prop, since the kit default `vertical`
 would stack the label under the glyph and blow out the band height. A stacked
 header-band action is therefore impossible; icon-only actions are unaffected.
+
+**Mobile (<1024px) collapses every action button into one "more actions" dropdown** on
+the right, opened from a `more`-preset `ActionButton`. Every action shape qualifies —
+thunks included, since the contract above already assumes each one is an `ActionButton` —
+except the `'search'` forms, which are a different kind of control and always stay
+inline. Pure CSS toggle at the shell's one breakpoint, not configurable.
 
 **A layout can own the band; a leaf can add to it.** Because the band is automatic, a
 layout that just wants breadcrumbs present mounts nothing — it only registers crumbs (via

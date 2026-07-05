@@ -10,6 +10,14 @@
  * inherits the shipped look. No i18n import: the group's accessible name comes from
  * the consumer's optional `ariaLabel` thunk (config), matching the rest of the
  * app-shell chrome labels.
+ *
+ * Header mode (`variant="header"`) additionally renders a mobile-only dropdown
+ * switcher — a single "current mode ▾" trigger listing every mode, in place of the
+ * segmented control, which doesn't have room to breathe in the narrow header row.
+ * Both forms are always in the DOM; only visibility toggles, at the shell's one
+ * breakpoint (matching the breadcrumb / page-header-actions mobile collapse). Menu
+ * mode keeps the segmented control at every width — it already lives in its own
+ * full-width sidebar/drawer column, so it isn't cramped the way the header is.
  */
 import type { ReactNode } from 'react';
 export interface ShellAppModeControlProps {

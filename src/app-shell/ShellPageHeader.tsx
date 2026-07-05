@@ -27,6 +27,7 @@ import type {
   ShellBreadcrumbCollapseConfig,
   ShellPageHeaderSearchSlot,
   ShellPageHeaderSpec,
+  PageHeaderAction,
   PageHeaderPresetAction,
   PageHeaderSearchAction,
   PageHeaderIconAction,
@@ -96,6 +97,65 @@ export function findActiveChain(
   return chain
 }
 
+/* ── Page-header actions ──────────────────────────────────────────────────
+   An action item is one of: a `() => ReactNode` thunk (per the contract on
+   `PageHeaderOptions.actions`, always an `ActionButton` under the hood — the
+   band's stylesheet even forces its `layout` on that assumption), a plain
+   `ActionType` preset string, a `PageHeaderPresetAction` / `PageHeaderIconAction`
+   object, or a `'search'` shorthand / `{ action: 'search', … }` (a search
+   input, not a button). Every shape but the search one is a single button and
+   collapses into the mobile "more actions" dropdown; the search input is a
+   different kind of control and always stays inline. */
+type CollapsibleAction = Exclude<PageHeaderAction, 'search' | PageHeaderSearchAction>
+
+function isCollapsibleAction(item: PageHeaderAction): item is CollapsibleAction {
+  if (typeof item === 'function') return true
+  if (typeof item === 'string') return item !== 'search'
+  return item.action !== 'search'
+}
+
+/** Builds the one button a collapsible item renders as — shared by the
+ *  always-visible inline row and the mobile "more actions" dropdown, so the two
+ *  never drift apart. */
+function renderPageHeaderAction(item: CollapsibleAction): ReactNode {
+  if (typeof item === 'function') {
+    return item()
+  }
+  if (typeof item === 'string') {
+    return <ActionButton action={item} size="md" />
+  }
+  if (item.action) {
+    const presetAction = item as PageHeaderPresetAction
+    return (
+      <ActionButton
+        action={presetAction.action}
+        onClick={presetAction.onClick}
+        label={presetAction.label}
+        showEmoji={presetAction.showEmoji}
+        tone={presetAction.tone}
+        size={presetAction.size ?? 'md'}
+        layout={presetAction.layout}
+        disabled={presetAction.disabled}
+        hint={presetAction.hint}
+      />
+    )
+  }
+  const iconAction = item as PageHeaderIconAction
+  return (
+    <ActionButton
+      icon={iconAction.icon}
+      onClick={iconAction.onClick}
+      label={iconAction.label}
+      showEmoji={iconAction.showEmoji}
+      tone={iconAction.tone}
+      size={iconAction.size ?? 'md'}
+      layout={iconAction.layout}
+      disabled={iconAction.disabled}
+      hint={iconAction.hint}
+    />
+  )
+}
+
 /* ── Chrome renderer (rendered by AppShell in the pinned slot) ───────────── */
 
 export interface ShellPageHeaderUIProps {
@@ -158,6 +218,11 @@ export function ShellPageHeaderUI(props: ShellPageHeaderUIProps): ReactNode {
   const hideOther = alertAction?.hideOtherActions === true
   const visibleActions = hideOther ? undefined : spec.actions
   const hasActions = (visibleActions?.length ?? 0) > 0 || alertAction !== null
+  // Mobile (<1024px) collapses every action button into one "more actions"
+  // dropdown — see the `CollapsibleAction` comment above for what does and
+  // doesn't qualify. Search inputs stay inline at every breakpoint.
+  const collapsibleActions = (visibleActions ?? []).filter(isCollapsibleAction)
+  const moreActionsLabel = config.labels?.more?.()
 
   const className = spec.className
     ? `mrs-page-header ${spec.className}`
@@ -186,68 +251,41 @@ export function ShellPageHeaderUI(props: ShellPageHeaderUIProps): ReactNode {
               </span>
             ) : null}
             {visibleActions?.map((actionItem, i) => {
-              if (typeof actionItem === 'function') {
-                const actionThunk = actionItem as () => ReactNode
-                return <span key={i}>{actionThunk()}</span>
-              }
-
               if (actionItem === 'search') {
                 return <SearchInputComponent key={i} style={{ backgroundColor: 'transparent' }} />
               }
 
-              if (typeof actionItem === 'string') {
-                return (
-                  <span key={i}>
-                    <ActionButton action={actionItem} size="md" />
-                  </span>
-                )
+              if (typeof actionItem === 'object' && actionItem !== null && actionItem.action === 'search') {
+                const { action, ...searchProps } = actionItem as PageHeaderSearchAction
+                return <SearchInputComponent key={i} style={{ backgroundColor: 'transparent', ...(searchProps as any).style }} {...searchProps} />
               }
 
-              if (typeof actionItem === 'object' && actionItem !== null) {
-                if (actionItem.action === 'search') {
-                  const { action, ...searchProps } = actionItem as PageHeaderSearchAction
-                  return <SearchInputComponent key={i} style={{ backgroundColor: 'transparent', ...(searchProps as any).style }} {...searchProps} />
-                }
-                if (actionItem.action) {
-                  const presetAction = actionItem as PageHeaderPresetAction
-                  return (
-                    <span key={i}>
-                      <ActionButton
-                        action={presetAction.action}
-                        onClick={presetAction.onClick}
-                        label={presetAction.label}
-                        showEmoji={presetAction.showEmoji}
-                        tone={presetAction.tone}
-                        size={presetAction.size ?? 'md'}
-                        layout={presetAction.layout}
-                        disabled={presetAction.disabled}
-                        hint={presetAction.hint}
-                      />
-                    </span>
-                  )
-                }
-                if ('icon' in actionItem) {
-                  const iconAction = actionItem as PageHeaderIconAction
-                  return (
-                    <span key={i}>
-                      <ActionButton
-                        icon={iconAction.icon}
-                        onClick={iconAction.onClick}
-                        label={iconAction.label}
-                        showEmoji={iconAction.showEmoji}
-                        tone={iconAction.tone}
-                        size={iconAction.size ?? 'md'}
-                        layout={iconAction.layout}
-                        disabled={iconAction.disabled}
-                        hint={iconAction.hint}
-                      />
-                    </span>
-                  )
-                }
-              }
-
-              return null
+              // Every remaining shape is a button — rendered inline here (hidden on
+              // mobile via CSS) and again, collapsed, in the dropdown below.
+              return (
+                <span key={i} className="mrs-page-header__action-inline">
+                  {renderPageHeaderAction(actionItem as CollapsibleAction)}
+                </span>
+              )
             })}
+            {collapsibleActions.length > 0 ? (
+              <div className="mrs-page-header__actions-menu">
+                <DropdownMenu.Root>
+                  <DropdownMenu.Trigger asChild>
+                    <ActionButton action="more" aria-label={moreActionsLabel} size="md" />
+                  </DropdownMenu.Trigger>
+                  <DropdownMenu.Portal>
+                    <DropdownMenu.Content className="mrs-page-header__actions-menu-content" align="end">
+                      {collapsibleActions.map((actionItem, i) => (
+                        <DropdownMenu.Item asChild key={i}>
+                          {renderPageHeaderAction(actionItem)}
+                        </DropdownMenu.Item>
+                      ))}
+                    </DropdownMenu.Content>
+                  </DropdownMenu.Portal>
+                </DropdownMenu.Root>
+              </div>
+            ) : null}
           </div>
         ) : null}
 

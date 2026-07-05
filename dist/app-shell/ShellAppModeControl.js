@@ -1,4 +1,5 @@
-import { jsx as _jsx } from "react/jsx-runtime";
+import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { SegmentedControl } from '../components';
 import { useShellContextOptional } from './shellContext';
 export function ShellAppModeControl({ variant }) {
@@ -30,5 +31,7 @@ export function ShellAppModeControl({ variant }) {
             tone: config.tone?.(mode) ?? undefined,
         };
     });
-    return (_jsx("div", { className: `mrs-shell__app-mode mrs-shell__app-mode--${variant}`, "data-readonly": !runtime.selectable, children: _jsx(SegmentedControl, { options: options, value: runtime.appMode, onChange: runtime.selectable ? runtime.setAppMode : () => { }, "aria-label": config.ariaLabel?.(), size: menu ? 'sm' : 'md', fullWidth: menu }) }));
+    const currentOption = options.find((option) => option.value === runtime.appMode);
+    const ariaLabel = config.ariaLabel?.();
+    return (_jsxs("div", { className: `mrs-shell__app-mode mrs-shell__app-mode--${variant}`, "data-readonly": !runtime.selectable, children: [_jsx("div", { className: "mrs-shell__app-mode-segmented", children: _jsx(SegmentedControl, { options: options, value: runtime.appMode, onChange: runtime.selectable ? runtime.setAppMode : () => { }, "aria-label": ariaLabel, size: menu ? 'sm' : 'md', fullWidth: menu }) }), !menu && (_jsx("div", { className: "mrs-shell__app-mode-dropdown", children: runtime.selectable ? (_jsxs(DropdownMenu.Root, { children: [_jsx(DropdownMenu.Trigger, { asChild: true, children: _jsxs("button", { type: "button", className: "mrs-shell__app-mode-trigger", "aria-label": ariaLabel, children: [currentOption?.icon, _jsx("span", { className: "mrs-shell__app-mode-trigger-label", children: currentOption?.label }), renderIcon('chevronDown', 16)] }) }), _jsx(DropdownMenu.Portal, { children: _jsx(DropdownMenu.Content, { className: "mrs-shell__app-mode-menu", align: "end", children: options.map((option) => (_jsxs(DropdownMenu.Item, { className: "mrs-shell__app-mode-menu-item", "data-current": option.value === runtime.appMode, onSelect: () => runtime.setAppMode(option.value), children: [option.icon, option.label] }, option.value))) }) })] })) : (_jsxs("span", { className: "mrs-shell__app-mode-trigger mrs-shell__app-mode-trigger--static", children: [currentOption?.icon, _jsx("span", { className: "mrs-shell__app-mode-trigger-label", children: currentOption?.label })] })) }))] }));
 }

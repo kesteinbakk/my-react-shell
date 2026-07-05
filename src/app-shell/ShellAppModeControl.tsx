@@ -10,9 +10,18 @@
  * inherits the shipped look. No i18n import: the group's accessible name comes from
  * the consumer's optional `ariaLabel` thunk (config), matching the rest of the
  * app-shell chrome labels.
+ *
+ * Header mode (`variant="header"`) additionally renders a mobile-only dropdown
+ * switcher — a single "current mode ▾" trigger listing every mode, in place of the
+ * segmented control, which doesn't have room to breathe in the narrow header row.
+ * Both forms are always in the DOM; only visibility toggles, at the shell's one
+ * breakpoint (matching the breadcrumb / page-header-actions mobile collapse). Menu
+ * mode keeps the segmented control at every width — it already lives in its own
+ * full-width sidebar/drawer column, so it isn't cramped the way the header is.
  */
 
 import type { ReactNode } from 'react'
+import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 import { SegmentedControl } from '../components'
 import { useShellContextOptional } from './shellContext'
 
@@ -49,20 +58,62 @@ export function ShellAppModeControl({ variant }: ShellAppModeControlProps): Reac
       tone: config.tone?.(mode) ?? undefined,
     }
   })
+  const currentOption = options.find((option) => option.value === runtime.appMode)
+  const ariaLabel = config.ariaLabel?.()
 
   return (
     <div
       className={`mrs-shell__app-mode mrs-shell__app-mode--${variant}`}
       data-readonly={!runtime.selectable}
     >
-      <SegmentedControl
-        options={options}
-        value={runtime.appMode}
-        onChange={runtime.selectable ? runtime.setAppMode : () => {}}
-        aria-label={config.ariaLabel?.()}
-        size={menu ? 'sm' : 'md'}
-        fullWidth={menu}
-      />
+      <div className="mrs-shell__app-mode-segmented">
+        <SegmentedControl
+          options={options}
+          value={runtime.appMode}
+          onChange={runtime.selectable ? runtime.setAppMode : () => {}}
+          aria-label={ariaLabel}
+          size={menu ? 'sm' : 'md'}
+          fullWidth={menu}
+        />
+      </div>
+
+      {/* Header mode only: a mobile-only dropdown switcher, standing in for the
+          segmented control where the header row has no room for it. */}
+      {!menu && (
+        <div className="mrs-shell__app-mode-dropdown">
+          {runtime.selectable ? (
+            <DropdownMenu.Root>
+              <DropdownMenu.Trigger asChild>
+                <button type="button" className="mrs-shell__app-mode-trigger" aria-label={ariaLabel}>
+                  {currentOption?.icon}
+                  <span className="mrs-shell__app-mode-trigger-label">{currentOption?.label}</span>
+                  {renderIcon('chevronDown', 16)}
+                </button>
+              </DropdownMenu.Trigger>
+              <DropdownMenu.Portal>
+                <DropdownMenu.Content className="mrs-shell__app-mode-menu" align="end">
+                  {options.map((option) => (
+                    <DropdownMenu.Item
+                      key={option.value}
+                      className="mrs-shell__app-mode-menu-item"
+                      data-current={option.value === runtime.appMode}
+                      onSelect={() => runtime.setAppMode(option.value)}
+                    >
+                      {option.icon}
+                      {option.label}
+                    </DropdownMenu.Item>
+                  ))}
+                </DropdownMenu.Content>
+              </DropdownMenu.Portal>
+            </DropdownMenu.Root>
+          ) : (
+            <span className="mrs-shell__app-mode-trigger mrs-shell__app-mode-trigger--static">
+              {currentOption?.icon}
+              <span className="mrs-shell__app-mode-trigger-label">{currentOption?.label}</span>
+            </span>
+          )}
+        </div>
+      )}
     </div>
   )
 }

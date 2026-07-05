@@ -291,6 +291,74 @@
 .mrs-shell__app-mode .mrs-segmented__item:not(.mrs-segmented__item--active):hover {
   opacity: 1;
 }
+/* Mobile (<1024px), header mode only: the segmented control has no room to
+   breathe in the narrow header row, so it swaps for a single dropdown
+   switcher. Menu mode keeps the segmented control at every width — it already
+   lives in its own full-width sidebar/drawer column. Both forms are always in
+   the DOM; only visibility toggles, at the shell's one breakpoint. */
+.mrs-shell__app-mode-dropdown {
+  display: none;
+}
+@media (max-width: 1023.98px) {
+  .mrs-shell__app-mode--header .mrs-shell__app-mode-segmented {
+    display: none;
+  }
+  .mrs-shell__app-mode--header .mrs-shell__app-mode-dropdown {
+    display: inline-flex;
+  }
+}
+.mrs-shell__app-mode-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.375rem 0.625rem;
+  border: 1px solid var(--color-border-primary);
+  border-radius: 0.5rem;
+  background: var(--color-surface-primary);
+  color: var(--color-text-primary);
+  font: inherit;
+  font-weight: 500;
+  cursor: pointer;
+}
+.mrs-shell__app-mode-trigger:hover {
+  background: var(--color-hover);
+}
+.mrs-shell__app-mode-trigger--static {
+  cursor: default;
+  background: transparent;
+}
+.mrs-shell__app-mode-trigger--static:hover {
+  background: transparent;
+}
+.mrs-shell__app-mode-menu {
+  min-width: 10rem;
+  padding: 0.25rem;
+  border-radius: 0.5rem;
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-border-primary);
+  box-shadow: 0 8px 24px var(--color-shadow-lg);
+  z-index: 50;
+}
+.mrs-shell__app-mode-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.375rem 0.5rem;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  outline: none;
+}
+.mrs-shell__app-mode-menu-item:hover,
+.mrs-shell__app-mode-menu-item[data-highlighted] {
+  background: var(--color-hover);
+  color: var(--color-text-primary);
+}
+.mrs-shell__app-mode-menu-item[data-current='true'] {
+  color: var(--color-primary);
+  font-weight: 500;
+}
 
 /* ── Mobile brand strip + hamburger (no page header) ─────────────────────── */
 .mrs-shell__mobile-brand {
@@ -607,6 +675,45 @@ button.mrs-breadcrumbs__leaf {
 .mrs-page-header__actions .mrs-btn--md {
   padding: 0.5rem 1rem;
   font-size: 0.9375rem;
+}
+/* Mobile (<1024px): every menuable action (see `isMenuableAction` in
+   ShellPageHeader.tsx) collapses into one "more actions" dropdown on the
+   right — thunks and search inputs are a different shape and stay inline at
+   every width. Both the per-action buttons and the dropdown trigger are
+   always in the DOM; only visibility toggles, at the shell's one breakpoint. */
+.mrs-page-header__actions-menu {
+  display: inline-flex;
+}
+@media (min-width: 1024px) {
+  .mrs-page-header__actions-menu {
+    display: none;
+  }
+}
+@media (max-width: 1023.98px) {
+  .mrs-page-header__action-inline {
+    display: none;
+  }
+}
+/* Dropdown content — one ActionButton per row, laid out full-width instead of
+   the header band's icon-first inline chip. */
+.mrs-page-header__actions-menu-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  min-width: 12rem;
+  padding: 0.25rem;
+  border-radius: 0.5rem;
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-border-primary);
+  box-shadow: 0 8px 24px var(--color-shadow-lg);
+  z-index: 50;
+}
+.mrs-page-header__actions-menu-content .mrs-action-btn {
+  flex-direction: row;
+  justify-content: flex-start;
+  width: 100%;
+  padding: 0.5rem 0.625rem;
+  border-radius: 0.375rem;
 }
 .mrs-page-header__search {
   position: relative;

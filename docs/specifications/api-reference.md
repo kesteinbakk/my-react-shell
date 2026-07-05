@@ -1256,7 +1256,11 @@ runtime state driven
 anywhere via `useAppMode()`: `setAppMode` (end-user *or* data-driven), `setVisible`,
 `setSelectable` (`false` → a read-only indicator), and `setModes` (narrow by role at
 runtime). The control **auto-hides** when fewer than two modes are available or `visible`
-is false — `appMode` stays readable either way. Built on the kit `SegmentedControl`.
+is false — `appMode` stays readable either way. Built on the kit `SegmentedControl`. In
+header mode, mobile (<1024px) swaps the segmented control for a single dropdown switcher
+(current mode + a menu of the rest) — the segmented control has no room to breathe in the
+narrow header row. Menu mode keeps the segmented control at every width (it already lives
+in its own full-width sidebar/drawer column). Pure CSS toggle, not configurable.
 
 **Persistence.** The selected mode persists to `localStorage` under `storageKey` (same
 best-effort try/catch as the theme/i18n/menu-size modules) and restores on reload — a
@@ -1315,6 +1319,11 @@ export const shellConfig = defineShellConfig({
 > - Custom search objects: `{ action: 'search', icon?, endIcon?, onDebounceSearch?, debounceMs?, value?, defaultValue?, loadedIconState? }` to customize the search input field.
 > - Custom-icon objects: `{ icon, onClick?, label?, showEmoji?, tone?, size?, layout?, disabled?, hint? }` (no `action`) render an `ActionButton` around a glyph outside the preset `ActionType` enum. **Prefer this over a `() => <ActionButton icon={…} />` thunk** for anything whose content changes at runtime: `usePageHeader`'s value-signature diff reads these scalar props, so a real change (e.g. a view-mode toggle's `label`/`icon` flipping) is detected and pushed, whereas a thunk is opaque to that diff (`'fn'` only) and a change baked into its closure can go unpropagated.
 > - Any custom ReactNode thunk. An `ActionButton` mounted here always lays out inline (glyph before label). **Anti-pattern:** Action items in the header should NEVER be styled as normal buttons (e.g. `<Button>`). Action items must either be default supported strings (e.g. `'add'`), a custom label + icon via `ActionButton`, or an icon-only `ActionButton`.
+>
+> **Mobile (<1024px) collapses every action button into one "more actions" dropdown** on
+> the right, opened from a `more`-preset `ActionButton` — every shape above except the
+> search forms qualifies (a search input is a different kind of control and always stays
+> inline). Pure CSS toggle, not configurable.
 >
 > **`route: '/'` is reserved.** Never put `/` in `pages` — `defineShellConfig` throws
 > `ShellConfigError` if you do. Home is always reachable via the brand link and the
