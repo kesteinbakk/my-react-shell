@@ -13,6 +13,7 @@
 // ── chrome ────────────────────────────────────────────────────────────────────
 export { AppShell } from './AppShell';
 export { AppHeader } from './AppHeader';
+export { HeaderActionButton } from './HeaderActions';
 export { AppMenu } from './AppMenu';
 export { AppBottomNav } from './AppBottomNav';
 // ── page header + config ──────────────────────────────────────────────────────

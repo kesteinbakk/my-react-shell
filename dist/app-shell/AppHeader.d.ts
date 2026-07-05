@@ -9,9 +9,10 @@
  * `<Link>`; classes are `mrs-app-header*` from app-shell.css.
  */
 import type { ReactNode } from 'react';
+import type { HeaderAction } from './shellContract';
 export interface AppHeaderProps {
-    /** Action item render thunks, rendered in the right zone. `[]` for none. */
-    actions: Array<() => ReactNode>;
+    /** Declarative chrome actions, rendered in the right zone. `[]` for none. */
+    actions: HeaderAction[];
     /** Brand text. Required standalone; inside the shell falls back to `config.appName`. */
     title?: string;
     /** Home-link target. Default `'/'`. */

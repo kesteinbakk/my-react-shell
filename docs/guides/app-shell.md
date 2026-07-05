@@ -123,18 +123,34 @@ appear.
 ## Mount the shell
 
 Wrap your router outlet in `<AppShell>` once at the root. `useMenu` picks sidebar
-(`true`) vs top banner (`false`). `actions` is your chrome action row (theme toggle,
-language picker, notification bell — your components, as render thunks).
+(`true`) vs top banner (`false`). `actions` is your chrome action row (notification
+bell, language picker, preferences — one row, shared by header and sidebar).
+
+`actions` is a **closed, declarative** list — `HeaderAction[]`, *not* render thunks.
+You describe intent (a clean `renderIcon` **key** + `label` + what happens); the shell
+renders every entry through its one `HeaderActionButton`, so the whole row shares one
+size and one box model — the row cannot drift the way ad-hoc trigger elements do, and an
+empty action is skipped (no phantom gap). Four shapes: **button/toggle** (`onClick`,
+optional `active`/`badge`), **menu** (`items`), **panel** (`panel` popover body), and the
+**`custom`** escape hatch — for an overlay that owns its own trigger, the shell hands you a
+builder for the same uniform trigger. Prefer a declarative shape; reach for `custom` last.
 
 ```tsx
 import { AppShell } from 'my-react-shell/app-shell'
+import type { HeaderAction } from 'my-react-shell/app-shell'
+
+const actions: HeaderAction[] = [
+  { icon: 'bell', label: t('nav.alerts'), badge: unread, panel: () => <Alerts /> },
+  { icon: 'account', label: t('nav.account'), items: accountItems },
+  { custom: (T) => <UserPreferences trigger={T({ icon: 'settings', label: t('prefs.open') })} /> },
+]
 
 function RootLayout() {
   return (
     <AppShell
       config={shellConfig}
       useMenu
-      actions={[() => <ThemeToggle />, () => <LanguagePicker />]}
+      actions={actions}
       mobileNav="drawer" // or 'tabBar' for a mobile bottom bar
     >
       <Outlet />

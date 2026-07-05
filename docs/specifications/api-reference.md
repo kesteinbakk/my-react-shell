@@ -1138,8 +1138,9 @@ import 'my-react-shell/app-shell/styles.css'
 |---|---|---|
 | `defineShellConfig(input)` | function | Validates (throws `ShellConfigError`) + brands the config at import time. Requires `renderIcon`. |
 | `ShellConfigError` | class | Thrown on a bad config shape. |
-| `AppShell` | component | Mount once at root. `config`, `useMenu` (sidebar vs banner), `actions[]`, `mobileNav` (`'drawer'`\|`'tabBar'`), `children`. |
+| `AppShell` | component | Mount once at root. `config`, `useMenu` (sidebar vs banner), `actions: HeaderAction[]` (declarative — see **Chrome actions** below), `mobileNav` (`'drawer'`\|`'tabBar'`), `children`. |
 | `AppHeader`, `AppMenu`, `AppBottomNav` | component | Chrome sub-parts (usually composed by `AppShell`). |
+| `HeaderActionButton` | component | The shell's single header-action trigger — the one box model every `actions` entry renders through. Rarely used directly; the `HeaderAction` `custom` hatch is handed a builder for it. `icon` (registry key or node), `label`, `active`, `tone`, `badge`, `hint`, `onClick`; forwards its ref so it works as a Radix `asChild` overlay trigger. |
 | `usePageHeader(options)` | hook | Call from a route subtree to add page chrome to the band — `title`/`actions`/`search`/`tabs`/`documentTitle`/`className`. The band shows **automatically** from the URL chain; call this only to *add* chrome. When more than one call is active (e.g. a layout band + a leaf's actions), the **deepest-mounted wins** and updates in place — no flicker. |
 | `usePageAlert(spec)` | hook | Set a global page-level alert in the header band (`{ label, tone, hideOtherActions? }`). If `hideOtherActions` is true, the renderer hides the regular actions and search input. |
 | `useDocumentTitlePrefix(prefix)` | hook | Set a plain-string prefix prepended to `document.title` with a single space (`"(3) Leaf · App"`) — e.g. an unread-count badge. `null` / `''` = no prefix; cleared on unmount. The shell is the single owner of `document.title`, so this is the ONLY safe seam for a prefix (a direct write is clobbered on the next recompute). One intended producer — last-write-wins. |
@@ -1152,6 +1153,36 @@ import 'my-react-shell/app-shell/styles.css'
 | `useAppMode()`, `useAppModeOptional()` | hook | Read/drive the **app-mode** — the global "what mode is the app in" state declared by the config's `appMode` block. `→ { appMode, setAppMode, modes, setModes, visible, setVisible, selectable, setSelectable }`. Pass a union for exhaustive typing: `useAppMode<'SETUP'\|'MAIN'\|'FINALIZE'>()`. `useAppMode()` throws when no `appMode` block is declared; `useAppModeOptional()` returns `null` instead. Set from end-user selection **or** data (a role/data effect calling `setAppMode`); read `appMode` anywhere as a global mode. |
 | `MenuSizeProvider` | component | Owns the **menu-size** preference (header-chrome size `small`·`medium`·`large`). Uncontrolled (localStorage) or controlled (`value`+`onChange`). `defaultSize` (`'medium'`), `storageKey`. `<AppShell>` reads it **softly** — no provider → `medium` (normal). |
 | `useMenuSize()`, `useMenuSizeOptional()` | hook | `useMenuSize()` → `{ menuSize, setMenuSize }` (throws outside the provider); feed into `<UserPreferences>` (`menuSize`/`onMenuSizeChange`). `useMenuSizeOptional()` is the non-throwing read (`null` outside a provider) `<AppShell>` uses. |
+
+**Chrome actions (`AppShell` `actions`).** The action row (bell / language / preferences /
+account, …) rendered in the header banner's right cluster and the sidebar footer is a
+**closed, declarative** list — `actions: HeaderAction[]`. The consumer describes intent (a
+clean `renderIcon` **key** + `label` + what happens); the shell renders every entry through
+one `HeaderActionButton`, so the whole row shares one size and one box model. There is
+deliberately **no** `ReactNode` trigger and **no** `size` prop — uniformity is enforced by
+the type, not by convention, and an action whose glyph resolves to nothing is skipped (no
+stray wrapper, no phantom gap). The four shapes:
+
+- **Button / toggle** — `{ icon, label, onClick, active?, tone?, badge?, hint? }`. `active`
+  drives `aria-pressed`; `badge` (a number, hidden when `0`) draws a count pill.
+- **Menu** — `{ icon, label, items, tone?, badge?, align? }`. The shell renders the uniform
+  trigger + `<DropdownMenu>`; `items` is the kit `DropdownMenuItem[]`.
+- **Panel** — `{ icon, label, panel, tone?, badge?, align? }`. The shell renders the uniform
+  trigger + `<Popover>`; `panel()` is the popover body.
+- **Custom (escape hatch — last resort)** — `{ custom: (renderTrigger) => ReactNode }`. For
+  an overlay component that owns its own trigger (e.g. `UserPreferences`). The shell hands you
+  `renderTrigger(props)` — a builder for the **same** `HeaderActionButton` — so even a bespoke
+  overlay keeps the identical chrome. Reach for a declarative shape first; a raw element here
+  is the one way to reintroduce drift.
+
+```tsx
+actions={[
+  { icon: 'bell', label: t('nav.alerts'), badge: unread, panel: () => <Alerts /> },
+  { icon: 'chat', label: t('nav.chat'), active: open, onClick: toggle },
+  { icon: 'account', label: t('nav.account'), items: accountItems },
+  { custom: (T) => <UserPreferences trigger={T({ icon: 'settings', label: t('prefs.open') })} /> },
+]}
+```
 
 **Menu size (header-chrome size).** `<AppShell>` sets `data-menu-size` (`small`·`medium`·`large`)
 on its root; for `small`/`large`, app-shell.css scales the page-header band (breadcrumbs +

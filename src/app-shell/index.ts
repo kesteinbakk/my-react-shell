@@ -16,6 +16,7 @@ export { AppShell } from './AppShell'
 export type { AppShellProps, AppShellContentPadding, AppShellMobileNav } from './AppShell'
 export { AppHeader } from './AppHeader'
 export type { AppHeaderProps } from './AppHeader'
+export { HeaderActionButton } from './HeaderActions'
 export { AppMenu } from './AppMenu'
 export type { AppMenuProps } from './AppMenu'
 export { AppBottomNav } from './AppBottomNav'
@@ -72,4 +73,10 @@ export type {
   PageHeaderSearchAction,
   PageHeaderPresetAction,
   PageHeaderIconAction,
+  HeaderAction,
+  HeaderActionButtonSpec,
+  HeaderActionMenuSpec,
+  HeaderActionPanelSpec,
+  HeaderActionCustomSpec,
+  HeaderActionTriggerProps,
 } from './shellContract'

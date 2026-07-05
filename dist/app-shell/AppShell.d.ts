@@ -13,7 +13,7 @@
  * the only breakpoint JS is the auto-close-drawer-past-1024px effect.
  */
 import type { ReactNode } from 'react';
-import type { ShellConfig } from './shellContract';
+import type { ShellConfig, HeaderAction } from './shellContract';
 export type AppShellContentPadding = 'default' | 'none';
 export type AppShellMobileNav = 'drawer' | 'tabBar';
 export interface AppShellProps {
@@ -21,8 +21,8 @@ export interface AppShellProps {
     config: ShellConfig;
     /** `true` → sidebar (`AppMenu`); `false` → top banner (`AppHeader`). */
     useMenu: boolean;
-    /** Chrome action item thunks (theme toggle, language, bell, …). `[]` for none. */
-    actions: Array<() => ReactNode>;
+    /** Declarative chrome actions (theme toggle, language, bell, …). `[]` for none. */
+    actions: HeaderAction[];
     /** Under the brand. */
     subtitle?: () => ReactNode;
     /** Right of the brand (badge/pill). */

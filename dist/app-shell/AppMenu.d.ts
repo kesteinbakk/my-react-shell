@@ -15,9 +15,10 @@
  * Icons via `config.renderIcon`; the module ships no icon kit and no i18n.
  */
 import type { ReactNode } from 'react';
+import type { HeaderAction } from './shellContract';
 export interface AppMenuProps {
-    /** Action item render thunks for the footer. `[]` for none. */
-    actions: Array<() => ReactNode>;
+    /** Declarative chrome actions for the footer. `[]` for none. */
+    actions: HeaderAction[];
     /** Node rendered right of the brand (badge / pill). */
     titleAdornment?: () => ReactNode;
     /** Node rendered under the brand. */

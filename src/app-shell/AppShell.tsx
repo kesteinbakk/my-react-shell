@@ -18,7 +18,7 @@ import type { ReactNode } from 'react'
 import { Link, useRouterState } from '@tanstack/react-router'
 import * as Dialog from '@radix-ui/react-dialog'
 import { SHELL_CONFIG_BRAND } from './shellContract'
-import type { ShellConfig, ShellDocumentTitleMode, ShellPageHeaderSpec, PageHeaderAlertSpec } from './shellContract'
+import type { ShellConfig, ShellDocumentTitleMode, ShellPageHeaderSpec, PageHeaderAlertSpec, HeaderAction } from './shellContract'
 import {
   ShellContext,
   ShellAPIContext,
@@ -62,8 +62,8 @@ export interface AppShellProps {
   config: ShellConfig
   /** `true` → sidebar (`AppMenu`); `false` → top banner (`AppHeader`). */
   useMenu: boolean
-  /** Chrome action item thunks (theme toggle, language, bell, …). `[]` for none. */
-  actions: Array<() => ReactNode>
+  /** Declarative chrome actions (theme toggle, language, bell, …). `[]` for none. */
+  actions: HeaderAction[]
   /** Under the brand. */
   subtitle?: () => ReactNode
   /** Right of the brand (badge/pill). */

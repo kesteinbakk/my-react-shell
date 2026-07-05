@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 import { Link, useRouterState } from '@tanstack/react-router';
 import { useShellContext } from './shellContext';
 import { ShellAppModeControl } from './ShellAppModeControl';
+import { HeaderActions } from './HeaderActions';
 /** Longest-prefix match of `pathname` against the top-level pages. */
 function findActivePageId(pages, pathname) {
     let activeId = null;
@@ -29,5 +30,5 @@ export function AppMenu(props) {
     const brand = config.appNameRender
         ? config.appNameRender()
         : config.appName;
-    return (_jsxs("div", { className: className, "data-size": size, children: [_jsxs("div", { className: "mrs-app-menu__head", children: [_jsx(Link, { to: "/", className: "mrs-app-menu__brand", children: brand }), props.titleAdornment?.(), props.subtitle ? (_jsx("div", { className: "mrs-app-menu__subtitle", children: props.subtitle() })) : null] }), _jsx(ShellAppModeControl, { variant: "menu" }), _jsx("nav", { className: "mrs-app-menu__nav", children: config.pages.map((page, i) => (_jsxs("span", { children: [page.groupBreak && i > 0 ? (_jsx("div", { className: "mrs-app-menu__divider" })) : null, _jsxs(Link, { to: page.route, className: "mrs-app-menu__item", "data-active": page.id === activePageId, children: [config.renderIcon(page.icon, 18), page.label()] })] }, page.id))) }), _jsx("div", { className: "mrs-app-menu__actions", "data-dense": dense, children: props.actions.map((thunk, i) => (_jsx("span", { children: thunk() }, i))) })] }));
+    return (_jsxs("div", { className: className, "data-size": size, children: [_jsxs("div", { className: "mrs-app-menu__head", children: [_jsx(Link, { to: "/", className: "mrs-app-menu__brand", children: brand }), props.titleAdornment?.(), props.subtitle ? (_jsx("div", { className: "mrs-app-menu__subtitle", children: props.subtitle() })) : null] }), _jsx(ShellAppModeControl, { variant: "menu" }), _jsx("nav", { className: "mrs-app-menu__nav", children: config.pages.map((page, i) => (_jsxs("span", { children: [page.groupBreak && i > 0 ? (_jsx("div", { className: "mrs-app-menu__divider" })) : null, _jsxs(Link, { to: page.route, className: "mrs-app-menu__item", "data-active": page.id === activePageId, children: [config.renderIcon(page.icon, 18), page.label()] })] }, page.id))) }), _jsx("div", { className: "mrs-app-menu__actions", "data-dense": dense, children: _jsx(HeaderActions, { actions: props.actions }) })] }));
 }

@@ -18,13 +18,14 @@
 import type { ReactNode } from 'react'
 import { useMemo } from 'react'
 import { Link, useRouterState } from '@tanstack/react-router'
-import type { PageEntry } from './shellContract'
+import type { HeaderAction, PageEntry } from './shellContract'
 import { useShellContext } from './shellContext'
 import { ShellAppModeControl } from './ShellAppModeControl'
+import { HeaderActions } from './HeaderActions'
 
 export interface AppMenuProps {
-  /** Action item render thunks for the footer. `[]` for none. */
-  actions: Array<() => ReactNode>
+  /** Declarative chrome actions for the footer. `[]` for none. */
+  actions: HeaderAction[]
   /** Node rendered right of the brand (badge / pill). */
   titleAdornment?: () => ReactNode
   /** Node rendered under the brand. */
@@ -102,9 +103,7 @@ export function AppMenu(props: AppMenuProps): ReactNode {
       </nav>
 
       <div className="mrs-app-menu__actions" data-dense={dense}>
-        {props.actions.map((thunk, i) => (
-          <span key={i}>{thunk()}</span>
-        ))}
+        <HeaderActions actions={props.actions} />
       </div>
     </div>
   )

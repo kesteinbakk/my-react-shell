@@ -13,10 +13,12 @@ import type { ReactNode } from 'react'
 import { Link } from '@tanstack/react-router'
 import { useShellContextOptional } from './shellContext'
 import { ShellAppModeControl } from './ShellAppModeControl'
+import { HeaderActions } from './HeaderActions'
+import type { HeaderAction } from './shellContract'
 
 export interface AppHeaderProps {
-  /** Action item render thunks, rendered in the right zone. `[]` for none. */
-  actions: Array<() => ReactNode>
+  /** Declarative chrome actions, rendered in the right zone. `[]` for none. */
+  actions: HeaderAction[]
   /** Brand text. Required standalone; inside the shell falls back to `config.appName`. */
   title?: string
   /** Home-link target. Default `'/'`. */
@@ -64,9 +66,7 @@ export function AppHeader(props: AppHeaderProps): ReactNode {
             reads shell context, so it renders nothing standalone or when no `appMode`. */}
         <ShellAppModeControl variant="header" />
         <div className="mrs-app-header__actions">
-          {props.actions.map((thunk, i) => (
-            <span key={i}>{thunk()}</span>
-          ))}
+          <HeaderActions actions={props.actions} />
         </div>
       </div>
     </header>

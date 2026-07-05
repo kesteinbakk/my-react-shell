@@ -8,11 +8,13 @@
  * user-facing string is a thunk the consumer wires to its own `t()` — the module
  * never imports i18n.
  */
-import type { ReactNode } from 'react';
+import type { MouseEventHandler, ReactNode } from 'react';
 import type { ActionType, ActionButtonTone, ActionButtonSize, ActionButtonLayout } from '../components/ActionButton';
 import type { SearchInputProps } from '../components/SearchInput';
 import type { AlertTone } from '../components/Alert';
 import type { Tone } from '../components/tone';
+import type { DropdownMenuItem } from '../components/DropdownMenu';
+import type { PopoverAlign } from '../components/Popover';
 /**
  * Consumer-extensible interface for strict icon typing.
  * By default it is empty, meaning the shell falls back to `string`.
@@ -335,6 +337,97 @@ export interface PageHeaderOptions {
     /** Extra classes on the band's outer container. */
     className?: string;
 }
+/**
+ * The props the shell's ONE header-action trigger (`HeaderActionButton`) accepts.
+ * The `custom` escape hatch is handed a builder for exactly this shape — so even a
+ * bespoke overlay reuses the identical chrome. `icon` is a registry key (resolved via
+ * `config.renderIcon`) or, only from `custom`, a pre-resolved node.
+ */
+export interface HeaderActionTriggerProps {
+    icon: ShellIcon | ReactNode;
+    /** Accessible name — chrome buttons are never unnamed. */
+    label: string;
+    /** Toggle state → `aria-pressed`. */
+    active?: boolean;
+    /** Semantic tone. Default `neutral`. */
+    tone?: ActionButtonTone;
+    /** Count badge (e.g. unread). Hidden when `0` / absent. */
+    badge?: number;
+    /** Native tooltip. Defaults to `label`. */
+    hint?: string;
+    /**
+     * Click handler — for a plain trigger. Omit when the trigger is an overlay anchor
+     * (Radix wires the open/close itself via `asChild`).
+     */
+    onClick?: MouseEventHandler<HTMLButtonElement>;
+}
+/** A plain or toggle chrome button — the shell renders the uniform trigger. */
+export interface HeaderActionButtonSpec {
+    /** Registry icon key — a clean glyph, no wrapper. Resolved via `config.renderIcon`. */
+    icon: ShellIcon;
+    /** Accessible name — chrome buttons are never unnamed. */
+    label: string;
+    onClick: () => void;
+    /** Toggle state → `aria-pressed`. */
+    active?: boolean;
+    tone?: ActionButtonTone;
+    badge?: number;
+    hint?: string;
+    items?: never;
+    panel?: never;
+    custom?: never;
+}
+/** A dropdown-menu chrome action — the shell renders the uniform trigger + `<DropdownMenu>`. */
+export interface HeaderActionMenuSpec {
+    icon: ShellIcon;
+    label: string;
+    /** Menu rows (reuses the kit `DropdownMenu` item union). */
+    items: DropdownMenuItem[];
+    tone?: ActionButtonTone;
+    badge?: number;
+    /** Menu alignment along the trigger edge. Default `end`. */
+    align?: PopoverAlign;
+    onClick?: never;
+    panel?: never;
+    custom?: never;
+}
+/** A popover-panel chrome action — the shell renders the uniform trigger + `<Popover>`; you supply the body. */
+export interface HeaderActionPanelSpec {
+    icon: ShellIcon;
+    label: string;
+    /** Panel body, rendered inside the shell-owned popover. */
+    panel: () => ReactNode;
+    tone?: ActionButtonTone;
+    badge?: number;
+    /** Panel alignment along the trigger edge. Default `end`. */
+    align?: PopoverAlign;
+    onClick?: never;
+    items?: never;
+    custom?: never;
+}
+/**
+ * Escape hatch — reach for this ONLY when no declarative shape fits (an overlay
+ * component that owns its own trigger, e.g. `UserPreferences`). The shell hands you a
+ * builder for the SAME uniform trigger; wire it into your overlay so the box model
+ * stays identical. A raw element here is the one way to reintroduce drift — avoid it.
+ */
+export interface HeaderActionCustomSpec {
+    custom: (renderTrigger: (props: HeaderActionTriggerProps) => ReactNode) => ReactNode;
+    icon?: never;
+    label?: never;
+    onClick?: never;
+    items?: never;
+    panel?: never;
+}
+/**
+ * One chrome action in the shell's `actions` row (AppHeader banner + AppMenu footer).
+ * A CLOSED data shape on purpose: the consumer describes intent (a clean icon key +
+ * label + what happens), and the shell renders every action through one trigger with
+ * one box model. There is deliberately no `ReactNode` trigger and no `size` prop —
+ * uniformity is enforced by the type, not by convention. See {@link HeaderActionCustomSpec}
+ * for the one irreducible case.
+ */
+export type HeaderAction = HeaderActionButtonSpec | HeaderActionMenuSpec | HeaderActionPanelSpec | HeaderActionCustomSpec;
 /**
  * Internal — the spec a `usePageHeader` call registers onto shell context, consumed
  * by `<AppShell>`. Structurally identical to {@link PageHeaderOptions}.
