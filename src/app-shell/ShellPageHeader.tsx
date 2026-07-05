@@ -374,7 +374,7 @@ function Breadcrumbs(props: BreadcrumbsProps): ReactNode {
       ) : null}
 
       <Link to="/" className="mrs-breadcrumbs__home" title={homeLabel}>
-        {config.renderIcon('home', 20)}
+        {config.renderIcon('home', 24)}
       </Link>
 
       {upRoute !== undefined ? (
@@ -384,7 +384,7 @@ function Breadcrumbs(props: BreadcrumbsProps): ReactNode {
           title={upLabel}
           aria-label={upLabel}
         >
-          {config.renderIcon('arrowUp', 20)}
+          {config.renderIcon('arrowUp', 24)}
         </Link>
       ) : null}
 
