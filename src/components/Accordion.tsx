@@ -108,39 +108,41 @@ export function Accordion({
       disabled={item.disabled}
       className="mrs-accordion__item"
     >
+      {/*
+        The action slots and the chevron are rendered as SIBLINGS of the trigger
+        inside the header — never nested inside `RadixAccordion.Trigger` (a real
+        `<button>`). Slot content is frequently interactive (a menu, an icon
+        button); nesting it inside the trigger produced a `<button>`-in-`<button>`
+        DOM tree (a hydration error, and invalid HTML). As siblings they carry
+        their own click targets and never toggle the panel — so no
+        `stopPropagation` shim is needed either. The header is a Radix-rendered
+        heading element, so button siblings are valid there. The chevron reads its
+        rotation off the ITEM's `data-state` (see the CSS) since it no longer lives
+        inside the trigger.
+      */}
       <RadixAccordion.Header className="mrs-accordion__header">
+        {item.actionsStart && (
+          <div className="mrs-accordion__actions mrs-accordion__actions--start">
+            {item.actionsStart}
+          </div>
+        )}
         <RadixAccordion.Trigger className="mrs-accordion__trigger">
-          <div className="mrs-accordion__trigger-main">
-            {item.actionsStart && (
-              <div
-                className="mrs-accordion__actions"
-                onClick={(e) => e.stopPropagation()}
-                onPointerDown={(e) => e.stopPropagation()}
-              >
-                {item.actionsStart}
+          <span className="mrs-accordion__label">{item.trigger}</span>
+        </RadixAccordion.Trigger>
+        {(item.actionsEnd || showArrow) && (
+          <div className="mrs-accordion__trigger-end">
+            {item.actionsEnd && (
+              <div className="mrs-accordion__actions mrs-accordion__actions--end">
+                {item.actionsEnd}
               </div>
             )}
-            <span className="mrs-accordion__label">{item.trigger}</span>
+            {showArrow && (
+              <span className="mrs-accordion__chevron" aria-hidden="true">
+                {chevronDown}
+              </span>
+            )}
           </div>
-          {(item.actionsEnd || showArrow) && (
-            <div className="mrs-accordion__trigger-end">
-              {item.actionsEnd && (
-                <div
-                  className="mrs-accordion__actions"
-                  onClick={(e) => e.stopPropagation()}
-                  onPointerDown={(e) => e.stopPropagation()}
-                >
-                  {item.actionsEnd}
-                </div>
-              )}
-              {showArrow && (
-                <span className="mrs-accordion__chevron" aria-hidden="true">
-                  {chevronDown}
-                </span>
-              )}
-            </div>
-          )}
-        </RadixAccordion.Trigger>
+        )}
       </RadixAccordion.Header>
       <RadixAccordion.Content className="mrs-accordion__content">
         <div className="mrs-accordion__body">{item.content}</div>

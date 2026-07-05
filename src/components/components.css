@@ -4143,13 +4143,18 @@
 }
 .mrs-accordion__header {
   display: flex;
+  align-items: center;
+  gap: 0.5rem;
   margin: 0;
 }
+/* The trigger is the flex-growing, clickable toggle region (the label). The action
+   slots and chevron sit BESIDE it as header siblings, so interactive slot content
+   never nests inside this <button>. */
 .mrs-accordion__trigger {
   display: flex;
   flex: 1;
+  min-width: 0;
   align-items: center;
-  justify-content: space-between;
   gap: 0.5rem;
   width: 100%;
   border: none;
@@ -4162,19 +4167,17 @@
   transition: background-color 120ms ease, color 120ms ease;
 }
 
-.mrs-accordion__trigger-main,
 .mrs-accordion__trigger-end {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-}
-.mrs-accordion__trigger-main {
-  min-width: 0;
+  flex-shrink: 0;
 }
 .mrs-accordion__actions {
   display: flex;
   align-items: center;
   gap: 0.25rem;
+  flex-shrink: 0;
 }
 .mrs-accordion__trigger:hover:not(:disabled) {
   background: var(--color-hover);
@@ -4196,7 +4199,9 @@
   color: var(--color-text-secondary);
   transition: transform 200ms cubic-bezier(0.4, 0, 0.2, 1);
 }
-.mrs-accordion__trigger[data-state='open'] .mrs-accordion__chevron {
+/* The chevron now lives outside the trigger, so its rotation keys off the ITEM's
+   open state rather than the trigger's. */
+.mrs-accordion__item[data-state='open'] .mrs-accordion__chevron {
   transform: rotate(180deg);
 }
 
@@ -4222,6 +4227,13 @@
 
 /* Sizes — trigger padding/type + content body padding (no top padding, so the
    body sits flush under its trigger). */
+/* The header owns the horizontal insets — the trigger and its sibling action
+   slots share one padding box. The trigger keeps its own left+vertical padding so
+   its hover-background stays a comfortable pill inside the row; the header's right
+   padding gives the action slots / chevron their trailing inset. */
+.mrs-accordion--sm .mrs-accordion__header {
+  padding-right: 0.625rem;
+}
 .mrs-accordion--sm .mrs-accordion__trigger {
   padding: 0.5rem 0.625rem;
   font-size: 0.8125rem;
@@ -4230,6 +4242,9 @@
   padding: 0 0.625rem 0.625rem;
   font-size: 0.8125rem;
 }
+.mrs-accordion--md .mrs-accordion__header {
+  padding-right: 0.875rem;
+}
 .mrs-accordion--md .mrs-accordion__trigger {
   padding: 0.75rem 0.875rem;
   font-size: 0.875rem;
@@ -4237,6 +4252,9 @@
 .mrs-accordion--md .mrs-accordion__body {
   padding: 0 0.875rem 0.875rem;
   font-size: 0.875rem;
+}
+.mrs-accordion--lg .mrs-accordion__header {
+  padding-right: 1.125rem;
 }
 .mrs-accordion--lg .mrs-accordion__trigger {
   padding: 1rem 1.125rem;
