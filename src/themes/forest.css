@@ -131,13 +131,13 @@
      and hover on any surface stay visible. */
   --color-surface-primary: rgb(22, 30, 24);      /* card — dark green-tinted gray */
   --color-surface-raised: rgb(32, 44, 35);       /* popovers/dropdowns — lifted above the card */
-  --color-surface-sunken: rgb(18, 25, 20);       /* recessed well — darker than the card */
-  --color-surface-sunken-deep: rgb(14, 20, 16);  /* deeper recess — near the page floor */
+  --color-surface-sunken: rgb(12, 30, 18);       /* recessed well — darker than the card, green kept visible */
+  --color-surface-sunken-deep: rgb(8, 25, 15);   /* deepest recess — a clearly green dark floor, not black */
   --color-surface-neutral: rgb(107, 114, 128); /* gray-500 - mid-gray for color indicators */
 
   /* ===== Background Colors ===== */
-  --color-background-primary: rgb(15, 20, 16); /* Very dark green-tinted gray */
-  --color-background-secondary: rgb(22, 30, 24);
+  --color-background-primary: rgb(7, 17, 11);    /* page — dark, but the green stays perceptible */
+  --color-background-secondary: rgb(12, 28, 18);
 
   /* ===== Border Colors =====
      Border must contrast with surface-primary AND surface-raised. */

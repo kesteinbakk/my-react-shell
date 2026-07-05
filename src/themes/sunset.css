@@ -130,13 +130,13 @@
      are DARKER (recessed). */
   --color-surface-primary: rgb(40, 25, 20);     /* card — dark warm brown */
   --color-surface-raised: rgb(54, 34, 27);      /* popovers/dropdowns — lifted above the card */
-  --color-surface-sunken: rgb(33, 20, 15);      /* recessed well — darker than the card */
-  --color-surface-sunken-deep: rgb(27, 16, 11); /* deeper recess — near the page floor */
+  --color-surface-sunken: rgb(42, 21, 12);      /* recessed well — darker than the card, warmth kept visible */
+  --color-surface-sunken-deep: rgb(38, 17, 9);  /* deepest recess — a clearly warm dark floor, not black */
   --color-surface-neutral: rgb(107, 114, 128); /* gray-500 - mid-gray for color indicators */
 
   /* ===== Background Colors ===== */
-  --color-background-primary: rgb(25, 15, 10); /* Very dark warm brown */
-  --color-background-secondary: rgb(35, 20, 15);
+  --color-background-primary: rgb(28, 13, 6);    /* page — dark, but the warmth stays perceptible */
+  --color-background-secondary: rgb(40, 19, 10);
 
   /* ===== Border Colors ===== */
   --color-border-primary: rgb(70, 45, 35);

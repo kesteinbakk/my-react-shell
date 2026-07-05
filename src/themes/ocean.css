@@ -134,13 +134,13 @@
      hover applied on any surface stay visible. */
   --color-surface-primary: #172230;      /* card — matches the kons-ev card fill */
   --color-surface-raised: #1f2c3d;       /* popovers/dropdowns — lifted (lighter) above the card */
-  --color-surface-sunken: #131d29;       /* recessed well — darker than the card */
-  --color-surface-sunken-deep: #101924;  /* deeper recess — near the page floor */
+  --color-surface-sunken: rgb(16, 32, 58);       /* recessed well — darker than the card, blue kept visible */
+  --color-surface-sunken-deep: rgb(11, 25, 50);  /* deepest recess — a clearly blue dark floor, not black */
   --color-surface-neutral: var(--color-gray-500); /* mid-gray for color indicators */
 
   /* ===== Background Colors ===== */
-  --color-background-primary: #0f1620; /* page — matches the kons-ev page bg */
-  --color-background-secondary: #131c28;
+  --color-background-primary: rgb(9, 18, 38);    /* page — dark, but the blue stays perceptible */
+  --color-background-secondary: rgb(14, 27, 50);
 
   /* ===== Border Colors =====
      Border must contrast with surface-primary AND surface-raised. */
