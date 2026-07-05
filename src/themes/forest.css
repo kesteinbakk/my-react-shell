@@ -129,15 +129,15 @@
      Mode-consistent with light: `raised` is LIGHTER than the card, `sunken` /
      `sunken-deep` are DARKER (recessed). Each stop is a distinct step so borders
      and hover on any surface stay visible. */
-  --color-surface-primary: rgb(22, 30, 24);      /* card — dark green-tinted gray */
-  --color-surface-raised: rgb(32, 44, 35);       /* popovers/dropdowns — lifted above the card */
-  --color-surface-sunken: rgb(12, 30, 18);       /* recessed well — darker than the card, green kept visible */
-  --color-surface-sunken-deep: rgb(8, 25, 15);   /* deepest recess — a clearly green dark floor, not black */
+  --color-surface-primary: oklch(0.275 0.045 162);      /* card — shared dark ladder: identical OKLCH L stops across palettes, only hue+chroma differ */
+  --color-surface-raised: oklch(0.325 0.045 162);       /* popovers/dropdowns — lifted above the card */
+  --color-surface-sunken: oklch(0.245 0.045 162);       /* recessed well — darker than the card */
+  --color-surface-sunken-deep: oklch(0.215 0.045 162);  /* deepest recess — a clear step above the page floor */
   --color-surface-neutral: rgb(107, 114, 128); /* gray-500 - mid-gray for color indicators */
 
   /* ===== Background Colors ===== */
-  --color-background-primary: rgb(7, 17, 11);    /* page — dark, but the green stays perceptible */
-  --color-background-secondary: rgb(12, 28, 18);
+  --color-background-primary: oklch(0.16 0.045 162);    /* page floor — darkest rung */
+  --color-background-secondary: oklch(0.19 0.045 162);  /* section background — a step above the floor */
 
   /* ===== Border Colors =====
      Border must contrast with surface-primary AND surface-raised. */

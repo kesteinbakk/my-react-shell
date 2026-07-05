@@ -129,15 +129,15 @@
   /* ===== Surface Colors — the depth ladder (dark) =====
      Mode-consistent: `raised` is LIGHTER than the card, `sunken` / `sunken-deep`
      are DARKER (recessed). */
-  --color-surface-primary: rgb(28, 29, 33);     /* card — warm dark gray */
-  --color-surface-raised: rgb(42, 44, 51);      /* popovers/dropdowns — lifted above the card */
-  --color-surface-sunken: rgb(23, 24, 28);      /* recessed well — darker than the card */
-  --color-surface-sunken-deep: rgb(19, 20, 24); /* deeper recess — near the page floor */
+  --color-surface-primary: oklch(0.275 0.012 250);      /* card — shared dark ladder: identical OKLCH L stops across palettes; soft stays near-neutral (low chroma) */
+  --color-surface-raised: oklch(0.325 0.012 250);       /* popovers/dropdowns — lifted above the card */
+  --color-surface-sunken: oklch(0.245 0.012 250);       /* recessed well — darker than the card */
+  --color-surface-sunken-deep: oklch(0.215 0.012 250);  /* deepest recess — a clear step above the page floor */
   --color-surface-neutral: rgb(107, 114, 128); /* gray-500 - mid-gray for color indicators */
 
   /* ===== Background Colors ===== */
-  --color-background-primary: rgb(18, 19, 22); /* very dark with warm tint */
-  --color-background-secondary: rgb(24, 25, 29); /* dark warm gray */
+  --color-background-primary: oklch(0.16 0.012 250);    /* page floor — darkest rung */
+  --color-background-secondary: oklch(0.19 0.012 250);  /* section background — a step above the floor */
 
   /* ===== Border Colors ===== */
   --color-border-primary: rgb(58, 61, 69); /* visible but soft */

@@ -132,15 +132,15 @@
      lifts), while `sunken` / `sunken-deep` are DARKER than the card (a well
      recedes toward the page floor). Each stop is a distinct step so borders and
      hover applied on any surface stay visible. */
-  --color-surface-primary: #172230;      /* card — matches the kons-ev card fill */
-  --color-surface-raised: #1f2c3d;       /* popovers/dropdowns — lifted (lighter) above the card */
-  --color-surface-sunken: rgb(16, 32, 58);       /* recessed well — darker than the card, blue kept visible */
-  --color-surface-sunken-deep: rgb(11, 25, 50);  /* deepest recess — a clearly blue dark floor, not black */
+  --color-surface-primary: oklch(0.275 0.045 237);      /* card — shared dark ladder: identical OKLCH L stops across palettes, only hue+chroma differ */
+  --color-surface-raised: oklch(0.325 0.045 237);       /* popovers/dropdowns — lifted above the card */
+  --color-surface-sunken: oklch(0.245 0.045 237);       /* recessed well — darker than the card */
+  --color-surface-sunken-deep: oklch(0.215 0.045 237);  /* deepest recess — a clear step above the page floor */
   --color-surface-neutral: var(--color-gray-500); /* mid-gray for color indicators */
 
   /* ===== Background Colors ===== */
-  --color-background-primary: rgb(9, 18, 38);    /* page — dark, but the blue stays perceptible */
-  --color-background-secondary: rgb(14, 27, 50);
+  --color-background-primary: oklch(0.16 0.045 237);    /* page floor — darkest rung */
+  --color-background-secondary: oklch(0.19 0.045 237);  /* section background — a step above the floor */
 
   /* ===== Border Colors =====
      Border must contrast with surface-primary AND surface-raised. */

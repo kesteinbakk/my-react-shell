@@ -151,17 +151,17 @@
      Mode-consistent: `raised` is LIGHTER than the card, `sunken` / `sunken-deep`
      are DARKER (recessed). Lifted off pure black (the page sits at rgb(9,9,11),
      not #000) so there's headroom to recess a well and no OLED smear/halation. */
-  --color-surface-primary: rgb(19, 19, 22);     /* card — near black, off pure #000 */
-  --color-surface-raised: rgb(32, 32, 37);      /* popovers/dropdowns — lifted above the card */
-  --color-surface-sunken: rgb(16, 16, 19);      /* recessed well — darker than the card */
-  --color-surface-sunken-deep: rgb(13, 13, 16); /* deeper recess — near the page floor */
+  --color-surface-primary: oklch(0.275 0.006 265);      /* card — shared dark ladder: identical OKLCH L stops across palettes; dynamic stays neutral (near-zero chroma) */
+  --color-surface-raised: oklch(0.325 0.006 265);       /* popovers/dropdowns — lifted above the card */
+  --color-surface-sunken: oklch(0.245 0.006 265);       /* recessed well — darker than the card */
+  --color-surface-sunken-deep: oklch(0.215 0.006 265);  /* deepest recess — a clear step above the page floor */
   --color-surface-neutral: rgb(107, 114, 128); /* gray-500 - mid-gray for color indicators */
 
   /* ===== Background Colors =====
      Off pure black: a near-black page keeps the high-contrast feel without OLED
      smear/halation, and leaves room for a well to recess below the card. */
-  --color-background-primary: rgb(9, 9, 11);    /* near-black page */
-  --color-background-secondary: rgb(14, 14, 17); /* a touch above the page */
+  --color-background-primary: oklch(0.16 0.006 265);    /* page floor — darkest rung */
+  --color-background-secondary: oklch(0.19 0.006 265);  /* section background — a step above the floor */
 
   /* ===== Border Colors ===== */
   --color-border-primary: rgb(64, 64, 71); /* clearly visible borders */
