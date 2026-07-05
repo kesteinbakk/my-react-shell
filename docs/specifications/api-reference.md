@@ -97,6 +97,27 @@ const { theme, isDark, themes, setTheme, toggleMode } = useTheme()
 Self-hosted via `@fontsource` (no CDN). See [theme.md](../guides/theme.md) →
 *Typography*.
 
+**Design size scales.** Two shared step ladders exported from the core barrel — the
+glyph and text counterparts to the icon-**button** box scale (`ICON_BUTTON_GLYPH_PX`,
+under `/components`). Each pairs a TS constant with a CSS-token family (defined in
+`styles/base.css`); keep the two in sync. These establish the ladder — they are **not**
+yet wired into the component kit (components keep their own per-component `size` maps).
+
+```ts
+import { ICON_GLYPH_PX, TEXT_SIZE_REM } from 'my-react-shell'
+import type { IconSize, TextSize } from 'my-react-shell'
+```
+
+| Export | Kind | Summary |
+|---|---|---|
+| `ICON_GLYPH_PX` | const | `Record<IconSize, number>` — px a rendered glyph draws at: `xs` 16 · `sm` 20 · `md` 24 · `lg` 32 · `xl` 40. Default `md`. |
+| `TEXT_SIZE_REM` | const | `Record<TextSize, string>` — UI-text font-size (rem string): `xs` 0.75 · `sm` 0.875 · `md` 1 · `lg` 1.125 · `xl` 1.25. Base `md`. |
+| `IconSize` | type | `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl'`. |
+| `TextSize` | type | `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl'`. |
+
+CSS-token mirrors (from `my-react-shell/styles.css`): `--mrs-icon-{xs,sm,md,lg,xl}`
+(px) and `--mrs-text-{xs,sm,md,lg,xl}` (rem).
+
 ---
 
 ## `my-react-shell/providers` — Convex client + `AppProviders`

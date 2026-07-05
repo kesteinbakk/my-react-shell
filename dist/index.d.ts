@@ -1,3 +1,5 @@
+export { ICON_GLYPH_PX, TEXT_SIZE_REM } from './sizes';
+export type { IconSize, TextSize } from './sizes';
 export { ThemeProvider } from './theme/ThemeProvider';
 export type { ThemeProviderProps } from './theme/ThemeProvider';
 export { useTheme } from './theme/useTheme';

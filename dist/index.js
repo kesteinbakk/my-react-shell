@@ -6,6 +6,8 @@
 //   • Convex Auth default                                       → `my-react-shell/auth/convex`
 //   • i18n (t() seam + missing-key surface, zero-dep)           → `my-react-shell/i18n`
 // The dev-harness (src/main.tsx, src/routes/**) is NOT exported.
+// ── design size scales (glyph + text step ladders) ──────────────────────────
+export { ICON_GLYPH_PX, TEXT_SIZE_REM } from './sizes';
 // ── theme ───────────────────────────────────────────────────────────────────
 export { ThemeProvider } from './theme/ThemeProvider';
 export { useTheme } from './theme/useTheme';

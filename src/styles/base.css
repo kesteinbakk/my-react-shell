@@ -21,6 +21,33 @@
   --font-footer: inherit;
 }
 
+/* ── Design size scales ──────────────────────────────────────────────────────
+   Two shared step scales — the glyph and text counterparts to the icon-BUTTON
+   box scale (`--mrs-icon-btn-*` in components.css). One vocabulary so an icon
+   glyph and a run of UI text are sized from a fixed ladder instead of an ad-hoc
+   literal. Mirrored by `ICON_GLYPH_PX` / `TEXT_SIZE_REM` in sizes.ts — keep the
+   two in sync. These are NOT wired into the components yet; they establish the
+   ladder (used directly, and by adopters over time). */
+:root {
+  /* Icon glyph size — the px a rendered glyph (inline <svg>/emoji) draws at. px,
+     not rem, because glyphs are consumed as pixel sizes (renderIcon(name, px),
+     SVG width/height). Matches ActionButton's internal step ladder. */
+  --mrs-icon-xs: 16px;
+  --mrs-icon-sm: 20px;
+  --mrs-icon-md: 24px;
+  --mrs-icon-lg: 32px;
+  --mrs-icon-xl: 40px;
+
+  /* UI text size — the font-size steps for shell/body text (not display
+     headings). rem so it tracks the root font. `md` (1rem) is the base body
+     size; `sm` (0.875rem) is the most common UI-control size. */
+  --mrs-text-xs: 0.75rem;
+  --mrs-text-sm: 0.875rem;
+  --mrs-text-md: 1rem;
+  --mrs-text-lg: 1.125rem;
+  --mrs-text-xl: 1.25rem;
+}
+
 body {
   font-family: var(--font-sans);
   background-color: var(--color-background-primary);
