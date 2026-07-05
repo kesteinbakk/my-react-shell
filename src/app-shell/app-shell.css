@@ -426,9 +426,8 @@
   align-items: center;
   gap: 0.5rem;
   /* A quiet trail, deliberately subordinate to the page title (H1) below it:
-     small + regular weight, muted ancestors, with only the interactive leaf
-     accented. */
-  font-size: 0.9375rem;
+     regular weight, muted ancestors, with only the interactive leaf accented. */
+  font-size: 1rem;
   font-weight: 400;
   min-width: 0;
   order: 1;
@@ -633,6 +632,17 @@ button.mrs-breadcrumbs__leaf {
 /* Action buttons / buttons in the page header actions slot are slightly larger */
 .mrs-page-header__actions .mrs-action-btn--sm {
   padding: 0.375rem 0.625rem;
+}
+/* Band chrome glyphs read larger than a standalone `sm` toolbar icon so the
+   header's actions carry weight beside the breadcrumb trail. The SVG size is set
+   as width/height attributes (a plain rule overrides them); the emoji size is set
+   inline by ActionButton, so `!important` is required to keep both modes in step. */
+.mrs-page-header__actions .mrs-action-btn__glyph svg {
+  width: 1.375rem;
+  height: 1.375rem;
+}
+.mrs-page-header__actions .mrs-action-btn__glyph .mrs-action-btn__emoji {
+  font-size: 1.375rem !important;
 }
 .mrs-page-header__actions .mrs-action-btn--sm .mrs-action-btn__label {
   font-size: 0.875rem;
