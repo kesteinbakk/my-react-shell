@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate, useRouterState } from '@tanstack/react-router';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { SearchInput as SearchInputComponent, ActionButton } from '../components';
+import { ICON_GLYPH_PX } from '../sizes';
 /**
  * How long the "no registered page" DEV warning waits before firing. Long enough
  * to outlast a backing query + its `useDynamicPages` registration commit on a
@@ -105,7 +106,7 @@ export function ShellPageHeaderUI(props) {
                                     return _jsx(SearchInputComponent, { style: { backgroundColor: 'transparent' } }, i);
                                 }
                                 if (typeof actionItem === 'string') {
-                                    return (_jsx("span", { children: _jsx(ActionButton, { action: actionItem }) }, i));
+                                    return (_jsx("span", { children: _jsx(ActionButton, { action: actionItem, size: "md" }) }, i));
                                 }
                                 if (typeof actionItem === 'object' && actionItem !== null) {
                                     if (actionItem.action === 'search') {
@@ -114,11 +115,11 @@ export function ShellPageHeaderUI(props) {
                                     }
                                     if (actionItem.action) {
                                         const presetAction = actionItem;
-                                        return (_jsx("span", { children: _jsx(ActionButton, { action: presetAction.action, onClick: presetAction.onClick, label: presetAction.label, showEmoji: presetAction.showEmoji, tone: presetAction.tone, size: presetAction.size, layout: presetAction.layout, disabled: presetAction.disabled, hint: presetAction.hint }) }, i));
+                                        return (_jsx("span", { children: _jsx(ActionButton, { action: presetAction.action, onClick: presetAction.onClick, label: presetAction.label, showEmoji: presetAction.showEmoji, tone: presetAction.tone, size: presetAction.size ?? 'md', layout: presetAction.layout, disabled: presetAction.disabled, hint: presetAction.hint }) }, i));
                                     }
                                     if ('icon' in actionItem) {
                                         const iconAction = actionItem;
-                                        return (_jsx("span", { children: _jsx(ActionButton, { icon: iconAction.icon, onClick: iconAction.onClick, label: iconAction.label, showEmoji: iconAction.showEmoji, tone: iconAction.tone, size: iconAction.size, layout: iconAction.layout, disabled: iconAction.disabled, hint: iconAction.hint }) }, i));
+                                        return (_jsx("span", { children: _jsx(ActionButton, { icon: iconAction.icon, onClick: iconAction.onClick, label: iconAction.label, showEmoji: iconAction.showEmoji, tone: iconAction.tone, size: iconAction.size ?? 'md', layout: iconAction.layout, disabled: iconAction.disabled, hint: iconAction.hint }) }, i));
                                     }
                                 }
                                 return null;
@@ -181,7 +182,7 @@ function Breadcrumbs(props) {
         : visibleChain.length === 1
             ? '/'
             : visibleChain[visibleChain.length - 2].entry.route;
-    return (_jsxs("nav", { className: "mrs-breadcrumbs", "aria-label": navLabel, children: [showMenuButton ? (_jsx("button", { type: "button", className: "mrs-page-header__hamburger", "aria-label": openMenuLabel, onClick: onOpenMenu, children: config.renderIcon('menu', 20) })) : null, _jsx(Link, { to: "/", className: "mrs-breadcrumbs__home", title: homeLabel, children: config.renderIcon('home', 24) }), upRoute !== undefined ? (_jsx(Link, { to: upRoute, className: "mrs-breadcrumbs__up", title: upLabel, "aria-label": upLabel, children: config.renderIcon('arrowUp', 24) })) : null, slots.map(slot => {
+    return (_jsxs("nav", { className: "mrs-breadcrumbs", "aria-label": navLabel, children: [showMenuButton ? (_jsx("button", { type: "button", className: "mrs-page-header__hamburger", "aria-label": openMenuLabel, onClick: onOpenMenu, children: config.renderIcon('menu', 20) })) : null, _jsx(Link, { to: "/", className: "mrs-breadcrumbs__home", title: homeLabel, children: config.renderIcon('home', ICON_GLYPH_PX.lg) }), upRoute !== undefined ? (_jsx(Link, { to: upRoute, className: "mrs-breadcrumbs__up", title: upLabel, "aria-label": upLabel, children: config.renderIcon('arrowUp', ICON_GLYPH_PX.lg) })) : null, slots.map(slot => {
                 const chevron = (_jsx("span", { className: "mrs-breadcrumbs__chevron", children: config.renderIcon('chevronRight', 14) }));
                 if (slot.kind === 'overflow') {
                     return (_jsxs("span", { className: "mrs-breadcrumbs__crumb", children: [chevron, _jsx(OverflowCrumb, { shell: shell, hidden: slot.hidden })] }, "overflow"));

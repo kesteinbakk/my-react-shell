@@ -33,6 +33,7 @@ import type {
 } from './shellContract'
 import type { ShellContextValue } from './shellContext'
 import { SearchInput as SearchInputComponent, ActionButton } from '../components'
+import { ICON_GLYPH_PX } from '../sizes'
 
 /**
  * How long the "no registered page" DEV warning waits before firing. Long enough
@@ -197,7 +198,7 @@ export function ShellPageHeaderUI(props: ShellPageHeaderUIProps): ReactNode {
               if (typeof actionItem === 'string') {
                 return (
                   <span key={i}>
-                    <ActionButton action={actionItem} />
+                    <ActionButton action={actionItem} size="md" />
                   </span>
                 )
               }
@@ -217,7 +218,7 @@ export function ShellPageHeaderUI(props: ShellPageHeaderUIProps): ReactNode {
                         label={presetAction.label}
                         showEmoji={presetAction.showEmoji}
                         tone={presetAction.tone}
-                        size={presetAction.size}
+                        size={presetAction.size ?? 'md'}
                         layout={presetAction.layout}
                         disabled={presetAction.disabled}
                         hint={presetAction.hint}
@@ -235,7 +236,7 @@ export function ShellPageHeaderUI(props: ShellPageHeaderUIProps): ReactNode {
                         label={iconAction.label}
                         showEmoji={iconAction.showEmoji}
                         tone={iconAction.tone}
-                        size={iconAction.size}
+                        size={iconAction.size ?? 'md'}
                         layout={iconAction.layout}
                         disabled={iconAction.disabled}
                         hint={iconAction.hint}
@@ -374,7 +375,7 @@ function Breadcrumbs(props: BreadcrumbsProps): ReactNode {
       ) : null}
 
       <Link to="/" className="mrs-breadcrumbs__home" title={homeLabel}>
-        {config.renderIcon('home', 24)}
+        {config.renderIcon('home', ICON_GLYPH_PX.lg)}
       </Link>
 
       {upRoute !== undefined ? (
@@ -384,7 +385,7 @@ function Breadcrumbs(props: BreadcrumbsProps): ReactNode {
           title={upLabel}
           aria-label={upLabel}
         >
-          {config.renderIcon('arrowUp', 24)}
+          {config.renderIcon('arrowUp', ICON_GLYPH_PX.lg)}
         </Link>
       ) : null}
 
