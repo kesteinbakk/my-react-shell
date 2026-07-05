@@ -22,14 +22,16 @@
   --mrs-elevation-popover: 0 4px 12px var(--color-shadow-md), 0 18px 44px var(--color-shadow-lg);
 
   /* Shared square icon-button size scale. ONE source of truth for every icon-only
-     trigger (DropdownMenu icon-trigger, UserPreferences trigger, LanguagePicker,
-     HeaderActionButton) — they all read these via `data-size` (default `md`), so an
-     icon button is the same size everywhere unless a caller opts into a step. Pairs
-     with `IconButtonSize` / `ICON_BUTTON_GLYPH_PX` in iconButton.ts. */
-  --mrs-icon-btn-sm: 2rem;
-  --mrs-icon-btn-md: 2.25rem;
-  --mrs-icon-btn-lg: 2.5rem;
-  --mrs-icon-btn-xl: 2.75rem;
+     trigger (IconButton + the DropdownMenu icon-trigger / LanguagePicker on it, the
+     UserPreferences trigger, HeaderActionButton) — they all read these via `data-size`
+     (default `md`), so an icon button is the same size everywhere unless a caller opts
+     into a step. Each box = its glyph (the shared icon-glyph scale, 20·24·32·40px) +
+     2× a padding that steps up with size (6·8·10·12px), so the padding tracks the
+     button. Pairs with `IconButtonSize` / `ICON_BUTTON_GLYPH_PX` in iconButtonScale.ts. */
+  --mrs-icon-btn-sm: 2rem;    /* 20 + 2·6  = 32px */
+  --mrs-icon-btn-md: 2.5rem;  /* 24 + 2·8  = 40px */
+  --mrs-icon-btn-lg: 3.25rem; /* 32 + 2·10 = 52px */
+  --mrs-icon-btn-xl: 4rem;    /* 40 + 2·12 = 64px */
 }
 
 /* Sizes every kit icon button box off `data-size` (default `md`). Each class keeps
@@ -4389,6 +4391,30 @@
   outline: none;
   border-color: var(--color-focus);
   box-shadow: 0 0 0 3px var(--color-focus-ring);
+}
+/* Glyph wrapper — sizes a direct-child <svg> to the step's glyph size (the shared
+   icon-glyph scale) via `1em`, so the icon is drawn from the same ladder as a bare
+   glyph. A composed node (LanguagePicker's flag/code span) is centered untouched —
+   only a DIRECT svg child is resized. `md` glyph is the default. */
+.mrs-icon-btn__glyph {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 0;
+  font-size: 1.5rem; /* md — 24px */
+}
+.mrs-icon-btn[data-size='sm'] .mrs-icon-btn__glyph {
+  font-size: 1.25rem; /* 20px */
+}
+.mrs-icon-btn[data-size='lg'] .mrs-icon-btn__glyph {
+  font-size: 2rem; /* 32px */
+}
+.mrs-icon-btn[data-size='xl'] .mrs-icon-btn__glyph {
+  font-size: 2.5rem; /* 40px */
+}
+.mrs-icon-btn__glyph > svg {
+  width: 1em;
+  height: 1em;
 }
 
 /* ── Checkbox (Radix Checkbox) ───────────────────────────────────────────────

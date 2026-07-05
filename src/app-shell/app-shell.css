@@ -249,8 +249,8 @@
   flex-shrink: 0;
   /* Same shared icon-button scale as the kit triggers (components.css); `data-size`
      default `md`. Literal fallback covers app-shell.css imported without components.css. */
-  width: var(--mrs-icon-btn-md, 2.25rem);
-  height: var(--mrs-icon-btn-md, 2.25rem);
+  width: var(--mrs-icon-btn-md, 2.5rem);
+  height: var(--mrs-icon-btn-md, 2.5rem);
   margin: 0;
   padding: 0;
   border: 1px solid transparent;
@@ -265,12 +265,12 @@
   height: var(--mrs-icon-btn-sm, 2rem);
 }
 .mrs-header-action[data-size='lg'] {
-  width: var(--mrs-icon-btn-lg, 2.5rem);
-  height: var(--mrs-icon-btn-lg, 2.5rem);
+  width: var(--mrs-icon-btn-lg, 3.25rem);
+  height: var(--mrs-icon-btn-lg, 3.25rem);
 }
 .mrs-header-action[data-size='xl'] {
-  width: var(--mrs-icon-btn-xl, 2.75rem);
-  height: var(--mrs-icon-btn-xl, 2.75rem);
+  width: var(--mrs-icon-btn-xl, 4rem);
+  height: var(--mrs-icon-btn-xl, 4rem);
 }
 .mrs-header-action:hover,
 .mrs-header-action[data-state='open'] {

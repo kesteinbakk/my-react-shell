@@ -8,15 +8,15 @@ import { cn } from './cn';
  * renders it for its `iconTrigger`.
  *
  * It forwards its `ref` and spreads native button props, so it drops straight into a
- * Radix `asChild` trigger (Dropdown / Popover / Tooltip). The glyph size is the
- * caller's to set — pair it with `ICON_BUTTON_GLYPH_PX[size]`:
+ * Radix `asChild` trigger (Dropdown / Popover / Tooltip). The glyph is auto-sized to
+ * the step's scale — pass the icon unsized:
  *
  * ```tsx
  * <IconButton size="md" aria-label={t('action.settings')} onClick={openSettings}>
- *   <Settings size={ICON_BUTTON_GLYPH_PX.md} />
+ *   <Settings />
  * </IconButton>
  * ```
  */
 export const IconButton = forwardRef(function IconButton({ children, size = 'md', active, type = 'button', className, ...rest }, ref) {
-    return (_jsx("button", { ref: ref, ...rest, type: type, "data-size": size, "aria-pressed": active, className: cn('mrs-icon-btn', className), children: children }));
+    return (_jsx("button", { ref: ref, ...rest, type: type, "data-size": size, "aria-pressed": active, className: cn('mrs-icon-btn', className), children: _jsx("span", { className: "mrs-icon-btn__glyph", children: children }) }));
 });

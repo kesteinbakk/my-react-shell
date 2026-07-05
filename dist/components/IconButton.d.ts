@@ -2,8 +2,9 @@ import type { ButtonHTMLAttributes, ReactNode } from 'react';
 import type { IconButtonSize } from './iconButtonScale';
 export interface IconButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'> {
     /**
-     * The icon glyph, centered in the square. Size it from the paired glyph scale
-     * (`ICON_BUTTON_GLYPH_PX`) so the icon tracks the box across the size steps.
+     * The icon glyph, centered in the square. A direct-child `<svg>` is auto-sized to
+     * the step's glyph size (the shared icon-glyph scale) — pass the icon unsized; a
+     * composed node (its own nested markup) is centered as-is, never resized.
      */
     children: ReactNode;
     /** Box size step — sm · md · lg · xl. Defaults to `md`. */
@@ -21,12 +22,12 @@ export interface IconButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonEle
  * renders it for its `iconTrigger`.
  *
  * It forwards its `ref` and spreads native button props, so it drops straight into a
- * Radix `asChild` trigger (Dropdown / Popover / Tooltip). The glyph size is the
- * caller's to set — pair it with `ICON_BUTTON_GLYPH_PX[size]`:
+ * Radix `asChild` trigger (Dropdown / Popover / Tooltip). The glyph is auto-sized to
+ * the step's scale — pass the icon unsized:
  *
  * ```tsx
  * <IconButton size="md" aria-label={t('action.settings')} onClick={openSettings}>
- *   <Settings size={ICON_BUTTON_GLYPH_PX.md} />
+ *   <Settings />
  * </IconButton>
  * ```
  */
