@@ -31,7 +31,7 @@ const PERMANENT_QUERY = {
  * </Sheet>
  * ```
  */
-export function Sheet({ children, trigger, open, onOpenChange, onEscapeKeyDown, defaultOpen, title, header, headerActions, description, side = 'right', size = 'md', showClose = true, closeLabel, iconMode, scrim = true, modal = true, permanent, bare = false, className, overlayClass, panelTestId, }) {
+export function Sheet({ children, trigger, open, onOpenChange, onEscapeKeyDown, defaultOpen, title, header, headerActions, description, side = 'right', size = 'md', showClose = true, closeLabel, iconMode, scrim = true, modal = true, closeOnOutsideClick = false, permanent, bare = false, className, overlayClass, panelTestId, }) {
     const st = useShellText();
     // Above the `permanent` breakpoint the sheet renders as an inline layout panel; below
     // it (or when `permanent` is unset) it stays the normal overlay dialog. The hook runs
@@ -58,6 +58,13 @@ export function Sheet({ children, trigger, open, onOpenChange, onEscapeKeyDown, 
                         }, onInteractOutside: (e) => {
                             if (guardNestedDismiss(e))
                                 return;
+                            // Non-modal default suppresses outside-close. With `closeOnOutsideClick`,
+                            // a genuine backdrop click (the guard already excluded poppers, tooltips,
+                            // and stacked dialogs above) instead dismisses the sheet.
+                            if (!modal && closeOnOutsideClick) {
+                                onOpenChange?.(false);
+                                return;
+                            }
                             if (!modal)
                                 e.preventDefault();
                         }, children: bare ? (_jsxs(_Fragment, { children: [title != null && (_jsx(RadixDialog.Title, { className: "mrs-sr-only", children: title })), description != null && (_jsx(RadixDialog.Description, { className: "mrs-sr-only", children: description })), children] })) : (_jsxs(_Fragment, { children: [header != null && title != null && (_jsx(RadixDialog.Title, { className: "mrs-sr-only", children: title })), showHeader && (_jsxs("div", { className: "mrs-sheet__header", children: [header != null ? (header) : (title != null && (_jsx(RadixDialog.Title, { className: "mrs-sheet__title", children: title }))), (showClose || headerActions != null) && (_jsxs("div", { className: "mrs-sheet__header-actions", children: [headerActions, showClose && (_jsx(RadixDialog.Close, { className: "mrs-sheet__close", "aria-label": closeLabel ?? st('mrs.action.close'), children: _jsx(CloseGlyph, { iconMode: iconMode }) }))] }))] })), description != null && (_jsx(RadixDialog.Description, { className: "mrs-sheet__desc", children: description })), _jsx("div", { className: "mrs-sheet__body", children: children })] })) })] })] }));

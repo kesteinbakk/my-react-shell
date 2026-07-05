@@ -65,6 +65,17 @@ export interface SheetProps {
      */
     modal?: boolean;
     /**
+     * Let a genuine outside click dismiss a **non-modal** sheet. By default a non-modal
+     * sheet suppresses outside-click close (the page stays interactive and the panel
+     * closes only via its ✕ / an external toggle). Set `true` to instead call
+     * `onOpenChange(false)` on a real backdrop click. Has no effect on a modal sheet
+     * (Radix already dismisses those on outside click) and is applied only **after** the
+     * nested-layer guard passes, so a click inside a nested popper (Select, menu,
+     * Popover), a stacked Dialog, or a tooltip never collapses the sheet. Esc handling is
+     * unaffected — wire `onEscapeKeyDown` to suppress it separately. Defaults to `false`.
+     */
+    closeOnOutsideClick?: boolean;
+    /**
      * Make the sheet a **permanent, non-modal, non-dismissible layout panel** at and
      * above the given breakpoint (`sm` = ≥640px, `lg` = ≥1024px). Above it, the panel
      * renders inline as a real layout sibling that occupies UI space — no portal, no
@@ -111,4 +122,4 @@ export interface SheetProps {
  * </Sheet>
  * ```
  */
-export declare function Sheet({ children, trigger, open, onOpenChange, onEscapeKeyDown, defaultOpen, title, header, headerActions, description, side, size, showClose, closeLabel, iconMode, scrim, modal, permanent, bare, className, overlayClass, panelTestId, }: SheetProps): import("react").JSX.Element;
+export declare function Sheet({ children, trigger, open, onOpenChange, onEscapeKeyDown, defaultOpen, title, header, headerActions, description, side, size, showClose, closeLabel, iconMode, scrim, modal, closeOnOutsideClick, permanent, bare, className, overlayClass, panelTestId, }: SheetProps): import("react").JSX.Element;
