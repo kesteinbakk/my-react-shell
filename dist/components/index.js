@@ -82,4 +82,6 @@ export { DynamicGridCard } from './DynamicGridCard';
 // DynamicNavCards — a self-contained grid of lean navigation tiles. Rides the same
 // DynamicCardGrid as the card family but renders its own tile (never a DynamicGridCard);
 // each tile's single `title` grows large when short and steps down (2-line cap) as it grows.
-export { DynamicNavCards } from './DynamicNavCards';
+// `NavTile` is the single-tile primitive behind the grid — for a lone tile outside
+// `DynamicNavCards` (e.g. wrapped in a drag handle), same look, one `DynamicNavCard`.
+export { DynamicNavCards, NavTile } from './DynamicNavCards';

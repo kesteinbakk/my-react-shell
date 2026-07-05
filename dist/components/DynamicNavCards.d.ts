@@ -82,6 +82,13 @@ export interface DynamicNavCardsProps<T> extends Omit<DynamicCardGridProps<T>, '
     getCard: (item: T) => DynamicNavCard;
 }
 /**
+ * One independent nav tile — the single-tile primitive behind `DynamicNavCards`.
+ * Exported so a consumer can place a lone tile outside the grid (e.g. wrapped in a
+ * drag handle), keeping the exact tile look without a `DynamicGridCard`. Props are
+ * one {@link DynamicNavCard}.
+ */
+export declare function NavTile({ title, renderLink, onClick, hoverable, lift, tone, color, accentPlacement, footer, corner, watermark, autoscaleWatermark, className, }: DynamicNavCard): import("react").JSX.Element;
+/**
  * A **self-contained grid of navigation tiles**. Unlike the card family it renders its own
  * lean tile element (it does **not** use `DynamicGridCard`), but it drives that grid through
  * the same {@link DynamicCardGrid} — so it inherits its fluid `1fr` columns, `cardSize`

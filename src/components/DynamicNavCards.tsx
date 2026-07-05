@@ -104,8 +104,13 @@ function titleFit(title: ReactNode): 0 | 1 | 2 | 3 | 4 {
   return 4
 }
 
-/** One independent nav tile — its own element, never a `DynamicGridCard`. */
-function NavTile({
+/**
+ * One independent nav tile — the single-tile primitive behind `DynamicNavCards`.
+ * Exported so a consumer can place a lone tile outside the grid (e.g. wrapped in a
+ * drag handle), keeping the exact tile look without a `DynamicGridCard`. Props are
+ * one {@link DynamicNavCard}.
+ */
+export function NavTile({
   title,
   renderLink,
   onClick,

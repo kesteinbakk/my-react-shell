@@ -24,8 +24,13 @@ function titleFit(title) {
         return 3;
     return 4;
 }
-/** One independent nav tile — its own element, never a `DynamicGridCard`. */
-function NavTile({ title, renderLink, onClick, hoverable, lift = false, tone, color, accentPlacement = 'top', footer, corner, watermark, autoscaleWatermark = true, className, }) {
+/**
+ * One independent nav tile — the single-tile primitive behind `DynamicNavCards`.
+ * Exported so a consumer can place a lone tile outside the grid (e.g. wrapped in a
+ * drag handle), keeping the exact tile look without a `DynamicGridCard`. Props are
+ * one {@link DynamicNavCard}.
+ */
+export function NavTile({ title, renderLink, onClick, hoverable, lift = false, tone, color, accentPlacement = 'top', footer, corner, watermark, autoscaleWatermark = true, className, }) {
     const titleId = useId();
     // Typography scale follows the enclosing grid's `cardSize` (via context), falling back to
     // `'md'` with no enclosing grid — a tile never overrides its own scale.
