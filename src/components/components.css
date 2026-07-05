@@ -20,7 +20,28 @@
   --mrs-elevation-card: 0 1px 2px var(--color-shadow-sm), 0 8px 24px var(--color-shadow-md);
   --mrs-elevation-card-hover: 0 2px 6px var(--color-shadow-md), 0 14px 32px var(--color-shadow-lg);
   --mrs-elevation-popover: 0 4px 12px var(--color-shadow-md), 0 18px 44px var(--color-shadow-lg);
+}
 
+/* Dark-mode rim-light. On a near-black floor a cast shadow loses almost all
+   contrast, so dark cards read flat. A 2px inset highlight on the top edge fakes
+   light-from-above and gives the card a crisp lifted rim, over a deep ambient
+   halo — together they lift the card off the floor. Dark only; light cards
+   already pop via the cast shadow, so they stay untouched. The halo alphas are
+   literal here because dark `--color-shadow-*` tops out at 0.60, shallower than
+   this deliberately deep ambient (and dark shadow alphas are palette-uniform, so
+   nothing is lost by not tokenizing). */
+:root[data-mode='dark'] {
+  --mrs-elevation-card:
+    inset 0 2px 0 0 rgba(255, 255, 255, 0.14),
+    0 3px 6px rgba(0, 0, 0, 0.4),
+    0 14px 36px rgba(0, 0, 0, 0.65);
+  --mrs-elevation-card-hover:
+    inset 0 2px 0 0 rgba(255, 255, 255, 0.18),
+    0 5px 10px rgba(0, 0, 0, 0.45),
+    0 18px 44px rgba(0, 0, 0, 0.72);
+}
+
+:root {
   /* Shared square icon-button size scale. ONE source of truth for every icon-only
      trigger (IconButton + the DropdownMenu icon-trigger / LanguagePicker on it, the
      UserPreferences trigger, HeaderActionButton) — they all read these via `data-size`

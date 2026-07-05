@@ -157,6 +157,12 @@ a lifted layer instead of sitting flat: a soft lift for cards (deeper on hover) 
 stronger ambient for floating chrome (dialogs, menus, toasts). The geometry is
 kit-internal (`--mrs-elevation-*`), not a public token.
 
+In **dark mode** a cast shadow loses almost all contrast on the near-black page floor, so
+the card elevation switches technique: it adds a 2px **top rim-light** (an inset white
+highlight faking light-from-above) over a deeper ambient halo, so the card still reads
+lifted where a plain shadow would flatten out. This is dark-only — light cards keep the
+plain cast shadow, which already separates them from the lighter background.
+
 ## Nested layers don't tear down their host dialog
 
 `Dialog`, `Sheet`, and `ConfirmDialog` guard against a **nested layer collapsing the whole
