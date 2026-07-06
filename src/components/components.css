@@ -4246,8 +4246,10 @@
   to { height: 0; }
 }
 
-/* Sizes — trigger padding/type + content body padding (no top padding, so the
-   body sits flush under its trigger). */
+/* Sizes — trigger padding/type + content body padding (symmetric top/bottom, so
+   the body gets the same breathing room under its trigger as below its last
+   child — matters most for a nested Accordion in the body, whose own first
+   trigger would otherwise sit flush against the parent trigger). */
 /* The header owns the horizontal insets — the trigger and its sibling action
    slots share one padding box. The trigger keeps its own left+vertical padding so
    its hover-background stays a comfortable pill inside the row; the header's right
@@ -4260,7 +4262,7 @@
   font-size: 0.8125rem;
 }
 .mrs-accordion--sm .mrs-accordion__body {
-  padding: 0 0.625rem 0.625rem;
+  padding: 0.625rem;
   font-size: 0.8125rem;
 }
 .mrs-accordion--md .mrs-accordion__header {
@@ -4271,7 +4273,7 @@
   font-size: 0.875rem;
 }
 .mrs-accordion--md .mrs-accordion__body {
-  padding: 0 0.875rem 0.875rem;
+  padding: 0.875rem;
   font-size: 0.875rem;
 }
 .mrs-accordion--lg .mrs-accordion__header {
@@ -4282,7 +4284,7 @@
   font-size: 1rem;
 }
 .mrs-accordion--lg .mrs-accordion__body {
-  padding: 0 1.125rem 1.125rem;
+  padding: 1.125rem;
   font-size: 0.9375rem;
 }
 
