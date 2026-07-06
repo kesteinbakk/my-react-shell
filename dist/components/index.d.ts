@@ -17,6 +17,8 @@ export { Label } from './Label';
 export type { LabelProps } from './Label';
 export { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from './Card';
 export type { CardProps, CardHeaderProps, CardTitleProps, CardDescriptionProps, CardContentProps, CardFooterProps, } from './Card';
+export { Surface } from './Surface';
+export type { SurfaceProps, SurfaceLevel, SurfaceVariant, SurfaceElevation, SurfaceRadius, } from './Surface';
 export { Separator } from './Separator';
 export type { SeparatorProps, SeparatorOrientation } from './Separator';
 export { Skeleton } from './Skeleton';

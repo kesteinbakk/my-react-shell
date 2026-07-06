@@ -20,6 +20,7 @@ export { Input } from './Input';
 export { Textarea } from './Textarea';
 export { Label } from './Label';
 export { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from './Card';
+export { Surface } from './Surface';
 export { Separator } from './Separator';
 export { Skeleton } from './Skeleton';
 export { Dialog } from './Dialog';

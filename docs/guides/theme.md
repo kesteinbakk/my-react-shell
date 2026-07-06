@@ -60,6 +60,39 @@ listed in the [API reference](../specifications/api-reference.md#surfaces--eleva
 consumer composing its own surfaces should follow the same role mapping so cards, menus,
 and wells read consistently across every palette.
 
+### Which rung to reach for — and don't hand-paint it
+
+When you compose your own region, map it to a rung by **what it is**, not by how dark it
+looks. The recurring mistakes: painting a raised card with a sunken/`muted` token, or
+punching a nested element down to the page floor with `background-primary`.
+
+| The thing you're building | Rung |
+|---|---|
+| The page itself (the app-shell body renders this) | `--color-background-primary` |
+| A banded page zone — a rail, a hero strip, a section band | `--color-background-secondary` |
+| A card / the default content panel | `--color-surface-primary` |
+| Floating chrome — popover, dropdown, dialog, toast | `--color-surface-raised` |
+| A recessed well — an input/control well, a table header, a neutral note | `--color-surface-sunken` |
+| A deeper recess — a filled neutral badge, an avatar, a nested well, hover-on-sunken | `--color-surface-sunken-deep` |
+
+**Don't reach for these tokens on a bare `<div>` at all — reach for a component.** The kit
+ships a neutral, role-parameterized [`Surface`](../specifications/api-reference.md)
+primitive (`<Surface level="sunken">`, `<Surface level="raised" elevation="popover">`,
+`<Surface variant="outline">`) that owns the fill, border, elevation, **and** the paired
+foreground colour, so nested text can't wash out and the depth can't invert between light
+and dark. A full card is `<Card>` (which *is* `Surface level="primary"` with card chrome).
+Hand-picking a `--color-surface-*` value onto a plain element is the drift this ladder
+exists to prevent — let `Surface` / `Card` carry the token.
+
+**Filled vs outline — pick per region, deliberately.** A **filled** surface reads as a
+layer by its fill (plus optional elevation) — the default, and the right call for anything
+that should read as *raised* (a card, a floating panel), because in light mode an
+outline-only box leans on a hairline border that all but vanishes when the panel, canvas,
+and card sit within a hair of each other in lightness. An **outline** surface (transparent
++ border, no shadow) is the deliberate choice for a *flat* grouping box on the canvas that
+shouldn't claim elevation. Choose one rule per surface role and hold it — don't mix filled
+and outline for the same kind of region.
+
 ### Other Base Variables
 
 Along with the surface ladder, the base contract provides strictly named tokens for text, borders, and overlays. Use **only** these exact names:

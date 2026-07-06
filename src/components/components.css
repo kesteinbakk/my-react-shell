@@ -946,6 +946,60 @@
   border-top: 1px solid var(--color-border-primary);
 }
 
+/* ── Surface ─────────────────────────────────────────────────────────────────
+   The neutral, role-parameterized surface primitive. `--level-*` sets the fill
+   token for the rung; `--filled` paints it, `--outline` stays transparent. Text
+   colour resets to the paired foreground so nested content can't wash out on a
+   darker/lighter rung. Layout (padding, gap, flow) is the consumer's className. */
+.mrs-surface {
+  color: var(--color-text-primary);
+}
+.mrs-surface--level-raised {
+  --mrs-surface-fill: var(--color-surface-raised);
+}
+.mrs-surface--level-primary {
+  --mrs-surface-fill: var(--color-surface-primary);
+}
+.mrs-surface--level-sunken {
+  --mrs-surface-fill: var(--color-surface-sunken);
+}
+.mrs-surface--level-sunken-deep {
+  --mrs-surface-fill: var(--color-surface-sunken-deep);
+}
+.mrs-surface--level-background {
+  --mrs-surface-fill: var(--color-background-primary);
+}
+.mrs-surface--level-background-secondary {
+  --mrs-surface-fill: var(--color-background-secondary);
+}
+.mrs-surface--filled {
+  background: var(--mrs-surface-fill);
+}
+.mrs-surface--outline {
+  background: transparent;
+}
+.mrs-surface--bordered {
+  border: 1px solid var(--color-border-primary);
+}
+.mrs-surface--elev-card {
+  box-shadow: var(--mrs-elevation-card);
+}
+.mrs-surface--elev-popover {
+  box-shadow: var(--mrs-elevation-popover);
+}
+.mrs-surface--radius-none {
+  border-radius: 0;
+}
+.mrs-surface--radius-sm {
+  border-radius: 0.375rem;
+}
+.mrs-surface--radius-md {
+  border-radius: 0.5rem;
+}
+.mrs-surface--radius-lg {
+  border-radius: 0.75rem;
+}
+
 /* ── Separator ───────────────────────────────────────────────────────────── */
 .mrs-separator {
   flex-shrink: 0;

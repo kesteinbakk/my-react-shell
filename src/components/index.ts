@@ -46,6 +46,15 @@ export type {
   CardFooterProps,
 } from './Card'
 
+export { Surface } from './Surface'
+export type {
+  SurfaceProps,
+  SurfaceLevel,
+  SurfaceVariant,
+  SurfaceElevation,
+  SurfaceRadius,
+} from './Surface'
+
 export { Separator } from './Separator'
 export type { SeparatorProps, SeparatorOrientation } from './Separator'
 

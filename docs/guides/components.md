@@ -136,6 +136,14 @@ but render no asterisk — a marker on a single toggle reads oddly.
 
 ## Surfaces & elevation
 
+For a themed region that isn't one of the components below — a bare well, a raised side
+panel, a banded section — reach for the **`Surface`** primitive rather than hand-painting
+a `--color-surface-*` token onto a `<div>`: `<Surface level="sunken">` /
+`<Surface level="raised" elevation="popover">` / `<Surface variant="outline">`. It owns
+the fill, border, elevation, and paired foreground colour, and leaves layout to your
+`className`. `Card` is `Surface level="primary"` with card chrome baked in. Which rung
+maps to what: [theme guide → Which rung to reach for](theme.md#which-rung-to-reach-for--and-dont-hand-paint-it).
+
 Kit components render on the semantic **surface ladder** (full definition in the
 [theme guide](theme.md#the-surface-ladder)); each role maps to one token:
 
