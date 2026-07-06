@@ -239,6 +239,8 @@ Task folder: `docs/2-tasks/TXXX-feature-name/` — contents per "Where agents wr
 
 When a task warrants isolation in a git worktree (parallel work, large rewrites, anything you'd rather not interleave on the working branch), read the `worktree-flow` skill. It defines base/target branch (the project's working branch, per project CLAUDE.md), the `node_modules` symlink at creation, squash-merge on approval, post-merge `pnpm typecheck` (with auto-commit-on-fix), and cleanup.
 
+**Keep the working branch clean.** The commit-immediately rule (see "Task File Maintenance") matters most with a worktree open: a stray uncommitted task-doc or index change on the working branch is easily swept into the merge or another agent's commit. Never leave one sitting there alongside a worktree.
+
 ### Task.md structure
 
 Top to bottom — every feature task uses this layout:
@@ -380,6 +382,8 @@ For no-doc bugs the "archive" step is just the index bump + commit — there's n
 
 Keeping the task file in sync with reality is **your job**, not the user's. Do not wait to be reminded.
 
+**Commit every task-doc/index write immediately.** Any task doc or index change you make directly on the working branch — creating a task folder, editing `task.md`/`background.md`/reviews, a status bump — is committed the moment it's coherent, pathspec-scoped to just those files. This holds whether or not a worktree exists; an uncommitted task doc on the working branch is easily lost or swept into another agent's commit. (The `PostToolUse` hook already auto-commits the index; you own the task-doc files.)
+
 **When to update the task file:**
 - After each major phase completes (status, what was done, what changed)
 - When the approach changes (update strategy/plan sections, not just append)
@@ -429,6 +433,7 @@ Read the `independent-work` skill when the user grants autonomous authority ("wo
 **TM-specific additions:**
 - Approve reviews yourself if they follow standard patterns.
 - Never contradict existing patterns, implement breaking changes, or skip verification.
+- **Worktree merge, settled up front.** If the away work runs on a worktree and the user hasn't already said, ask **before they leave**: (a) is the squash-merge pre-approved, and (b) if so, may you commit uncommitted work already on the working branch before merging? Without these answers the merge gate (Phase 4 step 4) blocks and you stall waiting on an absent user. Ask only what they haven't already covered.
 
 ---
 

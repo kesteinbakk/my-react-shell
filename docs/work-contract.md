@@ -20,6 +20,11 @@ knowledge. Track init/task steps with the Todo tool. Beyond what the hook says:
 - **Read `~/Developer/scripts/projects.toml` once at init** — the canonical
   registry of what projects exist, where they live (`path`), and which sync
   pipelines they consume. Every agent and script reads it.
+- **If your cwd is under `.claude/worktrees/`, you were spawned into a worktree** —
+  run `node ~/Developer/scripts/worktree-init.mjs` before any pnpm command or dev
+  server, and never symlink `node_modules`/`.env.local` to patch a missing one
+  (it half-works and aborts every other pnpm command under pnpm v11). Detail:
+  `worktree-flow`.
 - **Per new task**, re-check your skill list against the task and read any
   relevant unread skill or guide before starting.
 - **If you need no feedback to proceed, start** — don't wait for approval. If
