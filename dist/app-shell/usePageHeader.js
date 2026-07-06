@@ -59,13 +59,16 @@ const CHURN_FIELDS = ['title', 'actions', 'search', 'tabs', 'documentTitle'];
  *
  * A **function-form action** (`() => ReactNode`) is resolved the same way: we call
  * the thunk (a `createElement`, NOT a render — no hooks run) and signature the
- * resulting element's scalar / `Set` / scalar-array props + scalar children. So a
- * thunk whose *rendered value* changes — e.g. a vendor selector re-created with a
- * new `openSet` prop — propagates to the band and re-renders live, while pure
- * identity churn (a fresh thunk each render with the same output) stays equivalent
- * and never pushes, so unstable inline thunks still can't loop. Non-scalar props
- * (callbacks, arrays of objects, nested nodes) are skipped, exactly as the object-
- * action branch skips its callbacks — their identity churn alone never forces a push.
+ * resulting element's observable props + scalar children. Observable means a scalar,
+ * a `Set`/array of scalars, or a plain record of such values — so a data-derived
+ * `options={[{value,label},…]}` list (an array of scalar records) counts. A thunk
+ * whose *rendered value* changes — a vendor selector re-created with a new `openSet`
+ * prop, or a `<Select>` whose option list just loaded — propagates to the band and
+ * re-renders live, while pure identity churn (a fresh thunk each render with the same
+ * output) stays equivalent and never pushes, so unstable inline thunks still can't
+ * loop. Truly non-scalar props (callbacks, nested ReactNodes, objects transitively
+ * holding either) are skipped, exactly as the object-action branch skips its
+ * callbacks — their identity churn alone never forces a push.
  *
  * The remaining callbacks (`search.onChange`) and the `tabs` thunk are still compared
  * by *presence/kind*, not output. */
@@ -83,10 +86,20 @@ function searchEquivalent(a, b) {
     return a.initialValue === b.initialValue && a.placeholder?.() === b.placeholder?.();
 }
 /**
- * Serialize a value iff it is observable/stable — a scalar, a `Set` of scalars, or
- * an array of scalars. Returns `null` for anything else (functions, plain objects,
- * ReactNodes), so identity churn in those is ignored, matching the object-action
- * branch. A `Set` is order-normalized so `{a,b}` and `{b,a}` compare equal.
+ * Serialize a value iff it is observable/stable — a scalar, a `Set` of scalars, an
+ * array of such values, or a plain object (record) whose every value is itself
+ * observable. Returns `null` for anything else (functions, ReactNodes, and any
+ * object/array that transitively holds one), so identity churn in those is ignored,
+ * matching the object-action branch. A `Set` and an object's keys are
+ * order-normalized so `{a,b}` and `{b,a}` compare equal.
+ *
+ * The record case is what makes a data-derived option list observable: a
+ * `<Select options={[{value,label},…]}>` prop is an array of scalar records, so a
+ * change to the list (e.g. an async load resolving `undefined → […]`) alters the
+ * signature and propagates a real push — without it, the band never re-resolves the
+ * winning thunk and the control renders stale. ReactNodes are excluded up front
+ * (their `$$typeof` symbol would bail anyway; the explicit guard is defensive), so
+ * an element passed as a prop stays skipped exactly as before.
  */
 function valueSig(v) {
     if (v === null || v === undefined)
@@ -101,6 +114,13 @@ function valueSig(v) {
     if (Array.isArray(v)) {
         const parts = v.map(valueSig);
         return parts.every((p) => p !== null) ? `arr:[${parts.join(',')}]` : null;
+    }
+    if (t === 'object' && !isValidElement(v)) {
+        const parts = Object.entries(v).map(([k, val]) => {
+            const s = valueSig(val);
+            return s === null ? null : `${k}:${s}`;
+        });
+        return parts.every((p) => p !== null) ? `obj:{${parts.sort().join(',')}}` : null;
     }
     return null;
 }
