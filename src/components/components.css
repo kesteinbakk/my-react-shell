@@ -2561,6 +2561,14 @@
   font-size: 1em !important;
 }
 
+/* `watermarkVariant="solid"` — the same slot at full opacity/colour: a clear glyph rather
+   than a faint mark. Only the opacity changes; placement, size, and the content-dodge stay. */
+.mrs-dynamic-nav-card--watermark-solid[data-watermark]::after,
+.mrs-dynamic-nav-card--watermark-solid .mrs-dynamic-nav-card__watermark,
+.mrs-dynamic-nav-card--watermark-solid .mrs-dynamic-nav-card__watermark--glyph {
+  opacity: 1;
+}
+
 /* ── PhiCard ─────────────────────────────────────────────────────────────── */
 /* Golden-ratio card. Outer width:height = φ:1 (both set inline from PHI); the two
    sections split φ:1 via the `1.6180339887fr` literals (φ, kept in lockstep with PHI).
@@ -3737,7 +3745,7 @@
   border: 1px solid var(--color-border-primary);
   border-radius: 0.75rem;
   padding: 1rem;
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--mrs-elevation-card);
 }
 .mrs-stat-card__info-section-header {
   display: flex;

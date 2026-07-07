@@ -287,7 +287,8 @@ that grid through the same `DynamicCards`, so it inherits the fluid `1fr` column
 - **Lean by design** — no `icon`, `subtitle`, `shape`, or drag seam. Each `DynamicNavCard`
   carries `renderLink` (whole-tile navigation, accessible name auto-wired from `title`),
   `onClick`, `hoverable`/`lift`, `tone`/`color` accent, a freeform `footer`, a `corner` slot,
-  and `watermark` (+ `autoscaleWatermark`).
+  and `watermark` (+ `autoscaleWatermark`, + `watermarkVariant` — `'faint'` default, or
+  `'solid'` for a full-opacity/full-color glyph in the same slot).
 - **`wrapCard`** — like `DynamicCards`, pass `wrapCard(item, buildCard)` to wrap each tile in a
   drag `Sortable` (the tiles ride the same grid, so sortable folder grids work here too).
 

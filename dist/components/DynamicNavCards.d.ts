@@ -92,6 +92,12 @@ export interface DynamicNavCard {
      */
     watermark?: ReactNode;
     /**
+     * How the `watermark` reads. **`'faint'`** (default) is the dimmed background mark;
+     * **`'solid'`** renders it **full-opacity, full-color** at the exact same place and size —
+     * a clear glyph rather than a watermark. Same slot, so a tile shows one or the other.
+     */
+    watermarkVariant?: 'faint' | 'solid';
+    /**
      * For a **`ReactNode`** watermark only: scales the node's intrinsic `<svg>`/`<img>`/`<span>`
      * up to watermark scale, oversized and faint. Set `false` for a self-sized illustration
      * (e.g. `DrawerMark`). Default `true`.
@@ -123,7 +129,7 @@ export interface DynamicNavCardsProps<T> extends DynamicCardsCommonProps<T> {
  * drag handle), keeping the exact tile look without a `DynamicCard`. Props are
  * one {@link DynamicNavCard}.
  */
-export declare function NavTile({ title, contentPlacement, renderLink, onClick, hoverable, lift, tone, color, accentPlacement, footer, corner, watermark, autoscaleWatermark, className, }: DynamicNavCard): import("react").JSX.Element;
+export declare function NavTile({ title, contentPlacement, renderLink, onClick, hoverable, lift, tone, color, accentPlacement, footer, corner, watermark, watermarkVariant, autoscaleWatermark, className, }: DynamicNavCard): import("react").JSX.Element;
 /**
  * A **self-contained grid of navigation tiles**. Unlike the card family it renders its own
  * lean tile element (it does **not** use `DynamicCard`), but it drives that grid through

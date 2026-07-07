@@ -99,6 +99,12 @@ export interface DynamicNavCard {
    */
   watermark?: ReactNode
   /**
+   * How the `watermark` reads. **`'faint'`** (default) is the dimmed background mark;
+   * **`'solid'`** renders it **full-opacity, full-color** at the exact same place and size —
+   * a clear glyph rather than a watermark. Same slot, so a tile shows one or the other.
+   */
+  watermarkVariant?: 'faint' | 'solid'
+  /**
    * For a **`ReactNode`** watermark only: scales the node's intrinsic `<svg>`/`<img>`/`<span>`
    * up to watermark scale, oversized and faint. Set `false` for a self-sized illustration
    * (e.g. `DrawerMark`). Default `true`.
@@ -162,6 +168,7 @@ export function NavTile({
   footer,
   corner,
   watermark,
+  watermarkVariant = 'faint',
   autoscaleWatermark = true,
   className,
 }: DynamicNavCard) {
@@ -208,6 +215,7 @@ export function NavTile({
         isHoverable && lift && 'mrs-dynamic-nav-card--lift',
         renderLink && 'mrs-dynamic-nav-card--linked',
         hasWatermark && 'mrs-dynamic-nav-card--watermark',
+        hasWatermark && watermarkVariant === 'solid' && 'mrs-dynamic-nav-card--watermark-solid',
         hasArtWatermark && 'mrs-reveal-host',
         className,
       )}

@@ -30,7 +30,7 @@ function titleFit(title) {
  * drag handle), keeping the exact tile look without a `DynamicCard`. Props are
  * one {@link DynamicNavCard}.
  */
-export function NavTile({ title, contentPlacement = 'top', renderLink, onClick, hoverable, lift = false, tone, color, accentPlacement = 'top', footer, corner, watermark, autoscaleWatermark = true, className, }) {
+export function NavTile({ title, contentPlacement = 'top', renderLink, onClick, hoverable, lift = false, tone, color, accentPlacement = 'top', footer, corner, watermark, watermarkVariant = 'faint', autoscaleWatermark = true, className, }) {
     const titleId = useId();
     // Typography scale follows the enclosing grid's `cardSize` (via context), falling back to
     // `'md'` with no enclosing grid — a tile never overrides its own scale.
@@ -54,7 +54,7 @@ export function NavTile({ title, contentPlacement = 'top', renderLink, onClick, 
         ? (linkProps) => renderLink({ ...linkProps, 'aria-labelledby': titleId })
         : undefined;
     const cssVars = { ...(hasAccent ? { '--mrs-stat-accent': accentColor } : {}) };
-    return (_jsxs("div", { className: cn('mrs-dynamic-nav-card', `mrs-dynamic-nav-card--${effectiveSize}`, `mrs-dynamic-nav-card--content-${contentPlacement}`, hasAccent && `mrs-dynamic-nav-card--accent-${accentPlacement}`, isHoverable && 'mrs-dynamic-nav-card--hoverable', isHoverable && lift && 'mrs-dynamic-nav-card--lift', renderLink && 'mrs-dynamic-nav-card--linked', hasWatermark && 'mrs-dynamic-nav-card--watermark', hasArtWatermark && 'mrs-reveal-host', className), style: cssVars, "data-watermark": watermarkIsString ? watermark : undefined, onClick: onClick, children: [wrappedRenderLink
+    return (_jsxs("div", { className: cn('mrs-dynamic-nav-card', `mrs-dynamic-nav-card--${effectiveSize}`, `mrs-dynamic-nav-card--content-${contentPlacement}`, hasAccent && `mrs-dynamic-nav-card--accent-${accentPlacement}`, isHoverable && 'mrs-dynamic-nav-card--hoverable', isHoverable && lift && 'mrs-dynamic-nav-card--lift', renderLink && 'mrs-dynamic-nav-card--linked', hasWatermark && 'mrs-dynamic-nav-card--watermark', hasWatermark && watermarkVariant === 'solid' && 'mrs-dynamic-nav-card--watermark-solid', hasArtWatermark && 'mrs-reveal-host', className), style: cssVars, "data-watermark": watermarkIsString ? watermark : undefined, onClick: onClick, children: [wrappedRenderLink
                 ? wrappedRenderLink({ className: 'mrs-dynamic-nav-card__link-overlay' })
                 : null, hasArtWatermark ? (_jsx("div", { className: cn('mrs-dynamic-nav-card__watermark', autoscaleWatermark && 'mrs-dynamic-nav-card__watermark--glyph'), "aria-hidden": "true", children: watermark })) : null, corner != null ? _jsx("div", { className: "mrs-dynamic-nav-card__corner", children: corner }) : null, _jsx("div", { className: "mrs-dynamic-nav-card__body", children: _jsx("span", { className: "mrs-dynamic-nav-card__title", id: titleId, "data-fit": titleFit(title) || undefined, children: title }) }), footerSlots != null ? (_jsxs("div", { className: "mrs-dynamic-nav-card__footer", children: [_jsx("span", { className: "mrs-dynamic-nav-card__footer-left", children: footerSlots.left }), _jsx("span", { className: "mrs-dynamic-nav-card__footer-center", children: footerSlots.center }), _jsx("span", { className: "mrs-dynamic-nav-card__footer-right", children: footerSlots.right })] })) : null] }));
 }
