@@ -121,7 +121,7 @@ Along with the surface ladder, the base contract provides strictly named tokens 
 - ❌ `--color-base-root` / `--color-base-surface` / `--color-base-dim` (Hallucinated. Use `--color-surface-raised`, `--color-surface`, `--color-overlay` etc. instead.)
 - ❌ `--color-text-body` (Hallucinated. Use `--color-text-primary` instead.)
 - ❌ `--color-border-subtle` (Hallucinated. Use `--color-border-secondary` instead.)
-- ❌ `--radius-lg` / `--shadow-xl` (No generic radius/shadow utility tokens exist; use hardcoded `rem` for borders, and standard elevation tokens or `--color-shadow-*` for shadows).
+- ❌ `--radius-lg` / `--shadow-sm` / `--shadow-md` / `--shadow-lg` / `--shadow-xl` (No generic radius/shadow utility tokens exist — the real shadow tokens carry the `-color` infix: `--color-shadow-{sm,md,lg,xl}`. Use hardcoded `rem` for borders, and `--mrs-elevation-*` or `--color-shadow-*` for shadows).
 
 ## Typography
 
