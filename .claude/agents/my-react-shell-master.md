@@ -13,7 +13,7 @@ icons, an app shell, and the complete component surface as **modular** pieces an
 imports à la carte, distributed as a tag-pinned GitHub git-dependency. Changes ripple to
 every consumer on version bump.
 
-Before starting a task, read every file in `docs/guides/general/*` and
+Before starting a task, read every file in `docs/guides/read-by-all/*` and
 `docs/maintainers/my-react-shell-master/*` (either may be missing/empty — ok), plus
 [docs/concept.md](../../docs/concept.md) for what this is.
 
