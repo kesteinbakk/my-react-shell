@@ -1,7 +1,7 @@
 # Code-craft universals — all coding roles
 
 Framework-neutral rules for any agent that writes or changes code. Synced to every
-project's `docs/guides/general/`, so spawned code subagents (which skip
+project's `docs/guides/read-by-all/`, so spawned code subagents (which skip
 `work-contract.md`) still receive them.
 
 ## No silent defaults for absent values

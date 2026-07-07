@@ -5,7 +5,7 @@ subscriber's `docs/work-contract.md` (imported by the content-free `CLAUDE.md`;
 read by non-Claude tools via `AGENTS.md`). Edit *here*, never a synced copy.
 
 Universal **session/orchestration** rules only — they hold for every project.
-Code-craft universals live in `docs/guides/general/code-craft.md`; project or
+Code-craft universals live in `docs/guides/read-by-all/code-craft.md`; project or
 ecosystem specifics live in that project's `docs/concept.md` / role guides.
 
 ---
@@ -37,7 +37,7 @@ knowledge. Track init/task steps with the Todo tool. Beyond what the hook says:
 These roles are environment-independent and run in **any** project. They hold
 role *method* only — the environment *knowledge* (what the project is, where its
 files live, which conventions apply) comes from `docs/concept.md`, the role's
-guides (`docs/guides/general/` + `docs/guides/<role>/`), and triggered skills.
+guides (`docs/guides/read-by-all/` + `docs/guides/<role>/`), and triggered skills.
 
 | Role | Use for |
 |------|---------|
@@ -49,7 +49,7 @@ guides (`docs/guides/general/` + `docs/guides/<role>/`), and triggered skills.
 | `assist` | Non-coding help: answer questions, explain docs, draft proposals/reports. |
 | `external-research` | Web/library/error-message research. Does not read the project. |
 
-**After picking your role, read its guides:** every file in `docs/guides/general/`
+**After picking your role, read its guides:** every file in `docs/guides/read-by-all/`
 and `docs/guides/<role>/` (either may be missing/empty — fine).
 
 **Where a role is defined — don't hunt for a file that isn't there:** user-level
@@ -77,6 +77,16 @@ Skills are synced from `~/Developer/dev-docs/` into each subscribing project's
 changes. To change one, propose it in `~/Developer/dev-docs/proposals/`; code/
 development proposals (not skills) go in the local project's own proposals area.
 When a task matches a skill's `TRIGGER`, invoke it with the Skill tool.
+
+---
+
+## Guides
+
+Creating a new guide? A guide for **every** agent → `docs/guides/read-by-all/`; a
+**role-specific** guide → `docs/guides/<role>/`. Nothing outside those two
+locations is read at startup — never repo root, never an ad-hoc folder. In a
+migrated project the former is synced from `dev-docs/agent-source/guides/read-by-all/`
+— add it there, not in the local copy.
 
 ---
 

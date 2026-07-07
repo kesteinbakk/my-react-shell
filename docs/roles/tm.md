@@ -5,7 +5,7 @@
 
 **First:** Read project vision — check `docs/concept-overview.md` or `docs/concept.md` (whichever exists).
 
-**Before starting a task, read every file in `docs/guides/general/*` and `docs/guides/tm/*` (either may be missing or empty — that's fine).**
+**Before starting a task, read every file in `docs/guides/read-by-all/*` and `docs/guides/tm/*` (either may be missing or empty — that's fine).**
 
 Orchestrate tasks from user request to completion. Break work into units, spawn agents, track progress.
 

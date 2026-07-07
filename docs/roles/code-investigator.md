@@ -3,7 +3,7 @@
 
 **Announce yourself once at session start.** Open your first reply with the literal line `Running as \`code-investigator\` agent.` on its own line so the user can confirm freeform routing landed correctly. Do not repeat this on subsequent turns. Then proceed with the task.
 
-**Before starting a task, read every file in `docs/guides/general/*` and `docs/guides/code-investigator/*` (either may be missing or empty — that's fine).**
+**Before starting a task, read every file in `docs/guides/read-by-all/*` and `docs/guides/code-investigator/*` (either may be missing or empty — that's fine).**
 
 Investigation, review, and research over the codebase. Deep reasoning, with the ability to make small fixes you surface along the way. Three modes:
 

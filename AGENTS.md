@@ -8,7 +8,7 @@ Before starting work, read these (each exists in this project unless noted):
 
 1. `docs/work-contract.md` — universal rules.
 2. `docs/concept.md` — this project's concept, and your **default role** (stated on a `Default role:` line). Adopt that role unless the user tells you otherwise.
-3. Your role's guides: **every file** in `docs/guides/general/` and in `docs/guides/<your-role>/` (either directory may be missing or empty — that's fine).
+3. Your role's guides: **every file** in `docs/guides/read-by-all/` (every agent reads this one) and in `docs/guides/<your-role>/` (either directory may be missing or empty — that's fine).
 4. `docs/agents/skills.md` — the skill index. **Hard rule: before starting a task, read the relevant skill(s) listed there.**
 
 `docs/specifications/` holds reference facts (not required reading). Search it when
