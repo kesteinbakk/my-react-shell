@@ -1,7 +1,7 @@
 # B003 — nested-popper-dismisses-dialog
 
 **Status:** awaiting-user-confirmation | **Branch:** main
-**Filed:** 2026-06-30 — reported from offansk-ev (admin → Invite member modal): opening
+**Filed:** 2026-06-30 — reported from offansk (admin → Invite member modal): opening
 the Role `Select` inside the modal and then clicking anywhere inside the modal but outside
 the open dropdown collapsed the **entire dialog**, discarding the user's in-progress form
 data. Reproduced and fixed against a controlled repro in `my-react-shell-demo`.
@@ -76,7 +76,7 @@ form. Confirmed via the browser (chrome-devtools) after rebuild:
 
 - **Production (tag-pinned git-dep):** ships on the next shell tag bump; consumers get it on
   bumping their pin.
-- **Dev (`link:` loop, e.g. offansk-ev / the demos):** the rebuilt `dist/` is picked up on
+- **Dev (`link:` loop, e.g. offansk / the demos):** the rebuilt `dist/` is picked up on
   reload — no install needed.
 
-Closure to `resolved` awaits the user confirming in offansk-ev's real Invite-member modal.
+Closure to `resolved` awaits the user confirming in offansk's real Invite-member modal.

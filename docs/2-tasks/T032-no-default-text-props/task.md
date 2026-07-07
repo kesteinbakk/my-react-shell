@@ -68,7 +68,7 @@ users).
 - Final grep over shipped `src/` (excl. dev overlay + harness) shows **zero** residual
   user-facing English literals or `?? 'English'` fallbacks.
 - Demo (`my-react-shell-demo`) call sites migrated — typecheck clean.
-- Consumer (`offansk-ev`) call sites migrated via its i18n seam — see report.
+- Consumer (`offansk`) call sites migrated via its i18n seam — see report.
 
 ## Docs
 

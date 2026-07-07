@@ -7,7 +7,7 @@
 
 Let a shell card act as a **whole-card navigation target** (a real link) without the
 shell ever importing a router. First concrete scope: the **nav-card** use — replace the
-offansk-ev consumer `NavCard` (a thin compose over the now-retiring `PhiCard`) with the
+offansk consumer `NavCard` (a thin compose over the now-retiring `PhiCard`) with the
 shell's **`DynamicGridCard`**, given the interactive-root support it currently lacks.
 
 The hard part is **how** the card becomes a link. That pattern is the central open
@@ -23,7 +23,7 @@ below — this is what forces the block-link overlay over a naive root-as-anchor
 
 ## Background
 
-- The consumer's `NavCard` (`offansk-ev/src/components/NavCard.tsx`) wraps the whole
+- The consumer's `NavCard` (`offansk/src/components/NavCard.tsx`) wraps the whole
   card in a TanStack `<Link>` so the tile is a real anchor (navigation, focus,
   keyboard activation). It composes `PhiCard`.
 - **`PhiCard` is being retired** (see T028, api-reference, `docs/guides/card-grid.md`).
@@ -37,7 +37,7 @@ below — this is what forces the block-link overlay over a naive root-as-anchor
   - `NavCard` → wraps the whole card in `<Link>` (anchor `>` card `<div>` nesting; the
     error border had to be moved onto the Link wrapper because the card root doesn't own
     its own border state).
-  - `EntityCard` (`offansk-ev/src/components/EntityCard.tsx`, wraps `StatCard`) → can't
+  - `EntityCard` (`offansk/src/components/EntityCard.tsx`, wraps `StatCard`) → can't
     make the card a link at all (`StatCard.onClick` is a "mouse-only div click"), so it
     injects a focusable `<button>` CTA in the `lower` slot as the accessible open path.
   A single interactive-root pattern would retire **both** workarounds.
@@ -76,7 +76,7 @@ below — this is what forces the block-link overlay over a naive root-as-anchor
   (`figure` / `hoverable` / `corner` / `renderLink` + block-link overlay), proven on the
   demo's card-grid page. **Phase 2:** port the `renderLink` + overlay seam to `StatCard` +
   `ContentCard` (medallion/drag-handle above the overlay), demo'd on the kit pages.
-  **Phase 3:** consumer `offansk-ev` migration — delete `NavCard` + `EntityCard`, swap all
+  **Phase 3:** consumer `offansk` migration — delete `NavCard` + `EntityCard`, swap all
   call sites. Each phase is its own commit-and-verify unit.
 
 ## Plan (nav-card scope, pending the open-question decision)
@@ -93,7 +93,7 @@ defaults to a plain `<div>`):
   router `<Link>`, which the card renders as a full-bleed block-link overlay (Option A);
   the card root stays a `position:relative` `<div>` that owns its hover/border/focus states.
 
-Then swap the offansk-ev call sites (`SetupHome`, `TenantAdminHome`, `DocumentsHome`,
+Then swap the offansk call sites (`SetupHome`, `TenantAdminHome`, `DocumentsHome`,
 `TenantTemplatesPage` — clean swaps; `AccessGroupsView` — swap, passing its `DropdownMenu`
 to the new `corner` slot so the inline menu is kept), delete the consumer `NavCard`, update
 the api-reference + `docs/guides/card-grid.md`, and show the nav/link variant on the demo's
@@ -277,7 +277,7 @@ standard golden-ratio (φ:1) height reads too tall/empty.
   added the landscape `shape` (`height = width / φ²`) and the `dragHandle`×`renderLink` dev
   throw. Shell + demo kit pages + docs updated. Browser-verified: clicking the medallion in
   a linked card fires `onMedallionPress` and does **not** navigate.
-- **Phase 3 (NavCard retired — done).** Consumer `offansk-ev`: deleted `NavCard`; swapped
+- **Phase 3 (NavCard retired — done).** Consumer `offansk`: deleted `NavCard`; swapped
   `SetupHome`, `DocumentsHome`, `TenantTemplatesPage`, `TenantAdminHome`, and
   `AccessGroupsView` to `DynamicGridCard` + `renderLink` (AppIcon/emoji in `figure`,
   AccessGroupsView's rename/delete menu in `corner`). Also repointed the freeform
@@ -325,7 +325,7 @@ card surface is easy to consume:
   table row (steer to StatCard/ContentCard; note it has no `renderLink` seam); added the
   overlap caveat + a pointer to the read-first guide on the grid section; PaperCard listed in
   the static-grid card set.
-- **Consumer `offansk-ev`** — fixed staleness the deletions left behind: two dangling JSDoc
+- **Consumer `offansk`** — fixed staleness the deletions left behind: two dangling JSDoc
   `{@link NavCard}` comments (`TenantAdminHome.tsx`, `SetupHome.tsx`) now describe
   `DynamicGridCard` + `renderLink`; `docs/guides/app-shell-structure.md` told module authors to
   return an `EntityCard` — updated to `StatCard` in a static `CardGrid` (matching `ProjectHome`).
@@ -346,7 +346,7 @@ ProjectHome module-card grid renders identically at `md`. No navigable EntityCar
 
 ## References
 
-- [offansk-ev Card Consolidation research](../../4-reports/research/2026-06-28-offansk-ev-card-consolidation.md)
+- [offansk Card Consolidation research](../../4-reports/research/2026-06-28-offansk-card-consolidation.md)
   — the analysis pass that scoped this work: which consumer card wrappers can be deleted, and
   the two shell gaps (routable/keyboard-accessible cards; full-border error state) that block
   removing the rest.
@@ -365,7 +365,7 @@ ProjectHome module-card grid renders identically at `md`. No navigable EntityCar
 - `my-react-shell-demo` (nav/link card on the card-grid page, including a `corner`-slot
   example; link variant on the stat/content kit sections; `shell-config.tsx` icon if a new
   section).
-- Consumer `offansk-ev`: delete `src/components/NavCard.tsx`; swap call sites
+- Consumer `offansk`: delete `src/components/NavCard.tsx`; swap call sites
   (`SetupHome`, `TenantAdminHome`, `DocumentsHome`, `TenantTemplatesPage`, `AccessGroupsView`
   — the last passes its `DropdownMenu` to the new `corner` slot, keeping the inline menu).
   Migrate `src/components/EntityCard.tsx` to the `StatCard` overlay link — drop its `lower`

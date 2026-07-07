@@ -104,7 +104,7 @@ local checkout — this is a **dev-only** redirect:
   (`does not provide an export named …`) the moment the `rs:watch` sidecar rebuilds on
   save — not at release, *now*. So sequence a breaking change as one tight code step:
   **edit the shell source AND migrate every consumer that imports the changed surface
-  (the demos, `offansk-ev`, any live-linked app) together, let `dist/` rebuild once, then
+  (the demos, `offansk`, any live-linked app) together, let `dist/` rebuild once, then
   typecheck + load all of them.** Do the slow, dev-server-irrelevant polish — docs, the
   API reference, guides, comments — *only after* the code is migrated and green. The
   anti-pattern is rebuilding `dist/` and then spending a long docs pass while consumers

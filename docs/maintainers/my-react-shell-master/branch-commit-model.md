@@ -63,7 +63,7 @@ crash-loops. Use `pnpm add` / `pnpm <script>` / `pnpm dlx`.
   [release-runbook.md](release-runbook.md).
 - **Never call a shell change "done" until you've checked the consumer projects — their
   code AND their TypeScript.** A rename / removed export / changed prop / any API-surface
-  edit breaks every `link:` consumer (the demo, `offansk-ev`, any live-linked app) the
+  edit breaks every `link:` consumer (the demo, `offansk`, any live-linked app) the
   instant `dist/` rebuilds. After any API-surface change: rebuild `dist/`, run each
   consumer's `pnpm typecheck`, load its dev/preview. Migrate consumers in the *same*
   change; verify before reporting done.

@@ -21,7 +21,7 @@ release: `pnpm release` in the shell auto-cascades into themes. See
 ## The chain
 
 ```
-themes  ──(vendored at shell release)──►  my-react-shell  ──(git-dep tag)──►  consumer (offansk-ev)
+themes  ──(vendored at shell release)──►  my-react-shell  ──(git-dep tag)──►  consumer (offansk)
 ```
 
 ## Rule 1 — to ship shell and/or themes changes, run ONE command
@@ -68,10 +68,10 @@ cd ~/Developer/themes && pnpm release minor --push
 
 Normally you don't — Rule 1 cascades it.
 
-## Rule 3 — to deploy a consumer (offansk-ev)
+## Rule 3 — to deploy a consumer (offansk)
 
 ```bash
-cd ~/Developer/offansk-ev && pnpm release v0.X.Y --push   # the my-react-shell tag to pin
+cd ~/Developer/offansk && pnpm release v0.X.Y --push   # the my-react-shell tag to pin
 ```
 
 Pins `my-react-shell` to the tag (the consumer's only foundation dep — no themes),

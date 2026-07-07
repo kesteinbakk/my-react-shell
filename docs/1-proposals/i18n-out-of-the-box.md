@@ -15,7 +15,7 @@ This violates the goal of having `my-react-shell` support shared infrastructure 
 
 `my-react-shell/i18n` should expose a new high-level factory, `createProjectI18n`, that completely abstracts away merging, type inference, and custom interpolation logic.
 
-### 1. Consumer Usage (in `offansk-ev/src/i18n/index.tsx`)
+### 1. Consumer Usage (in `offansk/src/i18n/index.tsx`)
 
 The entire `index.tsx` file in consumers can be reduced to this:
 

@@ -60,7 +60,7 @@ The fix is two-part, documented in full in `docs/guides/distribution-model.md` â
 - **`server.deps.inline` + `fixShellReactRequires()` transform plugin in `vitest.config.ts`** (belt-and-suspenders): inlines the shell and its Radix chain through Vite's transform pipeline; the transform plugin patches CJS `require("react")` calls in files that DO reach the transform hook (ESM entry-point wrappers).
 - **`resolve.dedupe` + Radix devDeps prerequisite** â€” still required for the ESM path to resolve Radix imports through the consumer's node_modules.
 
-Applied to `offansk-ev` (`evaluering`). Reduced test failures from 94 (React-dup crashes) to 0 React-dup failures.
+Applied to `offansk` (`evaluering`). Reduced test failures from 94 (React-dup crashes) to 0 React-dup failures.
 
 ## References
 
